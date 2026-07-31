@@ -58,17 +58,17 @@ export function StateModelArchitecture() {
 const contractParts = [
   ['I', '身份', '谁能发起'],
   ['P', '策略', '能做什么'],
-  ['W', '流程', '怎么推进'],
-  ['V', '核验', '如何证明'],
+  ['W', 'Worker', '执行工作负载'],
+  ['V', 'Validator', '核验工作负载'],
   ['F', '终局', '何时完成'],
 ] as const;
 
 export function ContractModelArchitecture() {
   return (
     <div className="diagram-panel formal-panel contract-model-panel">
-      <SpecChrome chapter="02 · AGENTIC CONTRACT" status="5-TUPLE MODEL" />
+      <SpecChrome chapter="02 · AGENTIC CONTRACT" status="2 WORKLOADS / 1 CONTRACT" />
       <div className="formal-panel-body">
-        <Equation number="ACVM.2">C<sub>A</sub> ≡ (I, P, W, V, F)</Equation>
+        <Equation number="ACVM.2">C<sub>A</sub> ≡ (I, P, W<sub>box</sub>, V<sub>box</sub>, F)</Equation>
         <div className="contract-part-grid" aria-label="Agentic Contract 五元组">
           {contractParts.map(([code, title, detail], index) => (
             <div className="contract-part" key={code}>
@@ -84,12 +84,14 @@ export function ContractModelArchitecture() {
         <div className="contract-call">
           <span><Icon name="fingerprint" /><small>CALLER</small><strong>主体 + 权限</strong></span>
           <i>→</i>
-          <span className="is-contract"><Icon name="terminal" /><small>CONTRACT</small><strong>流程 + 核验器</strong></span>
+          <span className="is-contract"><Icon name="bolt" /><small>A3S-BOX / WORKER</small><strong>执行任务</strong></span>
           <i>→</i>
-          <span><Icon name="check" /><small>FINALITY</small><strong>回执 + 状态根</strong></span>
+          <span className="is-contract"><Icon name="shield" /><small>A3S-BOX / VALIDATOR</small><strong>独立验收</strong></span>
+          <i>→</i>
+          <span><Icon name="receipt" /><small>ON-CHAIN TRACE</small><strong>回执 + 状态根</strong></span>
         </div>
       </div>
-      <footer className="formal-note"><span>VALID CALL</span><strong>Authorize(I, P) ∧ Verify(V) ∧ Finalize(F)</strong></footer>
+      <footer className="formal-note"><span>VALID CALL</span><strong>Authorize(I, P) ∧ Run_box(W) ∧ Verify_box(V) ∧ Trace(R) ∧ Finalize(F)</strong></footer>
     </div>
   );
 }

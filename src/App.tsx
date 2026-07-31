@@ -7,6 +7,7 @@ import {
   ReceiptModelArchitecture,
   StateModelArchitecture,
 } from './components/FormalSpecArchitecture';
+import { LifecycleArchitecture } from './components/LifecycleArchitecture';
 import {
   ChainArchitectureSimple,
   IdentityArchitectureSimple,
@@ -28,6 +29,7 @@ const screens = [
   ['spec-contract', '合约模型'],
   ['spec-receipt', '回执转换'],
   ['spec-poi', '智能证明链'],
+  ['lifecycle', '完整生命周期'],
   ['runtime', '执行流程'],
   ['onchain', '链上执行'],
   ['identity', '身份与权限'],
@@ -42,6 +44,7 @@ const screens = [
 
 const navigation = [
   { id: 'spec-state', label: '技术说明', screens: ['spec-state', 'spec-contract', 'spec-receipt', 'spec-poi'] },
+  { id: 'lifecycle', label: '生命周期', screens: ['lifecycle'] },
   { id: 'runtime', label: '执行与身份', screens: ['runtime', 'onchain', 'identity', 'offchain'] },
   { id: 'privacy', label: '隐私与安全', screens: ['privacy', 'sentry'] },
   { id: 'proof', label: '证明与多链', screens: ['proof', 'intelligence', 'chains'] },
@@ -49,20 +52,24 @@ const navigation = [
 ] as const;
 
 type MechanismComparison = {
+  traditionalTitle: string;
   traditional: string;
+  acvmTitle: string;
   acvm: string;
 };
 
-function MechanismCompare({ traditional, acvm }: MechanismComparison) {
+function MechanismCompare({ traditionalTitle, traditional, acvmTitle, acvm }: MechanismComparison) {
   return (
     <div className="mechanism-compare" aria-label="传统区块链机制与 ACVM 对比">
-      <section>
-        <small>传统区块链</small>
+      <section className="is-traditional">
+        <header><b aria-hidden="true">×</b><small>传统区块链 · 痛点</small></header>
+        <h3>{traditionalTitle}</h3>
         <p>{traditional}</p>
       </section>
       <i aria-hidden="true" />
-      <section>
-        <small>ACVM</small>
+      <section className="is-acvm">
+        <header><b aria-hidden="true">✓</b><small>ACVM · 得到什么</small></header>
+        <h3>{acvmTitle}</h3>
         <p>{acvm}</p>
       </section>
     </div>
@@ -349,9 +356,14 @@ export function App() {
             <div className="hero-copy">
               <span className="hero-eyebrow"><i /> 00 / DEFINITION · AGENTIC CONTRACT VM</span>
               <h1>ACVM 是一套<br /><em>可验证执行环境。</em></h1>
-              <p>ACVM Core 可由链上节点共同执行；API、TEE 和模型任务通过回执接入。</p>
+              <p>一句话：链上只做必须一致的判断，复杂任务放到外部执行；每一步带回执，既省链上成本，也能追责。</p>
+              <ul className="hero-benefits" aria-label="ACVM 核心价值">
+                <li><Icon name="bolt" />复杂任务不堵链</li>
+                <li><Icon name="fingerprint" />每一步可追责</li>
+                <li><Icon name="shield" />结果自带证明</li>
+              </ul>
               <div className="hero-actions">
-                <a href="#spec-state" className="button button--primary">看技术说明 <Icon name="arrow" /></a>
+                <a href="#lifecycle" className="button button--primary">看完整流程 <Icon name="arrow" /></a>
                 <a href="#stories" className="button button--secondary">浏览业务场景</a>
               </div>
             </div>
@@ -368,8 +380,10 @@ export function App() {
           accent="再定义执行。"
           body="沿用黄皮书的状态机写法，ACVM 把一次任务定义成可验证的状态转换。"
           comparison={{
-            traditional: '状态主要围绕账户、余额和合约存储。',
-            acvm: '状态还包含任务、权限、回执和证明根。',
+            traditionalTitle: '只认识短交易',
+            traditional: '任务跨几天后，链上状态说不清谁做到哪一步。',
+            acvmTitle: '工作轨迹就是链上状态',
+            acvm: '每一步写入状态或回执根，能连续核验与追责。',
           }}
           terms={['Receipt Root', 'Proof-carrying Execution']}
           figureLabel="FORMAL MODEL / DRAFT 0.1 · REF. ETHEREUM YELLOW PAPER"
@@ -378,12 +392,14 @@ export function App() {
         <TechnicalSlide
           id="spec-contract" index={2} className="formal-screen contract-spec-screen"
           eyebrow="FORMAL SPEC 02 / 04 · AGENTIC CONTRACT"
-          title="合约不只写代码，"
-          accent="还写完成条件。"
-          body="Agentic Contract 是五元组：身份、策略、工作流、核验器和终局条件。"
+          title="一份合约，"
+          accent="两类工作负载。"
+          body="部署必须同时提供 Worker 和 Validator；二者都是可由 a3s-box 运行的工作负载。"
           comparison={{
-            traditional: '合约只描述代码、存储和交易入口。',
-            acvm: '合约同时声明身份、流程、核验与终局。',
+            traditionalTitle: '代码能执行，结果难验收',
+            traditional: '合约只知道调用返回，链下谁执行、谁验收常靠另一个系统补齐。',
+            acvmTitle: '执行与验收成对部署',
+            acvm: 'Worker 负责工作，Validator 独立验收；两边都留下链上回执。',
           }}
           terms={['Intent-centric', 'UCAN / ZCAP']}
           figureLabel="ACVM FORMAL MODEL / DRAFT 0.1"
@@ -396,8 +412,10 @@ export function App() {
           accent="凭回执改变状态。"
           body="任务先进入等待状态；只有回执通过验证，链上状态才继续推进。"
           comparison={{
-            traditional: '预言机把外部数据直接送进合约。',
-            acvm: '外部任务带回证明，验证通过才改状态。',
+            traditionalTitle: '外部数据只能信预言机',
+            traditional: '预言机说“是真的”，链上通常看不到执行过程。',
+            acvmTitle: '回执必须自带证据',
+            acvm: '验证通过才改状态，失败则保持原状态。',
           }}
           terms={['Receipt Root', 'Remote Attestation']}
           figureLabel="ACVM FORMAL MODEL / DRAFT 0.1"
@@ -410,131 +428,167 @@ export function App() {
           accent="只计算有效工作。"
           body="真实需求、验收结果和执行证据组成 PoI，再参与出块与奖励。"
           comparison={{
-            traditional: 'PoW 计能耗，PoS 计质押。',
-            acvm: 'PoI 只计有需求、有验收、有证据的计算。',
+            traditionalTitle: '奖励资源，不奖励结果',
+            traditional: 'PoW 奖励能耗，PoS 偏向资本，都不判断工作是否有用。',
+            acvmTitle: '只奖励被验收的工作',
+            acvm: '有需求、结果和执行证明，才生成 PoI。',
           }}
           terms={['Proof of Intelligence', 'VRF']}
           figureLabel="INTELLIGENCE-PROOF CHAIN / DRAFT 0.1"
         ><IntelligenceChainArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="runtime" index={5} className="runtime-screen"
+          id="lifecycle" index={5} className="lifecycle-screen"
+          eyebrow="SYSTEM WALKTHROUGH · FULL LIFECYCLE"
+          title="从部署到记账，"
+          accent="每一步都看得见。"
+          body="动画从双工作负载部署开始；每一步都生成链上状态或回执，可记录、可追溯。"
+          comparison={{
+            traditionalTitle: '交易结束，业务过程就断了',
+            traditional: '部署、调用、链下执行和验收散在不同系统，出问题只能逐个查。',
+            acvmTitle: '一条生命周期串到底',
+            acvm: '从部署到全网确认，每一步的状态、责任人和回执都能在链上追溯。',
+          }}
+          terms={['Proof of Intelligence', 'BFT / HotStuff', 'Receipt Root']}
+          figureLabel="ACVM FULL CONTRACT LIFECYCLE / AUTO LOOP"
+        ><LifecycleArchitecture /></TechnicalSlide>
+
+        <TechnicalSlide
+          id="runtime" index={6} className="runtime-screen"
           eyebrow="01 / 09 · EXECUTION TOPOLOGY"
           title="规则写清楚，"
           accent="任务再开跑。"
           body="把执行者、权限和完成条件写进合约，ACVM 按状态推进任务。"
           comparison={{
-            traditional: '接口彼此直连，系统一多就难排错。',
-            acvm: '统一接入执行内核，状态和回执一处管理。',
+            traditionalTitle: '接口越多，连接越乱',
+            traditional: '合约、预言机和脚本两两对接，故障很难定位。',
+            acvmTitle: '一个内核统一调度',
+            acvm: '状态、权限和回执在同一处流转。',
           }}
           terms={['Intent-centric', 'Proof-carrying Execution']}
         ><RuntimeArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="onchain" index={6} className="onchain-screen"
+          id="onchain" index={7} className="onchain-screen"
           eyebrow="02 / 09 · CHAIN-NATIVE EXECUTION"
           title="像 EVM 一样，"
           accent="节点一起执行。"
           body="确定性逻辑由节点共同执行，外部计算带着证明回链。"
           comparison={{
-            traditional: '重计算塞进每个节点，慢且昂贵。',
-            acvm: '链上跑核心，重任务异步回链。',
+            traditionalTitle: '所有节点重复做重计算',
+            traditional: 'API、模型和长任务塞不进同步交易，成本也高。',
+            acvmTitle: '确定性上链，重任务异步',
+            acvm: '链上保留一致性，外部计算带证明回链。',
           }}
           terms={['BFT / HotStuff', 'Receipt Root']}
         ><OnchainExecutionArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="identity" index={7} className="identity-screen"
+          id="identity" index={8} className="identity-screen"
           eyebrow="03 / 09 · IDENTITY & CAPABILITY"
           title="每个操作，"
           accent="都能追到责任人。"
           body="企业、Agent、合约和临时权限逐层绑定，每次操作都能追责。"
           comparison={{
-            traditional: '钱包地址看不出岗位、资质和授权范围。',
-            acvm: '身份与权限一起绑定，出问题能追到人。',
+            traditionalTitle: '地址不等于责任主体',
+            traditional: '私钥能签名，却看不出岗位、资质和授权边界。',
+            acvmTitle: '每次操作都能追责',
+            acvm: '企业、Agent、合约和临时权限逐层绑定。',
           }}
           terms={['DID / VC', 'UCAN / ZCAP']}
         ><IdentityArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="offchain" index={8} className="offchain-screen"
+          id="offchain" index={9} className="offchain-screen"
           eyebrow="04 / 09 · ORACLE & OFF-CHAIN COMPUTE"
           title="数据留在本地，"
           accent="结果交给链上。"
           body="原始数据留在业务系统，链上只收状态根、回执和证明。"
           comparison={{
-            traditional: '单一预言机是信任点，原始数据上链又贵又泄密。',
-            acvm: '就地核验数据，只把证明交给链。',
+            traditionalTitle: '上链泄密，预言机又要信任',
+            traditional: '原始数据公开且昂贵，单点预言机还可以撒谎。',
+            acvmTitle: '数据不出域，结果可验证',
+            acvm: '就地核验，只提交状态根、回执和证明。',
           }}
           terms={['zkTLS / TLSNotary', 'Receipt Root']}
         ><OffchainArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="privacy" index={9} className="privacy-screen"
+          id="privacy" index={10} className="privacy-screen"
           eyebrow="05 / 09 · PRIVATE EXECUTION"
           title="a3s-box 管隔离，"
           accent="a3s-power 管推理。"
           body="a3s-box 隔离任务，a3s-power 保护模型与输入。"
           comparison={{
-            traditional: '链上数据会被所有节点复制。',
-            acvm: '敏感计算留在隔离环境，只公开证明。',
+            traditionalTitle: '所有节点都会复制数据',
+            traditional: '商业数据和模型参数无法保密。',
+            acvmTitle: '敏感计算留在隔离环境',
+            acvm: '链上只看结果承诺和硬件证明。',
           }}
           terms={['TEE', 'Remote Attestation']}
         ><PrivacyArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="sentry" index={10} className="sentry-screen"
+          id="sentry" index={11} className="sentry-screen"
           eyebrow="06 / 09 · ANYSENTRY"
           title="先看清风险，"
           accent="再决定放不放行。"
           body="AnySentry 在执行前检查进程、网络和工具调用。"
           comparison={{
-            traditional: '合约看不到链下进程发生了什么。',
-            acvm: '风险信号决定放行、审批或阻断。',
+            traditionalTitle: '合约看不到链下行为',
+            traditional: '恶意进程、越权工具和异常网络调用无法拦截。',
+            acvmTitle: '执行前先做风险判断',
+            acvm: '放行、审批和阻断都有记录。',
           }}
         ><SentryArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="proof" index={11} className="proof-screen"
+          id="proof" index={12} className="proof-screen"
           eyebrow="07 / 09 · LONG-RUNNING TASK PROOF"
           title="任务跑几个月，"
           accent="证明也不会变大。"
           body="里程碑连续记录状态，最后折叠成一份固定大小的证明。"
           comparison={{
-            traditional: '长任务拆成多笔交易后容易断档。',
-            acvm: '里程碑继承状态，最终折叠成一份证明。',
+            traditionalTitle: '长任务拆开后证据断裂',
+            traditional: '暂停、重试和人工审批很难证明是同一任务。',
+            acvmTitle: '里程碑连续，证明固定大小',
+            acvm: '每一步继承状态，最终折叠为一份证明。',
           }}
           terms={['IVC', 'Folding']}
         ><LongTaskArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="intelligence" index={12} className="intelligence-screen"
+          id="intelligence" index={13} className="intelligence-screen"
           eyebrow="08 / 09 · PROOF OF INTELLIGENCE"
           title="有用的计算，"
           accent="才写进账本。"
           body="真实任务、验收结果和执行回执一起生成 PoI。"
           comparison={{
-            traditional: 'PoW / PoS 不能证明计算是否有用。',
-            acvm: '先核对需求、结果和回执，再记录贡献。',
+            traditionalTitle: '共识安全不等于计算有用',
+            traditional: 'PoW / PoS 能选出块者，不能证明任务真的完成。',
+            acvmTitle: '需求、结果、回执一起验',
+            acvm: '通过验收的计算才记录贡献。',
           }}
           terms={['Proof of Intelligence', 'zkML']}
         ><IntelligenceProofArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="chains" index={13} className="chains-screen"
+          id="chains" index={14} className="chains-screen"
           eyebrow="09 / 09 · CHAIN-AGNOSTIC DEPLOYMENT"
           title="保留原来的链，"
           accent="只替换执行层。"
           body="执行语义不变，通过适配器接入现有链或独立成链。"
           comparison={{
-            traditional: '换一条链，合约和集成往往要重写。',
-            acvm: '只换适配器，不改业务规则。',
+            traditionalTitle: '换链就要重写业务',
+            traditional: '虚拟机、ABI 和最终性不同，迁移成本高。',
+            acvmTitle: '业务语义不随链变化',
+            acvm: '只换适配器，不改合约流程。',
           }}
           terms={['Light Client', 'Receipt Root']}
         ><ChainArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="stories" index={14} className="stories-screen"
+          id="stories" index={15} className="stories-screen"
           eyebrow="10 / DEPLOYED NETWORK · INTERACTIVE GRAPH"
           title="一张运行中的"
           accent="ACVM 合约网络。"
