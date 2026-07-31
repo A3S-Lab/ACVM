@@ -3,10 +3,14 @@ import { Icon, type IconName } from './Icons';
 import { TechTerm, type TechKey } from './TechTerm';
 
 type Industry = 'business' | 'government' | 'manufacturing' | 'finance' | 'education';
+type ParticipantType = 'institution' | 'enterprise' | 'individual';
 
 type Scenario = {
   id: string;
   industry: Industry;
+  participant: ParticipantType;
+  deployer: string;
+  contract: string;
   title: string;
   thesis: string;
   delegator: string;
@@ -27,7 +31,7 @@ const industryMeta: Record<Industry, { label: string; english: string; point: [n
 
 const scenarios: Scenario[] = [
   {
-    id: 'ads', industry: 'business', title: '广告按效果结算',
+    id: 'ads', industry: 'business', participant: 'enterprise', deployer: '品牌企业', contract: 'AdSettlement.ac', title: '广告按效果结算',
     thesis: '有效转化经过多源核验后，推广预算才进入渠道账户。',
     delegator: '广告主签署预算、归因窗口与有效转化口径',
     provider: '推广渠道执行投放并申报本期转化结果',
@@ -37,7 +41,7 @@ const scenarios: Scenario[] = [
     terms: ['zkTLS / TLSNotary', 'Receipt Root'],
   },
   {
-    id: 'sla', industry: 'business', title: '软件 SLA 自动结算',
+    id: 'sla', industry: 'business', participant: 'enterprise', deployer: '企业客户', contract: 'ServiceSLA.ac', title: '软件 SLA 自动结算',
     thesis: '服务商监控、客户探针与工单共同还原故障，再计算服务费。',
     delegator: '企业客户与服务商签署可用率和扣费阶梯',
     provider: '软件服务商持续供服并提交月度账单',
@@ -47,7 +51,7 @@ const scenarios: Scenario[] = [
     terms: ['Proof-carrying Execution', 'Receipt Root'],
   },
   {
-    id: 'subsidy', industry: 'government', title: '惠企补贴核验拨付',
+    id: 'subsidy', industry: 'government', participant: 'institution', deployer: '主管部门', contract: 'SubsidyGrant.ac', title: '惠企补贴核验拨付',
     thesis: '跨部门只交换资格证明，不交换企业完整经营台账。',
     delegator: '主管部门发布专项条件、绩效指标和资金上限',
     provider: '申报企业提交身份承诺与补贴申请',
@@ -57,7 +61,7 @@ const scenarios: Scenario[] = [
     terms: ['Selective Disclosure', 'TEE', 'FROST'],
   },
   {
-    id: 'gov-project', industry: 'government', title: '政府工程进度款',
+    id: 'gov-project', industry: 'government', participant: 'institution', deployer: '建设单位', contract: 'ProjectPayment.ac', title: '政府工程进度款',
     thesis: 'BIM、现场影像、监理签章和发票共同证明本期工程量。',
     delegator: '建设单位冻结工程清单、付款节点与本期上限',
     provider: '承建方完成施工并申报本期工程量',
@@ -67,7 +71,7 @@ const scenarios: Scenario[] = [
     terms: ['DID / VC', 'FROST', 'Receipt Root'],
   },
   {
-    id: 'quality', industry: 'manufacturing', title: '生产批次质量结算',
+    id: 'quality', industry: 'manufacturing', participant: 'enterprise', deployer: '整机制造商', contract: 'BatchQuality.ac', title: '生产批次质量结算',
     thesis: '工艺、设备、质检和实验室证据闭合后，整批货款才放行。',
     delegator: '整机制造商冻结批次标准、工艺窗口和结算规则',
     provider: '零部件供应商生产并提交批次验收',
@@ -77,7 +81,7 @@ const scenarios: Scenario[] = [
     terms: ['DID / VC', 'Remote Attestation', 'Receipt Root'],
   },
   {
-    id: 'supply', industry: 'manufacturing', title: '供应链验收付款',
+    id: 'supply', industry: 'manufacturing', participant: 'enterprise', deployer: '采购企业', contract: 'DeliveryEscrow.ac', title: '供应链验收付款',
     thesis: '交付数量、运输状态、仓储签收和抽检结果按同一批次闭合。',
     delegator: '采购企业发布订单、批次标准和付款条件',
     provider: '供应商生产发货并申请验收',
@@ -87,7 +91,7 @@ const scenarios: Scenario[] = [
     terms: ['DID / VC', 'FROST', 'Receipt Root'],
   },
   {
-    id: 'energy', industry: 'manufacturing', title: '节能改造按效果付费',
+    id: 'energy', industry: 'manufacturing', participant: 'enterprise', deployer: '生产企业', contract: 'EnergyOutcome.ac', title: '节能改造按效果付费',
     thesis: '在隐私域内归一化产量与工况，只按真实节能量付款。',
     delegator: '生产企业签署节能目标、基线版本和数据边界',
     provider: '节能服务商实施改造并申报节能效果',
@@ -97,7 +101,7 @@ const scenarios: Scenario[] = [
     terms: ['TEE', 'Remote Attestation', 'Proof-carrying Execution'],
   },
   {
-    id: 'credit', industry: 'finance', title: '供应链融资按履约放款',
+    id: 'credit', industry: 'finance', participant: 'institution', deployer: '商业银行', contract: 'TradeCredit.ac', title: '供应链融资按履约放款',
     thesis: '真实贸易、货物交付和未重复质押同时成立，融资才分段释放。',
     delegator: '金融机构签署授信上限、风险规则和放款节点',
     provider: '供应商履行订单并提交应收账款融资请求',
@@ -107,7 +111,7 @@ const scenarios: Scenario[] = [
     terms: ['TEE', 'Selective Disclosure', 'Remote Attestation'],
   },
   {
-    id: 'insurance', industry: 'finance', title: '货运保险核验赔付',
+    id: 'insurance', industry: 'finance', participant: 'institution', deployer: '保险机构', contract: 'CargoClaim.ac', title: '货运保险核验赔付',
     thesis: '轨迹、传感器、查勘和保单条件共同确定事故责任与赔付。',
     delegator: '保险机构与货主签署保障范围和赔付条件',
     provider: '被保险人申报货损事件与赔付请求',
@@ -117,7 +121,7 @@ const scenarios: Scenario[] = [
     terms: ['DID / VC', 'zkTLS / TLSNotary', 'FROST'],
   },
   {
-    id: 'research', industry: 'education', title: '科研项目按里程碑拨款',
+    id: 'research', industry: 'education', participant: 'institution', deployer: '科研资助机构', contract: 'ResearchMilestone.ac', title: '科研项目按里程碑拨款',
     thesis: '数月实验持续形成状态承诺，阶段成果被压缩为完成证明。',
     delegator: '资助单位签署任务书、里程碑和拨款条件',
     provider: '科研团队持续实验、分析并交付阶段成果',
@@ -127,7 +131,7 @@ const scenarios: Scenario[] = [
     terms: ['IVC', 'Folding', 'Recursive ZK'],
   },
   {
-    id: 'training', industry: 'education', title: '职业培训按就业成效结算',
+    id: 'training', industry: 'education', participant: 'institution', deployer: '公共就业服务机构', contract: 'TrainingOutcome.ac', title: '职业培训按就业成效结算',
     thesis: '课程完成不等于成效，稳定就业经过隐私核验后才结算服务费。',
     delegator: '采购方签署培训人群、就业口径和观察期',
     provider: '培训机构交付课程并申报就业成效',
@@ -136,38 +140,67 @@ const scenarios: Scenario[] = [
     finality: '412 人达到就业口径 · 结算培训服务费',
     terms: ['Selective Disclosure', 'TEE', 'Receipt Root'],
   },
+  {
+    id: 'personal-buy', industry: 'business', participant: 'individual', deployer: '个人用户', contract: 'PersonalPurchase.ac', title: '个人 Agent 授权采购',
+    thesis: '个人先写清预算、品类和退款条件，Agent 只能在授权范围内下单。',
+    delegator: '个人用户签署预算上限、商品范围与有效期',
+    provider: '购物 Agent 比价、下单并提交订单回执',
+    evidence: '商家 API · 支付授权 · 物流状态 · 电子发票',
+    predicate: '总价未超预算 ∧ 商品在白名单 ∧ 收货条件可验证',
+    finality: '订单与授权一致 · 支付 ¥3,280 · 权限自动失效',
+    terms: ['UCAN / ZCAP', 'zkTLS / TLSNotary', 'Receipt Root'],
+  },
+  {
+    id: 'freelance', industry: 'business', participant: 'individual', deployer: '独立开发者', contract: 'FreelanceEscrow.ac', title: '自由职业成果托管',
+    thesis: '需求、版本、验收和付款节点写在同一份合约里，减少交付扯皮。',
+    delegator: '独立开发者与客户共同确认交付清单和验收口径',
+    provider: '个人工作 Agent 提交版本、测试报告和里程碑回执',
+    evidence: '代码仓库 · CI 结果 · 客户验收 · 签名工单',
+    predicate: '版本匹配 ∧ 测试通过 ∧ 验收签名有效 ∧ 未重复结算',
+    finality: '里程碑 M3 通过 · 托管款释放 ¥18,000',
+    terms: ['DID / VC', 'Proof-carrying Execution', 'Receipt Root'],
+  },
 ];
 
 type GraphNode = {
   id: string;
-  kind: 'core' | 'industry' | 'scenario';
+  kind: 'core' | 'participant' | 'contract';
   label: string;
   point: [number, number, number];
-  industry?: Industry;
+  participant?: ParticipantType;
   scenario?: Scenario;
 };
 
-const scenarioOffsets: Array<[number, number, number]> = [
-  [-0.24, -0.2, 0.12],
-  [0.23, 0.12, -0.14],
-  [-0.04, 0.3, 0.1],
+const participantMeta: Record<ParticipantType, { label: string; english: string; point: [number, number, number] }> = {
+  institution: { label: '机构节点', english: 'INSTITUTION', point: [-0.82, 0.34, -0.18] },
+  enterprise: { label: '企业节点', english: 'ENTERPRISE', point: [0.82, 0.2, 0.24] },
+  individual: { label: '个人节点', english: 'INDIVIDUAL', point: [-0.03, -0.76, 0.36] },
+};
+
+const contractOffsets: Array<[number, number, number]> = [
+  [-0.28, 0.16, 0.14],
+  [0.18, 0.28, -0.12],
+  [-0.3, -0.18, -0.1],
+  [0.3, -0.13, 0.1],
+  [0.02, 0.38, 0.18],
+  [0.08, -0.34, -0.2],
 ];
 
 const graphNodes: GraphNode[] = [
-  { id: 'acvm', kind: 'core', label: 'ACVM', point: [0, 0, 0] },
-  ...(Object.keys(industryMeta) as Industry[]).flatMap((industry) => {
-    const meta = industryMeta[industry];
-    const related = scenarios.filter((scenario) => scenario.industry === industry);
+  { id: 'acvm', kind: 'core', label: 'ACVM CHAIN', point: [0, 0, 0] },
+  ...(Object.keys(participantMeta) as ParticipantType[]).flatMap((participant) => {
+    const meta = participantMeta[participant];
+    const related = scenarios.filter((scenario) => scenario.participant === participant);
     return [
-      { id: `industry-${industry}`, kind: 'industry' as const, label: meta.label, point: meta.point, industry },
+      { id: `participant-${participant}`, kind: 'participant' as const, label: meta.label, point: meta.point, participant },
       ...related.map((scenario, index) => {
-        const offset = scenarioOffsets[index % scenarioOffsets.length];
+        const offset = contractOffsets[index % contractOffsets.length];
         return {
-          id: `scenario-${scenario.id}`,
-          kind: 'scenario' as const,
-          label: scenario.title,
+          id: `contract-${scenario.id}`,
+          kind: 'contract' as const,
+          label: scenario.contract,
           point: [meta.point[0] + offset[0], meta.point[1] + offset[1], meta.point[2] + offset[2]] as [number, number, number],
-          industry,
+          participant,
           scenario,
         };
       }),
@@ -176,8 +209,8 @@ const graphNodes: GraphNode[] = [
 ];
 
 const graphLinks = [
-  ...(Object.keys(industryMeta) as Industry[]).map((industry) => ['acvm', `industry-${industry}`] as const),
-  ...scenarios.map((scenario) => [`industry-${scenario.industry}`, `scenario-${scenario.id}`] as const),
+  ...(Object.keys(participantMeta) as ParticipantType[]).map((participant) => ['acvm', `participant-${participant}`] as const),
+  ...scenarios.map((scenario) => [`participant-${scenario.participant}`, `contract-${scenario.id}`] as const),
 ];
 
 function project(point: [number, number, number], yaw: number, pitch: number) {
@@ -244,16 +277,16 @@ export function ScenarioGraph() {
           dragRef.current = null;
           event.currentTarget.releasePointerCapture(event.pointerId);
         }}
-        aria-label="可拖拽旋转的 ACVM 行业场景三维图谱"
+        aria-label="可拖拽旋转的 ACVM Agentic Contract 部署网络"
       >
-        <header><code>ACVM / VERIFIED OUTCOME GRAPH</code><span><i /> DRAG TO ROTATE</span></header>
+        <header><code>ACVM / DEPLOYED CONTRACT NETWORK</code><span><i /> DRAG TO ROTATE</span></header>
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
           <ellipse cx="50" cy="50" rx="38" ry="24" />
           <ellipse cx="50" cy="50" rx="25" ry="39" transform="rotate(58 50 50)" />
           {graphLinks.map(([sourceId, targetId]) => {
             const source = projected.get(sourceId)!;
             const target = projected.get(targetId)!;
-            const active = targetId === `scenario-${selected.id}`;
+            const active = targetId === `contract-${selected.id}`;
             return <line className={active ? 'is-active' : ''} x1={source.x} y1={source.y} x2={target.x} y2={target.y} key={`${sourceId}-${targetId}`} />;
           })}
         </svg>
@@ -268,41 +301,50 @@ export function ScenarioGraph() {
             '--node-scale': point.scale,
           } as React.CSSProperties;
 
-          if (node.kind === 'scenario' && node.scenario) {
+          if (node.kind === 'contract' && node.scenario) {
             return (
               <button
-                className={`graph-node graph-node--scenario ${active ? 'is-active' : ''}`}
+                className={`graph-node graph-node--contract graph-node--${node.participant} ${active ? 'is-active' : ''}`}
                 style={style}
                 type="button"
                 key={node.id}
                 onClick={() => setSelectedId(node.scenario!.id)}
-                aria-label={`${industryMeta[node.industry!].label}场景：${node.label}`}
+                aria-label={`${participantMeta[node.participant!].label}部署的 ${node.label}：${node.scenario.title}`}
               >
                 <i />
-                <span>{node.label}</span>
+                <span><small>{node.scenario.title}</small>{node.label}</span>
               </button>
             );
           }
 
           return (
-            <div className={`graph-node graph-node--${node.kind}`} style={style} key={node.id}>
+            <div className={`graph-node graph-node--${node.kind} ${node.participant ? `graph-node--${node.participant}` : ''}`} style={style} key={node.id}>
               {node.kind === 'core' ? <Icon name="terminal" /> : null}
               <strong>{node.label}</strong>
             </div>
           );
         })}
-        <footer><span>行业节点</span><span>业务场景</span><strong>{scenarios.length} SCENARIOS</strong></footer>
+        <footer>
+          <span className="is-institution">机构</span>
+          <span className="is-enterprise">企业</span>
+          <span className="is-individual">个人</span>
+          <strong>{scenarios.length} CONTRACTS</strong>
+        </footer>
       </div>
 
       <article className={`scenario-detail scenario-detail--${selected.industry}`} key={selected.id}>
         <header>
-          <span>{String(selectedIndex + 1).padStart(2, '0')} / {String(scenarios.length).padStart(2, '0')} · {industryMeta[selected.industry].english}</span>
+          <span>{String(selectedIndex + 1).padStart(2, '0')} / {String(scenarios.length).padStart(2, '0')} · {participantMeta[selected.participant].english} NODE</span>
           <div>
             <button type="button" onClick={() => selectRelative(-1)} aria-label="上一个场景">←</button>
             <button type="button" onClick={() => selectRelative(1)} aria-label="下一个场景">→</button>
           </div>
           <h3>{selected.title}</h3>
           <p>{selected.thesis}</p>
+          <dl className="contract-deployment">
+            <div><dt>DEPLOYER</dt><dd>{selected.deployer}</dd></div>
+            <div><dt>AGENTIC CONTRACT</dt><dd>{selected.contract}</dd></div>
+          </dl>
         </header>
         <div className="scenario-steps" aria-label={`${selected.title}端到端业务流程`}>
           {journeySteps.map(([code, label, detail, icon], index) => (

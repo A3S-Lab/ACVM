@@ -19,42 +19,147 @@ function PanelChrome({ label, status }: { label: string; status: string }) {
   );
 }
 
-const runtimeSteps: Array<{ code: string; title: string; detail: string; icon: IconName }> = [
-  { code: '01', title: '读取任务规则', detail: 'Manifest 与验收条件', icon: 'terminal' },
-  { code: '02', title: '推进状态', detail: '等待 · 重试 · 审批', icon: 'bolt' },
-  { code: '03', title: '调用工具', detail: '业务 API 与短期授权', icon: 'key' },
-  { code: '04', title: '检查边界', detail: '预算 · 权限 · 风险规则', icon: 'shield' },
-  { code: '05', title: '生成回执', detail: 'Receipt Root 与公共输入', icon: 'receipt' },
+type TopologyNode = {
+  title: string;
+  detail: string;
+  x: number;
+  y: number;
+  labelX: number;
+  labelY: number;
+  anchor: 'start' | 'middle' | 'end';
+};
+
+const topologyNodes: TopologyNode[] = [
+  { title: '身份', detail: 'IDENTITY', x: 180, y: 55, labelX: 180, labelY: 19, anchor: 'middle' },
+  { title: '策略', detail: 'POLICY', x: 244, y: 75, labelX: 260, labelY: 49, anchor: 'start' },
+  { title: '预言机', detail: 'ORACLE', x: 280, y: 128, labelX: 300, labelY: 110, anchor: 'start' },
+  { title: '链适配', detail: 'CHAIN', x: 280, y: 192, labelX: 300, labelY: 190, anchor: 'start' },
+  { title: '证明', detail: 'PROOF', x: 244, y: 245, labelX: 260, labelY: 272, anchor: 'start' },
+  { title: '状态', detail: 'STATE', x: 180, y: 265, labelX: 180, labelY: 294, anchor: 'middle' },
+  { title: '隔离', detail: 'TEE', x: 116, y: 245, labelX: 100, labelY: 272, anchor: 'end' },
+  { title: '工具', detail: 'TOOLS', x: 80, y: 192, labelX: 60, labelY: 190, anchor: 'end' },
+  { title: '安全', detail: 'SENTRY', x: 80, y: 128, labelX: 60, labelY: 110, anchor: 'end' },
+  { title: '调度', detail: 'SCHEDULER', x: 116, y: 75, labelX: 100, labelY: 49, anchor: 'end' },
 ];
+
+const topologyMesh = topologyNodes.flatMap((source, sourceIndex) =>
+  topologyNodes.slice(sourceIndex + 1).map((target) => [source, target] as const),
+);
+
+function TopologyNodeLayer() {
+  return (
+    <g className="topology-node-layer">
+      {topologyNodes.map((node) => (
+        <g key={node.detail}>
+          <circle cx={node.x} cy={node.y} r="7" />
+          <text x={node.labelX} y={node.labelY} textAnchor={node.anchor}>
+            {node.title}
+            <tspan x={node.labelX} dy="11">{node.detail}</tspan>
+          </text>
+        </g>
+      ))}
+    </g>
+  );
+}
 
 export function RuntimeArchitecture() {
   return (
-    <div className="diagram-panel runtime-architecture">
-      <PanelChrome label="ACVM / EXECUTION TRACE" status="CONTRACT ACTIVE" />
-      <div className="runtime-package">
-        <span><Icon name="fingerprint" /></span>
-        <p><small>SIGNED AGENTIC CONTRACT</small><strong>身份、目标、边界与完成条件同时固定</strong></p>
-        <code>manifest:0x71…ac9</code>
+    <div className="diagram-panel runtime-topology">
+      <PanelChrome label="ACVM / EXECUTION TOPOLOGY" status="BOUNDARIES MAPPED" />
+      <div className="topology-comparison" aria-label="点对点任务编排与 ACVM 统一执行内核对比">
+        <section>
+          <header><span>01 / POINT-TO-POINT</span><strong>职责互相直连</strong></header>
+          <svg viewBox="0 0 360 320" role="img" aria-label="十个职责节点彼此直接连接形成复杂网状结构">
+            <circle className="topology-orbit" cx="180" cy="160" r="105" />
+            <g className="topology-mesh">
+              {topologyMesh.map(([source, target]) => (
+                <line x1={source.x} y1={source.y} x2={target.x} y2={target.y} key={`${source.detail}-${target.detail}`} />
+              ))}
+            </g>
+            <TopologyNodeLayer />
+          </svg>
+          <footer><span>10 BOUNDARIES</span><strong>45 DIRECT CONNECTIONS</strong></footer>
+        </section>
+        <i className="topology-divider" />
+        <section>
+          <header><span>02 / ACVM CORE</span><strong>共享执行内核</strong></header>
+          <svg viewBox="0 0 360 320" role="img" aria-label="十个职责节点通过 ACVM Core 统一连接">
+            <circle className="topology-orbit" cx="180" cy="160" r="105" />
+            <g className="topology-routes">
+              {topologyNodes.map((node) => <line x1={node.x} y1={node.y} x2="180" y2="160" key={node.detail} />)}
+            </g>
+            <rect className="topology-core" x="132" y="112" width="96" height="96" rx="14" />
+            <path className="topology-core-grid" d="M132 144h96M132 176h96M164 112v96M196 112v96" />
+            <circle className="topology-core-point" cx="180" cy="160" r="5" />
+            <text className="topology-core-label" x="180" y="153" textAnchor="middle">ACVM</text>
+            <text className="topology-core-detail" x="180" y="173" textAnchor="middle">STATE · POLICY · GAS</text>
+            <TopologyNodeLayer />
+          </svg>
+          <footer><span>10 BOUNDARIES</span><strong>1 EXECUTION CONTRACT</strong></footer>
+        </section>
       </div>
-      <div className="runtime-flow" aria-label="ACVM 五步执行流程">
-        {runtimeSteps.map((step, index) => (
-          <div className="flow-fragment" key={step.code}>
-            <article className={`flow-node ${index === 2 ? 'is-focus' : ''}`}>
-              <span>{step.code}</span>
-              <Icon name={step.icon} />
-              <strong>{step.title}</strong>
-              <small>{step.detail}</small>
-            </article>
-            {index < runtimeSteps.length - 1 ? <Arrow /> : null}
+    </div>
+  );
+}
+
+export function OnchainExecutionArchitecture() {
+  const workers: Array<[string, string, IconName]> = [
+    ['Oracle / API', '外部事实与业务系统', 'eye'],
+    ['TEE / Model', '私密计算与模型推理', 'lock'],
+    ['Long Task', '等待、审批与跨区块任务', 'receipt'],
+  ];
+
+  return (
+    <div className="diagram-panel onchain-architecture">
+      <PanelChrome label="ACVM / CHAIN-NATIVE EXECUTION" status="DETERMINISTIC CORE" />
+      <div className="onchain-layout">
+        <section className="validator-domain">
+          <header><span>CONSENSUS DOMAIN</span><strong>每个验证节点运行同一 ACVM Core</strong></header>
+          <svg viewBox="0 0 430 320" role="img" aria-label="四个验证节点共同执行 ACVM 确定性状态转换">
+            <path className="validator-ring" d="M95 76H335V224H95Z" />
+            <path className="validator-spokes" d="M95 76 215 150 335 76M335 224 215 150 95 224M215 46V112M215 188V284" />
+            <g className="validator-nodes">
+              <circle cx="95" cy="76" r="22" /><circle cx="335" cy="76" r="22" />
+              <circle cx="335" cy="224" r="22" /><circle cx="95" cy="224" r="22" />
+              <text x="95" y="80" textAnchor="middle">V1</text><text x="335" y="80" textAnchor="middle">V2</text>
+              <text x="335" y="228" textAnchor="middle">V3</text><text x="95" y="228" textAnchor="middle">V4</text>
+            </g>
+            <g className="validator-labels">
+              <text x="95" y="42" textAnchor="middle">VALIDATOR / ACVM</text>
+              <text x="335" y="42" textAnchor="middle">VALIDATOR / ACVM</text>
+              <text x="335" y="263" textAnchor="middle">VALIDATOR / ACVM</text>
+              <text x="95" y="263" textAnchor="middle">VALIDATOR / ACVM</text>
+            </g>
+            <rect className="state-transition-core" x="158" y="112" width="114" height="76" rx="12" />
+            <text className="state-transition-title" x="215" y="141" textAnchor="middle">ACVM CORE</text>
+            <text className="state-transition-code" x="215" y="162" textAnchor="middle">Sₙ → Sₙ₊₁</text>
+            <text className="state-transition-note" x="215" y="179" textAnchor="middle">GAS · STORAGE · REVERT</text>
+            <rect className="block-input" x="173" y="18" width="84" height="28" rx="6" />
+            <text className="block-input-label" x="215" y="36" textAnchor="middle">BLOCK N</text>
+            <rect className="state-output" x="161" y="284" width="108" height="24" rx="6" />
+            <text className="state-output-label" x="215" y="300" textAnchor="middle">STATE ROOT</text>
+          </svg>
+        </section>
+
+        <i className="proof-boundary"><span>ASYNC PROOF BOUNDARY</span></i>
+
+        <section className="external-domain">
+          <header><span>EXTERNAL DOMAIN</span><strong>不确定或重计算任务返回证明</strong></header>
+          <div>
+            {workers.map(([title, detail, icon], index) => (
+              <article key={title}>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <Icon name={icon} />
+                <p><strong>{title}</strong><small>{detail}</small></p>
+              </article>
+            ))}
           </div>
-        ))}
+          <footer><Icon name="chain" /><span><small>RESUME TRANSACTION</small><strong>receiptRoot · proof · attestation</strong></span></footer>
+        </section>
       </div>
-      <footer className="diagram-statusline">
-        <span>ENTERPRISE</span><strong>Progressive API · Zero Trust Gateway</strong>
-        <i />
-        <span>RUNTIME</span><strong>a3s-box · a3s-power · AnySentry</strong>
-        <i />
-        <span>FINALITY</span><strong>Chain Adapter · Audit Ledger</strong>
+      <footer className="onchain-legend">
+        <span><i /> ON-CHAIN：确定性状态、Gas、存储与回执</span>
+        <span><i /> OFF-CHAIN：API、TEE、模型与长期任务</span>
       </footer>
     </div>
   );
