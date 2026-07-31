@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
-const columns = 51;
-const rows = 29;
+const columns = 63;
+const rows = 35;
 
 type GlobeNode = {
   lat: number;
@@ -15,6 +15,8 @@ const fogNodes: GlobeNode[] = [
   { lat: 37.8, lon: -122.4 },
   { lat: -23.6, lon: -46.6 },
   { lat: -33.9, lon: 151.2 },
+  { lat: 35.7, lon: 139.7 },
+  { lat: 19.1, lon: 72.9 },
 ];
 
 const links = [
@@ -23,6 +25,9 @@ const links = [
   [0, 3],
   [1, 5],
   [2, 4],
+  [1, 6],
+  [2, 7],
+  [6, 5],
 ] as const;
 
 const toRadians = (degrees: number) => degrees * Math.PI / 180;
@@ -135,7 +140,7 @@ export function AsciiGlobe({ running, activeStage }: { running: boolean; activeS
     <div className="ascii-globe" aria-hidden="true">
       <span className="ascii-globe-axis" />
       <pre>{frame}</pre>
-      <span className="ascii-globe-caption"><i /> 06 FOG REGIONS / LIVE ROUTING</span>
+      <span className="ascii-globe-caption"><i /> 08 FOG REGIONS / LIVE ROUTING</span>
     </div>
   );
 }

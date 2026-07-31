@@ -1,31 +1,31 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 
 type LineNote = {
   title: string;
   body: string;
 };
 
-type CodeStep = {
+type CodeFile = {
   id: string;
-  layer: string;
   filename: string;
-  title: string;
-  body: string;
-  result: string;
-  focus: [number, number];
   code: string;
   notes: Record<number, LineNote>;
 };
 
-const steps: CodeStep[] = [
+type CodeBeat = {
+  id: string;
+  fileId: string;
+  layer: string;
+  title: string;
+  body: string;
+  result: string;
+  focus: [number, number];
+};
+
+const files: CodeFile[] = [
   {
-    id: 'manifest',
-    layer: 'L01 / CONTRACT',
+    id: 'contract',
     filename: 'contract.ts',
-    title: '先冻结合约边界',
-    body: '部署前把 Worker、Validator、验收阈值和结算单价写进同一版本。两份工作负载不能临时替换。',
-    result: '输出：contractRoot · workerDigest · validatorDigest',
-    focus: [4, 14],
     code: `export const contract = {
   name: 'geo-outcome',
   version: 1,
@@ -39,33 +39,98 @@ const steps: CodeStep[] = [
       image: 'sha256:23ab…e190',
     },
   },
-  predicate: { minDays: 30, minLiftPp: 8 },
-  settlement: { unit: 'CNY', perLiftPp: 10_000 },
+  permissions: {
+    oracle: ['geo-citation-share', 'site-analytics'],
+    transfers: {
+      token: 'CNYC',
+      maxAmount: 200_000_000_000n,
+    },
+  },
+  predicate: { minDays: 30, minLiftBps: 800 },
+  settlement: { perLiftBps: 100_000_000n },
 } as const;`,
     notes: {
-      2: { title: 'name', body: '链上合约实例引用的稳定名称；版本变化不会覆盖旧实例。' },
-      3: { title: 'version', body: 'Worker、Validator 和结算规则共同升级，避免只换执行端。' },
-      4: { title: 'workloads', body: '一次部署必须给出两个独立工作负载：负责干活的 Worker 和负责验收的 Validator。' },
-      6: { title: 'worker.entry', body: 'a3s-box 启动 Worker 时执行的 TypeScript 入口。' },
-      7: { title: 'worker.image', body: '镜像摘要写入合约根，实际运行镜像与摘要不一致时拒绝回执。' },
-      10: { title: 'validator.entry', body: 'Validator 使用另一入口和权限集合，不能复用 Worker 会话。' },
-      11: { title: 'validator.image', body: '独立镜像摘要阻止执行方在验收时偷偷替换规则。' },
-      14: { title: 'predicate', body: 'GEO 结果至少观察 30 天，引用份额增量至少达到 8 个百分点。' },
-      15: { title: 'settlement', body: '只对通过 Validator 的有效增量计价；这里每增加 1pp 结算一万元。' },
+      4: { title: 'workloads', body: '一次部署同时绑定 Worker 和 Validator，两份镜像缺一不可。' },
+      7: { title: 'worker.image', body: 'a3s-box 实际启动的 Worker 镜像必须匹配这个摘要。' },
+      11: { title: 'validator.image', body: '验收端使用独立镜像，执行方不能在任务完成后临时换规则。' },
+      14: { title: 'permissions', body: 'ctx 能访问哪些预言机、资产和最高转账金额在部署时冻结。' },
+      15: { title: 'oracle allowlist', body: 'Worker 和 Validator 只能请求合约列出的数据源。' },
+      16: { title: 'transfers', body: '转账能力由合约托管账户提供，不使用 Agent 自己的私钥。' },
+      18: { title: 'maxAmount', body: '单次任务最多转出 200,000 CNYC，超过上限时 ctx 会直接拒绝。' },
+      21: { title: 'predicate', body: '观察期至少 30 天，引用份额增量至少 800 bps，也就是 8pp。' },
+      22: { title: 'settlement', body: '每个有效 bps 对应 100 CNYC；1160 bps 最终结算 116,000 CNYC。' },
+    },
+  },
+  {
+    id: 'context',
+    filename: 'ctx.d.ts',
+    code: `export type Address = string; // 0x-prefixed
+
+export type OracleResult<T> = {
+  value: T;
+  proof: string;
+  observedAt: number;
+};
+
+export interface AgenticContractContext {
+  taskId: string;
+  caller: Address;
+  block: { height: bigint; timestamp: number };
+  contract: {
+    address: Address;
+    escrow: Address;
+    settlementToken: Address;
+  };
+  oracle: {
+    read<T>(request: {
+      source: string;
+      query: Record<string, unknown>;
+      atBlock?: bigint;
+    }): Promise<OracleResult<T>>;
+  };
+  chain: {
+    transfer(request: {
+      token: Address;
+      to: Address;
+      amount: bigint;
+      memo?: string;
+    }): Promise<{ txHash: string }>;
+    emit(event: string, payload: unknown): Promise<void>;
+  };
+  receipt: {
+    commit(kind: string, payload: unknown):
+      Promise<{ root: string }>;
+  };
+}
+
+declare global {
+  const ctx: AgenticContractContext;
+}`,
+    notes: {
+      9: { title: 'AgenticContractContext', body: 'ACVM 在工作负载启动时注入的只读全局上下文，不需要业务代码保存链私钥。' },
+      10: { title: 'taskId', body: '调用、Worker、Validator、回执和转账都引用同一个任务编号。' },
+      12: { title: 'block', body: '读取当前确定区块的高度与时间，避免预言机查询没有时间边界。' },
+      13: { title: 'contract', body: '提供当前合约地址、托管地址和允许结算的资产地址。' },
+      18: { title: 'ctx.oracle', body: '读取外部数据时同时返回值、来源证明和观测时间。' },
+      19: { title: 'oracle.read<T>', body: '泛型 T 描述返回数据结构；source 必须命中 Manifest 白名单。' },
+      25: { title: 'ctx.chain', body: '所有链操作先经过 ACVM 权限、额度、nonce 和状态检查。' },
+      26: { title: 'chain.transfer', body: '从合约托管账户转账，不能指定任意 from 地址绕过授权。' },
+      32: { title: 'chain.emit', body: '写入可索引事件，事件会和 taskId、交易哈希及回执根绑定。' },
+      34: { title: 'ctx.receipt', body: '把本阶段输入、输出和证明提交为规范化回执。' },
+      35: { title: 'receipt.commit', body: '返回 Merkle Root，链上只需保存根即可验证完整轨迹。' },
+      41: { title: 'global ctx', body: 'Worker 与 Validator 都可直接使用 ctx，但获得的能力由各自 Manifest 权限裁剪。' },
     },
   },
   {
     id: 'worker',
-    layer: 'L02 / WORKER',
     filename: 'worker.ts',
-    title: 'Worker 负责执行',
-    body: 'a3s-code 会话被绑定到指定工作区和权限。完整事件流与运行快照保留下来，供后续验收和追责。',
-    result: '输出：resultCommitment · runId · traceRoot',
-    focus: [7, 18],
     code: `import {
   Agent, FileSessionStore, LocalWorkspaceBackend,
   type SessionOptions,
 } from '@a3s-lab/code';
+
+type GeoObservation = { sharePp: number; windowDays: number };
+type WorkOrder = { querySetRoot: string; siteVersion: string };
 
 const options: SessionOptions = {
   planningMode: 'disabled',
@@ -78,161 +143,272 @@ const options: SessionOptions = {
   },
 };
 
-export async function run(workOrder: string) {
+export async function run(order: WorkOrder) {
+  const baseline = await ctx.oracle.read<GeoObservation>({
+    source: 'geo-citation-share',
+    query: { querySetRoot: order.querySetRoot },
+    atBlock: ctx.block.height,
+  });
+
   const agent = await Agent.create('worker.acl');
   const session = await agent.sessionAsync('/workspace', options);
-  const events: unknown[] = [];
-  for await (const event of await session.stream(workOrder))
-    events.push(event);
+  const result = await session.send({
+    prompt: 'Improve GEO for site version ' + order.siteVersion,
+  });
   await session.save();
-  return { events, runs: await session.runs() };
+  const [latestRun] = (await session.runs()).slice(-1);
+  const receipt = await ctx.receipt.commit('worker', {
+    taskId: ctx.taskId,
+    baseline,
+    latestRun,
+    result,
+  });
+  await session.closeAsync();
+  await agent.close();
+  return { baselinePp: baseline.value.sharePp, receipt };
 }`,
     notes: {
-      3: { title: 'SessionOptions', body: 'TypeScript 类型会在构建时检查会话配置字段，减少部署后才发现拼写错误。' },
-      7: { title: 'planningMode', body: '本例关闭自动规划，执行步骤由已签名的 workOrder 和 Agent 配置约束。' },
-      8: { title: 'LocalWorkspaceBackend', body: '所有文件工具都被限制在 /workspace，不能越过本次工作负载边界。' },
-      9: { title: 'FileSessionStore', body: '运行事件、Trace、Artifact 和验证材料落到独立持久化目录。' },
-      10: { title: 'autoSave', body: '每次运行完成后自动保存快照；显式 save 仍作为提交屏障。' },
-      12: { title: 'allow', body: 'Worker 只看到完成 GEO 内容修改所需的文件与代码工具。' },
-      13: { title: 'deny / defaultDecision', body: 'Shell、Git 和未匹配工具默认拒绝，权限不会因为模型请求而扩大。' },
-      18: { title: 'Agent.create', body: '从 worker.acl 创建执行 Agent；模型、提供方和运行策略由 ACL 配置。' },
-      19: { title: 'sessionAsync', body: '异步创建工作区会话，不阻塞 Node.js 事件循环。' },
-      21: { title: 'session.stream', body: '每个文本、工具和状态事件都能被宿主收集，而不是只保留最后一句回答。' },
-      23: { title: 'session.save', body: '等待事件流清理完毕后提交当前 SessionSnapshot，形成可追溯运行边界。' },
-      24: { title: 'session.runs', body: '返回持久化的 Run 快照，回执会引用其中的 runId 和状态。' },
+      2: { title: '@a3s-lab/code', body: 'TypeScript SDK 提供 Agent、工作区、事件流和持久化 Session。' },
+      9: { title: 'SessionOptions', body: '运行配置经过 TypeScript 类型检查后再交给 a3s-code。' },
+      11: { title: 'LocalWorkspaceBackend', body: '文件与代码工具只能访问 a3s-box 挂载的 /workspace。' },
+      12: { title: 'FileSessionStore', body: 'Run、Trace、Artifact 和验证材料被持续保存。' },
+      14: { title: 'permissionPolicy', body: '这是 Agent 工具权限；它和 ctx 的链权限是两套独立闸门。' },
+      20: { title: 'run(order)', body: 'a3s-box 用签名 WorkOrder 调用这个入口。' },
+      21: { title: 'ctx.oracle.read', body: '执行前冻结 GEO 基线；返回值自带可写入回执的来源证明。' },
+      24: { title: 'atBlock', body: '把基线绑定到确定区块，之后不能挑一个更有利的历史值。' },
+      27: { title: 'Agent.create', body: '从 worker.acl 创建 Agent；模型和运行策略不写死在业务代码里。' },
+      28: { title: 'sessionAsync', body: '创建不阻塞 Node.js 事件循环的工作区会话。' },
+      29: { title: 'session.send', body: '让 Agent 完成网站分析与内容修改，工具调用全部进入事件轨迹。' },
+      33: { title: 'session.runs', body: '取得本次 a3s-code Run 快照，后续可按 runId 重放和审计。' },
+      34: { title: 'worker receipt', body: '把预言机基线、Agent Run 和输出一起提交，防止只交最后结果。' },
+      40: { title: 'closeAsync', body: '先关闭 Session，再关闭 Agent，释放 a3s-box 中的运行资源。' },
     },
   },
   {
     id: 'validator',
-    layer: 'L03 / VALIDATOR',
     filename: 'validator.ts',
-    title: 'Validator 独立验收',
-    body: 'Validator 使用单独 ACL、只读证据目录和默认拒绝策略。它核验结果，不替 Worker 补做任务。',
-    result: '输出：passed · measuredLiftPp · evidenceRoot',
-    focus: [6, 18],
-    code: `import {
-  Agent, FileSessionStore, LocalWorkspaceBackend,
-  type SessionOptions,
-} from '@a3s-lab/code';
+    code: `import type { Address } from './ctx';
 
-const options: SessionOptions = {
-  planningMode: 'disabled',
-  workspaceBackend: new LocalWorkspaceBackend('/evidence'),
-  sessionStore: new FileSessionStore('/receipts/validator'),
-  permissionPolicy: {
-    allow: ['read*', 'ls*', 'glob*', 'grep*', 'code_*'],
-    deny: ['write*', 'edit*', 'patch*', 'bash*', 'git*'],
-    defaultDecision: 'deny',
-  },
+type GeoObservation = { sharePp: number; windowDays: number };
+type Claim = {
+  baselinePp: number;
+  querySetRoot: string;
+  payout: Address;
 };
 
-export async function validate(evidenceRoot: string) {
-  const agent = await Agent.create('validator.acl');
-  const session = await agent.sessionAsync('/evidence', options);
-  const result = await session.send(
-    'Verify GEO evidence root ' + evidenceRoot +
-    '; return passed, measuredLiftPp and exclusions.',
+export async function validate(claim: Claim) {
+  const observed = await ctx.oracle.read<GeoObservation>({
+    source: 'geo-citation-share',
+    query: { querySetRoot: claim.querySetRoot },
+    atBlock: ctx.block.height,
+  });
+
+  const liftBps = Math.round(
+    (observed.value.sharePp - claim.baselinePp) * 100,
   );
-  await session.save();
-  return { result, traces: session.traceEvents() };
+  const passed = observed.value.windowDays >= 30
+    && liftBps >= 800;
+
+  return ctx.receipt.commit('validator', {
+    taskId: ctx.taskId,
+    passed,
+    liftBps,
+    payout: claim.payout,
+    oracleProof: observed.proof,
+    observedAt: observed.observedAt,
+    });
 }`,
     notes: {
-      7: { title: 'planningMode', body: '验收流程按固定提示和谓词运行，避免 Validator 自行改变判断目标。' },
-      8: { title: '/evidence', body: 'Validator 只挂载证据目录，不接触 Worker 的可写工作区。' },
-      9: { title: 'validator store', body: '验收轨迹与 Worker 轨迹分开保存，方便比较双方版本和时间线。' },
-      11: { title: 'read-only allowlist', body: 'Validator 可以读取、枚举、搜索和检查代码，但没有修改证据的工具。' },
-      12: { title: 'write denylist', body: '即使模型尝试修改文件、执行 Shell 或操作 Git，也会在工具入口被拒绝。' },
-      13: { title: 'defaultDecision', body: '所有清单外工具都拒绝，新增工具不会自动获得权限。' },
-      18: { title: '独立 ACL', body: 'validator.acl 与 worker.acl 分开配置，可使用不同模型、机构和密钥。' },
-      20: { title: 'session.send', body: '等待完整验收结果；输入只引用已承诺的 evidenceRoot，避免换一套证据。' },
-      25: { title: 'traceEvents', body: '返回本次核验的紧凑 Trace，最终与验证结论一起进入回执。' },
+      10: { title: 'validate(claim)', body: 'Validator 是第二个 a3s-box 工作负载，只接收 Worker 声明和证据引用。' },
+      11: { title: '独立预言机观测', body: 'Validator 重新读取同一签名问题集，不接受 Worker 自报的最终引用率。' },
+      14: { title: 'atBlock', body: '最终观测同样绑定区块高度，使观察窗口和数据快照可复核。' },
+      17: { title: 'liftBps', body: '引用份额差值转换成整数 bps，避免浮点值直接进入链上结算。' },
+      20: { title: 'passed', body: '只有观察期满 30 天且增量达到 800 bps 时才通过。' },
+      23: { title: 'validator receipt', body: '判断结果、增量、收款地址和预言机证明共同进入验收回执。' },
+      28: { title: 'oracleProof', body: '证明本次观测来自 Manifest 允许的数据源，而不是 Validator 手填。' },
     },
   },
   {
-    id: 'receipt',
-    layer: 'L04 / RECEIPT',
-    filename: 'receipt.ts',
-    title: '把双方轨迹变成回执',
-    body: '宿主把 Worker Run、Validator 结论和合约版本规范化后哈希。a3s-box 再为工作负载回执签名，ACVM 只接受匹配的状态转换。',
-    result: '链上：taskId · receiptHash · settlement = ¥116,000',
-    focus: [5, 17],
-    code: `import { createHash } from 'node:crypto';
+    id: 'settlement',
+    filename: 'settle.ts',
+    code: `import type { Address } from './ctx';
 
-type RunEvidence = { runId: string; root: string };
+type Verdict = {
+  passed: boolean;
+  liftBps: number;
+  payout: Address;
+};
 
-export function buildReceipt(
-  taskId: string,
-  worker: RunEvidence,
-  validator: RunEvidence,
-  measuredLiftPp: number,
-) {
-  const settlement = measuredLiftPp * 10_000;
-  const body = {
-    taskId, contractVersion: 1,
-    worker, validator, measuredLiftPp, settlement,
-    status: 'verified',
-  } as const;
-  const receiptHash = createHash('sha256')
-    .update(JSON.stringify(body)).digest('hex');
-  return { ...body, receiptHash: '0x' + receiptHash };
+export async function settle(verdict: Verdict) {
+  if (!verdict.passed) {
+    await ctx.chain.emit('GEORejected', { taskId: ctx.taskId });
+    return ctx.receipt.commit('settlement', { status: 'rejected' });
+  }
+
+  const amount = BigInt(verdict.liftBps) * 100_000_000n;
+  const transfer = await ctx.chain.transfer({
+    token: ctx.contract.settlementToken,
+    to: verdict.payout,
+    amount,
+    memo: ctx.taskId,
+  });
+
+  await ctx.chain.emit('GEOSettled', {
+    taskId: ctx.taskId,
+    liftBps: verdict.liftBps,
+    amount,
+    txHash: transfer.txHash,
+  });
+
+  return ctx.receipt.commit('settlement', {
+    status: 'paid',
+    amount,
+    txHash: transfer.txHash,
+    });
 }`,
     notes: {
-      3: { title: 'RunEvidence', body: '双方各提交一个 runId 和轨迹根；链上无需保存完整日志。' },
-      6: { title: 'taskId', body: '同一编号贯穿调用、执行、验收和结算，防止把其他任务结果拿来复用。' },
-      7: { title: 'worker', body: '引用 Worker 的运行快照和 Trace Root。' },
-      8: { title: 'validator', body: '引用独立 Validator 的结论与证据根。' },
-      9: { title: 'measuredLiftPp', body: 'Validator 实测的引用份额增量，单位是百分点 pp。' },
-      11: { title: 'settlement', body: '只有已验收增量进入公式：11.6pp × ¥10,000 = ¥116,000。' },
-      13: { title: 'contractVersion', body: '固定到部署时的规则版本，旧任务不会被新规则重新解释。' },
-      15: { title: 'status', body: '只有 verified 回执能触发结算；拒绝回执仅写入原因和轨迹。' },
-      17: { title: 'SHA-256', body: '规范化回执体后计算摘要；任何字段变化都会得到不同 receiptHash。' },
-      19: { title: 'receiptHash', body: '链上保存摘要和必要索引，完整回执可在链下按哈希取回并复核。' },
+      9: { title: 'settle(verdict)', body: '只有已验证回执才能进入结算入口，普通 Worker 无权直接调用。' },
+      10: { title: '拒绝分支', body: '验收未通过时只写拒绝事件与回执，不产生资产转移。' },
+      11: { title: 'ctx.chain.emit', body: '事件自动绑定当前合约、taskId、区块和调用者。' },
+      15: { title: 'amount', body: '1160 bps × 100 CNYC = 116,000 CNYC；使用 bigint 避免金额精度丢失。' },
+      16: { title: 'ctx.chain.transfer', body: 'ACVM 检查资产白名单、托管余额、额度、nonce 和 Validator 回执后才执行。' },
+      17: { title: 'settlementToken', body: '资产来自 Manifest 与当前合约上下文，业务代码不能临时换币种。' },
+      18: { title: 'payout', body: '收款地址已在 Validator 回执中绑定，结算阶段不能替换。' },
+      20: { title: 'memo', body: '把转账直接关联到 taskId，账本和工作轨迹可以双向查询。' },
+      23: { title: 'GEOSettled', body: '公开事件只放结算必要字段，完整证据仍通过回执根按需取回。' },
+      30: { title: 'settlement receipt', body: '最终回执同时记录支付状态、金额和交易哈希，生命周期至此闭合。' },
     },
   },
 ];
 
+const beats: CodeBeat[] = [
+  {
+    id: 'contract', fileId: 'contract', layer: '01 / CONTRACT', title: '冻结两份工作负载',
+    body: 'Manifest 同时锁定 Worker、Validator、ctx 权限、验收阈值和结算上限。',
+    result: 'contractRoot · workerDigest · validatorDigest', focus: [4, 22],
+  },
+  {
+    id: 'context', fileId: 'context', layer: '02 / ACVM CONTEXT', title: 'ctx 提供链能力',
+    body: 'ACVM 向工作负载注入受权限约束的全局 ctx，不把链私钥交给 Agent。',
+    result: 'oracle · chain · receipt · taskId', focus: [9, 37],
+  },
+  {
+    id: 'worker-runtime', fileId: 'worker', layer: '03 / A3S-CODE', title: '配置 Agent 运行边界',
+    body: 'a3s-code 负责模型会话、工具权限、工作区和可追溯运行快照。',
+    result: 'SessionOptions · PermissionPolicy · FileSessionStore', focus: [9, 18],
+  },
+  {
+    id: 'worker-run', fileId: 'worker', layer: '04 / WORKER', title: '读预言机并执行任务',
+    body: '先通过 ctx 冻结 GEO 基线，再让 Agent 修改内容，最后把 Run 与结果提交成回执。',
+    result: 'baselineProof · runId · workerReceipt', focus: [20, 39],
+  },
+  {
+    id: 'validator', fileId: 'validator', layer: '05 / VALIDATOR', title: '独立观测结果',
+    body: 'Validator 重新读取同一问题集，只用整数谓词判断观察期和引用增量。',
+    result: 'passed · liftBps · oracleProof', focus: [10, 30],
+  },
+  {
+    id: 'settlement', fileId: 'settlement', layer: '06 / SETTLEMENT', title: '验收后转账',
+    body: '通过后由 ctx 从合约托管账户转账，并把事件、交易哈希和回执根写回链上。',
+    result: 'transferTx · GEOSettled · settlementReceipt', focus: [9, 34],
+  },
+];
+
+const tokenPattern = /(\/\/.*$|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|\b(?:import|from|export|const|type|interface|declare|global|async|function|await|return|if|else|new|as|true|false|unknown|string|number|bigint|boolean|Promise)\b|\b\d[\d_]*(?:\.\d+)?n?\b|\b(?:ctx|oracle|chain|receipt|contract|block)\b|\b[A-Z][A-Za-z0-9_]*\b|\b[a-zA-Z_$][\w$]*(?=\s*\()|\b[a-zA-Z_$][\w$]*(?=\s*:)|[{}\[\](),.:;?<>+=*|&!\/-]+)/g;
+
+function tokenClass(token: string) {
+  if (token.startsWith('//')) return 'tok-comment';
+  if (token.startsWith("'") || token.startsWith('"')) return 'tok-string';
+  if (/^\d/.test(token)) return 'tok-number';
+  if (/^(?:import|from|export|const|type|interface|declare|global|async|function|await|return|if|else|new|as|true|false|unknown|string|number|bigint|boolean|Promise)$/.test(token)) return 'tok-keyword';
+  if (/^(?:ctx|oracle|chain|receipt|contract|block)$/.test(token)) return 'tok-context';
+  if (/^[A-Z]/.test(token)) return 'tok-type';
+  if (/^[a-zA-Z_$]/.test(token)) return 'tok-symbol';
+  return 'tok-operator';
+}
+
+function highlightLine(line: string) {
+  const output: ReactNode[] = [];
+  let cursor = 0;
+  for (const match of line.matchAll(tokenPattern)) {
+    const index = match.index ?? 0;
+    if (index > cursor) output.push(line.slice(cursor, index));
+    output.push(<span className={tokenClass(match[0])} key={`${index}-${match[0]}`}>{match[0]}</span>);
+    cursor = index + match[0].length;
+  }
+  if (cursor < line.length) output.push(line.slice(cursor));
+  return output;
+}
+
 export function ContractCodeWalkthrough() {
   const rootRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [playing, setPlaying] = useState(true);
-  const [visible, setVisible] = useState(false);
+  const codeLinesRef = useRef<HTMLDivElement>(null);
+  const wheelLockedRef = useRef(false);
+  const wheelTimerRef = useRef<number | undefined>(undefined);
+  const [activeBeatIndex, setActiveBeatIndex] = useState(0);
+  const activeBeatIndexRef = useRef(activeBeatIndex);
   const [copied, setCopied] = useState(false);
   const [inspectedLine, setInspectedLine] = useState<number | null>(null);
-  const active = steps[activeIndex];
-  const inspected = inspectedLine ? active.notes[inspectedLine] : undefined;
+  const activeBeat = beats[activeBeatIndex];
+  const activeFile = files.find((file) => file.id === activeBeat.fileId) ?? files[0];
+  const inspected = inspectedLine ? activeFile.notes[inspectedLine] : undefined;
 
   useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return undefined;
-    const observer = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting),
-      { threshold: 0.3 },
-    );
-    observer.observe(root);
-    return () => observer.disconnect();
+    activeBeatIndexRef.current = activeBeatIndex;
+  }, [activeBeatIndex]);
+
+  useEffect(() => {
+    const panel = rootRef.current;
+    if (!panel) return undefined;
+    const onWheel = (event: WheelEvent) => {
+      if (!window.matchMedia('(min-width: 961px)').matches || Math.abs(event.deltaY) < 12 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      const direction = event.deltaY > 0 ? 1 : -1;
+      const currentBeat = activeBeatIndexRef.current;
+      const atBoundary = (direction < 0 && currentBeat === 0) || (direction > 0 && currentBeat === beats.length - 1);
+      if (atBoundary) {
+        if (wheelLockedRef.current) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      if (wheelLockedRef.current) return;
+      wheelLockedRef.current = true;
+      const nextBeat = currentBeat + direction;
+      activeBeatIndexRef.current = nextBeat;
+      setActiveBeatIndex(nextBeat);
+      window.clearTimeout(wheelTimerRef.current);
+      wheelTimerRef.current = window.setTimeout(() => { wheelLockedRef.current = false; }, 520);
+    };
+    panel.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      panel.removeEventListener('wheel', onWheel);
+      window.clearTimeout(wheelTimerRef.current);
+    };
   }, []);
-
-  useEffect(() => {
-    if (!playing || !visible || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
-    const timer = window.setInterval(() => {
-      setActiveIndex((current) => (current + 1) % steps.length);
-    }, 3800);
-    return () => window.clearInterval(timer);
-  }, [playing, visible]);
 
   useEffect(() => {
     setInspectedLine(null);
     setCopied(false);
-  }, [activeIndex]);
+    const container = codeLinesRef.current;
+    const target = container?.querySelector<HTMLElement>(`[data-code-line="${activeBeat.focus[0]}"]`);
+    if (!container || !target) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    container.scrollTo({ top: Math.max(0, target.offsetTop - 54), behavior: reduceMotion ? 'auto' : 'smooth' });
+  }, [activeBeat]);
 
-  const selectStep = (index: number) => {
-    setActiveIndex(index);
-    setPlaying(false);
+  const selectBeat = (index: number) => setActiveBeatIndex(Math.max(0, Math.min(beats.length - 1, index)));
+
+  const selectFile = (fileId: string) => {
+    const firstBeat = beats.findIndex((beat) => beat.fileId === fileId);
+    if (firstBeat >= 0) selectBeat(firstBeat);
   };
 
   const copyCode = async () => {
     try {
-      await navigator.clipboard.writeText(active.code);
+      await navigator.clipboard.writeText(activeFile.code);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1500);
     } catch {
@@ -241,54 +417,67 @@ export function ContractCodeWalkthrough() {
   };
 
   return (
-    <div className={`diagram-panel code-walkthrough-panel ${playing ? 'is-playing' : 'is-paused'}`} ref={rootRef}>
+    <div
+      className="diagram-panel code-walkthrough-panel"
+      ref={rootRef}
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+        const direction = event.key === 'ArrowDown' ? 1 : -1;
+        const next = activeBeatIndex + direction;
+        if (next < 0 || next >= beats.length) return;
+        event.preventDefault();
+        event.stopPropagation();
+        selectBeat(next);
+      }}
+      aria-label="使用滚轮逐段查看 Agentic Contract TypeScript 代码"
+    >
       <header className="panel-chrome code-walkthrough-chrome">
         <span><i /><i /><i /></span>
-        <code>A3S-CODE / AGENTIC CONTRACT / TYPESCRIPT</code>
-        <button type="button" onClick={() => setPlaying((value) => !value)} aria-label={playing ? '暂停代码漫游' : '继续代码漫游'}>
-          <i aria-hidden="true">{playing ? 'Ⅱ' : '▶'}</i>{playing ? 'PAUSE' : 'PLAY'}
-        </button>
+        <code>A3S-CODE / ACVM CONTEXT / TYPESCRIPT</code>
+        <span className="code-scroll-cue"><i aria-hidden="true">↕</i> SCROLL TO EXPLORE</span>
       </header>
 
       <div className="code-walkthrough-body">
         <aside className="code-file-tree" aria-label="Agentic Contract 文件">
           <header><span>▾</span><strong>geo-outcome/</strong></header>
           <nav>
-            {steps.map((step, index) => (
+            {files.map((file) => (
               <button
                 type="button"
-                className={activeIndex === index ? 'is-active' : ''}
-                onClick={() => selectStep(index)}
-                aria-pressed={activeIndex === index}
-                key={step.id}
+                className={activeFile.id === file.id ? 'is-active' : ''}
+                onClick={() => selectFile(file.id)}
+                aria-pressed={activeFile.id === file.id}
+                key={file.id}
               >
-                <i>TS</i><span>{step.filename}</span>
+                <i>TS</i><span>{file.filename}</span>
               </button>
             ))}
           </nav>
           <footer><span>ACL</span><small>worker.acl</small><span>ACL</span><small>validator.acl</small></footer>
         </aside>
 
-        <section className="code-editor" aria-label={`${active.filename} 代码`}>
+        <section className="code-editor" aria-label={`${activeFile.filename} 代码`}>
           <header>
-            <span><i>TS</i>{active.filename}</span>
+            <span><i>TS</i>{activeFile.filename}</span>
             <div><small>TypeScript</small><button type="button" onClick={copyCode}>{copied ? 'COPIED' : 'COPY'}</button></div>
           </header>
-          <div className="code-lines">
-            {active.code.split('\n').map((line, index) => {
+          <div className="code-lines" ref={codeLinesRef}>
+            {activeFile.code.split('\n').map((line, index) => {
               const lineNumber = index + 1;
-              const focused = lineNumber >= active.focus[0] && lineNumber <= active.focus[1];
-              const note = active.notes[lineNumber];
+              const focused = lineNumber >= activeBeat.focus[0] && lineNumber <= activeBeat.focus[1];
+              const note = activeFile.notes[lineNumber];
               return (
                 <div
                   className={`${focused ? 'is-focused' : ''} ${note ? 'has-note' : ''} ${inspectedLine === lineNumber ? 'is-inspected' : ''}`}
+                  data-code-line={lineNumber}
                   onMouseEnter={() => note && setInspectedLine(lineNumber)}
                   onFocus={() => note && setInspectedLine(lineNumber)}
                   tabIndex={note ? 0 : undefined}
                   title={note ? `${note.title}：${note.body}` : undefined}
-                  key={`${active.id}-${lineNumber}`}
+                  key={`${activeFile.id}-${lineNumber}`}
                 >
-                  <span>{String(lineNumber).padStart(2, '0')}</span><code>{line || ' '}</code>{note ? <i aria-hidden="true">·</i> : null}
+                  <span>{String(lineNumber).padStart(2, '0')}</span><code>{line ? highlightLine(line) : ' '}</code>{note ? <i aria-hidden="true">·</i> : null}
                 </div>
               );
             })}
@@ -296,37 +485,37 @@ export function ContractCodeWalkthrough() {
         </section>
 
         <aside className="code-stage-rail">
-          <header><span>STEP</span><strong>{String(activeIndex + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')}</strong></header>
+          <header><span>SCROLL STEP</span><strong>{String(activeBeatIndex + 1).padStart(2, '0')} / {String(beats.length).padStart(2, '0')}</strong></header>
           <nav aria-label="代码漫游步骤">
-            {steps.map((step, index) => (
+            {beats.map((beat, index) => (
               <button
                 type="button"
-                className={activeIndex === index ? 'is-active' : ''}
-                onClick={() => selectStep(index)}
-                aria-pressed={activeIndex === index}
-                key={step.id}
+                className={activeBeatIndex === index ? 'is-active' : ''}
+                onClick={() => selectBeat(index)}
+                aria-pressed={activeBeatIndex === index}
+                key={beat.id}
               >
-                <i /><span><small>{step.layer}</small><strong>{step.title}</strong></span>
+                <i /><span><small>{beat.layer}</small><strong>{beat.title}</strong></span>
               </button>
             ))}
           </nav>
           <div className={`code-line-inspector ${inspected ? 'is-inspecting' : ''}`} aria-live="polite">
-            <small>{inspected ? `LINE ${String(inspectedLine).padStart(2, '0')} / HOVER NOTE` : active.layer}</small>
-            <strong>{inspected?.title ?? active.title}</strong>
-            <p>{inspected?.body ?? active.body}</p>
-            {!inspected ? <code>{active.result}</code> : null}
+            <small>{inspected ? `LINE ${String(inspectedLine).padStart(2, '0')} / HOVER NOTE` : activeBeat.layer}</small>
+            <strong>{inspected?.title ?? activeBeat.title}</strong>
+            <p>{inspected?.body ?? activeBeat.body}</p>
+            {!inspected ? <code>{activeBeat.result}</code> : null}
           </div>
         </aside>
       </div>
 
       <footer className="code-walkthrough-status">
-        <span><i /> SDK VERIFIED</span>
-        <code>@a3s-lab/code · WORKER → VALIDATOR → RECEIPT</code>
+        <span><i /> CTX CAPABILITIES BOUND</span>
+        <code>ORACLE → A3S-CODE → VALIDATOR → TRANSFER</code>
         <strong>A3S-BOX × 2</strong>
       </footer>
       <i
         className="code-walkthrough-progress"
-        style={{ '--code-progress': `${((activeIndex + 1) / steps.length) * 100}%` } as CSSProperties}
+        style={{ '--code-progress': `${((activeBeatIndex + 1) / beats.length) * 100}%` } as CSSProperties}
         aria-hidden="true"
       />
     </div>
