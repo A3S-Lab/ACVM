@@ -37,7 +37,7 @@ const lifecycleSteps: LifecycleStep[] = [
   },
   {
     code: '03',
-    title: '共识激活',
+    title: '激活合约',
     actor: '2f+1 确认',
     detail: '验证者对同一份代码和初始状态投票，达到 2f+1 后合约正式可用。',
     output: 'Contract Root',
@@ -68,7 +68,7 @@ const lifecycleSteps: LifecycleStep[] = [
   },
   {
     code: '06',
-    title: '智能证明',
+    title: '生成 PoI',
     actor: '需求 · 结果 · 回执',
     detail: '真实需求、执行结果和过程回执被绑定成一份可核验的 PoI。',
     output: 'PoI Bundle',
@@ -89,7 +89,7 @@ const lifecycleSteps: LifecycleStep[] = [
   },
   {
     code: '08',
-    title: '共识确认',
+    title: '确认状态',
     actor: '状态转换投票',
     detail: '委员会对同一状态转换投票；达到阈值后，这次执行获得终局性。',
     output: 'Quorum Certificate',

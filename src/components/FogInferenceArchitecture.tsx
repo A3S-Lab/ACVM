@@ -15,49 +15,49 @@ type FogStage = {
 const stages: FogStage[] = [
   {
     code: '01',
-    title: '签名推理意图',
-    actor: '数据拥有者 → 链上调度合约',
-    detail: '用户只提交模型版本、预算、时限、隐私级别和输出披露范围；原始输入留在本地。',
+    title: '提交推理任务',
+    actor: '数据拥有者 → 调度合约',
+    detail: '用户签名模型版本、预算、截止时间和披露范围。原始输入不上传。',
     record: 'Intent Hash · Model Hash · Privacy Policy · Nonce',
     icon: 'fingerprint',
   },
   {
     code: '02',
-    title: '就近选择雾节点',
-    actor: 'ACVM 调度合约 → 雾节点市场',
-    detail: '按延迟、硬件证明、地域、价格和能力选择可运行 a3s-box / a3s-power 的雾节点。',
+    title: '分配雾节点',
+    actor: '调度合约 → 雾节点',
+    detail: '调度合约按延迟、地域、硬件证明、价格和可用资源选择节点。',
     record: 'Lease ID · Node DID · Capability Proof · SLA',
     icon: 'chain',
   },
   {
     code: '03',
-    title: '隐私域内完成推理',
+    title: 'Worker 运行模型',
     actor: '雾节点 Worker',
-    detail: '密封输入进入隔离环境，固定模型完成推理；节点只输出结果承诺，不持久化明文上下文。',
+    detail: 'a3s-box 解封输入，a3s-power 加载指定模型。完成后删除明文上下文。',
     record: 'Input Commitment · Output Commitment · Runtime Measurement',
     icon: 'brain',
   },
   {
     code: '04',
-    title: '独立节点核验结果',
-    actor: '雾节点 Validator 委员会',
-    detail: 'Validator 检查模型哈希、远程证明、输出约束和 SLA；必要时抽样复算或门限确认。',
+    title: 'Validator 验收',
+    actor: '独立 Validator 节点',
+    detail: 'Validator 检查模型哈希、远程证明、输出约束和 SLA。不通过则返回拒绝回执。',
     record: 'Validator Receipts · Attestation · Threshold Signature',
     icon: 'shield',
   },
   {
     code: '05',
-    title: '证明与轨迹写链',
+    title: '提交链上记录',
     actor: 'Validator → 区块链共识节点',
-    detail: '链上只接收可验证回执、证明和状态根，共识节点不重复执行完整模型推理。',
+    detail: '共识节点验证回执、证明和状态根，不重新执行模型。',
     record: 'Receipt Root · Proof · State Root · Finality',
     icon: 'receipt',
   },
   {
     code: '06',
-    title: '按授权披露结果',
-    actor: 'ACVM 合约 → 数据拥有者',
-    detail: '结果只返回给授权主体或指定业务合约；租约、临时密钥和雾节点缓存随后失效。',
+    title: '返回推理结果',
+    actor: 'ACVM 合约 → 授权接收方',
+    detail: '结果只发给授权接收方。随后关闭租约、撤销临时密钥并清理节点缓存。',
     record: 'Disclosure Receipt · Settlement · Key Revocation',
     icon: 'lock',
   },
@@ -121,10 +121,10 @@ export function FogInferenceArchitecture() {
           category="本步链上字段"
           label={<code>{current.record}</code>}
           title={`${current.code} · ${current.title}`}
-          summary="这些字段共同绑定本步参与方、规则版本、执行结果与前后状态，缺少必要字段时不能进入下一阶段。"
+          summary="链上用这些字段把本步骤接到同一个 taskId。必要字段缺失时，状态不会推进。"
           details={[
-            { label: '可追溯', value: '字段与同一 taskId、合约版本和前序状态根关联，可沿回执链还原完整过程。' },
-            { label: '隐私边界', value: '链上保存哈希、证明与状态，不保存原始输入、模型正文和完整推理上下文。' },
+            { label: '查记录', value: '用 taskId、合约版本和前序状态根可以按顺序查到每一份回执。' },
+            { label: '不写链', value: '原始输入、模型文件和完整推理上下文不会写入区块。' },
           ]}
         />
       </section>
@@ -154,7 +154,7 @@ export function FogInferenceArchitecture() {
           <Icon name="brain" /><small>FOG WORKERS</small><strong>a3s-power 推理</strong><span>机构 · 企业 · 边缘节点</span>
         </button>
         <button className={`fog-node fog-node--validator ${activeStage === 3 ? 'is-active' : ''}`} type="button" onClick={() => selectStage(3)} onMouseEnter={() => selectStage(3)}>
-          <Icon name="shield" /><small>FOG VALIDATORS</small><strong>独立核验委员会</strong><span>证明 · 抽检 · 门限签名</span>
+          <Icon name="shield" /><small>FOG VALIDATORS</small><strong>独立 Validator</strong><span>证明 · 抽检 · 门限签名</span>
         </button>
         <div className="fog-mini-nodes" aria-hidden="true"><i /><i /><i /><i /><i /></div>
       </div>
@@ -174,7 +174,7 @@ export function FogInferenceArchitecture() {
       </nav>
 
       <footer className="fog-terms">
-        <span>原始数据不写链、不广播、不过雾节点持久层</span>
+        <span>链上不保存原始输入；雾节点不持久化明文</span>
         <div><TechTerm term="TEE" /><TechTerm term="Remote Attestation" /><TechTerm term="Receipt Root" /></div>
       </footer>
     </div>
