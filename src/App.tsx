@@ -9,12 +9,12 @@ import { StoryGallery } from './components/SimpleStory';
 const githubUrl = 'https://github.com/A3S-Lab/ACVM';
 
 const screens = [
-  ['top', '首页'],
-  ['stories', '场景故事'],
-  ['runtime', '执行架构'],
-  ['security', 'A3S 安全栈'],
-  ['proof', '长期证明'],
+  ['top', 'ACVM'],
+  ['runtime', '执行与身份'],
+  ['security', '安全与隐私'],
+  ['proof', '长期任务'],
   ['chains', '多链部署'],
+  ['stories', '行业场景'],
 ] as const;
 
 function SectionHeading({
@@ -39,11 +39,11 @@ function SectionHeading({
 
 function HeroArchitecture() {
   return (
-    <div className="hero-architecture" aria-label="AgenticContract 从发布到联盟链终局的执行架构">
+    <div className="hero-architecture" aria-label="Agentic Contract 从发布到联盟链终局的执行架构">
       <div className="hero-contract">
         <header><Icon name="fingerprint" /><span><small>PUBLISHER</small><strong>个人 / 企业</strong></span></header>
         <section>
-          <span>AGENTICCONTRACT</span>
+          <span>AGENTIC CONTRACT</span>
           <strong>有身份的任务合约</strong>
           <p>目标 · 策略 · 能力证明<br />验收规则 · 结算分支</p>
         </section>
@@ -92,11 +92,11 @@ function HeroArchitecture() {
       </div>
 
       <div className="hero-enterprise-tools">
-        <span><small>ENTERPRISE TOOL PLANE</small><strong>企业能力不直接暴露给 Agent</strong></span>
+        <span><small>ORACLE & TOOL PLANE</small><strong>可信事实进入，企业能力受控执行</strong></span>
         <div>
           <em>list</em><Icon name="arrow" /><em>describe</em><Icon name="arrow" /><em>dry-run</em><Icon name="arrow" /><em>execute</em>
         </div>
-        <strong>每次调用：主体、工具、参数、时限、设备状态重新验证</strong>
+        <strong>预言机凭证校验来源；工具调用重新验证主体、参数、时限与设备状态</strong>
       </div>
     </div>
   );
@@ -130,8 +130,12 @@ export function App() {
           const target = document.getElementById(id);
           const scroller = document.querySelector<HTMLElement>('.page-scroller');
           if (!target || !scroller) return;
-          if (window.matchMedia('(min-width: 961px)').matches) scroller.scrollTop = target.offsetTop;
-          else window.scrollTo(0, target.offsetTop);
+          const screen = target.matches('[data-screen]')
+            ? target
+            : target.closest<HTMLElement>('[data-screen]');
+          if (!screen) return;
+          if (window.matchMedia('(min-width: 961px)').matches) scroller.scrollTop = screen.offsetTop;
+          else window.scrollTo(0, screen.offsetTop);
         });
       });
     };
@@ -197,12 +201,12 @@ export function App() {
           <div className="hero-backdrop" aria-hidden="true"><i /><i /><i /></div>
           <div className="screen-inner hero-layout">
             <div className="hero-copy">
-              <span className="hero-eyebrow"><i /> AGENTIC CONTRACT VIRTUAL MACHINE</span>
-              <h1>让链上规则真正理解<br /><em>链外工作如何完成。</em></h1>
-              <p>个人或企业发布有身份的 AgenticContract。ACVM 通过渐进式 API 使用企业能力，在零信任边界内持续执行、核验事实、控制风险，并把结果变成联盟链可验证的业务终局。</p>
+              <span className="hero-eyebrow"><i /> ACVM · AGENTIC CONTRACT VM</span>
+              <h1>让 Agentic Contract<br /><em>可信执行真实业务。</em></h1>
+              <p>ACVM 是 Agentic Contract 的可信执行环境。企业数据预言机提供可验证事实，Agent 在零信任边界内完成链下计算、隐私推理与工具执行，再把状态承诺和证明交给联盟链确认业务终局。</p>
               <div className="hero-actions">
-                <a href="#stories" className="button button--primary">看懂一个真实业务 <Icon name="arrow" /></a>
-                <a href="#runtime" className="button button--secondary">查看技术架构</a>
+                <a href="#runtime" className="button button--primary">理解 ACVM 如何执行 <Icon name="arrow" /></a>
+                <a href="#stories" className="button button--secondary">查看行业场景</a>
               </div>
               <div className="hero-facts">
                 <span><Icon name="fingerprint" /><strong>身份可追责</strong><small>组织 → Agent → 合约 → 会话</small></span>
@@ -213,29 +217,29 @@ export function App() {
             <HeroArchitecture />
           </div>
           <div className="hero-positioning">
-            <span>不发行虚拟货币</span>
+            <span>不是一条新链</span>
             <i />
-            <span>不把原始业务数据搬上链</span>
+            <span>不是 EVM 换皮</span>
+            <i />
+            <span>不发行虚拟货币</span>
             <i />
             <span>不替代联盟链共识</span>
           </div>
         </section>
 
-        <StoryGallery />
-
-        <section className="screen architecture-screen" id="runtime" data-screen="2">
+        <section className="screen architecture-screen" id="runtime" data-screen="1">
           <div className="screen-inner technical-layout">
             <SectionHeading
               eyebrow="ACVM ARCHITECTURE"
-              title="替换复杂链外任务的执行语义，"
+              title="为 Agentic Contract 定义可信执行语义，"
               accent="保留区块链的共识与账本。"
-              body="ACVM 装载的不只是字节码，而是带身份、能力范围、状态、工具类型、验收条件和结算分支的 AgenticContract Package。"
+              body="ACVM 把链上触发、企业数据预言机、链下计算、隐私推理、零知识证明与联盟链终局组织成一套带身份和策略边界的执行协议。"
             />
             <AcvmArchitecture />
           </div>
         </section>
 
-        <section className="screen security-screen" id="security" data-screen="3">
+        <section className="screen security-screen" id="security" data-screen="2">
           <div className="screen-inner technical-layout">
             <SectionHeading
               eyebrow="A3S PRIVACY & SECURITY STACK"
@@ -247,7 +251,7 @@ export function App() {
           </div>
         </section>
 
-        <section className="screen proof-screen" id="proof" data-screen="4">
+        <section className="screen proof-screen" id="proof" data-screen="3">
           <div className="screen-inner technical-layout">
             <SectionHeading
               eyebrow="LONG-RUNNING TASK PROOF"
@@ -259,21 +263,19 @@ export function App() {
           </div>
         </section>
 
-        <section className="screen chains-screen" id="chains" data-screen="5">
+        <section className="screen chains-screen" id="chains" data-screen="4">
           <div className="screen-inner technical-layout">
             <SectionHeading
               eyebrow="CHAIN-AGNOSTIC DEPLOYMENT"
-              title="同一套 AgenticContract 语义，"
+              title="同一套 Agentic Contract 语义，"
               accent="进入不同联盟链的治理边界。"
               body="ACVM 可以作为任意链的可验证协处理器，也可以成为可控联盟链的原生执行器。适配层处理身份、事件、证明与终局，不要求所有网络采用同一底层虚拟机。"
             />
             <ChainArchitecture />
-            <footer className="site-footer">
-              <span><LogoMark /><strong>ACVM</strong> · A3S-Lab</span>
-              <a href={githubUrl} target="_blank" rel="noreferrer"><Icon name="github" /> github.com/A3S-Lab/ACVM <Icon name="arrow" /></a>
-            </footer>
           </div>
         </section>
+
+        <StoryGallery />
       </main>
     </div>
   );

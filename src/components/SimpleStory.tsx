@@ -87,13 +87,37 @@ const riskActions: Record<StoryId, { action: string; signal: string }> = {
 };
 
 type StoryMode = 'normal' | 'risk';
+type StoryActorKey = 'initiator' | 'operator' | 'evidence' | 'acvm' | 'ledger';
+
+type StorySegment = {
+  from: StoryActorKey;
+  to: StoryActorKey;
+  label: string;
+  tone?: 'business' | 'proof' | 'settlement' | 'risk';
+};
 
 type StoryStep = {
   label: string;
-  actor: string;
   title: string;
   detail: string;
   artifact: string;
+  segments: StorySegment[];
+};
+
+const actorPositions: Record<StoryActorKey, number> = {
+  initiator: 0,
+  operator: 1,
+  evidence: 2,
+  acvm: 3,
+  ledger: 4,
+};
+
+const actorLabels: Record<StoryActorKey, string> = {
+  initiator: '发布方',
+  operator: '履约方',
+  evidence: '事实系统',
+  acvm: 'ACVM',
+  ledger: '联盟链',
 };
 
 function buildSteps(story: Story, mode: StoryMode): StoryStep[] {
@@ -103,168 +127,157 @@ function buildSteps(story: Story, mode: StoryMode): StoryStep[] {
 
   return [
     {
-      label: '双方约定',
-      actor: `${participants.initiator.name} ↔ ${participants.operator.name}`,
-      title: playbook.agreement.object,
-      detail: playbook.agreement.rule,
-      artifact: playbook.agreement.result,
+      label: '签名发布',
+      title: `${participants.initiator.name}发布有身份的 Agentic Contract`,
+      detail: `${playbook.agreement.object}。${playbook.agreement.rule}`,
+      artifact: `${playbook.agreement.result}；发布者、Agent、合约与资金状态完成签名绑定`,
+      segments: [
+        { from: 'initiator', to: 'acvm', label: '签名发布 · 身份 / 规则 / 资金', tone: 'business' },
+        { from: 'acvm', to: 'ledger', label: '登记身份绑定与初始状态根', tone: 'proof' },
+      ],
     },
     mode === 'normal'
       ? {
-          label: '真实业务发生',
-          actor: participants.operator.name,
+          label: '真实履约',
           title: playbook.operation.action,
-          detail: playbook.operation.object,
-          artifact: playbook.operation.result,
+          detail: `${playbook.operation.object}。${playbook.operation.result}`,
+          artifact: '业务原始数据留在各责任系统；过程持续生成带来源、时间和主体签名的留痕',
+          segments: [
+            { from: 'initiator', to: 'operator', label: '任务与验收规则生效', tone: 'business' },
+            { from: 'operator', to: 'evidence', label: '真实履约 · 业务系统持续留痕', tone: 'business' },
+          ],
         }
       : {
-          label: '出现造假行为',
-          actor: participants.operator.name,
+          label: '异常履约',
           title: risk.action,
           detail: risk.signal,
-          artifact: '业务系统仍可能向传统合约提交 result = true',
+          artifact: '对传统合约，执行方仍可能只提交 result = true；真实系统里的矛盾尚未被检查',
+          segments: [
+            { from: 'initiator', to: 'operator', label: '原验收规则仍然有效', tone: 'business' },
+            { from: 'operator', to: 'evidence', label: '异常结果 · 原始系统留下矛盾', tone: 'risk' },
+          ],
         },
     mode === 'normal'
       ? {
-          label: 'ACVM 核验',
-          actor: `${participants.evidence.name} → ACVM`,
-          title: playbook.evidence.action,
-          detail: playbook.evidence.items.join(' · '),
-          artifact: playbook.privateRule,
+          label: '取证核验',
+          title: 'ACVM Agent 通过渐进式 API 交叉核验',
+          detail: `${playbook.evidence.action}。工具按 list → describe → dry-run → execute 渐进开放，每次调用都经过零信任重新授权。`,
+          artifact: `${playbook.evidence.items.join(' · ')}；a3s-box 隔离任务，a3s-power 只返回可验证推理结果`,
+          segments: [
+            { from: 'acvm', to: 'evidence', label: '最小权限请求 · 只取本次证据', tone: 'proof' },
+            { from: 'evidence', to: 'acvm', label: '签名凭证 / 零知识证明', tone: 'proof' },
+          ],
         }
       : {
-          label: 'ACVM 找到矛盾',
-          actor: `${participants.evidence.name} → ACVM`,
-          title: playbook.evidence.missing,
-          detail: playbook.verifyFail,
-          artifact: playbook.safety.signals.join(' · '),
+          label: '发现矛盾',
+          title: 'ACVM 核验事实，AnySentry 输出风险决定',
+          detail: `${risk.signal}。${playbook.verifyFail}`,
+          artifact: `${playbook.safety.signals.join(' · ')}；AnySentry 负责观测与决定，ACVM 负责改变合约状态`,
+          segments: [
+            { from: 'acvm', to: 'evidence', label: '零信任取证 · 核对最小字段', tone: 'proof' },
+            { from: 'evidence', to: 'acvm', label: '矛盾证据 + 风险信号', tone: 'risk' },
+          ],
         },
     mode === 'normal'
       ? {
-          label: '确认并执行',
-          actor: `${story.nodes[0]}节点 · ${story.nodes[1]}节点 · 审计节点`,
+          label: '共识结算',
           title: story.receipt,
-          detail: story.consensus,
-          artifact: `${story.receiptLabel} · 执行凭证写入联盟链`,
+          detail: `${story.consensus}。联盟链验证状态与证明，不读取企业原始业务数据。`,
+          artifact: `${story.receiptLabel} · 状态承诺、完成凭证与结算回执进入审计账本`,
+          segments: [
+            { from: 'acvm', to: 'ledger', label: '状态 + 证明 + 结算指令', tone: 'proof' },
+            { from: 'ledger', to: 'operator', label: '多机构确认 · 款项到账', tone: 'settlement' },
+          ],
         }
       : {
-          label: '阻断并留证',
-          actor: 'AnySentry 决策信号 → ACVM 状态机',
-          title: playbook.verifyFail,
-          detail: playbook.safety.block,
-          artifact: 'BLOCK · 差异证据根写入审计账本 · 资金保持锁定',
+          label: '阻断留证',
+          title: 'ACVM 执行 BLOCK，资金保持锁定',
+          detail: `${playbook.safety.block}。联盟链记录阻断终局，执行方不能用单方 result = true 触发付款。`,
+          artifact: 'BLOCK · 差异证据根 · 策略版本 · 责任主体进入审计账本；原始敏感数据不上链',
+          segments: [
+            { from: 'acvm', to: 'ledger', label: 'BLOCK · 提交差异证据根', tone: 'risk' },
+            { from: 'ledger', to: 'operator', label: '拒绝结算 · 资金保持锁定', tone: 'risk' },
+          ],
         },
   ];
 }
 
-function SceneBackdrop({ storyId }: { storyId: StoryId }) {
-  const common = (
-    <>
-      <path d="M34 350H726" />
-      <path d="M90 350v-38h78v38M598 350v-54h86v54" />
-      <circle cx="118" cy="282" r="11" />
-      <circle cx="638" cy="270" r="11" />
-      <path d="M118 293v35m-15-18h30M638 281v47m-15-20h30" />
-    </>
-  );
-
-  const scenes: Record<StoryId, React.ReactNode> = {
-    ads: (
-      <>
-        <rect x="260" y="102" width="240" height="150" rx="10" />
-        <path d="M290 211V164l44 17 46-54 45 30 46-29M380 252v48m-53 0h106" />
-        <circle cx="290" cy="211" r="5" /><circle cx="380" cy="127" r="5" /><circle cx="471" cy="128" r="5" />
-      </>
-    ),
-    sla: (
-      <>
-        <rect x="264" y="92" width="232" height="210" rx="12" />
-        <rect x="292" y="122" width="176" height="38" rx="4" />
-        <rect x="292" y="178" width="176" height="38" rx="4" />
-        <rect x="292" y="234" width="176" height="38" rx="4" />
-        <path d="M310 141h76l14-9 18 18 32-9M310 197h90l14-7 36 7" />
-      </>
-    ),
-    royalty: (
-      <>
-        <circle cx="380" cy="190" r="105" />
-        <path d="m354 139 78 51-78 51V139Z" />
-        <path d="M246 110c-43 43-43 117 0 160M514 110c43 43 43 117 0 160" />
-      </>
-    ),
-    'gov-subsidy': (
-      <>
-        <path d="m380 82 148 67H232L380 82Z" />
-        <path d="M258 164v126m56-126v126m66-126v126m66-126v126m56-126v126M218 302h324M198 328h364" />
-        <rect x="320" y="203" width="120" height="92" rx="5" />
-        <path d="m345 248 22 20 46-48" />
-      </>
-    ),
-    'gov-project': (
-      <>
-        <path d="M250 325V105h18v220M268 127h250M420 127v52M482 127l-62 52" />
-        <rect x="318" y="232" width="188" height="93" />
-        <path d="M318 265h188M358 232v93m54-93v93m54-93v93" />
-        <path d="M516 127v98m-18 0h36l-18 30-18-30Z" />
-      </>
-    ),
-    supply: (
-      <>
-        <path d="M250 165h188v137H250zM250 165l94-56 94 56M284 210h52v92m30-92h42v42h-42z" />
-        <path d="M448 247h100l40 43v12H448v-55Z" />
-        <circle cx="482" cy="306" r="21" /><circle cx="558" cy="306" r="21" />
-      </>
-    ),
-    'factory-quality': (
-      <>
-        <path d="M218 310h330M247 283h250M278 283v-68m0 0 51-42m0 0 47 35m-47-35v-48" />
-        <circle cx="278" cy="215" r="18" /><circle cx="329" cy="173" r="18" /><circle cx="376" cy="208" r="18" />
-        <path d="M376 208v38l35 18m-8-17 25 21-31 7" />
-        <circle cx="297" cy="310" r="12" /><circle cx="372" cy="310" r="12" /><circle cx="447" cy="310" r="12" />
-      </>
-    ),
-    'factory-energy': (
-      <>
-        <path d="M232 320V187l72 42v-42l72 42v-73h36v164M412 249h114v71" />
-        <path d="m465 109-46 83h39l-18 72 72-98h-43l24-57h-28Z" />
-        <circle cx="284" cy="273" r="15" /><circle cx="349" cy="273" r="15" />
-      </>
-    ),
-    'finance-credit': (
-      <>
-        <path d="m380 91 128 58H252L380 91ZM278 166v128m52-128v128m50-128v128m50-128v128m52-128v128M238 307h284" />
-        <rect x="512" y="205" width="112" height="88" rx="8" />
-        <path d="M534 230h69m-69 24h48m-48 20h61" />
-        <path d="M225 236h-82m0 0 22-22m-22 22 22 22" />
-      </>
-    ),
-    'finance-insurance': (
-      <>
-        <path d="M274 249h116l48 46v21H274v-67Z" />
-        <circle cx="312" cy="318" r="22" /><circle cx="405" cy="318" r="22" />
-        <path d="M505 95 600 130v72c0 65-43 104-95 126-52-22-95-61-95-126v-72l95-35Z" />
-        <path d="m462 206 28 28 60-70" />
-      </>
-    ),
-    'education-training': (
-      <>
-        <rect x="242" y="95" width="276" height="146" rx="7" />
-        <path d="M275 133h115m-115 31h176m-176 31h143M300 285h80v43h-80zm160 0h80v43h-80z" />
-        <circle cx="274" cy="272" r="13" /><circle cx="434" cy="272" r="13" />
-      </>
-    ),
-    'education-research': (
-      <>
-        <path d="M332 92v80l-73 123c-10 18 3 39 24 39h194c21 0 34-21 24-39l-73-123V92M305 92h150M294 255h172" />
-        <circle cx="355" cy="278" r="11" /><circle cx="413" cy="300" r="8" /><circle cx="391" cy="258" r="6" />
-        <path d="M542 137c0 38-62 38-62 0s62-38 62 0Zm-31-31v62m-31-31h62" />
-      </>
-    ),
-  };
+function MessageSegment({
+  segment,
+  segmentIndex,
+}: {
+  segment: StorySegment;
+  segmentIndex: number;
+}) {
+  const from = actorPositions[segment.from];
+  const to = actorPositions[segment.to];
+  const start = Math.min(from, to);
+  const span = Math.max(1, Math.abs(to - from));
+  const reverse = from > to;
 
   return (
-    <svg className="story-scene-backdrop" viewBox="0 0 760 420" aria-hidden="true">
-      <g>{common}{scenes[storyId]}</g>
+    <span
+      className={`case-message-line ${reverse ? 'is-reverse' : ''} case-message-line--${segment.tone ?? 'business'}`}
+      style={{
+        '--route-left': `${(start + 0.5) * 20}%`,
+        '--route-width': `${span * 20}%`,
+        '--route-row': segmentIndex,
+      } as React.CSSProperties}
+      aria-label={`${segment.from} 向 ${segment.to}：${segment.label}`}
+    >
+      <small>{actorLabels[segment.from]} → {actorLabels[segment.to]}</small>
+      <strong>{segment.label}</strong>
+    </span>
+  );
+}
+
+function IndustrySymbol({ storyId }: { storyId: StoryId }) {
+  const symbols: Record<StoryId, React.ReactNode> = {
+    ads: <><path d="M8 44V31h8v13M22 44V22h8v22M36 44V12h8v32" /><path d="m8 20 12-7 10 3L45 6" /></>,
+    sla: <><rect x="7" y="8" width="38" height="11" /><rect x="7" y="24" width="38" height="11" /><path d="M12 13h12m7 0h1M12 29h17m7 0h1M26 44h18" /></>,
+    royalty: <><circle cx="26" cy="25" r="19" /><path d="m22 16 14 9-14 9V16ZM4 25H0m56 0h-4" /></>,
+    'gov-subsidy': <><path d="m26 6 22 10H4L26 6ZM8 41h36M12 18v19m10-19v19m10-19v19m10-19v19" /></>,
+    'gov-project': <><path d="M8 44V7h5v37M13 11h36M36 11v13M48 11 36 24M24 44V29h25v15M46 11v17" /><path d="m42 28 4 7 4-7" /></>,
+    supply: <><path d="M4 19h28v22H4zM4 19 18 10l14 9M34 29h12l7 8v4H34z" /><circle cx="40" cy="42" r="4" /><circle cx="49" cy="42" r="4" /></>,
+    'factory-quality': <><path d="M3 42h50M8 36V18l12 7V14l13 8V8h7v28" /><circle cx="15" cy="31" r="3" /><circle cx="27" cy="31" r="3" /><path d="m41 20 5 5 8-11" /></>,
+    'factory-energy': <><path d="M4 43V25l12 7v-7l13 7V18h7v25" /><path d="m43 5-9 18h8l-4 13 14-20h-8l5-11h-6Z" /></>,
+    'finance-credit': <><path d="m26 6 22 10H4L26 6ZM9 40h34M13 18v18m9-18v18m9-18v18m9-18v18" /><path d="M47 26h9m-3-3 3 3-3 3" /></>,
+    'finance-insurance': <><path d="M7 29h21l8 8v5H7z" /><circle cx="14" cy="43" r="4" /><circle cx="30" cy="43" r="4" /><path d="m43 6 11 4v9c0 9-5 15-11 18-7-3-12-9-12-18v-9l12-4Z" /><path d="m38 20 4 4 7-9" /></>,
+    'education-training': <><path d="M5 10h18c5 0 7 3 7 7v27c0-4-2-7-7-7H5V10Zm50 0H37c-5 0-7 3-7 7v27c0-4 2-7 7-7h18V10Z" /><path d="M10 17h12m-12 6h9m26-6H34m11 6h-9" /></>,
+    'education-research': <><path d="M20 5v14L8 40c-2 4 0 7 5 7h26c5 0 7-3 5-7L32 19V5M16 5h20M13 35h26" /><circle cx="23" cy="38" r="2" /><circle cx="31" cy="42" r="2" /></>,
+  };
+
+  return <g transform="translate(116 22)">{symbols[storyId]}</g>;
+}
+
+function CaseMotif({ story, index }: { story: Story; index: number }) {
+  const nodes = [
+    [48, 10],
+    [82, 26],
+    [82, 66],
+    [48, 84],
+    [14, 66],
+    [14, 26],
+  ];
+
+  return (
+    <svg className="case-motif" viewBox="0 0 180 96" aria-hidden="true">
+      <g className="case-motif-network">
+        <ellipse cx="48" cy="47" rx="38" ry="38" />
+        {nodes.map(([x, y], nodeIndex) => (
+          <g key={`${x}-${y}`}>
+            <path d={`M48 47L${x} ${y}`} />
+            <circle cx={x} cy={y} r="3.5" />
+            {nodeIndex < nodes.length - 1 ? <path d={`M${x} ${y}L${nodes[nodeIndex + 1][0]} ${nodes[nodeIndex + 1][1]}`} /> : null}
+          </g>
+        ))}
+        <path d={`M${nodes[nodes.length - 1][0]} ${nodes[nodes.length - 1][1]}L${nodes[0][0]} ${nodes[0][1]}`} />
+        <rect x="37" y="38" width="22" height="18" />
+        <text x="48" y="50">AC</text>
+      </g>
+      <path className="case-motif-link" d="M87 47h21" />
+      <IndustrySymbol storyId={story.id} />
+      <text className="case-motif-code" x="116" y="88">{story.category.toUpperCase()} / {String(index + 1).padStart(2, '0')}</text>
     </svg>
   );
 }
@@ -278,6 +291,51 @@ function StoryPanel({ story, index }: { story: Story; index: number }) {
   const participants = storyParticipants[story.id];
   const steps = buildSteps(story, mode);
   const current = steps[phase];
+  const activeActors = new Set(current.segments.flatMap((segment) => [segment.from, segment.to]));
+
+  const actors: Array<{
+    key: StoryActorKey;
+    label: string;
+    name: string;
+    role: string;
+    mark: React.ReactNode;
+  }> = [
+    {
+      key: 'initiator',
+      label: '发布方',
+      name: participants.initiator.name,
+      role: participants.initiator.role,
+      mark: story.nodes[0],
+    },
+    {
+      key: 'operator',
+      label: '履约方',
+      name: participants.operator.name,
+      role: participants.operator.role,
+      mark: story.nodes[1],
+    },
+    {
+      key: 'evidence',
+      label: '事实来源',
+      name: participants.evidence.name,
+      role: participants.evidence.role,
+      mark: <Icon name="terminal" />,
+    },
+    {
+      key: 'acvm',
+      label: '可信执行',
+      name: 'ACVM Agent',
+      role: '取证、核验、推进状态与生成凭证',
+      mark: 'AC',
+    },
+    {
+      key: 'ledger',
+      label: '共识终局',
+      name: '联盟链 / 结算节点',
+      role: '多机构确认、结算与审计',
+      mark: <Icon name="chain" />,
+    },
+  ];
 
   const stop = () => {
     timers.current.forEach((timer) => window.clearTimeout(timer));
@@ -299,7 +357,7 @@ function StoryPanel({ story, index }: { story: Story; index: number }) {
       timers.current.push(window.setTimeout(() => {
         setPhase(next);
         if (next === 3) setPlaying(false);
-      }, (timerIndex + 1) * 1250));
+      }, (timerIndex + 1) * 1500));
     });
   };
 
@@ -310,115 +368,108 @@ function StoryPanel({ story, index }: { story: Story; index: number }) {
       aria-label={`${story.title}案例`}
     >
       <div className="story-panel-content">
-        <header className="story-panel-head">
-          <div>
+        <header className="case-heading">
+          <div className="case-heading-copy">
             <span className="case-index">CASE {String(index + 1).padStart(2, '0')} / {String(stories.length).padStart(2, '0')} · {story.category}</span>
             <h2>{story.title}</h2>
             <p>{playbook.oneLine}</p>
           </div>
 
-          <div className="story-head-side">
-            <div className="story-outcome">
-              <span><Icon name="receipt" /> 合约结果</span>
-              <strong>{mode === 'normal' ? story.receipt : 'ACVM 阻断结算，资金保持锁定'}</strong>
-              <small>{mode === 'normal' ? `${story.receiptLabel} · 多机构确认后执行` : 'BLOCK · 差异证据根进入审计账本'}</small>
-            </div>
-            <div className="story-panel-actions">
-              <div className="mode-switch" aria-label="切换履约情况">
-                <button type="button" className={mode === 'normal' ? 'is-active' : ''} aria-pressed={mode === 'normal'} onClick={() => setMode('normal')}>
-                  <Icon name="check" /> 正常履约
-                </button>
-                <button type="button" className={mode === 'risk' ? 'is-active' : ''} aria-pressed={mode === 'risk'} onClick={() => setMode('risk')}>
-                  <Icon name="shield" /> 具体造假
-                </button>
-              </div>
-              <button className="story-play" type="button" onClick={play} aria-label="播放四步业务流程" aria-pressed={playing}>
-                <Icon name={playing ? 'pause' : 'play'} /> {playing ? '演示中' : '播放流程'}
+          <CaseMotif story={story} index={index} />
+
+          <div className="case-controls">
+            <div className="mode-switch" aria-label="切换履约情况">
+              <button type="button" className={mode === 'normal' ? 'is-active' : ''} aria-pressed={mode === 'normal'} onClick={() => setMode('normal')}>
+                <Icon name="check" /> 正常履约
+              </button>
+              <button type="button" className={mode === 'risk' ? 'is-active' : ''} aria-pressed={mode === 'risk'} onClick={() => setMode('risk')}>
+                <Icon name="shield" /> 具体造假
               </button>
             </div>
+            <button className="story-play" type="button" onClick={play} aria-label="播放四步业务流程" aria-pressed={playing}>
+              <Icon name={playing ? 'pause' : 'play'} /> {playing ? '演示中' : '播放流程'}
+            </button>
           </div>
         </header>
 
-        <div
-          className={`story-theatre story-theatre--phase-${phase + 1}`}
-          style={{
-            '--story-progress': `${phase * 33.333}%`,
-            '--scene-x': `${(index % 4) * 33.333}%`,
-            '--scene-y': `${Math.floor(index / 4) * 50}%`,
-          } as React.CSSProperties}
-        >
-          <div className="story-theatre-bar">
-            <span><i /> LIVE CONTRACT</span>
-            <strong>沿业务时间播放，观察参与方如何协同</strong>
+        <div className="case-contrast" aria-label="传统智能合约与 ACVM 的区别">
+          <span><b>传统智能合约</b><code>result = true</code><small>{story.legacyExecution}</small></span>
+          <i><Icon name="arrow" /></i>
+          <span><b>ACVM</b><strong>验证谁做了什么、证据从哪里来，再决定结算或阻断</strong></span>
+        </div>
+
+        <div className={`case-theatre case-theatre--phase-${phase + 1}`}>
+          <div className="case-theatre-bar">
+            <span><i /> AGENTIC CONTRACT LIVE</span>
+            <strong>{playbook.subject}</strong>
             <small>{story.contract} · {story.amount}</small>
           </div>
 
-          <div className="story-theatre-main">
-            <div className="story-world">
-              <SceneBackdrop storyId={story.id} />
-              <div className="story-world-floor" aria-hidden="true" />
-              <div className="story-industry-object" aria-hidden="true" />
-              <div className="story-world-path" aria-hidden="true"><i /><i /><i /></div>
-
-              <div className="story-actors" aria-label="业务参与方">
-                <span className="is-initiator"><i>{story.nodes[0]}</i><strong>{participants.initiator.name}</strong><small>{participants.initiator.role}</small></span>
-                <em>签约</em>
-                <span className="is-operator"><i>{story.nodes[1]}</i><strong>{participants.operator.name}</strong><small>{participants.operator.role}</small></span>
-                <em>业务</em>
-                <span className="is-evidence"><i><Icon name="terminal" /></i><strong>{participants.evidence.name}</strong><small>{participants.evidence.role}</small></span>
-                <em>核验</em>
-                <span className="is-acvm"><i>AC</i><strong>ACVM</strong><small>改变合约状态并生成凭证</small></span>
+          <div className="case-theatre-body">
+            <section className="case-sequence" aria-label={`${story.title}参与方交互时序`}>
+              <div className="case-actors">
+                {actors.map((actor) => (
+                  <div className={`${activeActors.has(actor.key) ? 'is-active' : ''} is-${actor.key}`} key={actor.key}>
+                    <span>{actor.mark}</span>
+                    <section>
+                      <small>{actor.label}</small>
+                      <strong>{actor.name}</strong>
+                      <p>{actor.role}</p>
+                    </section>
+                  </div>
+                ))}
               </div>
 
-              <div className="story-live-packet">
-                <span>{phase + 1}</span>
-                <strong>{current.label}</strong>
+              <div className="case-flow">
+                <div className="case-lanes" aria-hidden="true">{actors.map((actor) => <i key={actor.key} />)}</div>
+                {steps.map((step, stepIndex) => (
+                  <button
+                    className={`case-sequence-row ${stepIndex === phase ? 'is-active' : ''} ${stepIndex < phase ? 'is-done' : ''}`}
+                    type="button"
+                    key={step.label}
+                    onClick={() => {
+                      stop();
+                      setPhase(stepIndex);
+                    }}
+                    aria-current={stepIndex === phase ? 'step' : undefined}
+                    aria-label={`第${stepIndex + 1}步：${step.label}。${step.title}`}
+                  >
+                    <span className="case-step-label">
+                      <b>{stepIndex < phase ? <Icon name="check" /> : `0${stepIndex + 1}`}</b>
+                      <i>{step.label}</i>
+                    </span>
+                    <span className="case-routes">
+                      {step.segments.map((segment, segmentIndex) => (
+                        <MessageSegment segment={segment} segmentIndex={segmentIndex} key={`${segment.from}-${segment.to}-${segment.label}`} />
+                      ))}
+                    </span>
+                  </button>
+                ))}
               </div>
-            </div>
+            </section>
 
-            <aside className="story-narrative" aria-live="polite">
-              <div className="legacy-contrast">
-                <span>传统智能合约看到的</span>
-                <code>result = true</code>
-                <p>{story.legacyExecution}</p>
-              </div>
-
-              <div className="story-step-detail">
-                <div>
-                  <span>0{phase + 1}</span>
-                  <small>{current.actor}</small>
-                </div>
-                <section>
-                  <small>{current.label}</small>
-                  <strong>{current.title}</strong>
-                  <p>{current.detail}</p>
-                </section>
-                <aside>
-                  <small>{mode === 'risk' && phase === 3 ? '控制结果' : '当前可验证产物'}</small>
-                  <p>{current.artifact}</p>
-                </aside>
-              </div>
+            <aside className="case-detail" aria-live="polite">
+              <header>
+                <span>STEP 0{phase + 1}</span>
+                <small>{current.label}</small>
+              </header>
+              <section>
+                <small>本步发生什么</small>
+                <h3>{current.title}</h3>
+                <p>{current.detail}</p>
+              </section>
+              <section className="case-artifact">
+                <small>留下什么可验证产物</small>
+                <p>{current.artifact}</p>
+              </section>
+              <footer className={mode === 'risk' ? 'is-risk' : ''}>
+                <Icon name={mode === 'risk' ? 'shield' : 'receipt'} />
+                <span>
+                  <small>最终业务结果</small>
+                  <strong>{mode === 'normal' ? story.receipt : '结算被阻断，资金保持锁定'}</strong>
+                </span>
+              </footer>
             </aside>
-          </div>
-
-          <div className="story-step-track">
-            {steps.map((step, stepIndex) => (
-              <button
-                type="button"
-                key={step.label}
-                className={stepIndex === phase ? 'is-active' : stepIndex < phase ? 'is-done' : ''}
-                onClick={() => {
-                  stop();
-                  setPhase(stepIndex);
-                }}
-                aria-current={stepIndex === phase ? 'step' : undefined}
-              >
-                <span>{stepIndex < phase ? <Icon name="check" /> : `0${stepIndex + 1}`}</span>
-                <small>{step.actor}</small>
-                <strong>{step.label}</strong>
-                <p>{step.title}</p>
-              </button>
-            ))}
           </div>
         </div>
       </div>
@@ -435,8 +486,7 @@ export function StoryGallery() {
     const track = trackRef.current;
     if (!track) return;
     const next = Math.max(0, Math.min(stories.length - 1, index));
-    const target = track.children.item(next) as HTMLElement | null;
-    target?.scrollIntoView({ behavior, block: 'nearest', inline: 'start' });
+    track.scrollTo({ left: next * track.clientWidth, behavior });
     setActiveStory(next);
   };
 
@@ -453,7 +503,7 @@ export function StoryGallery() {
   useEffect(() => () => window.cancelAnimationFrame(scrollFrame.current), []);
 
   return (
-    <section className="screen story-gallery-screen" id="stories" data-screen="1">
+    <section className="screen story-gallery-screen" id="stories" data-screen="5">
       <div
         className="story-gallery"
         ref={trackRef}
@@ -463,12 +513,8 @@ export function StoryGallery() {
           window.cancelAnimationFrame(scrollFrame.current);
           const track = event.currentTarget;
           scrollFrame.current = window.requestAnimationFrame(() => {
-            const centers = Array.from(track.children).map((child) => {
-              const rect = (child as HTMLElement).getBoundingClientRect();
-              return Math.abs(rect.left + rect.width / 2 - window.innerWidth / 2);
-            });
-            const index = centers.indexOf(Math.min(...centers));
-            if (index !== activeStory) setActiveStory(index);
+            const next = Math.max(0, Math.min(stories.length - 1, Math.round(track.scrollLeft / track.clientWidth)));
+            if (next !== activeStory) setActiveStory(next);
           });
         }}
         onKeyDown={(event) => {

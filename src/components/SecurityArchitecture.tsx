@@ -31,7 +31,7 @@ const modules: Array<{
     owns: '拥有模型加载、推理与模型—度量绑定',
     input: '加密模型、私密 Prompt、模型策略与一次性 Nonce',
     output: '推理结果、Model Hash、硬件度量和可独立验证的 Attestation',
-    boundary: '它不管理工具权限，不推进 AgenticContract 状态，也不决定是否付款。',
+    boundary: '它不管理工具权限，不推进 Agentic Contract 状态，也不决定是否付款。',
   },
   {
     key: 'sentry',

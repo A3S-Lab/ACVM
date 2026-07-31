@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Icon, type IconName } from './Icons';
+import { TechTerm, type TechKey } from './TechTerm';
 
 const stages: Array<{
   code: string;
@@ -9,6 +10,7 @@ const stages: Array<{
   body: string;
   privateData: string;
   publicData: string;
+  terms: TechKey[];
 }> = [
   {
     code: '01',
@@ -18,24 +20,27 @@ const stages: Array<{
     body: 'Manifest 固定目标、责任主体、允许工具、里程碑、截止时间、验收电路版本和结算分支。执行者不能在任务中途降低门槛。',
     privateData: '企业任务书、内部评审细则',
     publicData: 'manifestHash · ruleHash · deadline',
+    terms: ['Intent-centric'],
   },
   {
     code: '02',
     label: '连续状态承诺',
     icon: 'chain',
-    title: '每个里程碑承接上一个状态根',
-    body: 'ACVM 状态机消费签名事件和工具回执，产生新的状态根。等待、暂停、重试和人工审批也属于明确状态，不靠一份期末报告补写过程。',
+    title: '每个里程碑承接状态根，并递增折叠证明',
+    body: 'ACVM 状态机消费签名事件和工具回执，产生新的状态根；IVC / Folding 把本阶段证明折叠进上一阶段。等待、暂停、重试和人工审批也属于明确状态。',
     privateData: '原始文档、日志、实验数据、工具返回值',
-    publicData: 'C₀ → C₁ → C₂ … → Cₙ',
+    publicData: 'Cᵢ · πᵢ = Fold(πᵢ₋₁, stepᵢ)',
+    terms: ['IVC', 'Folding'],
   },
   {
     code: '03',
-    label: '生成完成证明',
+    label: '递归完成证明',
     icon: 'fingerprint',
-    title: '零知识电路证明过程连续且验收条件成立',
-    body: '证明系统在私下检查全部状态转移、授权范围、回执签名和最终验收谓词，只输出完成证明与公共状态，不公开长期任务轨迹。',
+    title: 'IVC / Recursive ZK 把数月执行压缩为一个证明',
+    body: '证明系统递归验证全部状态转移、授权范围、回执签名和最终验收谓词，只输出聚合完成证明与公共状态，不公开长期任务轨迹。',
     privateData: 'eventᵢ · receiptᵢ · witnessᵢ · acceptance inputs',
-    publicData: 'πcomplete · C₀ · Cₙ · ruleHash',
+    publicData: 'πrecursive · C₀ · Cₙ · ruleHash',
+    terms: ['Recursive ZK', 'Proof-carrying Execution'],
   },
   {
     code: '04',
@@ -44,7 +49,8 @@ const stages: Array<{
     title: '节点验证证明后确认终局，而不是重跑数月任务',
     body: '联盟节点核对发布者身份、规则版本、最终状态根和零知识证明。验证通过后记录完成事实，ACVM 才进入结算、拨付或下一阶段。',
     privateData: '不读取中间文件、提示词或企业数据',
-    publicData: 'Verify(πcomplete, public inputs) = true',
+    publicData: 'Verify(πrecursive, public inputs) = true',
+    terms: ['Light Client', 'Receipt Root'],
   },
 ];
 
@@ -88,8 +94,8 @@ export function LongTaskArchitecture() {
           })}
         </div>
         <footer>
-          <code>Cᵢ = H(Cᵢ₋₁, eventᵢ, receiptᵢ)</code>
-          <span>每个承诺都引用前序状态，缺一段就无法生成最终证明。</span>
+          <code>Cᵢ = H(Cᵢ₋₁, eventᵢ, receiptᵢ) · πᵢ = Fold(πᵢ₋₁, Δᵢ)</code>
+          <span>状态与证明同时继承，缺一段就无法生成最终递归证明。</span>
         </footer>
       </div>
 
@@ -116,6 +122,9 @@ export function LongTaskArchitecture() {
             <small>{current.label}</small>
             <h3>{current.title}</h3>
             <p>{current.body}</p>
+            <div className="tech-term-row">
+              {current.terms.map((term) => <TechTerm term={term} key={term} />)}
+            </div>
           </article>
           <aside>
             <div><Icon name="lock" /><span><small>PRIVATE WITNESS</small><strong>{current.privateData}</strong></span></div>
@@ -125,7 +134,7 @@ export function LongTaskArchitecture() {
       </div>
 
       <div className="proof-equation">
-        <span><small>CHAIN VERIFIER</small><code>Verify(πcomplete, C₀, Cₙ, ruleHash, identityCommitment)</code></span>
+        <span><small>CHAIN VERIFIER</small><code>Verify(πrecursive, C₀, Cₙ, ruleHash, identityCommitment)</code></span>
         <Icon name="arrow" />
         <strong><Icon name="check" /> completed = true</strong>
         <p>证明任务按既定规则完成；不证明模型永远正确，也不公开任务过程。</p>

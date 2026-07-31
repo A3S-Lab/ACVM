@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Icon } from './Icons';
+import { TechTerm } from './TechTerm';
 
 type DeployMode = 'coprocessor' | 'native' | 'appchain';
 
@@ -27,8 +28,8 @@ const deploymentModes: Array<{
     key: 'native',
     label: '原生执行器',
     fit: '可控联盟链内核',
-    title: 'ACVM 成为联盟链的 AgenticContract 执行器',
-    detail: '支持扩展执行引擎的网络将 AgenticContract 交易路由到 ACVM；节点验证确定性状态根与证明，EVM/WASM 继续处理普通确定性合约。',
+    title: 'ACVM 成为联盟链的 Agentic Contract 执行器',
+    detail: '支持扩展执行引擎的网络将 Agentic Contract 交易路由到 ACVM；节点验证确定性状态根与证明，EVM/WASM 继续处理普通确定性合约。',
     path: ['交易路由', 'ACVM Executor', 'State / Proof Check', '共识提交'],
     replaces: '替代复杂链外任务原本勉强塞入 EVM 的执行语义',
     keeps: '不替换共识、P2P、成员管理、国密体系与账本存储',
@@ -36,10 +37,10 @@ const deploymentModes: Array<{
   {
     key: 'appchain',
     label: 'ACVM 应用链',
-    fit: '大规模 AgenticContract',
-    title: '专用执行网络承载 AgenticContract',
-    detail: 'ACVM 节点组成专用执行与证明网络，负责调度、凭证聚合和争议重放；状态根可锚定到多个机构联盟链。',
-    path: ['业务联盟', 'ACVM Network', 'Proof Aggregator', '多账本锚定'],
+    fit: '大规模 Agentic Contract',
+    title: '专用执行网络承载 Agentic Contract',
+    detail: 'ACVM 节点组成专用执行与证明网络，负责调度、递归证明聚合和争议重放；状态根通过轻客户端证明锚定到多个机构联盟链。',
+    path: ['业务联盟', 'ACVM Network', 'Recursive Proof', 'Light-client Anchor'],
     replaces: '替代每条业务链各自重复建设 Agent 运行时',
     keeps: '各行业链仍拥有自己的成员准入、数据边界与最终审计权',
   },
@@ -99,10 +100,26 @@ export function ChainArchitecture() {
       <div className="adapter-layer">
         <header><span>CHAIN ADAPTER ABI</span><strong>统一执行语义，映射不同链的身份、交易、证明与终局</strong></header>
         <div>
-          <section><small>IDENTITY ADAPTER</small><strong>企业 CA · DID · SM2/SM3</strong><p>把联盟成员身份映射为 ACVM Principal Commitment</p></section>
-          <section><small>EVENT ADAPTER</small><strong>Trigger · Event · Callback</strong><p>把链上交易映射为状态机事件，把执行结果映射为回执</p></section>
-          <section><small>PROOF ADAPTER</small><strong>ZK · Attestation · Receipt Root</strong><p>按链能力选择原生验证、预编译或验证合约</p></section>
-          <section><small>FINALITY ADAPTER</small><strong>Consensus · Block · Audit</strong><p>确认写入高度、节点签名和不可逆业务终局</p></section>
+          <section>
+            <small>IDENTITY ADAPTER</small>
+            <strong className="adapter-term-list"><TechTerm term="DID / VC" /><TechTerm term="FROST" /></strong>
+            <p>选择性披露主体资格，高风险动作使用门限签名</p>
+          </section>
+          <section>
+            <small>EVENT ADAPTER</small>
+            <strong className="adapter-term-list"><TechTerm term="Intent-centric" /></strong>
+            <p>把业务意图和链上交易映射为 Trigger、Event、Callback 与执行回执</p>
+          </section>
+          <section>
+            <small>PROOF ADAPTER</small>
+            <strong className="adapter-term-list"><TechTerm term="IVC" /><TechTerm term="Remote Attestation" /><TechTerm term="Receipt Root" /></strong>
+            <p>按链能力选择递归证明、预编译或验证合约</p>
+          </section>
+          <section>
+            <small>FINALITY ADAPTER</small>
+            <strong className="adapter-term-list"><TechTerm term="Light Client" /></strong>
+            <p>验证跨链共识证明、写入高度与不可逆业务终局</p>
+          </section>
         </div>
       </div>
 
