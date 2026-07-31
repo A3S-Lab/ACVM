@@ -120,7 +120,7 @@ const scenarios: Scenario[] = [
     id: 'research', industry: 'education', title: '科研项目按里程碑拨款',
     thesis: '数月实验持续形成状态承诺，阶段成果被压缩为完成证明。',
     delegator: '资助单位签署任务书、里程碑和拨款条件',
-    provider: '科研团队 Agent 持续实验、分析与成果交付',
+    provider: '科研团队持续实验、分析并交付阶段成果',
     evidence: '科研仓库 · 伦理审批 · 设备记录 · 人工评审',
     predicate: '版本连续 ∧ 审批有效 ∧ 设备记录匹配任务书',
     finality: '递归完成证明有效 · 阶段拨款 ¥1,200,000',
@@ -209,7 +209,7 @@ export function ScenarioGraph() {
     ['02', '服务与申报', selected.provider, 'terminal'],
     ['03', '独立事实', selected.evidence, 'eye'],
     ['04', 'ACVM 验证', selected.predicate, 'shield'],
-    ['05', '共同终局', selected.finality, 'chain'],
+    ['05', '链上确认', selected.finality, 'chain'],
   ];
 
   const projected = useMemo(() => {

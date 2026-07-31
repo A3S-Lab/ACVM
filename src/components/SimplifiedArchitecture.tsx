@@ -20,11 +20,11 @@ function PanelChrome({ label, status }: { label: string; status: string }) {
 }
 
 const runtimeSteps: Array<{ code: string; title: string; detail: string; icon: IconName }> = [
-  { code: '01', title: '装载合约', detail: 'Manifest 与验收谓词', icon: 'terminal' },
+  { code: '01', title: '读取任务规则', detail: 'Manifest 与验收条件', icon: 'terminal' },
   { code: '02', title: '推进状态', detail: '等待 · 重试 · 审批', icon: 'bolt' },
-  { code: '03', title: '调用工具', detail: '渐进式 API 与短期授权', icon: 'key' },
-  { code: '04', title: '执行策略', detail: '预算 · 权限 · 风险决定', icon: 'shield' },
-  { code: '05', title: '生成证明', detail: 'Receipt Root 与公共输入', icon: 'receipt' },
+  { code: '03', title: '调用工具', detail: '业务 API 与短期授权', icon: 'key' },
+  { code: '04', title: '检查边界', detail: '预算 · 权限 · 风险规则', icon: 'shield' },
+  { code: '05', title: '生成回执', detail: 'Receipt Root 与公共输入', icon: 'receipt' },
 ];
 
 export function RuntimeArchitecture() {
@@ -95,7 +95,7 @@ export function IdentityArchitectureSimple() {
           <Icon name="fingerprint" />
           <small>ZK CAPABILITY PROOF</small>
           <strong>πcap</strong>
-          <span>签发可信 · 未撤销 · 范围匹配</span>
+          <span>签发有效 · 未撤销 · 范围匹配</span>
         </section>
         <Arrow />
         <section>
@@ -112,7 +112,7 @@ export function OffchainArchitectureSimple() {
   return (
     <div className="diagram-panel offchain-simple">
       <PanelChrome label="TRUSTED OFF-CHAIN COMPUTE" status="EVIDENCE FRESH" />
-      <div className="domain-flow" aria-label="从企业事实到联盟链终局的链下验证流程">
+      <div className="domain-flow" aria-label="从企业数据到联盟链确认的链下核验流程">
         <section className="source-domain">
           <small>PRIVATE DATA DOMAINS</small>
           <span>企业渐进式 API</span>
@@ -130,8 +130,8 @@ export function OffchainArchitectureSimple() {
         <section className="is-acvm">
           <Icon name="terminal" />
           <small>ACVM</small>
-          <strong>可信链下计算</strong>
-          <span>工具执行 · 隐私推理 · 状态机</span>
+          <strong>核对业务结果</strong>
+          <span>工具执行 · 私密计算 · 状态机</span>
         </section>
         <Arrow />
         <section>
@@ -144,8 +144,8 @@ export function OffchainArchitectureSimple() {
         <section>
           <Icon name="chain" />
           <small>CONSORTIUM CHAIN</small>
-          <strong>共同确认终局</strong>
-          <span>不读取业务原文与 Prompt</span>
+          <strong>多方链上确认</strong>
+          <span>只接收状态根与证明</span>
         </section>
       </div>
       <footer className="privacy-boundary">
@@ -174,7 +174,7 @@ export function PrivacyArchitecture() {
       <div className="privacy-lanes">
         <article>
           <header><Icon name="lock" /><span><small>ISOLATED WORKLOAD</small><strong>a3s-box</strong></span></header>
-          <p>接管工作负载生命周期，按策略选择硬件隔离等级，并生成执行租约与安全回执。</p>
+          <p>管理工作负载的启动、运行和销毁，按规则选择隔离等级，并留下执行租约与安全回执。</p>
           <MiniPipeline items={[
             ['隔离策略', '资源 · 网络 · 存储'],
             ['ExecutionManager', '唯一生命周期管理器'],
@@ -184,7 +184,7 @@ export function PrivacyArchitecture() {
         </article>
         <article>
           <header><Icon name="brain" /><span><small>PRIVATE INFERENCE</small><strong>a3s-power</strong></span></header>
-          <p>接管模型加载与推理，把模型哈希、代码度量、硬件环境和一次请求绑定为可验证结果。</p>
+          <p>负责模型加载与推理，把模型哈希、代码度量、硬件环境和本次请求写进同一份回执。</p>
           <MiniPipeline items={[
             ['密封输入', '加密模型 · 私密数据'],
             ['TEE 推理', '固定模型与随机种子'],
@@ -219,7 +219,7 @@ export function SentryArchitectureSimple() {
           <small>02 / DECIDE</small>
           <Icon name="brain" />
           <strong>分级判断风险</strong>
-          <p>L1 规则 · L2 快速模型<br />L3 深度安全 Agent</p>
+          <p>L1 规则 · L2 快速模型<br />L3 人工或深度复核</p>
         </section>
         <Arrow />
         <section className="is-enforce">
@@ -281,16 +281,16 @@ export function LongTaskArchitectureSimple() {
 
 export function IntelligenceProofArchitecture() {
   const steps: Array<{ code: string; title: string; detail: string; icon: IconName }> = [
-    { code: '01', title: '真实需求', detail: '用户签名任务 · SLA · 验收集', icon: 'fingerprint' },
-    { code: '02', title: '智能服务', detail: 'a3s-power 执行固定模型', icon: 'brain' },
-    { code: '03', title: '质量验证', detail: '结果验收 · 抽样复算 · 挑战', icon: 'check' },
-    { code: '04', title: '智能证明', detail: '质量 + 执行 + 防重放回执', icon: 'spark' },
+    { code: '01', title: '实际任务', detail: '用户签名 · SLA · 验收条件', icon: 'fingerprint' },
+    { code: '02', title: '执行计算', detail: 'a3s-power 运行固定模型', icon: 'brain' },
+    { code: '03', title: '结果验收', detail: '抽样复算 · 质量检查 · 挑战', icon: 'check' },
+    { code: '04', title: '生成 PoI', detail: '验收 + 执行 + 防重放', icon: 'spark' },
   ];
 
   return (
     <div className="diagram-panel intelligence-proof">
-      <PanelChrome label="PROOF OF INTELLIGENCE / POI" status="USEFUL SERVICE VERIFIED" />
-      <div className="poi-flow" aria-label="智能证明生成流程">
+      <PanelChrome label="PROOF OF INTELLIGENCE / POI" status="WORK VERIFIED" />
+      <div className="poi-flow" aria-label="PoI 生成流程">
         {steps.map((step, index) => (
           <div className="flow-fragment" key={step.code}>
             <article className={index === steps.length - 1 ? 'is-proof' : ''}>
@@ -305,19 +305,19 @@ export function IntelligenceProofArchitecture() {
       </div>
       <div className="poi-equation">
         <code>PoI = SignedDemand ∧ AcceptedResult ∧ AttestedExecution ∧ AntiReplay</code>
-        <span>自造任务、重复回执和未通过质量验收的推理不计入智能贡献</span>
+        <span>自造任务、重复回执和未通过验收的结果不计入贡献</span>
       </div>
       <div className="poi-finality">
         <section>
           <small>联盟链</small>
-          <strong>服务贡献与调度证明</strong>
-          <span>BFT / HotStuff 继续负责共识终局</span>
+          <strong>有效计算回执与调度记录</strong>
+          <span>原链继续负责共识与最终确认</span>
         </section>
         <i />
         <section>
           <small>开放网络</small>
-          <strong>生成可验证的出块资格</strong>
-          <span>VRF 从有效智能证明中选择提议者</span>
+          <strong>用 VRF 选出区块提议者</strong>
+          <span>只从有效 PoI 中抽签</span>
         </section>
       </div>
     </div>
@@ -352,7 +352,7 @@ export function ChainArchitectureSimple() {
         <section className="adapter-core">
           <Icon name="chain" />
           <small>CHAIN ADAPTER ABI</small>
-          <strong>身份 · 事件 · 证明 · 终局</strong>
+          <strong>身份 · 事件 · 证明 · 确认</strong>
         </section>
         <Arrow />
         <div className="chain-target-list">
@@ -364,7 +364,7 @@ export function ChainArchitectureSimple() {
         <strong>共识 · P2P · 成员治理 · 国密体系 · 账本存储</strong>
         <i />
         <span>ACVM 专门负责</span>
-        <strong>Agentic Contract 的长期、链下与可证明执行</strong>
+        <strong>长任务、链下任务与执行证明</strong>
       </footer>
     </div>
   );
