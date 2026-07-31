@@ -238,11 +238,10 @@ export function ScenarioGraph() {
   const selectedIndex = scenarios.findIndex((scenario) => scenario.id === selectedId);
   const selected = scenarios[selectedIndex] ?? scenarios[0];
   const journeySteps: Array<[string, string, string, IconName]> = [
-    ['01', '委托与规则', selected.delegator, 'fingerprint'],
-    ['02', '服务与申报', selected.provider, 'terminal'],
-    ['03', '独立事实', selected.evidence, 'eye'],
-    ['04', 'ACVM 验证', selected.predicate, 'shield'],
-    ['05', '链上确认', selected.finality, 'chain'],
+    ['01', '规则', selected.delegator, 'fingerprint'],
+    ['02', '执行', selected.provider, 'terminal'],
+    ['03', '核验数据', selected.evidence, 'eye'],
+    ['04', '链上回执', selected.finality, 'chain'],
   ];
 
   const projected = useMemo(() => {
@@ -356,7 +355,7 @@ export function ScenarioGraph() {
         </div>
         <footer>
           <span><i /> VERIFIED FINALITY</span>
-          <div>{selected.terms.map((term) => <TechTerm term={term} key={term} />)}</div>
+          <div>{selected.terms.slice(0, 2).map((term) => <TechTerm term={term} key={term} />)}</div>
         </footer>
       </article>
     </div>
