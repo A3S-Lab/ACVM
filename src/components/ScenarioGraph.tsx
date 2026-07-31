@@ -4,6 +4,7 @@ import { TechTerm, type TechKey } from './TechTerm';
 
 type Industry = 'business' | 'government' | 'manufacturing' | 'finance' | 'education';
 type ParticipantType = 'institution' | 'enterprise' | 'individual';
+type ParticipantFilter = ParticipantType | 'all';
 
 type Scenario = {
   id: string;
@@ -213,6 +214,15 @@ const graphLinks = [
   ...scenarios.map((scenario) => [`participant-${scenario.participant}`, `contract-${scenario.id}`] as const),
 ];
 
+const graphNodeById = new Map(graphNodes.map((node) => [node.id, node]));
+
+const participantFilters: Array<[ParticipantFilter, string]> = [
+  ['all', '全部'],
+  ['institution', '机构'],
+  ['enterprise', '企业'],
+  ['individual', '个人'],
+];
+
 function project(point: [number, number, number], yaw: number, pitch: number) {
   const yr = yaw * Math.PI / 180;
   const pr = pitch * Math.PI / 180;
@@ -232,16 +242,18 @@ function project(point: [number, number, number], yaw: number, pitch: number) {
 
 export function ScenarioGraph() {
   const [selectedId, setSelectedId] = useState('ads');
+  const [filter, setFilter] = useState<ParticipantFilter>('all');
   const [yaw, setYaw] = useState(-12);
   const [pitch, setPitch] = useState(10);
   const dragRef = useRef<{ x: number; y: number; yaw: number; pitch: number; moved: boolean } | null>(null);
   const selectedIndex = scenarios.findIndex((scenario) => scenario.id === selectedId);
   const selected = scenarios[selectedIndex] ?? scenarios[0];
+  const visibleScenarios = filter === 'all' ? scenarios : scenarios.filter((scenario) => scenario.participant === filter);
   const journeySteps: Array<[string, string, string, IconName]> = [
-    ['01', '规则', selected.delegator, 'fingerprint'],
-    ['02', '执行', selected.provider, 'terminal'],
-    ['03', '核验数据', selected.evidence, 'eye'],
-    ['04', '链上回执', selected.finality, 'chain'],
+    ['01', '部署规则', selected.delegator, 'fingerprint'],
+    ['02', 'Worker 执行', selected.provider, 'terminal'],
+    ['03', 'Validator 核验', selected.evidence, 'eye'],
+    ['04', '链上记账', selected.finality, 'chain'],
   ];
 
   const projected = useMemo(() => {
@@ -254,110 +266,170 @@ export function ScenarioGraph() {
     setSelectedId(scenarios[next].id);
   };
 
+  const selectFilter = (nextFilter: ParticipantFilter) => {
+    setFilter(nextFilter);
+    if (nextFilter !== 'all' && selected.participant !== nextFilter) {
+      const firstMatch = scenarios.find((scenario) => scenario.participant === nextFilter);
+      if (firstMatch) setSelectedId(firstMatch.id);
+    }
+  };
+
   return (
     <div className="scenario-explorer">
-      <div
-        className="scenario-space"
-        onPointerDown={(event) => {
-          if ((event.target as HTMLElement).closest('button')) return;
-          dragRef.current = { x: event.clientX, y: event.clientY, yaw, pitch, moved: false };
-          event.currentTarget.setPointerCapture(event.pointerId);
-        }}
-        onPointerMove={(event) => {
-          const drag = dragRef.current;
-          if (!drag) return;
-          const dx = event.clientX - drag.x;
-          const dy = event.clientY - drag.y;
-          if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
-          setYaw(drag.yaw + dx * 0.24);
-          setPitch(Math.max(-22, Math.min(25, drag.pitch - dy * 0.18)));
-        }}
-        onPointerUp={(event) => {
-          dragRef.current = null;
-          event.currentTarget.releasePointerCapture(event.pointerId);
-        }}
-        aria-label="可拖拽旋转的 ACVM Agentic Contract 部署网络"
-      >
-        <header><code>ACVM / DEPLOYED CONTRACT NETWORK</code><span><i /> DRAG TO ROTATE</span></header>
-        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <ellipse cx="50" cy="50" rx="38" ry="24" />
-          <ellipse cx="50" cy="50" rx="25" ry="39" transform="rotate(58 50 50)" />
-          {graphLinks.map(([sourceId, targetId]) => {
-            const source = projected.get(sourceId)!;
-            const target = projected.get(targetId)!;
-            const active = targetId === `contract-${selected.id}`;
-            return <line className={active ? 'is-active' : ''} x1={source.x} y1={source.y} x2={target.x} y2={target.y} key={`${sourceId}-${targetId}`} />;
-          })}
-        </svg>
-        {graphNodes.map((node) => {
-          const point = projected.get(node.id)!;
-          const active = node.scenario?.id === selected.id;
-          const style = {
-            left: `${point.x}%`,
-            top: `${point.y}%`,
-            zIndex: Math.round((point.z + 3) * 10),
-            opacity: 0.7 + point.scale * 0.25,
-            '--node-scale': point.scale,
-          } as React.CSSProperties;
-
-          if (node.kind === 'contract' && node.scenario) {
+      <header className="scenario-toolbar">
+        <div>
+          <span><i /> 运行中的 ACVM 应用网络</span>
+          <strong>当前显示 {visibleScenarios.length} 个合约 · 全网共 {scenarios.length} 个</strong>
+        </div>
+        <nav aria-label="按部署者类型筛选应用场景">
+          {participantFilters.map(([value, label]) => {
+            const count = value === 'all' ? scenarios.length : scenarios.filter((scenario) => scenario.participant === value).length;
             return (
               <button
-                className={`graph-node graph-node--contract graph-node--${node.participant} ${active ? 'is-active' : ''}`}
-                style={style}
                 type="button"
-                key={node.id}
-                onClick={() => setSelectedId(node.scenario!.id)}
-                aria-label={`${participantMeta[node.participant!].label}部署的 ${node.label}：${node.scenario.title}`}
+                className={filter === value ? 'is-active' : ''}
+                aria-pressed={filter === value}
+                onClick={() => selectFilter(value)}
+                key={value}
               >
-                <i />
-                <span><small>{node.scenario.title}</small>{node.label}</span>
+                {label}<small>{count}</small>
               </button>
             );
-          }
+          })}
+        </nav>
+      </header>
 
-          return (
-            <div className={`graph-node graph-node--${node.kind} ${node.participant ? `graph-node--${node.participant}` : ''}`} style={style} key={node.id}>
-              {node.kind === 'core' ? <Icon name="terminal" /> : null}
-              <strong>{node.label}</strong>
-            </div>
-          );
-        })}
-        <footer>
-          <span className="is-institution">机构</span>
-          <span className="is-enterprise">企业</span>
-          <span className="is-individual">个人</span>
-          <strong>{scenarios.length} CONTRACTS</strong>
-        </footer>
-      </div>
+      <div className="scenario-workspace">
+        <section className="scenario-map-column" aria-label="ACVM 合约部署网络与场景列表">
+          <div
+            className="scenario-space"
+            onPointerDown={(event) => {
+              if ((event.target as HTMLElement).closest('button')) return;
+              dragRef.current = { x: event.clientX, y: event.clientY, yaw, pitch, moved: false };
+              event.currentTarget.setPointerCapture(event.pointerId);
+            }}
+            onPointerMove={(event) => {
+              const drag = dragRef.current;
+              if (!drag) return;
+              const dx = event.clientX - drag.x;
+              const dy = event.clientY - drag.y;
+              if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
+              setYaw(drag.yaw + dx * 0.24);
+              setPitch(Math.max(-22, Math.min(25, drag.pitch - dy * 0.18)));
+            }}
+            onPointerUp={(event) => {
+              dragRef.current = null;
+              event.currentTarget.releasePointerCapture(event.pointerId);
+            }}
+            aria-label="可拖拽旋转的 ACVM Agentic Contract 部署网络"
+          >
+            <header>
+              <code>3D DEPLOYMENT GRAPH</code>
+              <div><span><i /> 拖动查看</span><button type="button" onClick={() => { setYaw(-12); setPitch(10); }}>视角归位</button></div>
+            </header>
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <ellipse cx="50" cy="50" rx="38" ry="24" />
+              <ellipse cx="50" cy="50" rx="25" ry="39" transform="rotate(58 50 50)" />
+              {graphLinks.map(([sourceId, targetId]) => {
+                const source = projected.get(sourceId)!;
+                const target = projected.get(targetId)!;
+                const targetNode = graphNodeById.get(targetId);
+                const active = targetId === `contract-${selected.id}`;
+                const dimmed = filter !== 'all' && targetNode?.participant !== filter;
+                return <line className={`${active ? 'is-active' : ''} ${dimmed ? 'is-dimmed' : ''}`} x1={source.x} y1={source.y} x2={target.x} y2={target.y} key={`${sourceId}-${targetId}`} />;
+              })}
+            </svg>
+            {graphNodes.map((node) => {
+              const point = projected.get(node.id)!;
+              const active = node.scenario?.id === selected.id;
+              const dimmed = filter !== 'all' && node.participant && node.participant !== filter;
+              const style = {
+                left: `${point.x}%`,
+                top: `${point.y}%`,
+                zIndex: Math.round((point.z + 3) * 10),
+                opacity: 0.7 + point.scale * 0.25,
+                '--node-scale': point.scale,
+              } as React.CSSProperties;
 
-      <article className={`scenario-detail scenario-detail--${selected.industry}`} key={selected.id}>
-        <header>
-          <span>{String(selectedIndex + 1).padStart(2, '0')} / {String(scenarios.length).padStart(2, '0')} · {participantMeta[selected.participant].english} NODE</span>
-          <div>
-            <button type="button" onClick={() => selectRelative(-1)} aria-label="上一个场景">←</button>
-            <button type="button" onClick={() => selectRelative(1)} aria-label="下一个场景">→</button>
+              if (node.kind === 'contract' && node.scenario) {
+                return (
+                  <button
+                    className={`graph-node graph-node--contract graph-node--${node.participant} ${active ? 'is-active' : ''} ${dimmed ? 'is-dimmed' : ''}`}
+                    style={style}
+                    type="button"
+                    key={node.id}
+                    onClick={() => setSelectedId(node.scenario!.id)}
+                    aria-label={`${participantMeta[node.participant!].label}部署的 ${node.label}：${node.scenario.title}`}
+                  >
+                    <i />
+                    <span><small>{node.scenario.title}</small>{node.label}</span>
+                  </button>
+                );
+              }
+
+              return (
+                <div className={`graph-node graph-node--${node.kind} ${node.participant ? `graph-node--${node.participant}` : ''} ${dimmed ? 'is-dimmed' : ''}`} style={style} key={node.id}>
+                  {node.kind === 'core' ? <Icon name="terminal" /> : null}
+                  <strong>{node.label}</strong>
+                </div>
+              );
+            })}
+            <footer>
+              <span className="is-institution">机构</span>
+              <span className="is-enterprise">企业</span>
+              <span className="is-individual">个人</span>
+              <strong>拖动网络 · 点选合约</strong>
+            </footer>
           </div>
-          <h3>{selected.title}</h3>
-          <p>{selected.thesis}</p>
-          <dl className="contract-deployment">
-            <div><dt>DEPLOYER</dt><dd>{selected.deployer}</dd></div>
-            <div><dt>AGENTIC CONTRACT</dt><dd>{selected.contract}</dd></div>
-          </dl>
-        </header>
-        <div className="scenario-steps" aria-label={`${selected.title}端到端业务流程`}>
-          {journeySteps.map(([code, label, detail, icon], index) => (
-            <section style={{ '--step-index': index } as React.CSSProperties} key={code}>
-              <span><Icon name={icon} /></span>
-              <p><small>{code} · {label}</small><strong>{detail}</strong></p>
-            </section>
-          ))}
-        </div>
-        <footer>
-          <span><i /> VERIFIED FINALITY</span>
-          <div>{selected.terms.slice(0, 2).map((term) => <TechTerm term={term} key={term} />)}</div>
-        </footer>
-      </article>
+
+          <nav className="scenario-picker" aria-label="选择 Agentic Contract 应用场景">
+            {visibleScenarios.map((scenario) => (
+              <button
+                type="button"
+                className={scenario.id === selected.id ? 'is-active' : ''}
+                aria-pressed={scenario.id === selected.id}
+                onClick={() => setSelectedId(scenario.id)}
+                key={scenario.id}
+              >
+                <span>{String(scenarios.indexOf(scenario) + 1).padStart(2, '0')}</span>
+                <strong>{scenario.title}</strong>
+                <small>{scenario.contract}</small>
+              </button>
+            ))}
+          </nav>
+        </section>
+
+        <article className={`scenario-detail scenario-detail--${selected.industry}`} key={selected.id}>
+          <header>
+            <div className="scenario-detail-meta">
+              <span>{String(selectedIndex + 1).padStart(2, '0')} / {String(scenarios.length).padStart(2, '0')}</span>
+              <b>{participantMeta[selected.participant].label}</b>
+            </div>
+            <div className="scenario-detail-nav">
+              <button type="button" onClick={() => selectRelative(-1)} aria-label="上一个场景">←</button>
+              <button type="button" onClick={() => selectRelative(1)} aria-label="下一个场景">→</button>
+            </div>
+            <h3>{selected.title}</h3>
+            <p>{selected.thesis}</p>
+            <dl className="contract-deployment">
+              <div><dt>部署者</dt><dd>{selected.deployer}</dd></div>
+              <div><dt>Agentic Contract</dt><dd>{selected.contract}</dd></div>
+            </dl>
+          </header>
+          <div className="scenario-steps" aria-label={`${selected.title}端到端业务流程`}>
+            {journeySteps.map(([code, label, detail, icon], index) => (
+              <section style={{ '--step-index': index } as React.CSSProperties} key={code}>
+                <span><Icon name={icon} /></span>
+                <p><small>{code} · {label}</small><strong>{detail}</strong></p>
+              </section>
+            ))}
+          </div>
+          <footer>
+            <span><i /> 已验证并写入链上</span>
+            <div>{selected.terms.slice(0, 2).map((term) => <TechTerm term={term} key={term} />)}</div>
+          </footer>
+        </article>
+      </div>
     </div>
   );
 }

@@ -77,6 +77,7 @@ function MechanismCompare({ traditionalTitle, traditional, acvmTitle, acvm }: Me
 }
 
 function SectionHeading({
+  index,
   eyebrow,
   title,
   accent,
@@ -84,6 +85,7 @@ function SectionHeading({
   comparison,
   terms = [],
 }: {
+  index: number;
   eyebrow: string;
   title: string;
   accent: string;
@@ -93,7 +95,12 @@ function SectionHeading({
 }) {
   return (
     <header className="section-heading">
-      <span className="section-eyebrow"><i /> {eyebrow}</span>
+      <div className="section-meta">
+        <span className="section-eyebrow"><i /> {eyebrow}</span>
+        <span className="chapter-progress" aria-label={`第 ${index} 章，共 ${screens.length - 1} 章`}>
+          CH {String(index).padStart(2, '0')} / {String(screens.length - 1).padStart(2, '0')}
+        </span>
+      </div>
       <h2>{title}<br /><em>{accent}</em></h2>
       <p>{body}</p>
       {comparison ? <MechanismCompare {...comparison} /> : null}
@@ -134,7 +141,7 @@ function TechnicalSlide({
   return (
     <section className={`screen technical-screen ${className}`} id={id} data-screen={index}>
       <div className="screen-inner technical-layout">
-        <SectionHeading eyebrow={eyebrow} title={title} accent={accent} body={body} comparison={comparison} terms={terms} />
+        <SectionHeading index={index} eyebrow={eyebrow} title={title} accent={accent} body={body} comparison={comparison} terms={terms} />
         <div className="technical-visual">
           {children}
           <div className="figure-caption" aria-hidden="true">
@@ -355,8 +362,8 @@ export function App() {
           <div className="screen-inner hero-layout">
             <div className="hero-copy">
               <span className="hero-eyebrow"><i /> 00 / DEFINITION · AGENTIC CONTRACT VM</span>
-              <h1>ACVM 是一套<br /><em>可验证执行环境。</em></h1>
-              <p>一句话：链上只做必须一致的判断，复杂任务放到外部执行；每一步带回执，既省链上成本，也能追责。</p>
+              <h1>ACVM<br /><em className="hero-full-name">Agentic Contract VM.</em></h1>
+              <p>专门运行 Agentic Contract 的虚拟机：链上处理必须一致的判断，a3s-box 运行 Worker 与 Validator，每一步都留下可追溯回执。</p>
               <ul className="hero-benefits" aria-label="ACVM 核心价值">
                 <li><Icon name="bolt" />复杂任务不堵链</li>
                 <li><Icon name="fingerprint" />每一步可追责</li>
@@ -589,7 +596,7 @@ export function App() {
 
         <TechnicalSlide
           id="stories" index={15} className="stories-screen"
-          eyebrow="10 / DEPLOYED NETWORK · INTERACTIVE GRAPH"
+          eyebrow="APPLICATION NETWORK · INTERACTIVE GRAPH"
           title="一张运行中的"
           accent="ACVM 合约网络。"
           body="拖动网络，点击合约查看部署者、核验数据和链上回执。"
