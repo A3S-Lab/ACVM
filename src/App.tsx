@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react';
+import { ContractCodeWalkthrough } from './components/ContractCodeWalkthrough';
 import { FogInferenceArchitecture } from './components/FogInferenceArchitecture';
 import { Icon, LogoMark } from './components/Icons';
 import { ScenarioGraph } from './components/ScenarioGraph';
@@ -34,6 +35,7 @@ const screens = [
   ['runtime', '执行流程'],
   ['onchain', '链上执行'],
   ['spec-contract', '合约模型'],
+  ['code-walkthrough', '代码示例'],
   ['spec-state', '状态模型'],
   ['spec-receipt', '回执转换'],
   ['identity', '身份与权限'],
@@ -50,7 +52,7 @@ const screens = [
 
 const navigation = [
   { id: 'lifecycle', label: '工作原理', screens: ['lifecycle', 'runtime', 'onchain'] },
-  { id: 'spec-contract', label: '合约机制', screens: ['spec-contract', 'spec-state', 'spec-receipt'] },
+  { id: 'spec-contract', label: '合约机制', screens: ['spec-contract', 'code-walkthrough', 'spec-state', 'spec-receipt'] },
   { id: 'identity', label: '身份与安全', screens: ['identity', 'offchain', 'privacy', 'fog', 'sentry'] },
   { id: 'proof', label: '证明与共识', screens: ['proof', 'intelligence', 'spec-poi'] },
   { id: 'chains', label: '多链部署', screens: ['chains'] },
@@ -62,6 +64,7 @@ const technicalBackdrops: Record<string, TechnicalBackdropVariant> = {
   runtime: 'flow',
   onchain: 'flow',
   'spec-contract': 'state',
+  'code-walkthrough': 'state',
   'spec-state': 'state',
   'spec-receipt': 'state',
   identity: 'identity',
@@ -497,7 +500,23 @@ export function App() {
         ><ContractModelArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="spec-state" index={5} className="formal-screen state-spec-screen"
+          id="code-walkthrough" index={5} className="code-screen"
+          eyebrow="BUILD WALKTHROUGH · TYPESCRIPT SDK"
+          title="用 a3s-code 构建"
+          accent="一份合约，两份工作负载"
+          body="点击文件或步骤查看完整代码。鼠标移到带圆点的代码行，右侧会解释对应参数。"
+          comparison={{
+            traditionalTitle: '执行代码和验收脚本各放一处',
+            traditional: '部署时很难确认两边引用的是不是同一规则、同一任务和同一版本。',
+            acvmTitle: 'Worker 与 Validator 一起锁定',
+            acvm: '合约根绑定两份镜像、权限、验收阈值和结算规则，再分别交给 a3s-box 运行。',
+          }}
+          terms={['Intent-centric', 'Receipt Root']}
+          figureLabel="A3S-CODE TYPESCRIPT SDK / CONTRACT WALKTHROUGH"
+        ><ContractCodeWalkthrough /></TechnicalSlide>
+
+        <TechnicalSlide
+          id="spec-state" index={6} className="formal-screen state-spec-screen"
           eyebrow="FORMAL SPEC 02 / 04 · STATE MACHINE"
           title="ACVM 状态模型"
           accent="回执决定下一状态"
@@ -513,7 +532,7 @@ export function App() {
         ><StateModelArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="spec-receipt" index={6} className="formal-screen receipt-spec-screen"
+          id="spec-receipt" index={7} className="formal-screen receipt-spec-screen"
           eyebrow="FORMAL SPEC 03 / 04 · RECEIPT TRANSITION"
           title="回执验证"
           accent="失败时状态不变"
@@ -529,7 +548,7 @@ export function App() {
         ><ReceiptModelArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="identity" index={7} className="identity-screen"
+          id="identity" index={8} className="identity-screen"
           eyebrow="03 / 10 · IDENTITY & CAPABILITY"
           title="身份与权限"
           accent="操作对应责任主体"
@@ -544,7 +563,7 @@ export function App() {
         ><IdentityArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="offchain" index={8} className="offchain-screen"
+          id="offchain" index={9} className="offchain-screen"
           eyebrow="04 / 10 · ORACLE & OFF-CHAIN COMPUTE"
           title="链下核验"
           accent="数据留在原系统"
@@ -559,7 +578,7 @@ export function App() {
         ><OffchainArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="privacy" index={9} className="privacy-screen"
+          id="privacy" index={10} className="privacy-screen"
           eyebrow="05 / 10 · PRIVATE EXECUTION"
           title="隐私执行"
           accent="隔离任务和模型"
@@ -574,7 +593,7 @@ export function App() {
         ><PrivacyArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="fog" index={10} className="fog-screen"
+          id="fog" index={11} className="fog-screen"
           eyebrow="06 / 10 · FOG PRIVACY INFERENCE"
           title="雾计算推理网络"
           accent="数据就近处理"
@@ -590,7 +609,7 @@ export function App() {
         ><FogInferenceArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="sentry" index={11} className="sentry-screen"
+          id="sentry" index={12} className="sentry-screen"
           eyebrow="07 / 10 · ANYSENTRY"
           title="执行前风控"
           accent="进程、网络和工具"
@@ -604,7 +623,7 @@ export function App() {
         ><SentryArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="proof" index={12} className="proof-screen"
+          id="proof" index={13} className="proof-screen"
           eyebrow="08 / 10 · LONG-RUNNING TASK PROOF"
           title="长任务证明"
           accent="按里程碑累计"
@@ -619,7 +638,7 @@ export function App() {
         ><LongTaskArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="intelligence" index={13} className="intelligence-screen"
+          id="intelligence" index={14} className="intelligence-screen"
           eyebrow="09 / 10 · PROOF OF INTELLIGENCE"
           title="有效计算"
           accent="验收后计入 PoI"
@@ -634,7 +653,7 @@ export function App() {
         ><IntelligenceProofArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="spec-poi" index={14} className="formal-screen poi-spec-screen"
+          id="spec-poi" index={15} className="formal-screen poi-spec-screen"
           eyebrow="FORMAL SPEC 04 / 04 · INTELLIGENCE-PROOF CHAIN"
           title="PoI 共识"
           accent="任务回执决定贡献"
@@ -650,7 +669,7 @@ export function App() {
         ><IntelligenceChainArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="chains" index={15} className="chains-screen"
+          id="chains" index={16} className="chains-screen"
           eyebrow="10 / 10 · CHAIN-AGNOSTIC DEPLOYMENT"
           title="多链部署"
           accent="业务逻辑保持不变"
@@ -665,11 +684,17 @@ export function App() {
         ><ChainArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="stories" index={16} className="stories-screen"
+          id="stories" index={17} className="stories-screen"
           eyebrow="APPLICATION NETWORK · INTERACTIVE GRAPH"
           title="应用网络"
-          accent="三类参与方"
-          body="拖动网络或点击节点，查看每个 Agentic Contract 的部署者、Worker、Validator 和链上记录。"
+          accent="按结果验收与结算"
+          body="拖动网络或点击节点，查看 GEO、量化交易、节能、采购等 Agentic Contract 怎么执行、验收和记账。"
+          comparison={{
+            traditionalTitle: '只能按调用次数或过程付费',
+            traditional: '链上看得到转账，却很难判断 Agent 是否真正带来了业务结果。',
+            acvmTitle: '结果通过独立验收后再结算',
+            acvm: 'Worker 干活，Validator 按冻结口径核验，链上只为可追溯的有效结果记账。',
+          }}
         ><ScenarioGraph /></TechnicalSlide>
       </main>
     </div>
