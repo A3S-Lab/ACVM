@@ -73,6 +73,7 @@ const scenarios: Scenario[] = [
     ],
     relations: [
       relation('advertiser', 'acvm', 'delegates'),
+      relation('channel', 'acvm', 'delegates'),
       relation('channel', 'adlog', 'observes'),
       relation('adlog', 'oracle', 'proves'),
       relation('attribution', 'oracle', 'proves'),
@@ -540,11 +541,19 @@ const entityKindLabel: Record<EntityKind, string> = {
 };
 
 const relationKindLabel: Record<RelationKind, string> = {
-  delegates: '委托',
+  delegates: '委托/申报',
   observes: '取证',
   controls: '控制',
   proves: '证明',
   settles: '结算',
+};
+
+const describeRelation = (kind: RelationKind, source: string, target: string) => {
+  if (kind === 'delegates') return `${source}提交委托或结果声明，${target}接收本次核验任务。`;
+  if (kind === 'observes') return `${source}从${target}取得本次业务事实。`;
+  if (kind === 'controls') return `${source}对${target}施加运行时策略与安全控制。`;
+  if (kind === 'proves') return `${source}向${target}提交可验证证据。`;
+  return `${source}依据验证终局向${target}执行结算。`;
 };
 
 type UniverseNodeKind = 'core' | 'industry' | 'pattern' | 'scenario';
@@ -670,13 +679,27 @@ function ScenarioMiniature({ scenario }: { scenario: Scenario }) {
 function ExpandedScenarioGraph({ scenario }: { scenario: Scenario }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const focusId = hoveredId ?? selectedId;
+  const [activeRelationIndex, setActiveRelationIndex] = useState(0);
+  const graphCanvasRef = useRef<HTMLDivElement>(null);
+  const guidedRelation = hoveredId || selectedId
+    ? null
+    : scenario.relations[activeRelationIndex % scenario.relations.length];
+  const focusId = hoveredId ?? selectedId ?? guidedRelation?.target ?? null;
   const detailId = focusId ?? 'acvm';
 
   useEffect(() => {
     setSelectedId(null);
     setHoveredId(null);
+    setActiveRelationIndex(0);
   }, [scenario.id]);
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const timer = window.setInterval(() => {
+      setActiveRelationIndex((index) => (index + 1) % scenario.relations.length);
+    }, 1800);
+    return () => window.clearInterval(timer);
+  }, [scenario.id, scenario.relations.length]);
 
   const adjacency = useMemo(() => {
     const map = new Map(scenario.entities.map((item) => [item.id, new Set<string>()]));
@@ -687,26 +710,64 @@ function ExpandedScenarioGraph({ scenario }: { scenario: Scenario }) {
     return map;
   }, [scenario]);
 
-  const degree = useMemo(() => {
-    const map = new Map(scenario.entities.map((item) => [item.id, 0]));
-    scenario.relations.forEach((item) => {
-      map.set(item.source, (map.get(item.source) ?? 0) + 1);
-      map.set(item.target, (map.get(item.target) ?? 0) + 1);
-    });
-    return map;
-  }, [scenario]);
-
   const positioned = useMemo(() => {
-    const outer = scenario.entities.filter((item) => !item.core);
+    const controlledActorIds = new Set(
+      scenario.relations
+        .filter((item) => item.kind === 'controls')
+        .map((item) => item.target)
+        .filter((id) => scenario.entities.some((candidate) => candidate.id === id && candidate.kind === 'actor')),
+    );
+    const settlementExecutorIds = new Set(
+      scenario.relations
+        .filter((item) => item.kind === 'settles')
+        .map((item) => item.source),
+    );
+    const finalActorIds = new Set(
+      [...controlledActorIds].filter((id) => settlementExecutorIds.has(id)),
+    );
+    const columns = {
+      actor: scenario.entities.filter((item) => item.kind === 'actor' && !finalActorIds.has(item.id)),
+      fact: scenario.entities.filter((item) => item.kind === 'fact'),
+      control: scenario.entities.filter(
+        (item) => item.kind === 'control' || (item.kind === 'compute' && !item.core),
+      ),
+      core: scenario.entities.filter((item) => item.core),
+      final: scenario.entities.filter(
+        (item) => item.kind === 'proof' || (item.kind === 'actor' && finalActorIds.has(item.id)),
+      ),
+    };
+    const columnById = new Map<string, keyof typeof columns>();
+    (Object.keys(columns) as Array<keyof typeof columns>).forEach((column) => {
+      columns[column].forEach((item) => columnById.set(item.id, column));
+    });
+    const columnX: Record<keyof typeof columns, number> = {
+      actor: 68,
+      fact: 198,
+      control: 336,
+      core: 462,
+      final: 580,
+    };
+    const columnY = (column: keyof typeof columns, id: string) => {
+      const list = columns[column];
+      const index = list.findIndex((item) => item.id === id);
+      if (list.length <= 1) return 152;
+      const top = list.length >= 4 ? 57 : 72;
+      const bottom = list.length >= 4 ? 253 : 232;
+      return top + (index / (list.length - 1)) * (bottom - top);
+    };
+
     return scenario.entities.map((item) => {
-      if (item.core) return { ...item, x: 150, y: 76 };
-      const index = outer.findIndex((candidate) => candidate.id === item.id);
-      const angle = -Math.PI / 2 + (index / outer.length) * Math.PI * 2;
-      const ring = index % 3 === 1 ? 0.82 : 1;
+      const column = columnById.get(item.id) ?? 'control';
+      const width = item.core
+        ? 86
+        : Math.min(116, Math.max(82, item.label.length * 8.5 + 30));
+      const height = item.core ? 42 : 38;
       return {
         ...item,
-        x: 150 + Math.cos(angle) * 99 * ring,
-        y: 76 + Math.sin(angle) * 56 * ring,
+        x: columnX[column],
+        y: columnY(column, item.id),
+        width,
+        height,
       };
     });
   }, [scenario]);
@@ -722,49 +783,117 @@ function ExpandedScenarioGraph({ scenario }: { scenario: Scenario }) {
       const target = scenario.entities.find((candidate) => candidate.id === item.target)?.label ?? item.target;
       return `${source} —${relationKindLabel[item.kind]}→ ${target}`;
     });
+  const guidedSource = guidedRelation
+    ? scenario.entities.find((item) => item.id === guidedRelation.source)
+    : null;
+  const guidedTarget = guidedRelation
+    ? scenario.entities.find((item) => item.id === guidedRelation.target)
+    : null;
+
+  useEffect(() => {
+    const canvas = graphCanvasRef.current;
+    if (!canvas || !guidedRelation || !window.matchMedia('(max-width: 960px)').matches) return;
+    const source = byId.get(guidedRelation.source);
+    const target = byId.get(guidedRelation.target);
+    if (!source || !target) return;
+    const focusX = (source.x + target.x) / 2;
+    const left = Math.max(0, (focusX / 640) * canvas.scrollWidth - canvas.clientWidth / 2);
+    canvas.scrollTo({
+      left,
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    });
+  }, [activeRelationIndex, byId, guidedRelation]);
 
   return (
     <div className="expanded-scenario-graph">
-      <svg
-        viewBox="0 0 300 154"
-        role="img"
-        aria-label={`${scenario.title}参与方与证明关系`}
-        onClick={() => setSelectedId(null)}
-      >
-        <ellipse className="expanded-orbit" cx="150" cy="76" rx="116" ry="61" />
-        <ellipse className="expanded-orbit expanded-orbit--inner" cx="150" cy="76" rx="73" ry="38" />
+      <div className="expanded-scenario-canvas" ref={graphCanvasRef}>
+        <svg
+          viewBox="0 0 640 292"
+          role="img"
+          aria-label={`${scenario.title}参与方与证明关系`}
+          onClick={() => setSelectedId(null)}
+        >
+        <defs>
+          <marker id="expanded-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 8 4 0 8Z" />
+          </marker>
+        </defs>
+
+        <g className="expanded-layers" aria-hidden="true">
+          <line x1="132" y1="31" x2="132" y2="278" />
+          <line x1="266" y1="31" x2="266" y2="278" />
+          <line x1="402" y1="31" x2="402" y2="278" />
+          <line x1="520" y1="31" x2="520" y2="278" />
+          <text x="68" y="17" textAnchor="middle">委托 / 申报</text>
+          <text x="198" y="17" textAnchor="middle">事实取证</text>
+          <text x="336" y="17" textAnchor="middle">安全与隐私</text>
+          <text x="462" y="17" textAnchor="middle">ACVM 核验</text>
+          <text x="580" y="17" textAnchor="middle">证明 / 终局</text>
+        </g>
 
         <g>
-          {scenario.relations.map((item) => {
+          {scenario.relations.map((item, index) => {
             const source = byId.get(item.source);
             const target = byId.get(item.target);
             if (!source || !target) return null;
-            const connected = Boolean(focusId) && (item.source === focusId || item.target === focusId);
-            const dimmed = Boolean(focusId) && !connected;
+            const connected = guidedRelation
+              ? index === activeRelationIndex % scenario.relations.length
+              : Boolean(focusId) && (item.source === focusId || item.target === focusId);
+            const dimmed = guidedRelation
+              ? !connected
+              : Boolean(focusId) && !connected;
+            const dx = target.x - source.x;
+            const dy = target.y - source.y;
+            const sourceScale = Math.min(
+              dx === 0 ? Number.POSITIVE_INFINITY : (source.width / 2 + 3) / Math.abs(dx),
+              dy === 0 ? Number.POSITIVE_INFINITY : (source.height / 2 + 3) / Math.abs(dy),
+            );
+            const targetScale = Math.min(
+              dx === 0 ? Number.POSITIVE_INFINITY : (target.width / 2 + 3) / Math.abs(dx),
+              dy === 0 ? Number.POSITIVE_INFINITY : (target.height / 2 + 3) / Math.abs(dy),
+            );
+            const x1 = source.x + dx * sourceScale;
+            const y1 = source.y + dy * sourceScale;
+            const x2 = target.x - dx * targetScale;
+            const y2 = target.y - dy * targetScale;
+            const labelX = (x1 + x2) / 2;
+            const labelY = (y1 + y2) / 2 + (index % 2 === 0 ? -4 : 7);
             return (
-              <line
-                key={`${item.source}-${item.target}`}
-                className={`expanded-link expanded-link--${item.kind} ${connected ? 'is-active' : ''} ${dimmed ? 'is-dimmed' : ''}`}
-                x1={source.x}
-                y1={source.y}
-                x2={target.x}
-                y2={target.y}
-              />
+              <g key={`${item.source}-${item.target}`}>
+                <line
+                  className={`expanded-link expanded-link--${item.kind} ${connected ? 'is-active' : ''} ${dimmed ? 'is-dimmed' : ''}`}
+                  x1={x1}
+                  y1={y1}
+                  x2={x2}
+                  y2={y2}
+                  markerEnd="url(#expanded-arrow)"
+                />
+                <text
+                  className={`expanded-link-label ${connected ? 'is-active' : ''} ${dimmed ? 'is-dimmed' : ''}`}
+                  x={labelX}
+                  y={labelY}
+                  textAnchor="middle"
+                >
+                  {relationKindLabel[item.kind]}
+                </text>
+              </g>
             );
           })}
         </g>
 
         <g>
           {positioned.map((item) => {
-            const related = !focusId || item.id === focusId || neighbours.has(item.id);
-            const radius = item.core ? 7.4 : 3.8 + Math.min(1.7, (degree.get(item.id) ?? 0) * 0.26);
-            const anchor = item.core ? 'middle' : item.x < 125 ? 'end' : item.x > 175 ? 'start' : 'middle';
-            const labelX = item.core ? item.x : item.x + (anchor === 'start' ? 7 : anchor === 'end' ? -7 : 0);
-            const labelY = item.core ? item.y + 18 : item.y + (item.y < 52 ? -8 : item.y > 104 ? 11 : 3);
+            const guided = Boolean(
+              guidedRelation
+              && (item.id === guidedRelation.source || item.id === guidedRelation.target),
+            );
+            const related = guidedRelation
+              ? guided
+              : !focusId || item.id === focusId || neighbours.has(item.id);
             return (
               <g
                 key={item.id}
-                className={`expanded-node expanded-node--${item.kind} ${item.id === focusId ? 'is-active' : ''} ${related ? '' : 'is-dimmed'}`}
+                className={`expanded-node expanded-node--${item.kind} ${item.id === focusId || guided ? 'is-active' : ''} ${related ? '' : 'is-dimmed'}`}
                 role="button"
                 tabIndex={0}
                 aria-label={`${entityKindLabel[item.kind]}：${item.label}。${item.detail}`}
@@ -789,22 +918,63 @@ function ExpandedScenarioGraph({ scenario }: { scenario: Scenario }) {
                   }
                 }}
               >
-                <circle cx={item.x} cy={item.y} r={radius} />
-                <circle className="expanded-node-ring" cx={item.x} cy={item.y} r={radius + 2.5} />
-                <text x={labelX} y={labelY} textAnchor={anchor}>{item.label}</text>
+                <rect
+                  className="expanded-node-card"
+                  x={item.x - item.width / 2}
+                  y={item.y - item.height / 2}
+                  width={item.width}
+                  height={item.height}
+                  rx="2"
+                />
+                <rect
+                  className="expanded-node-ring"
+                  x={item.x - item.width / 2 - 3}
+                  y={item.y - item.height / 2 - 3}
+                  width={item.width + 6}
+                  height={item.height + 6}
+                  rx="3"
+                />
+                <text className="expanded-node-kind" x={item.x} y={item.y - 4} textAnchor="middle">
+                  {entityKindLabel[item.kind]}
+                </text>
+                <text className="expanded-node-label" x={item.x} y={item.y + 9} textAnchor="middle">
+                  {item.label}
+                </text>
+                <rect
+                  className="expanded-node-hit"
+                  x={item.x - item.width / 2}
+                  y={item.y - item.height / 2}
+                  width={item.width}
+                  height={item.height}
+                  rx="2"
+                />
               </g>
             );
           })}
         </g>
-      </svg>
+        </svg>
+      </div>
 
-      <div className="expanded-node-detail" aria-live="polite">
-        <span>{entityKindLabel[detail.kind]}</span>
-        <strong>{detail.label}</strong>
-        <div>
-          <p>{detail.detail}</p>
-          <small>{detailRelations.join(' · ')}</small>
-        </div>
+      <div className="expanded-node-detail" aria-live={guidedRelation ? 'off' : 'polite'}>
+        {guidedRelation && guidedSource && guidedTarget ? (
+          <>
+            <span>{String(activeRelationIndex + 1).padStart(2, '0')} · {relationKindLabel[guidedRelation.kind]}</span>
+            <strong>{guidedSource.label} → {guidedTarget.label}</strong>
+            <div>
+              <p>{describeRelation(guidedRelation.kind, guidedSource.label, guidedTarget.label)}</p>
+              <small>该验证关系写入执行回执与证据根</small>
+            </div>
+          </>
+        ) : (
+          <>
+            <span>{entityKindLabel[detail.kind]}</span>
+            <strong>{detail.label}</strong>
+            <div>
+              <p>{detail.detail}</p>
+              <small>{detailRelations.join(' · ')}</small>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
@@ -819,26 +989,43 @@ function UniverseDetail({
 }) {
   if (node.kind === 'scenario' && node.scenario) {
     const scenario = node.scenario;
+    const actors = scenario.entities.filter((item) => item.kind === 'actor').map((item) => item.label);
+    const facts = scenario.entities.filter((item) => item.kind === 'fact').map((item) => item.label);
+    const controls = scenario.entities
+      .filter((item) => item.kind === 'control' || (item.kind === 'compute' && !item.core))
+      .map((item) => item.label);
+    const proofs = scenario.entities.filter((item) => item.kind === 'proof').map((item) => item.label);
     return (
       <aside className={`universe-detail universe-detail--scenario universe-detail--${scenario.industry}`}>
         <header>
           <span>{scenario.index} · {industryMeta[scenario.industry].english}</span>
-          <small>{patternMeta[scenario.pattern].code} · {patternMeta[scenario.pattern].english}</small>
+          <small>{patternMeta[scenario.pattern].code} · {patternMeta[scenario.pattern].label}</small>
           <h3>{scenario.title}</h3>
           <p>{scenario.thesis}</p>
         </header>
 
-        <ExpandedScenarioGraph scenario={scenario} />
+        <div className="scenario-business-layout">
+          <ExpandedScenarioGraph scenario={scenario} />
 
-        <section className="scenario-proof-contract">
-          <small>ACVM ACCEPTANCE PREDICATE</small>
-          <strong>{scenario.predicate}</strong>
-        </section>
+          <div className="scenario-business-contract">
+            <section className="scenario-proof-contract">
+              <small>ACVM ACCEPTANCE PREDICATE</small>
+              <strong>{scenario.predicate}</strong>
+            </section>
 
-        <footer>
-          <span><Icon name="chain" /> {scenario.finality}</span>
-          <div>{scenario.terms.map((term) => <TechTerm term={term} key={term} />)}</div>
-        </footer>
+            <div className="scenario-role-summary">
+              <section><small>责任主体</small><strong>{actors.join(' · ')}</strong></section>
+              <section><small>事实来源</small><strong>{facts.join(' · ')}</strong></section>
+              <section><small>安全与计算</small><strong>{controls.join(' · ')}</strong></section>
+              <section><small>链上确认</small><strong>{proofs.join(' · ')}</strong></section>
+            </div>
+
+            <footer>
+              <span><Icon name="chain" /> {scenario.finality}</span>
+              <div>{scenario.terms.map((term) => <TechTerm term={term} key={term} />)}</div>
+            </footer>
+          </div>
+        </div>
       </aside>
     );
   }
@@ -900,14 +1087,14 @@ function UniverseDetail({
 }
 
 export function ScenarioPatterns() {
-  const [selectedId, setSelectedId] = useState('acvm-root');
-  const [locked, setLocked] = useState(false);
+  const [selectedId, setSelectedId] = useState('scenario-ads');
+  const [locked, setLocked] = useState(true);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [rotation, setRotation] = useState({ x: -0.08, y: 0.14 });
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ x: number; y: number; rx: number; ry: number } | null>(null);
   const focusId = hoveredId ?? (locked ? selectedId : null);
-  const detailId = hoveredId ?? selectedId;
+  const detailId = locked ? selectedId : hoveredId ?? selectedId;
 
   useEffect(() => {
     const centerMobileGraph = () => {
@@ -971,6 +1158,7 @@ export function ScenarioPatterns() {
   const byId = useMemo(() => new Map(projected.map((node) => [node.id, node])), [projected]);
   const neighbours = focusId ? adjacency.get(focusId) ?? new Set<string>() : new Set<string>();
   const detailNode = universeNodes.find((node) => node.id === detailId) ?? universeNodes[0];
+  const scenarioFocused = detailNode.kind === 'scenario';
 
   const selectNode = (id: string) => {
     setSelectedId(id);
@@ -982,12 +1170,12 @@ export function ScenarioPatterns() {
       <div className="scenario-universe-meta">
         <span><i className="universe-shape universe-shape--core" />ACVM</span>
         <span><i className="universe-shape universe-shape--pattern" />合约机制</span>
-        <span><i className="universe-shape universe-shape--industry" />行业本体</span>
+        <span><i className="universe-shape universe-shape--industry" />行业</span>
         <span><i className="universe-shape universe-shape--scenario" />业务场景</span>
-        <strong>{universeNodes.length} GRAPH NODES · {universeEdges.length} RELATIONS</strong>
+        <strong>12 个业务场景 · 5 个行业 · 4 类合约机制</strong>
       </div>
 
-      <div className="scenario-universe-layout">
+      <div className={`scenario-universe-layout ${scenarioFocused ? 'is-scenario-focused' : ''}`}>
         <div className="scenario-universe-canvas" ref={canvasRef}>
           <svg
             viewBox="0 0 760 414"
@@ -1101,14 +1289,19 @@ export function ScenarioPatterns() {
                       </g>
                     ) : (
                       <>
-                        {node.kind === 'pattern' ? (
-                          <rect
-                            x={node.px - scaledRadius}
-                            y={node.py - scaledRadius}
-                            width={scaledRadius * 2}
-                            height={scaledRadius * 2}
-                            transform={`rotate(45 ${node.px} ${node.py})`}
-                          />
+                        {node.kind === 'pattern' && node.pattern ? (
+                          <>
+                            <rect
+                              x={node.px - scaledRadius}
+                              y={node.py - scaledRadius}
+                              width={scaledRadius * 2}
+                              height={scaledRadius * 2}
+                              transform={`rotate(45 ${node.px} ${node.py})`}
+                            />
+                            <text className="universe-pattern-code" x={node.px} y={node.py + 2.5} textAnchor="middle">
+                              {patternMeta[node.pattern].code}
+                            </text>
+                          </>
                         ) : (
                           <circle cx={node.px} cy={node.py} r={scaledRadius} />
                         )}
@@ -1122,7 +1315,7 @@ export function ScenarioPatterns() {
                     )}
                     {node.kind !== 'core' && (
                       <text className="universe-node-label" x={node.px} y={labelY} textAnchor="middle">
-                        {node.kind === 'pattern' && node.pattern ? patternMeta[node.pattern].code : node.label}
+                        {node.kind === 'pattern' && node.pattern ? patternMeta[node.pattern].label : node.label}
                       </text>
                     )}
                   </g>
