@@ -385,7 +385,7 @@ export function App() {
           eyebrow="FORMAL SPEC 01 / 04 · STATE MACHINE"
           title="先定义状态，"
           accent="再定义执行。"
-          body="沿用黄皮书的状态机写法，ACVM 把一次任务定义成可验证的状态转换。"
+          body="ACVM 用状态机描述一次任务：输入、执行结果和回执共同决定下一状态。"
           comparison={{
             traditionalTitle: '只认识短交易',
             traditional: '任务跨几天后，链上状态说不清谁做到哪一步。',
@@ -393,7 +393,7 @@ export function App() {
             acvm: '每一步写入状态或回执根，能连续核验与追责。',
           }}
           terms={['Receipt Root', 'Proof-carrying Execution']}
-          figureLabel="FORMAL MODEL / DRAFT 0.1 · REF. ETHEREUM YELLOW PAPER"
+          figureLabel="FORMAL MODEL / DRAFT 0.1 · ACVM STATE TRANSITION"
         ><StateModelArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
