@@ -30,13 +30,11 @@ const screens = [
 ] as const;
 
 const navigation = [
-  { id: 'runtime', label: '执行内核', screens: ['runtime'] },
-  { id: 'identity', label: '可信身份', screens: ['identity'] },
-  { id: 'offchain', label: '可信计算', screens: ['offchain'] },
-  { id: 'box', label: 'A3S 安全', screens: ['box', 'power', 'sentry'] },
-  { id: 'proof', label: '长期证明', screens: ['proof'] },
-  { id: 'chains', label: '多链部署', screens: ['chains'] },
-  { id: 'stories', label: '验证场景', screens: ['stories'] },
+  { id: 'runtime', label: '执行架构', screens: ['runtime', 'offchain'] },
+  { id: 'identity', label: '身份能力', screens: ['identity'] },
+  { id: 'box', label: '隐私与安全', screens: ['box', 'power', 'sentry'] },
+  { id: 'proof', label: '证明与多链', screens: ['proof', 'chains'] },
+  { id: 'stories', label: '应用场景', screens: ['stories'] },
 ] as const;
 
 function SectionHeading({
@@ -92,46 +90,46 @@ function HeroArchitecture() {
   return (
     <div className="hero-result-service" aria-label="ACVM 去中心化可信验证智能体运行架构">
       <header>
-        <span><small>DECENTRALIZED VERIFICATION AGENT RUNTIME</small><strong>去中心化可信验证智能体虚拟机</strong></span>
-        <em>MULTI-DOMAIN</em>
+        <span aria-hidden="true"><i /><i /><i /></span>
+        <code>ACVM / 验证控制面</code>
+        <em><i /> SYSTEM READY</em>
       </header>
 
-      <div className="result-request-grid">
-        <span><Icon name="receipt" /><small>结果服务方</small><strong>提交结果声明</strong></span>
-        <span><Icon name="fingerprint" /><small>业务委托方</small><strong>签署验收谓词</strong></span>
-        <span><Icon name="eye" /><small>独立事实源</small><strong>出具可验证证据</strong></span>
-        <span><Icon name="chain" /><small>治理网络</small><strong>约定共识门限</strong></span>
+      <div className="verification-flow">
+        <section>
+          <small>01</small>
+          <Icon name="receipt" />
+          <strong>验收契约</strong>
+          <p>结果声明 · 验收谓词</p>
+        </section>
+        <i className="verification-connector"><span /><span /><span /></i>
+        <section className="is-runtime">
+          <small>02</small>
+          <LogoMark />
+          <strong>多域验证 Agent</strong>
+          <p>委托方 · 独立方 · 审计方</p>
+        </section>
+        <i className="verification-connector"><span /><span /><span /></i>
+        <section>
+          <small>03</small>
+          <Icon name="chain" />
+          <strong>证明与终局</strong>
+          <p>零知识证明 · 门限签名</p>
+        </section>
       </div>
 
-      <div className="result-acvm-bar">
-        <LogoMark />
-        <span><strong>ACVM · Agentic Contract VM</strong><small>运行带身份、受约束、可证明的验证 Agent</small></span>
-        <i>RUNNING</i>
-      </div>
-
-      <div className="result-engine-grid">
-        <section><small>V₁ · 委托方节点</small><strong>规则验收 Agent</strong><p>按签名谓词判断结果是否完成</p></section>
-        <section><small>V₂ · 独立节点</small><strong>事实核验 Agent</strong><p>从多预言机与企业 API 主动取证</p></section>
-        <section><small>V₃ · 隐私节点</small><strong>隐私验证 Agent</strong><p>通过 a3s-box / power 计算敏感事实</p></section>
-        <section><small>V₄ · 审计节点</small><strong>安全审计 Agent</strong><p>依据 AnySentry 事件复核执行过程</p></section>
-      </div>
-
-      <div className="verified-result-package">
-        <header><Icon name="check" /><span><small>DECENTRALIZED VERIFICATION OUTPUT</small><strong>多方可复验的验证结论</strong></span></header>
+      <div className="verification-telemetry">
+        <header>
+          <span>LIVE VERIFICATION</span>
+          <strong><i /> 多方核验中</strong>
+        </header>
         <div>
-          <span>结果声明</span><i>+</i>
-          <span>事实证据</span><i>+</i>
-          <span>验证签名</span><i>+</i>
-          <span>完成证明</span><i>+</i>
-          <span>终局指令</span>
+          <span><code>oracle.evidence</code><i /><strong>多源签名事实</strong></span>
+          <span><code>privacy.compute</code><i /><strong>a3s-box / power</strong></span>
+          <span><code>runtime.policy</code><i /><strong>AnySentry enforced</strong></span>
+          <span><code>proof.output</code><i /><strong>ZK + threshold finality</strong></span>
         </div>
       </div>
-
-      <footer>
-        <span><Icon name="chain" /> 联盟链多节点确认</span>
-        <span><Icon name="terminal" /> 企业系统执行终局</span>
-        <span><Icon name="receipt" /> 审计与自动结算</span>
-      </footer>
     </div>
   );
 }
@@ -217,28 +215,14 @@ export function App() {
           <Icon name="github" /><span>GitHub</span>
         </a>
       </header>
-
-      <aside className="screen-dots" aria-label="章节导航">
-        {screens.map(([id, label], index) => (
-          <a
-            key={id}
-            href={`#${id}`}
-            className={activeScreen === index ? 'is-active' : ''}
-            aria-current={activeScreen === index ? 'page' : undefined}
-          >
-            <i /><span>{label}</span>
-          </a>
-        ))}
-      </aside>
-
       <main className="page-scroller">
         <section className="screen hero-screen" id="top" data-screen="0">
           <div className="hero-backdrop" aria-hidden="true"><i /><i /><i /></div>
           <div className="screen-inner hero-layout">
             <div className="hero-copy">
-              <span className="hero-eyebrow"><i /> ACVM · FOR RESULT-AS-A-SERVICE</span>
+              <span className="hero-eyebrow"><i /> ACVM · VERIFICATION AGENT VIRTUAL MACHINE</span>
               <h1>结果由服务方交付。<br /><em>可信由多方验证。</em></h1>
-              <p>ACVM 是运行可信验证智能体的 Agentic Contract 虚拟机。带身份的验证 Agent 在零信任边界内从独立预言机、企业 API 与隐私计算环境取证，生成可审计证明，再由联盟链多节点确认结果是否成立。</p>
+              <p>ACVM 是运行面向“结果即服务”的去中心化可信验证 Agent 的 Agentic Contract 虚拟机。带身份的验证 Agent 在零信任边界内从独立预言机、企业 API 与隐私计算环境取证，生成可审计证明，再由联盟链多节点确认结果是否成立。</p>
               <div className="hero-actions">
                 <a href="#runtime" className="button button--primary">理解验证如何运行 <Icon name="arrow" /></a>
                 <a href="#stories" className="button button--secondary">查看业务验证场景</a>
@@ -250,17 +234,6 @@ export function App() {
               </div>
             </div>
             <HeroArchitecture />
-          </div>
-          <div className="hero-positioning">
-            <span>Result Claim</span>
-            <i />
-            <span>Independent Evidence</span>
-            <i />
-            <span>Verifier Attestation</span>
-            <i />
-            <span>Completion Proof</span>
-            <i />
-            <span>Finality Instruction</span>
           </div>
         </section>
 
@@ -367,7 +340,7 @@ export function App() {
           eyebrow="09 / 09 · RESULT VERIFICATION SCENARIOS"
           title="服务方提交业务结果，"
           accent="验证 Agent 独立取证并共同确认。"
-          body="推广渠道申报 2,184 个有效转化；委托方、独立归因与审计节点分别运行验证 Agent，从广告平台、归因服务和 CRM 取证，通过验收谓词后共同签署结算证明。"
+          body="委托方签署验收规则，服务方申报结果，独立事实源出具证据，安全节点约束数据与工具权限，ACVM 内的验证 Agent 执行核验，再由联盟链节点共同确认业务终局。"
         >
           <ScenarioPatterns />
         </TechnicalSlide>

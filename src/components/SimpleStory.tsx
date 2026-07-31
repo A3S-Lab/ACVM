@@ -562,9 +562,7 @@ type UniverseNode = {
   id: string;
   label: string;
   kind: UniverseNodeKind;
-  angle?: number;
-  ring?: number;
-  z?: number;
+  position: readonly [number, number, number];
   industry?: Industry;
   pattern?: PatternKind;
   scenario?: Scenario;
@@ -578,38 +576,50 @@ type UniverseEdge = {
 
 const industryOrder: Industry[] = ['business', 'government', 'manufacturing', 'finance', 'education'];
 const patternOrder: PatternKind[] = ['outcome', 'threshold', 'privacy', 'longrun'];
+const goldenAngle = Math.PI * (3 - Math.sqrt(5));
 
 const universeNodes: UniverseNode[] = [
-  { id: 'acvm-root', label: 'ACVM', kind: 'core' },
+  { id: 'acvm-root', label: 'ACVM', kind: 'core', position: [0, 0, 0] },
   ...industryOrder.map((industry, index) => ({
     id: `industry-${industry}`,
     label: industryMeta[industry].label,
     kind: 'industry' as const,
     industry,
-    angle: -Math.PI / 2 + (index / industryOrder.length) * Math.PI * 2,
-    ring: 0.56,
-    z: Math.sin(index * 1.7) * 0.28,
+    position: [
+      Math.cos(-Math.PI / 2 + (index / industryOrder.length) * Math.PI * 2) * 0.52,
+      Math.sin(-Math.PI / 2 + (index / industryOrder.length) * Math.PI * 2) * 0.4,
+      Math.sin(index * 1.7) * 0.34,
+    ] as const,
   })),
   ...patternOrder.map((pattern, index) => ({
     id: `pattern-${pattern}`,
     label: patternMeta[pattern].label,
     kind: 'pattern' as const,
     pattern,
-    angle: -Math.PI / 4 + (index / patternOrder.length) * Math.PI * 2,
-    ring: 0.31,
-    z: Math.cos(index * 1.9) * 0.24,
+    position: [
+      Math.cos(-Math.PI / 4 + (index / patternOrder.length) * Math.PI * 2) * 0.3,
+      Math.sin(-Math.PI / 4 + (index / patternOrder.length) * Math.PI * 2) * 0.26,
+      Math.cos(index * 1.9) * 0.4,
+    ] as const,
   })),
-  ...scenarios.map((scenario, index) => ({
-    id: `scenario-${scenario.id}`,
-    label: scenario.title,
-    kind: 'scenario' as const,
-    scenario,
-    industry: scenario.industry,
-    pattern: scenario.pattern,
-    angle: -Math.PI / 2 + (index / scenarios.length) * Math.PI * 2,
-    ring: 1,
-    z: Math.sin(index * 1.33 + 0.4) * 0.46,
-  })),
+  ...scenarios.map((scenario, index) => {
+    const y = 1 - ((index + 0.5) / scenarios.length) * 2;
+    const radial = Math.sqrt(1 - y * y);
+    const theta = index * goldenAngle;
+    return {
+      id: `scenario-${scenario.id}`,
+      label: scenario.title,
+      kind: 'scenario' as const,
+      scenario,
+      industry: scenario.industry,
+      pattern: scenario.pattern,
+      position: [
+        Math.cos(theta) * radial,
+        y * 0.78,
+        Math.sin(theta) * radial,
+      ] as const,
+    };
+  }),
 ];
 
 const universeEdges: UniverseEdge[] = [
@@ -642,7 +652,48 @@ type ProjectedUniverseNode = UniverseNode & {
   py: number;
   depth: number;
   scale: number;
+  opacity: number;
 };
+
+type UniverseRotation = { x: number; y: number };
+
+function projectUniversePoint(
+  position: readonly [number, number, number],
+  rotation: UniverseRotation,
+) {
+  const [x, y, z] = position;
+  const cosY = Math.cos(rotation.y);
+  const sinY = Math.sin(rotation.y);
+  const cosX = Math.cos(rotation.x);
+  const sinX = Math.sin(rotation.x);
+  const x1 = x * cosY + z * sinY;
+  const z1 = -x * sinY + z * cosY;
+  const y1 = y * cosX - z1 * sinX;
+  const z2 = y * sinX + z1 * cosX;
+  const perspective = 3.25 / (3.25 - z2);
+  return {
+    x: 380 + x1 * 258 * perspective,
+    y: 206 + y1 * 202 * perspective,
+    depth: z2,
+    perspective,
+  };
+}
+
+function universeOrbitPath(
+  rotation: UniverseRotation,
+  plane: 'equator' | 'vertical' | 'tilted',
+) {
+  const points = Array.from({ length: 65 }, (_, index) => {
+    const angle = (index / 64) * Math.PI * 2;
+    const point: readonly [number, number, number] = plane === 'equator'
+      ? [Math.cos(angle), Math.sin(angle) * 0.78, 0]
+      : plane === 'vertical'
+        ? [Math.cos(angle), 0, Math.sin(angle)]
+        : [Math.cos(angle) * 0.92, Math.sin(angle) * 0.5, Math.sin(angle) * 0.68];
+    return projectUniversePoint(point, rotation);
+  });
+  return points.map((point, index) => `${index === 0 ? 'M' : 'L'}${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join(' ');
+}
 
 function ScenarioMiniature({ scenario }: { scenario: Scenario }) {
   const points = [
@@ -989,43 +1040,82 @@ function UniverseDetail({
 }) {
   if (node.kind === 'scenario' && node.scenario) {
     const scenario = node.scenario;
-    const actors = scenario.entities.filter((item) => item.kind === 'actor').map((item) => item.label);
+    const settlementActorIds = new Set(
+      scenario.relations
+        .filter((item) => item.kind === 'settles')
+        .map((item) => item.source),
+    );
+    const actors = scenario.entities
+      .filter((item) => item.kind === 'actor' && !settlementActorIds.has(item.id))
+      .map((item) => item.label);
     const facts = scenario.entities.filter((item) => item.kind === 'fact').map((item) => item.label);
     const controls = scenario.entities
       .filter((item) => item.kind === 'control' || (item.kind === 'compute' && !item.core))
       .map((item) => item.label);
     const proofs = scenario.entities.filter((item) => item.kind === 'proof').map((item) => item.label);
+    const settlementActors = scenario.entities
+      .filter((item) => item.kind === 'actor' && settlementActorIds.has(item.id))
+      .map((item) => item.label);
+    const journey = [
+      {
+        label: '谁委托 / 申报',
+        title: actors.join(' · '),
+        detail: '签署业务目标、验收谓词、授权范围与责任边界',
+      },
+      {
+        label: '谁取证',
+        title: facts.join(' · '),
+        detail: '分别出具来源、主体、时间和完整性可验证的业务事实',
+      },
+      {
+        label: '谁控制',
+        title: controls.join(' · ') || '零信任策略与人工审批',
+        detail: '限制数据与工具权限，对异常调用执行审批或阻断',
+      },
+      {
+        label: '谁执行',
+        title: 'ACVM 内的可信验证 Agent',
+        detail: scenario.predicate,
+      },
+      {
+        label: '谁证明 / 结算',
+        title: [...proofs, ...settlementActors].join(' · '),
+        detail: scenario.finality,
+      },
+    ];
+    const journeyIcons = ['fingerprint', 'eye', 'shield', 'terminal', 'chain'] as const;
+
     return (
       <aside className={`universe-detail universe-detail--scenario universe-detail--${scenario.industry}`}>
         <header>
-          <span>{scenario.index} · {industryMeta[scenario.industry].english}</span>
-          <small>{patternMeta[scenario.pattern].code} · {patternMeta[scenario.pattern].label}</small>
+          <div>
+            <span>{scenario.index} · {industryMeta[scenario.industry].english}</span>
+            <small>{patternMeta[scenario.pattern].code} · {patternMeta[scenario.pattern].label}</small>
+          </div>
           <h3>{scenario.title}</h3>
           <p>{scenario.thesis}</p>
         </header>
 
-        <div className="scenario-business-layout">
-          <ExpandedScenarioGraph scenario={scenario} />
-
-          <div className="scenario-business-contract">
-            <section className="scenario-proof-contract">
-              <small>ACVM ACCEPTANCE PREDICATE</small>
-              <strong>{scenario.predicate}</strong>
+        <div className="scenario-verification-journey" aria-label={`${scenario.title}端到端验证流程`}>
+          {journey.map((step, index) => (
+            <section
+              key={step.label}
+              style={{ '--journey-index': index } as React.CSSProperties}
+            >
+              <i><Icon name={journeyIcons[index]} /></i>
+              <span>
+                <small>{String(index + 1).padStart(2, '0')} · {step.label}</small>
+                <strong>{step.title}</strong>
+                <p>{step.detail}</p>
+              </span>
             </section>
-
-            <div className="scenario-role-summary">
-              <section><small>责任主体</small><strong>{actors.join(' · ')}</strong></section>
-              <section><small>事实来源</small><strong>{facts.join(' · ')}</strong></section>
-              <section><small>安全与计算</small><strong>{controls.join(' · ')}</strong></section>
-              <section><small>链上确认</small><strong>{proofs.join(' · ')}</strong></section>
-            </div>
-
-            <footer>
-              <span><Icon name="chain" /> {scenario.finality}</span>
-              <div>{scenario.terms.map((term) => <TechTerm term={term} key={term} />)}</div>
-            </footer>
-          </div>
+          ))}
         </div>
+
+        <footer className="scenario-detail-footer">
+          <span><i /> VERIFIED FINALITY</span>
+          <div>{scenario.terms.map((term) => <TechTerm term={term} key={term} />)}</div>
+        </footer>
       </aside>
     );
   }
@@ -1090,9 +1180,12 @@ export function ScenarioPatterns() {
   const [selectedId, setSelectedId] = useState('scenario-ads');
   const [locked, setLocked] = useState(true);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [rotation, setRotation] = useState({ x: -0.08, y: 0.14 });
+  const [rotation, setRotation] = useState<UniverseRotation>({ x: -0.22, y: 0.42 });
+  const [graphVisible, setGraphVisible] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ x: number; y: number; rx: number; ry: number } | null>(null);
+  const draggedRef = useRef(false);
   const focusId = hoveredId ?? (locked ? selectedId : null);
   const detailId = locked ? selectedId : hoveredId ?? selectedId;
 
@@ -1108,6 +1201,38 @@ export function ScenarioPatterns() {
     window.addEventListener('resize', centerMobileGraph);
     return () => window.removeEventListener('resize', centerMobileGraph);
   }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => setGraphVisible(entry.isIntersecting),
+      { threshold: 0.18 },
+    );
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (
+      !graphVisible
+      || hoveredId
+      || window.matchMedia('(max-width: 960px)').matches
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) return undefined;
+
+    let frame = 0;
+    let previous = 0;
+    const rotate = (time: number) => {
+      if (time - previous >= 42 && !dragRef.current) {
+        previous = time;
+        setRotation((current) => ({ ...current, y: current.y + 0.0018 }));
+      }
+      frame = window.requestAnimationFrame(rotate);
+    };
+    frame = window.requestAnimationFrame(rotate);
+    return () => window.cancelAnimationFrame(frame);
+  }, [graphVisible, hoveredId]);
 
   const adjacency = useMemo(() => {
     const map = new Map(universeNodes.map((node) => [node.id, new Set<string>()]));
@@ -1128,32 +1253,34 @@ export function ScenarioPatterns() {
   }, []);
 
   const projected = useMemo<ProjectedUniverseNode[]>(() => {
-    const cosY = Math.cos(rotation.y);
-    const sinY = Math.sin(rotation.y);
-    const cosX = Math.cos(rotation.x);
-    const sinX = Math.sin(rotation.x);
-
     return universeNodes.map((node) => {
-      if (node.kind === 'core') return { ...node, px: 380, py: 206, depth: 0.35, scale: 1.14 };
-      const angle = node.angle ?? 0;
-      const ring = node.ring ?? 1;
-      const x = Math.cos(angle) * ring;
-      const y = Math.sin(angle) * ring * 0.64;
-      const z = node.z ?? Math.sin(angle * 2) * 0.35;
-      const x1 = x * cosY + z * sinY;
-      const z1 = -x * sinY + z * cosY;
-      const y1 = y * cosX - z1 * sinX;
-      const z2 = y * sinX + z1 * cosX;
-      const perspective = 1 / (1 - z2 * 0.16);
+      const point = projectUniversePoint(node.position, rotation);
+      const normalizedDepth = Math.max(0, Math.min(1, (point.depth + 1.15) / 2.3));
       return {
         ...node,
-        px: 380 + x1 * 316 * perspective,
-        py: 206 + y1 * 205 * perspective,
-        depth: z2,
-        scale: 0.91 + (z2 + 0.8) * 0.095,
+        px: point.x,
+        py: point.y,
+        depth: point.depth,
+        scale: node.kind === 'core' ? 1.2 : 0.84 + normalizedDepth * 0.4,
+        opacity: node.kind === 'core' ? 1 : 0.64 + normalizedDepth * 0.36,
       };
     });
   }, [rotation]);
+
+  const orbitPaths = useMemo(() => [
+    universeOrbitPath(rotation, 'equator'),
+    universeOrbitPath(rotation, 'vertical'),
+    universeOrbitPath(rotation, 'tilted'),
+  ], [rotation]);
+
+  const axes = useMemo(() => ([
+    [[-1.12, 0, 0], [1.12, 0, 0]],
+    [[0, -1.02, 0], [0, 1.02, 0]],
+    [[0, 0, -1.08], [0, 0, 1.08]],
+  ] as const).map(([start, end]) => ({
+    start: projectUniversePoint(start, rotation),
+    end: projectUniversePoint(end, rotation),
+  })), [rotation]);
 
   const byId = useMemo(() => new Map(projected.map((node) => [node.id, node])), [projected]);
   const neighbours = focusId ? adjacency.get(focusId) ?? new Set<string>() : new Set<string>();
@@ -1168,28 +1295,35 @@ export function ScenarioPatterns() {
   return (
     <div className="scenario-universe">
       <div className="scenario-universe-meta">
-        <span><i className="universe-shape universe-shape--core" />ACVM</span>
-        <span><i className="universe-shape universe-shape--pattern" />合约机制</span>
-        <span><i className="universe-shape universe-shape--industry" />行业</span>
-        <span><i className="universe-shape universe-shape--scenario" />业务场景</span>
-        <strong>12 个业务场景 · 5 个行业 · 4 类合约机制</strong>
+        <div>
+          <span><i className="universe-shape universe-shape--core" />ACVM</span>
+          <span><i className="universe-shape universe-shape--pattern" />合约机制</span>
+          <span><i className="universe-shape universe-shape--industry" />行业</span>
+          <span><i className="universe-shape universe-shape--scenario" />业务场景</span>
+        </div>
+        <strong><i /> 3D SPACE · 12 SCENARIOS</strong>
       </div>
 
       <div className={`scenario-universe-layout ${scenarioFocused ? 'is-scenario-focused' : ''}`}>
-        <div className="scenario-universe-canvas" ref={canvasRef}>
+        <div className={`scenario-universe-canvas ${dragging ? 'is-dragging' : ''}`} ref={canvasRef}>
           <svg
             viewBox="0 0 760 414"
             role="img"
-            aria-label="ACVM 行业与业务场景本体图谱"
+            aria-label="可旋转的 ACVM 行业与业务场景三维图谱"
             onPointerDown={(event) => {
               if ((event.target as Element).closest('.universe-node')) return;
               if (window.matchMedia('(max-width: 960px)').matches) return;
               dragRef.current = { x: event.clientX, y: event.clientY, rx: rotation.x, ry: rotation.y };
+              draggedRef.current = false;
+              setDragging(true);
               event.currentTarget.setPointerCapture(event.pointerId);
             }}
             onPointerMove={(event) => {
               const drag = dragRef.current;
               if (!drag) return;
+              if (Math.abs(event.clientX - drag.x) + Math.abs(event.clientY - drag.y) > 5) {
+                draggedRef.current = true;
+              }
               setRotation({
                 x: Math.max(-0.48, Math.min(0.48, drag.rx - (event.clientY - drag.y) * 0.003)),
                 y: drag.ry + (event.clientX - drag.x) * 0.004,
@@ -1197,25 +1331,55 @@ export function ScenarioPatterns() {
             }}
             onPointerUp={(event) => {
               dragRef.current = null;
+              setDragging(false);
               if (event.currentTarget.hasPointerCapture(event.pointerId)) {
                 event.currentTarget.releasePointerCapture(event.pointerId);
               }
             }}
             onPointerCancel={() => {
               dragRef.current = null;
+              setDragging(false);
             }}
             onPointerLeave={() => {
               dragRef.current = null;
+              setDragging(false);
               setHoveredId(null);
             }}
             onClick={() => {
+              if (draggedRef.current) {
+                draggedRef.current = false;
+                return;
+              }
               setLocked(false);
               setSelectedId('acvm-root');
             }}
           >
-            <ellipse className="universe-orbit universe-orbit--outer" cx="380" cy="206" rx="326" ry="181" />
-            <ellipse className="universe-orbit universe-orbit--middle" cx="380" cy="206" rx="189" ry="108" />
-            <ellipse className="universe-orbit universe-orbit--inner" cx="380" cy="206" rx="106" ry="61" />
+            <defs>
+              <radialGradient id="universe-core-glow">
+                <stop offset="0" stopColor="#69d8e8" stopOpacity=".2" />
+                <stop offset=".5" stopColor="#5f72ff" stopOpacity=".08" />
+                <stop offset="1" stopColor="#050812" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+
+            <ellipse className="universe-ground" cx="380" cy="354" rx="238" ry="29" />
+            <circle className="universe-volume" cx="380" cy="206" r="176" />
+
+            <g className="universe-axes" aria-hidden="true">
+              {axes.map((axis, index) => (
+                <line
+                  key={index}
+                  x1={axis.start.x}
+                  y1={axis.start.y}
+                  x2={axis.end.x}
+                  y2={axis.end.y}
+                />
+              ))}
+            </g>
+
+            <g className="universe-orbits-3d" aria-hidden="true">
+              {orbitPaths.map((path, index) => <path d={path} key={index} />)}
+            </g>
 
             <g className="universe-edges">
               {universeEdges.map((edge) => {
@@ -1224,6 +1388,8 @@ export function ScenarioPatterns() {
                 if (!source || !target) return null;
                 const connected = Boolean(focusId) && (edge.source === focusId || edge.target === focusId);
                 const dimmed = Boolean(focusId) && !connected;
+                const depth = (source.depth + target.depth) / 2;
+                const opacity = Math.max(.12, Math.min(.58, .25 + (depth + 1) * .16));
                 return (
                   <line
                     key={`${edge.source}-${edge.target}`}
@@ -1232,6 +1398,7 @@ export function ScenarioPatterns() {
                     y1={source.py}
                     x2={target.px}
                     y2={target.py}
+                    style={{ '--edge-opacity': opacity } as React.CSSProperties}
                   />
                 );
               })}
@@ -1252,7 +1419,19 @@ export function ScenarioPatterns() {
                       ? 11
                       : 9.5;
                 const scaledRadius = radius * node.scale;
-                const labelY = node.py + scaledRadius + (node.kind === 'scenario' ? 12 : 11);
+                const labelAtLeft = node.px < 205;
+                const labelAtRight = node.px > 555;
+                const labelX = labelAtLeft
+                  ? node.px - scaledRadius - 8
+                  : labelAtRight
+                    ? node.px + scaledRadius + 8
+                    : node.px;
+                const labelY = labelAtLeft || labelAtRight
+                  ? node.py + 3
+                  : node.py < 206
+                    ? node.py - scaledRadius - 8
+                    : node.py + scaledRadius + (node.kind === 'scenario' ? 12 : 11);
+                const labelAnchor = labelAtLeft ? 'end' : labelAtRight ? 'start' : 'middle';
                 return (
                   <g
                     key={node.id}
@@ -1280,7 +1459,11 @@ export function ScenarioPatterns() {
                         selectNode(node.id);
                       }
                     }}
-                    style={{ '--node-scale': node.scale } as React.CSSProperties}
+                    style={{
+                      '--node-scale': node.scale,
+                      '--node-opacity': node.opacity,
+                      '--node-depth': node.depth,
+                    } as React.CSSProperties}
                   >
                     {node.kind === 'scenario' && node.scenario ? (
                       <g transform={`translate(${node.px} ${node.py}) scale(${node.scale})`}>
@@ -1314,7 +1497,7 @@ export function ScenarioPatterns() {
                       </>
                     )}
                     {node.kind !== 'core' && (
-                      <text className="universe-node-label" x={node.px} y={labelY} textAnchor="middle">
+                      <text className="universe-node-label" x={labelX} y={labelY} textAnchor={labelAnchor}>
                         {node.kind === 'pattern' && node.pattern ? patternMeta[node.pattern].label : node.label}
                       </text>
                     )}
@@ -1323,8 +1506,8 @@ export function ScenarioPatterns() {
               })}
             </g>
 
-            <text className="universe-axis-label" x="14" y="20">ACVM BUSINESS ONTOLOGY</text>
-            <text className="universe-axis-label" x="746" y="20" textAnchor="end">IDENTITY · FACT · CONTROL · PROOF · FINALITY</text>
+            <text className="universe-axis-label" x="16" y="22">ACVM VERIFICATION SPACE / XYZ</text>
+            <text className="universe-axis-label" x="744" y="22" textAnchor="end">IDENTITY · EVIDENCE · POLICY · PROOF · FINALITY</text>
           </svg>
         </div>
 
