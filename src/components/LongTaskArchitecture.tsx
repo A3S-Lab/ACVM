@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Icon, type IconName } from './Icons';
 import { TechTerm, type TechKey } from './TechTerm';
 
@@ -65,33 +64,22 @@ const checkpoints = [
 ] as const;
 
 export function LongTaskArchitecture() {
-  const [stage, setStage] = useState(0);
-  const current = stages[stage];
-
   return (
-    <div className="long-task-architecture">
-      <div className="long-task-timeline" style={{ '--proof-progress': `${stage * 33.333}%` } as React.CSSProperties}>
+    <div className="long-task-architecture long-task-architecture--expanded">
+      <div className="long-task-timeline" style={{ '--proof-progress': '100%' } as React.CSSProperties}>
         <header>
           <span>PROJECT ED-37 · 180 DAYS</span>
           <strong>科研项目第二阶段里程碑</strong>
           <small>任务运行时间不受单个区块限制</small>
         </header>
         <div>
-          {checkpoints.map(([month, label, root], index) => {
-            const checkpointStage = Math.min(3, Math.floor(index / 2));
-            return (
-              <button
-                type="button"
-                key={month}
-                className={checkpointStage < stage ? 'is-done' : checkpointStage === stage ? 'is-active' : ''}
-                onClick={() => setStage(checkpointStage)}
-              >
-                <span>{checkpointStage < stage ? <Icon name="check" /> : month}</span>
-                <strong>{label}</strong>
-                <small>{root}</small>
-              </button>
-            );
-          })}
+          {checkpoints.map(([month, label, root]) => (
+            <section className="long-task-checkpoint is-done" key={month}>
+              <span><Icon name="check" /></span>
+              <strong>{label}</strong>
+              <small>{month} · {root}</small>
+            </section>
+          ))}
         </div>
         <footer>
           <code>Cᵢ = H(Cᵢ₋₁, eventᵢ, receiptᵢ) · πᵢ = Fold(πᵢ₋₁, Δᵢ)</code>
@@ -99,38 +87,25 @@ export function LongTaskArchitecture() {
         </footer>
       </div>
 
-      <div className="proof-stage-layout">
-        <nav aria-label="长期任务证明步骤">
-          {stages.map((item, index) => (
-            <button
-              type="button"
-              key={item.code}
-              className={stage === index ? 'is-active' : ''}
-              onClick={() => setStage(index)}
-              aria-current={stage === index ? 'step' : undefined}
-            >
+      <div className="proof-stage-grid" aria-label="长期任务证明的四个连续阶段">
+        {stages.map((item) => (
+          <article className="proof-stage-card" key={item.code}>
+            <header>
               <span>{item.code}</span>
               <Icon name={item.icon} />
-              <strong>{item.label}</strong>
-            </button>
-          ))}
-        </nav>
-
-        <section className="proof-stage-detail" aria-live="polite">
-          <div><span>{current.code}</span><Icon name={current.icon} /></div>
-          <article>
-            <small>{current.label}</small>
-            <h3>{current.title}</h3>
-            <p>{current.body}</p>
+              <small>{item.label}</small>
+            </header>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
             <div className="tech-term-row">
-              {current.terms.map((term) => <TechTerm term={term} key={term} />)}
+              {item.terms.map((term) => <TechTerm term={term} key={term} />)}
             </div>
+            <footer>
+              <div><Icon name="lock" /><span><small>PRIVATE</small><strong>{item.privateData}</strong></span></div>
+              <div><Icon name="eye" /><span><small>PUBLIC</small><strong>{item.publicData}</strong></span></div>
+            </footer>
           </article>
-          <aside>
-            <div><Icon name="lock" /><span><small>PRIVATE WITNESS</small><strong>{current.privateData}</strong></span></div>
-            <div><Icon name="eye" /><span><small>PUBLIC INPUT / OUTPUT</small><strong>{current.publicData}</strong></span></div>
-          </aside>
-        </section>
+        ))}
       </div>
 
       <div className="proof-equation">

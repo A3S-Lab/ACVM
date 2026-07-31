@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Icon, type IconName } from './Icons';
 import { TechTerm, type TechKey } from './TechTerm';
 
@@ -66,12 +65,9 @@ const runtimeNodes: RuntimeNode[] = [
   },
 ];
 
-function RuntimeView() {
-  const [selected, setSelected] = useState(0);
-  const current = runtimeNodes[selected];
-
+export function AcvmRuntimeArchitecture() {
   return (
-    <div className="acvm-runtime-view">
+    <div className="acvm-runtime-view acvm-runtime-view--expanded">
       <div className="contract-package">
         <header><span>AGENTIC CONTRACT PACKAGE</span><strong>发布一次，责任和规则同时固定</strong></header>
         <div>
@@ -84,37 +80,30 @@ function RuntimeView() {
 
       <div className="architecture-downlink"><i /><span>LOAD SIGNED PACKAGE</span><i /></div>
 
-      <div className="runtime-kernel">
+      <div className="runtime-kernel runtime-kernel--expanded">
         <header>
           <span><i /> ACVM RUNTIME</span>
-          <strong>事件驱动、可暂停、可恢复、可证明</strong>
+          <strong>事件驱动 · 可暂停 · 可恢复 · 可证明</strong>
         </header>
-        <div className="runtime-node-row">
-          {runtimeNodes.map((node, index) => (
-            <button
-              type="button"
-              key={node.code}
-              className={selected === index ? 'is-active' : ''}
-              onClick={() => setSelected(index)}
-              aria-current={selected === index ? 'step' : undefined}
-            >
-              <span>{node.code}</span>
-              <Icon name={node.icon} />
-              <strong>{node.name}</strong>
-            </button>
+        <div className="runtime-node-grid">
+          {runtimeNodes.map((node) => (
+            <section className="runtime-node-card" key={node.code}>
+              <header>
+                <span>{node.code}</span>
+                <Icon name={node.icon} />
+                <strong>{node.name}</strong>
+              </header>
+              <p>{node.inside}</p>
+              <div className="runtime-node-io">
+                <span><small>INPUT</small><strong>{node.input}</strong></span>
+                <span><small>OUTPUT</small><strong>{node.output}</strong></span>
+              </div>
+              <div className="tech-term-row">
+                {node.terms.map((term) => <TechTerm term={term} key={term} />)}
+              </div>
+              <footer><Icon name="lock" /><span>{node.boundary}</span></footer>
+            </section>
           ))}
-        </div>
-        <div className="runtime-node-detail" aria-live="polite">
-          <div><small>INPUT</small><strong>{current.input}</strong></div>
-          <div className="is-main">
-            <small>INSIDE</small>
-            <p>{current.inside}</p>
-            <div className="tech-term-row">
-              {current.terms.map((term) => <TechTerm term={term} key={term} />)}
-            </div>
-          </div>
-          <div><small>OUTPUT</small><strong>{current.output}</strong></div>
-          <aside><Icon name="lock" /><span><small>职责边界</small>{current.boundary}</span></aside>
         </div>
       </div>
 
@@ -165,7 +154,7 @@ const identityLinks = [
   },
 ];
 
-function IdentityView() {
+export function IdentityArchitecture() {
   return (
     <div className="identity-architecture">
       <div className="identity-chain">
@@ -296,7 +285,7 @@ function ProtocolTopology({
   );
 }
 
-function OffchainView() {
+export function OffchainArchitecture() {
   const oracleNodes: TopologyNode[] = [
     { label: '企业 API' },
     { label: 'IoT 设备' },
@@ -333,7 +322,7 @@ function OffchainView() {
       <header className="offchain-protocol-head">
         <span><i /> TRUSTED OFF-CHAIN COMPUTE PROTOCOL</span>
         <strong>链上负责触发与终局，ACVM 负责可信链下执行。</strong>
-        <small>虚线术语可悬停 · 原始数据与模型不进入联盟链</small>
+        <small>原始数据与模型留在企业隐私域</small>
       </header>
 
       <div className="protocol-topology-row">
@@ -400,27 +389,6 @@ function OffchainView() {
         <i>≠</i>
         <span><Icon name="chain" /><strong>联盟链 / Ledger</strong>验证证明并确认业务终局</span>
       </footer>
-    </div>
-  );
-}
-
-export function AcvmArchitecture() {
-  const [view, setView] = useState<'runtime' | 'identity' | 'offchain'>('runtime');
-
-  return (
-    <div className="acvm-architecture">
-      <div className="architecture-tabs" role="tablist" aria-label="ACVM 架构视图">
-        <button type="button" role="tab" aria-selected={view === 'runtime'} className={view === 'runtime' ? 'is-active' : ''} onClick={() => setView('runtime')}>
-          <Icon name="terminal" /> 执行内核
-        </button>
-        <button type="button" role="tab" aria-selected={view === 'identity'} className={view === 'identity' ? 'is-active' : ''} onClick={() => setView('identity')}>
-          <Icon name="fingerprint" /> 身份与能力证明
-        </button>
-        <button type="button" role="tab" aria-selected={view === 'offchain'} className={view === 'offchain' ? 'is-active' : ''} onClick={() => setView('offchain')}>
-          <Icon name="chain" /> 链下计算与预言机
-        </button>
-      </div>
-      {view === 'runtime' ? <RuntimeView /> : view === 'identity' ? <IdentityView /> : <OffchainView />}
     </div>
   );
 }

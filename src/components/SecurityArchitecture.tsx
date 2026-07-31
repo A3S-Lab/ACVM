@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Icon, type IconName } from './Icons';
 
 type ModuleKey = 'box' | 'power' | 'sentry';
@@ -182,53 +181,61 @@ function SentryDiagram() {
   );
 }
 
-export function SecurityArchitecture() {
-  const [selected, setSelected] = useState<ModuleKey>('box');
-  const current = modules.find((module) => module.key === selected)!;
+function ResponsibilityLedger({ active }: { active: ModuleKey }) {
+  return (
+    <div className="responsibility-ledger" aria-label="A3S 各模块状态所有权">
+      <span><small>ACVM</small><strong>合约状态</strong></span>
+      <i>≠</i>
+      <span className={active === 'box' ? 'is-active' : ''}><small>a3s-box</small><strong>工作负载状态</strong></span>
+      <i>≠</i>
+      <span className={active === 'power' ? 'is-active' : ''}><small>a3s-power</small><strong>模型与推理状态</strong></span>
+      <i>≠</i>
+      <span className={active === 'sentry' ? 'is-active' : ''}><small>AnySentry</small><strong>风险与事件状态</strong></span>
+      <i>≠</i>
+      <span><small>联盟链</small><strong>共识终局状态</strong></span>
+    </div>
+  );
+}
+
+function ModuleContract({ module }: { module: (typeof modules)[number] }) {
+  return (
+    <aside className="module-contract">
+      <header><Icon name={module.icon} /><span><small>{module.name}</small><strong>{module.owns}</strong></span></header>
+      <div><small>INPUT</small><p>{module.input}</p></div>
+      <div><small>OUTPUT</small><p>{module.output}</p></div>
+      <footer><small>NOT RESPONSIBLE FOR</small><p>{module.boundary}</p></footer>
+    </aside>
+  );
+}
+
+function SecurityFeature({
+  moduleKey,
+  children,
+}: {
+  moduleKey: ModuleKey;
+  children: React.ReactNode;
+}) {
+  const module = modules.find((item) => item.key === moduleKey)!;
 
   return (
-    <div className={`security-architecture security-architecture--${selected}`}>
-      <div className="responsibility-ledger" aria-label="A3S 各模块状态所有权">
-        <span><small>ACVM</small><strong>合约状态</strong></span>
-        <i>≠</i>
-        <span><small>a3s-box</small><strong>工作负载状态</strong></span>
-        <i>≠</i>
-        <span><small>a3s-power</small><strong>模型与推理状态</strong></span>
-        <i>≠</i>
-        <span><small>AnySentry</small><strong>风险与事件状态</strong></span>
-        <i>≠</i>
-        <span><small>联盟链</small><strong>共识终局状态</strong></span>
-      </div>
-
-      <div className="security-workbench">
-        <aside className="module-tabs" role="tablist" aria-label="选择 A3S 子项目架构">
-          {modules.map((module) => (
-            <button
-              type="button"
-              role="tab"
-              aria-selected={selected === module.key}
-              className={selected === module.key ? 'is-active' : ''}
-              key={module.key}
-              onClick={() => setSelected(module.key)}
-            >
-              <Icon name={module.icon} />
-              <span><strong>{module.name}</strong><small>{module.subtitle}</small></span>
-              <Icon name="arrow" />
-            </button>
-          ))}
-        </aside>
-
-        <section className="module-canvas">
-          {selected === 'box' ? <BoxDiagram /> : selected === 'power' ? <PowerDiagram /> : <SentryDiagram />}
-        </section>
-
-        <aside className="module-contract" aria-live="polite">
-          <header><Icon name={current.icon} /><span><small>{current.name}</small><strong>{current.owns}</strong></span></header>
-          <div><small>INPUT</small><p>{current.input}</p></div>
-          <div><small>OUTPUT</small><p>{current.output}</p></div>
-          <footer><small>NOT RESPONSIBLE FOR</small><p>{current.boundary}</p></footer>
-        </aside>
+    <div className={`security-architecture security-feature security-feature--${moduleKey}`}>
+      <ResponsibilityLedger active={moduleKey} />
+      <div className="security-feature-layout">
+        <section className="module-canvas">{children}</section>
+        <ModuleContract module={module} />
       </div>
     </div>
   );
+}
+
+export function A3sBoxArchitecture() {
+  return <SecurityFeature moduleKey="box"><BoxDiagram /></SecurityFeature>;
+}
+
+export function A3sPowerArchitecture() {
+  return <SecurityFeature moduleKey="power"><PowerDiagram /></SecurityFeature>;
+}
+
+export function AnySentryArchitecture() {
+  return <SecurityFeature moduleKey="sentry"><SentryDiagram /></SecurityFeature>;
 }

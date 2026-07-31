@@ -1,20 +1,42 @@
 import { useEffect, useState } from 'react';
-import { AcvmArchitecture } from './components/AcvmArchitecture';
+import {
+  AcvmRuntimeArchitecture,
+  IdentityArchitecture,
+  OffchainArchitecture,
+} from './components/AcvmArchitecture';
 import { ChainArchitecture } from './components/ChainArchitecture';
 import { Icon, LogoMark } from './components/Icons';
 import { LongTaskArchitecture } from './components/LongTaskArchitecture';
-import { SecurityArchitecture } from './components/SecurityArchitecture';
-import { StoryGallery } from './components/SimpleStory';
+import {
+  A3sBoxArchitecture,
+  A3sPowerArchitecture,
+  AnySentryArchitecture,
+} from './components/SecurityArchitecture';
+import { ScenarioPatterns } from './components/SimpleStory';
 
 const githubUrl = 'https://github.com/A3S-Lab/ACVM';
 
 const screens = [
   ['top', 'ACVM'],
-  ['runtime', '执行与身份'],
-  ['security', '安全与隐私'],
-  ['proof', '长期任务'],
+  ['runtime', '执行内核'],
+  ['identity', '身份与能力'],
+  ['offchain', '可信链下计算'],
+  ['box', 'a3s-box'],
+  ['power', 'a3s-power'],
+  ['sentry', 'AnySentry'],
+  ['proof', '长期证明'],
   ['chains', '多链部署'],
-  ['stories', '行业场景'],
+  ['stories', '场景模式'],
+] as const;
+
+const navigation = [
+  { id: 'runtime', label: '执行内核', screens: ['runtime'] },
+  { id: 'identity', label: '可信身份', screens: ['identity'] },
+  { id: 'offchain', label: '可信计算', screens: ['offchain'] },
+  { id: 'box', label: 'A3S 安全', screens: ['box', 'power', 'sentry'] },
+  { id: 'proof', label: '长期证明', screens: ['proof'] },
+  { id: 'chains', label: '多链部署', screens: ['chains'] },
+  { id: 'stories', label: '场景模式', screens: ['stories'] },
 ] as const;
 
 function SectionHeading({
@@ -34,6 +56,35 @@ function SectionHeading({
       <h2>{title}<br /><em>{accent}</em></h2>
       <p>{body}</p>
     </header>
+  );
+}
+
+function TechnicalSlide({
+  id,
+  index,
+  className,
+  eyebrow,
+  title,
+  accent,
+  body,
+  children,
+}: {
+  id: string;
+  index: number;
+  className: string;
+  eyebrow: string;
+  title: string;
+  accent: string;
+  body: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className={`screen presentation-screen ${className}`} id={id} data-screen={index}>
+      <div className="screen-inner technical-layout presentation-layout">
+        <SectionHeading eyebrow={eyebrow} title={title} accent={accent} body={body} />
+        {children}
+      </div>
+    </section>
   );
 }
 
@@ -105,6 +156,7 @@ function HeroArchitecture() {
 export function App() {
   const [activeScreen, setActiveScreen] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const activeId = screens[activeScreen]?.[0] ?? 'top';
 
   useEffect(() => {
     const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-screen]'));
@@ -165,15 +217,15 @@ export function App() {
         </button>
 
         <nav className={menuOpen ? 'is-open' : ''} aria-label="主要导航">
-          {screens.slice(1).map(([id, label], index) => (
+          {navigation.map((item) => (
             <a
-              href={`#${id}`}
-              key={id}
-              className={activeScreen === index + 1 ? 'is-active' : ''}
-              aria-current={activeScreen === index + 1 ? 'page' : undefined}
+              href={`#${item.id}`}
+              key={item.id}
+              className={item.screens.some((screen) => screen === activeId) ? 'is-active' : ''}
+              aria-current={item.screens.some((screen) => screen === activeId) ? 'page' : undefined}
               onClick={() => setMenuOpen(false)}
             >
-              {label}
+              {item.label}
             </a>
           ))}
         </nav>
@@ -227,55 +279,113 @@ export function App() {
           </div>
         </section>
 
-        <section className="screen architecture-screen" id="runtime" data-screen="1">
-          <div className="screen-inner technical-layout">
-            <SectionHeading
-              eyebrow="ACVM ARCHITECTURE"
-              title="为 Agentic Contract 定义可信执行语义，"
-              accent="保留区块链的共识与账本。"
-              body="ACVM 把链上触发、企业数据预言机、链下计算、隐私推理、零知识证明与联盟链终局组织成一套带身份和策略边界的执行协议。"
-            />
-            <AcvmArchitecture />
-          </div>
-        </section>
+        <TechnicalSlide
+          id="runtime"
+          index={1}
+          className="architecture-screen runtime-screen"
+          eyebrow="01 / 09 · ACVM EXECUTION KERNEL"
+          title="Agentic Contract 进入 ACVM，"
+          accent="由五个内核职责推进状态。"
+          body="加载器固定合约实例，状态机管理长期执行，工具桥接器连接企业能力，策略执行器落实风险决定，凭证构造器生成链上可验证结果。"
+        >
+          <AcvmRuntimeArchitecture />
+        </TechnicalSlide>
 
-        <section className="screen security-screen" id="security" data-screen="2">
-          <div className="screen-inner technical-layout">
-            <SectionHeading
-              eyebrow="A3S PRIVACY & SECURITY STACK"
-              title="四个系统，四种状态，"
-              accent="各自架构，不可混用。"
-              body="ACVM 推进合约；a3s-box 管工作负载隔离；a3s-power 管可证明推理；AnySentry 管安全证据与风险决定。各自的输入、内部结构、输出和边界都不同。"
-            />
-            <SecurityArchitecture />
-          </div>
-        </section>
+        <TechnicalSlide
+          id="identity"
+          index={2}
+          className="architecture-screen identity-screen"
+          eyebrow="02 / 09 · IDENTITY & CAPABILITY"
+          title="身份从责任主体延伸到每次工具会话，"
+          accent="能力可证明、可缩小、可撤销。"
+          body="组织、Agent、合约实例和临时会话形成连续责任链。验证方获得主体、能力范围和有效期证明，企业内部凭据与能力评分保持私密。"
+        >
+          <IdentityArchitecture />
+        </TechnicalSlide>
 
-        <section className="screen proof-screen" id="proof" data-screen="3">
-          <div className="screen-inner technical-layout">
-            <SectionHeading
-              eyebrow="LONG-RUNNING TASK PROOF"
-              title="任务可以运行数月，"
-              accent="链上只验证它确实按规则完成。"
-              body="ACVM 把长期执行变成连续状态承诺，并生成零知识完成证明。联盟节点验证证明与公共输入，不读取企业文件、业务数据或完整推理轨迹。"
-            />
-            <LongTaskArchitecture />
-          </div>
-        </section>
+        <TechnicalSlide
+          id="offchain"
+          index={3}
+          className="architecture-screen offchain-screen"
+          eyebrow="03 / 09 · ORACLE & OFF-CHAIN COMPUTE"
+          title="企业事实在链外产生，"
+          accent="以可验证凭证进入合约状态。"
+          body="企业数据预言机验证来源与时效，ACVM 运行长期任务、工具调用和隐私推理，联盟链验证状态承诺、回执根与零知识证明。"
+        >
+          <OffchainArchitecture />
+        </TechnicalSlide>
 
-        <section className="screen chains-screen" id="chains" data-screen="4">
-          <div className="screen-inner technical-layout">
-            <SectionHeading
-              eyebrow="CHAIN-AGNOSTIC DEPLOYMENT"
-              title="同一套 Agentic Contract 语义，"
-              accent="进入不同联盟链的治理边界。"
-              body="ACVM 可以作为任意链的可验证协处理器，也可以成为可控联盟链的原生执行器。适配层处理身份、事件、证明与终局，不要求所有网络采用同一底层虚拟机。"
-            />
-            <ChainArchitecture />
-          </div>
-        </section>
+        <TechnicalSlide
+          id="box"
+          index={4}
+          className="security-screen box-screen"
+          eyebrow="04 / 09 · A3S-BOX"
+          title="工作负载运行在明确的隔离等级，"
+          accent="生命周期由唯一管理器持有。"
+          body="a3s-box 统一接收 SDK、CRI 与容器入口，根据硬件能力和策略选择 MicroVM 或显式 Sandbox，并生成可审计的执行租约与安全回执。"
+        >
+          <A3sBoxArchitecture />
+        </TechnicalSlide>
 
-        <StoryGallery />
+        <TechnicalSlide
+          id="power"
+          index={5}
+          className="security-screen power-screen"
+          eyebrow="05 / 09 · A3S-POWER"
+          title="模型、代码与硬件度量绑定，"
+          accent="隐私推理结果可独立验证。"
+          body="加密模型与私密 Prompt 在隔离环境中加载，推理完成后输出模型哈希、平台度量和硬件签名，原始数据与模型明文不进入联盟链。"
+        >
+          <A3sPowerArchitecture />
+        </TechnicalSlide>
+
+        <TechnicalSlide
+          id="sentry"
+          index={6}
+          className="security-screen sentry-screen"
+          eyebrow="06 / 09 · ANYSENTRY"
+          title="运行时信号形成安全证据，"
+          accent="风险决定进入强制执行边界。"
+          body="AnySentry 采集进程、工具、网络、文件与模型事件，完成规范化和分级判断；ACVM、零信任网关与内核 Guard 执行放行、审批或阻断。"
+        >
+          <AnySentryArchitecture />
+        </TechnicalSlide>
+
+        <TechnicalSlide
+          id="proof"
+          index={7}
+          className="proof-screen"
+          eyebrow="07 / 09 · LONG-RUNNING TASK PROOF"
+          title="任务可以运行数月，"
+          accent="链上验证它是否按规则完成。"
+          body="连续状态承诺记录里程碑、暂停、重试与审批，IVC 和递归零知识证明将完整执行压缩为固定大小的完成证明。"
+        >
+          <LongTaskArchitecture />
+        </TechnicalSlide>
+
+        <TechnicalSlide
+          id="chains"
+          index={8}
+          className="chains-screen"
+          eyebrow="08 / 09 · CHAIN-AGNOSTIC DEPLOYMENT"
+          title="同一套 Agentic Contract 语义，"
+          accent="进入不同联盟链的治理边界。"
+          body="链外协处理器、原生执行器与 ACVM 应用链对应不同部署条件；身份、事件、证明和终局通过统一适配 ABI 映射到 BSN、FISCO BCOS、长安链、Fabric 与企业 EVM。"
+        >
+          <ChainArchitecture />
+        </TechnicalSlide>
+
+        <TechnicalSlide
+          id="stories"
+          index={9}
+          className="stories-screen"
+          eyebrow="09 / 09 · SCENARIO ONTOLOGY"
+          title="真实业务由多方协作完成，"
+          accent="责任、事实与终局必须一致。"
+          body="广告转化由平台、独立归因与 CRM 交叉核验；工程、制造、金融和教育任务由法定事实源、零信任控制与联盟链节点共同确认。"
+        >
+          <ScenarioPatterns />
+        </TechnicalSlide>
       </main>
     </div>
   );

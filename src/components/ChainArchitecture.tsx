@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Icon } from './Icons';
 import { TechTerm } from './TechTerm';
 
@@ -55,46 +54,32 @@ const targets = [
 ] as const;
 
 export function ChainArchitecture() {
-  const [mode, setMode] = useState<DeployMode>('coprocessor');
-  const current = deploymentModes.find((item) => item.key === mode)!;
-
   return (
-    <div className="chain-architecture">
-      <div className="chain-mode-tabs" role="tablist" aria-label="ACVM 多链部署方式">
-        {deploymentModes.map((item) => (
-          <button
-            type="button"
-            role="tab"
-            key={item.key}
-            aria-selected={mode === item.key}
-            className={mode === item.key ? 'is-active' : ''}
-            onClick={() => setMode(item.key)}
-          >
-            <strong>{item.label}</strong>
-            <small>{item.fit}</small>
-          </button>
+    <div className="chain-architecture chain-architecture--expanded">
+      <div className="deployment-mode-grid">
+        {deploymentModes.map((item, modeIndex) => (
+          <article className={`deployment-mode-card deployment-mode-card--${item.key}`} key={item.key}>
+            <header>
+              <span>MODE {String(modeIndex + 1).padStart(2, '0')} · {item.label}</span>
+              <small>{item.fit}</small>
+              <h3>{item.title}</h3>
+              <p>{item.detail}</p>
+            </header>
+            <div className="deployment-path deployment-path--compact">
+              {item.path.map((node, index) => (
+                <span key={node} className={index === 1 ? 'is-acvm' : index === item.path.length - 1 ? 'is-ledger' : ''}>
+                  <i>{index === 1 ? 'AC' : index + 1}</i>
+                  <strong>{node}</strong>
+                  {index < item.path.length - 1 ? <em><Icon name="arrow" /></em> : null}
+                </span>
+              ))}
+            </div>
+            <footer>
+              <div><Icon name="bolt" /><span><small>ACVM 负责</small><strong>{item.replaces}</strong></span></div>
+              <div><Icon name="chain" /><span><small>原链保留</small><strong>{item.keeps}</strong></span></div>
+            </footer>
+          </article>
         ))}
-      </div>
-
-      <div className="chain-mode-canvas" aria-live="polite">
-        <header>
-          <span>DEPLOYMENT MODE</span>
-          <h3>{current.title}</h3>
-          <p>{current.detail}</p>
-        </header>
-        <div className="deployment-path">
-          {current.path.map((node, index) => (
-            <span key={node} className={index === 1 ? 'is-acvm' : index === current.path.length - 1 ? 'is-ledger' : ''}>
-              <i>{index === 1 ? 'AC' : index + 1}</i>
-              <strong>{node}</strong>
-              {index < current.path.length - 1 ? <em><Icon name="arrow" /></em> : null}
-            </span>
-          ))}
-        </div>
-        <footer>
-          <div><Icon name="bolt" /><span><small>ACVM 替换什么</small><strong>{current.replaces}</strong></span></div>
-          <div><Icon name="chain" /><span><small>区块链保留什么</small><strong>{current.keeps}</strong></span></div>
-        </footer>
       </div>
 
       <div className="adapter-layer">
