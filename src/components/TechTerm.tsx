@@ -17,6 +17,10 @@ export const techNotes = {
   'UCAN / ZCAP': '可委托、可缩小、可过期的能力凭证。Agent 只拿到完成当前步骤所需的最小权限。',
   'Receipt Root': '把大量执行回执组织成 Merkle Root。链上只保存一个短承诺，仍可单独验证任意一条回执。',
   'Remote Attestation': '由可信硬件签名证明：指定代码和模型确实运行在未被篡改的隔离环境中。',
+  'Proof of Intelligence': '只有为外部真实需求完成服务、结果通过质量验收且执行证据有效，才生成智能证明；单纯消耗算力或自造任务不计入贡献。',
+  zkML: '用零知识证明确认固定模型确实对承诺输入完成了指定推理，同时不公开模型参数或原始输入。',
+  VRF: '可验证随机函数。任何人都能核对抽签结果正确，但在结果公布前无法预测谁会被选中。',
+  'BFT / HotStuff': '联盟节点通过多方投票确认同一账本状态，少量节点故障或作恶时仍能给出明确终局。',
 } as const;
 
 export type TechKey = keyof typeof techNotes;
@@ -35,7 +39,7 @@ export function TechTerm({
       <span>{label ?? term}</span>
       <i aria-hidden="true">?</i>
       <span className="tech-term-tooltip" role="tooltip" id={tooltipId}>
-        <small>PLAIN-LANGUAGE NOTE</small>
+        <small>术语解释</small>
         <strong>{term}</strong>
         <p>{techNotes[term]}</p>
       </span>

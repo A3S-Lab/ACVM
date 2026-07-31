@@ -1,30 +1,29 @@
 import { useEffect, useState } from 'react';
-import {
-  AcvmRuntimeArchitecture,
-  IdentityArchitecture,
-  OffchainArchitecture,
-} from './components/AcvmArchitecture';
-import { ChainArchitecture } from './components/ChainArchitecture';
 import { Icon, LogoMark } from './components/Icons';
-import { LongTaskArchitecture } from './components/LongTaskArchitecture';
+import { ScenarioGraph } from './components/ScenarioGraph';
 import {
-  A3sBoxArchitecture,
-  A3sPowerArchitecture,
-  AnySentryArchitecture,
-} from './components/SecurityArchitecture';
-import { ScenarioPatterns } from './components/SimpleStory';
+  ChainArchitectureSimple,
+  IdentityArchitectureSimple,
+  IntelligenceProofArchitecture,
+  LongTaskArchitectureSimple,
+  OffchainArchitectureSimple,
+  PrivacyArchitecture,
+  RuntimeArchitecture,
+  SentryArchitectureSimple,
+} from './components/SimplifiedArchitecture';
+import { TechTerm, type TechKey } from './components/TechTerm';
 
 const githubUrl = 'https://github.com/A3S-Lab/ACVM';
 
 const screens = [
   ['top', 'ACVM'],
   ['runtime', '执行内核'],
-  ['identity', '身份与能力'],
-  ['offchain', '可信链下计算'],
-  ['box', 'a3s-box'],
-  ['power', 'a3s-power'],
-  ['sentry', 'AnySentry'],
+  ['identity', '身份能力'],
+  ['offchain', '链下计算'],
+  ['privacy', '隐私执行'],
+  ['sentry', '安全控制'],
   ['proof', '长期证明'],
+  ['intelligence', '智能证明'],
   ['chains', '多链部署'],
   ['stories', '验证场景'],
 ] as const;
@@ -32,9 +31,9 @@ const screens = [
 const navigation = [
   { id: 'runtime', label: '执行架构', screens: ['runtime', 'offchain'] },
   { id: 'identity', label: '身份能力', screens: ['identity'] },
-  { id: 'box', label: '隐私与安全', screens: ['box', 'power', 'sentry'] },
-  { id: 'proof', label: '证明与多链', screens: ['proof', 'chains'] },
-  { id: 'stories', label: '应用场景', screens: ['stories'] },
+  { id: 'privacy', label: '隐私与安全', screens: ['privacy', 'sentry'] },
+  { id: 'proof', label: '证明机制', screens: ['proof', 'intelligence'] },
+  { id: 'chains', label: '部署与场景', screens: ['chains', 'stories'] },
 ] as const;
 
 function SectionHeading({
@@ -42,17 +41,24 @@ function SectionHeading({
   title,
   accent,
   body,
+  terms = [],
 }: {
   eyebrow: string;
   title: string;
   accent: string;
   body: string;
+  terms?: TechKey[];
 }) {
   return (
     <header className="section-heading">
-      <span><i /> {eyebrow}</span>
+      <span className="section-eyebrow"><i /> {eyebrow}</span>
       <h2>{title}<br /><em>{accent}</em></h2>
       <p>{body}</p>
+      {terms.length > 0 ? (
+        <div className="section-terms">
+          {terms.map((term) => <TechTerm term={term} key={term} />)}
+        </div>
+      ) : null}
     </header>
   );
 }
@@ -65,6 +71,7 @@ function TechnicalSlide({
   title,
   accent,
   body,
+  terms,
   children,
 }: {
   id: string;
@@ -74,62 +81,54 @@ function TechnicalSlide({
   title: string;
   accent: string;
   body: string;
+  terms?: TechKey[];
   children: React.ReactNode;
 }) {
   return (
-    <section className={`screen presentation-screen ${className}`} id={id} data-screen={index}>
-      <div className="screen-inner technical-layout presentation-layout">
-        <SectionHeading eyebrow={eyebrow} title={title} accent={accent} body={body} />
-        {children}
+    <section className={`screen technical-screen ${className}`} id={id} data-screen={index}>
+      <div className="screen-inner technical-layout">
+        <SectionHeading eyebrow={eyebrow} title={title} accent={accent} body={body} terms={terms} />
+        <div className="technical-visual">{children}</div>
       </div>
+      <span className="screen-number" aria-hidden="true">{String(index).padStart(2, '0')}</span>
     </section>
   );
 }
 
-function HeroArchitecture() {
+function HeroConsole() {
   return (
-    <div className="hero-result-service" aria-label="ACVM 去中心化可信验证智能体运行架构">
-      <header>
-        <span aria-hidden="true"><i /><i /><i /></span>
-        <code>ACVM / 验证控制面</code>
-        <em><i /> SYSTEM READY</em>
+    <div className="hero-console" aria-label="ACVM 可信验证 Agent 执行流程">
+      <header className="panel-chrome">
+        <span><i /><i /><i /></span>
+        <code>ACVM / VERIFY RUN #00521</code>
+        <strong><i /> ACTIVE</strong>
       </header>
-
-      <div className="verification-flow">
+      <div className="hero-console-flow">
         <section>
-          <small>01</small>
+          <span>01</span>
           <Icon name="receipt" />
           <strong>验收契约</strong>
-          <p>结果声明 · 验收谓词</p>
+          <small>身份 · 规则 · 责任方</small>
         </section>
-        <i className="verification-connector"><span /><span /><span /></i>
-        <section className="is-runtime">
-          <small>02</small>
+        <i className="hero-connector"><b /></i>
+        <section className="is-acvm">
           <LogoMark />
-          <strong>多域验证 Agent</strong>
-          <p>委托方 · 独立方 · 审计方</p>
+          <strong>ACVM</strong>
+          <small>可信验证 Agent Runtime</small>
+          <div><span>IDENTITY</span><span>ORACLE</span><span>POLICY</span><span>PROOF</span></div>
         </section>
-        <i className="verification-connector"><span /><span /><span /></i>
+        <i className="hero-connector"><b /></i>
         <section>
-          <small>03</small>
+          <span>03</span>
           <Icon name="chain" />
-          <strong>证明与终局</strong>
-          <p>零知识证明 · 门限签名</p>
+          <strong>可信终局</strong>
+          <small>证明 · 共识 · 审计</small>
         </section>
       </div>
-
-      <div className="verification-telemetry">
-        <header>
-          <span>LIVE VERIFICATION</span>
-          <strong><i /> 多方核验中</strong>
-        </header>
-        <div>
-          <span><code>oracle.evidence</code><i /><strong>多源签名事实</strong></span>
-          <span><code>privacy.compute</code><i /><strong>a3s-box / power</strong></span>
-          <span><code>runtime.policy</code><i /><strong>AnySentry enforced</strong></span>
-          <span><code>proof.output</code><i /><strong>ZK + threshold finality</strong></span>
-        </div>
-      </div>
+      <footer>
+        <code>Verify(receiptRoot, proof, identityCommitment)</code>
+        <strong><Icon name="check" /> RESULT ACCEPTED</strong>
+      </footer>
     </div>
   );
 }
@@ -148,7 +147,7 @@ export function App() {
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         if (visible) setActiveScreen(Number((visible.target as HTMLElement).dataset.screen));
       },
-      { threshold: [0.25, 0.5, 0.7] },
+      { threshold: [0.35, 0.55, 0.75] },
     );
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
@@ -159,17 +158,12 @@ export function App() {
       const id = window.location.hash.slice(1);
       if (!id) return;
       window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => {
-          const target = document.getElementById(id);
-          const scroller = document.querySelector<HTMLElement>('.page-scroller');
-          if (!target || !scroller) return;
-          const screen = target.matches('[data-screen]')
-            ? target
-            : target.closest<HTMLElement>('[data-screen]');
-          if (!screen) return;
-          if (window.matchMedia('(min-width: 961px)').matches) scroller.scrollTop = screen.offsetTop;
-          else window.scrollTo(0, screen.offsetTop);
-        });
+        const target = document.getElementById(id);
+        const scroller = document.querySelector<HTMLElement>('.page-scroller');
+        const screen = target?.closest<HTMLElement>('[data-screen]') ?? (target?.matches('[data-screen]') ? target : null);
+        if (!target || !scroller || !screen) return;
+        if (window.matchMedia('(min-width: 961px)').matches) scroller.scrollTop = screen.offsetTop;
+        else target.scrollIntoView({ block: 'start' });
       });
     };
     scrollToHash();
@@ -186,34 +180,31 @@ export function App() {
     const desktop = () => window.matchMedia('(min-width: 961px)').matches;
     const goToScreen = (nextIndex: number) => {
       const bounded = Math.max(0, Math.min(screens.length - 1, nextIndex));
+      const target = document.querySelector<HTMLElement>(`[data-screen="${bounded}"]`);
+      if (!target) return;
       locked = true;
-      scroller.scrollTo({ top: bounded * scroller.clientHeight, behavior: 'smooth' });
+      scroller.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
       window.clearTimeout(unlockTimer);
-      unlockTimer = window.setTimeout(() => {
-        locked = false;
-      }, 620);
+      unlockTimer = window.setTimeout(() => { locked = false; }, 680);
     };
 
     const onWheel = (event: WheelEvent) => {
       if (!desktop() || event.ctrlKey || Math.abs(event.deltaY) < 12 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
       event.preventDefault();
       if (locked) return;
-      const current = Math.round(scroller.scrollTop / Math.max(1, scroller.clientHeight));
-      goToScreen(current + (event.deltaY > 0 ? 1 : -1));
+      goToScreen(activeScreen + (event.deltaY > 0 ? 1 : -1));
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (!desktop()) return;
       const target = event.target as HTMLElement | null;
       if (target?.matches('input, textarea, select, button, a, [contenteditable="true"]')) return;
-
-      const current = Math.round(scroller.scrollTop / Math.max(1, scroller.clientHeight));
       if (event.key === 'PageDown' || (event.key === ' ' && !event.shiftKey)) {
         event.preventDefault();
-        if (!locked) goToScreen(current + 1);
+        if (!locked) goToScreen(activeScreen + 1);
       } else if (event.key === 'PageUp' || (event.key === ' ' && event.shiftKey)) {
         event.preventDefault();
-        if (!locked) goToScreen(current - 1);
+        if (!locked) goToScreen(activeScreen - 1);
       } else if (event.key === 'Home') {
         event.preventDefault();
         goToScreen(0);
@@ -230,20 +221,18 @@ export function App() {
       document.removeEventListener('keydown', onKeyDown);
       window.clearTimeout(unlockTimer);
     };
-  }, []);
+  }, [activeScreen]);
 
   return (
-    <div className="site-shell site-shell--calm">
+    <div className="site-shell">
       <a className="skip-link" href="#top">跳到主要内容</a>
-
       <header className="site-header">
         <a className="brand" href="#top" aria-label="ACVM 首页">
           <LogoMark />
           <span><strong>ACVM</strong><small>AGENTIC CONTRACT VM</small></span>
         </a>
-
         <button
-          className="menu-toggle"
+          className={`menu-toggle ${menuOpen ? 'is-open' : ''}`}
           type="button"
           aria-label={menuOpen ? '关闭导航菜单' : '打开导航菜单'}
           aria-expanded={menuOpen}
@@ -251,157 +240,123 @@ export function App() {
         >
           <span /><span />
         </button>
-
         <nav className={menuOpen ? 'is-open' : ''} aria-label="主要导航">
-          {navigation.map((item) => (
-            <a
-              href={`#${item.id}`}
-              key={item.id}
-              className={item.screens.some((screen) => screen === activeId) ? 'is-active' : ''}
-              aria-current={item.screens.some((screen) => screen === activeId) ? 'page' : undefined}
-              onClick={() => setMenuOpen(false)}
-            >
-              {item.label}
-            </a>
-          ))}
+          {navigation.map((item) => {
+            const active = item.screens.some((screen) => screen === activeId);
+            return (
+              <a
+                href={`#${item.id}`}
+                key={item.id}
+                className={active ? 'is-active' : ''}
+                aria-current={active ? 'page' : undefined}
+                onClick={() => setMenuOpen(false)}
+              >
+                {item.label}
+              </a>
+            );
+          })}
         </nav>
-
         <a className="header-github" href={githubUrl} target="_blank" rel="noreferrer" aria-label="在 GitHub 查看 ACVM 仓库">
           <Icon name="github" /><span>GitHub</span>
         </a>
       </header>
+
       <main className="page-scroller">
         <section className="screen hero-screen" id="top" data-screen="0">
-          <div className="hero-backdrop" aria-hidden="true"><i /><i /><i /></div>
+          <div className="ambient-network" aria-hidden="true"><i /><i /><i /><i /></div>
           <div className="screen-inner hero-layout">
             <div className="hero-copy">
-              <span className="hero-eyebrow"><i /> ACVM · VERIFICATION AGENT VIRTUAL MACHINE</span>
-              <h1>结果由服务方交付。<br /><em>可信由多方验证。</em></h1>
-              <p>ACVM 运行专门验证“结果即服务”的去中心化可信验证 Agent。它们带着可追责身份，在零信任网络内向企业 API、设备和独立预言机取证；敏感数据在隐私计算环境内完成核验，证明交由联盟链共同确认。</p>
+              <span className="hero-eyebrow"><i /> OPEN · CHAIN-AGNOSTIC · VERIFIABLE</span>
+              <h1>让智能服务，<br /><em>成为可信的合约事实。</em></h1>
+              <p>ACVM 是运行“结果即服务”可信验证 Agent 的 Agentic Contract VM。它把身份、企业取证、隐私计算、安全控制与证明终局放进同一套执行语义。</p>
               <div className="hero-actions">
-                <a href="#runtime" className="button button--primary">理解验证如何运行 <Icon name="arrow" /></a>
-                <a href="#stories" className="button button--secondary">查看业务验证场景</a>
+                <a href="#runtime" className="button button--primary">理解 ACVM <Icon name="arrow" /></a>
+                <a href="#stories" className="button button--secondary">查看验证场景</a>
               </div>
             </div>
-            <HeroArchitecture />
+            <HeroConsole />
           </div>
-          <div className="hero-signal-strip" aria-label="ACVM 核心能力">
-            <div>
-              <span><Icon name="fingerprint" /><strong>验证者有身份</strong><small>DID · 能力证明 · 责任链</small></span>
-              <span><Icon name="eye" /><strong>证据来自多方</strong><small>预言机 · 企业 API · 设备</small></span>
-              <span><Icon name="receipt" /><strong>长期任务可证明</strong><small>IVC · Recursive ZK · Receipt Root</small></span>
-              <span><Icon name="chain" /><strong>结果共同确认</strong><small>门限签名 · 联盟链共识 · 审计终局</small></span>
-            </div>
-          </div>
+          <span className="hero-footnote"><i /> AGENTIC CONTRACT / IDENTITY / EVIDENCE / POLICY / PROOF / FINALITY</span>
         </section>
 
         <TechnicalSlide
-          id="runtime"
-          index={1}
-          className="architecture-screen runtime-screen"
-          eyebrow="01 / 09 · ACVM EXECUTION KERNEL"
-          title="可信验证 Agent 进入 ACVM，"
-          accent="每次核验沿可证明状态机运行。"
-          body="加载器固定验证合约、身份与验收谓词，状态机管理长期核验，工具桥接器从企业系统主动取证，策略执行器落实风险决定，凭证构造器生成链上可验证结论。"
-        >
-          <AcvmRuntimeArchitecture />
-        </TechnicalSlide>
+          id="runtime" index={1} className="runtime-screen"
+          eyebrow="01 / 09 · EXECUTION KERNEL"
+          title="Agentic Contract，"
+          accent="沿同一状态机执行到底。"
+          body="ACVM 固定身份、目标、权限与验收条件，再依次调度工具、落实策略并生成链上可验证回执。"
+          terms={['Intent-centric', 'Proof-carrying Execution']}
+        ><RuntimeArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="identity"
-          index={2}
-          className="architecture-screen identity-screen"
+          id="identity" index={2} className="identity-screen"
           eyebrow="02 / 09 · IDENTITY & CAPABILITY"
-          title="身份贯穿每次工具会话，"
-          accent="能力可证明、可缩小、可撤销。"
-          body="组织、Agent、合约实例和临时会话形成连续责任链。验证方获得主体、能力范围和有效期证明，企业内部凭据与能力评分保持私密。"
-        >
-          <IdentityArchitecture />
-        </TechnicalSlide>
+          title="Agent 身份唯一，"
+          accent="每次能力调用都可证明。"
+          body="责任主体、Agent、合约实例与临时工具会话连续绑定；验证方只看到资格结论，看不到企业内部凭据。"
+          terms={['DID / VC', 'UCAN / ZCAP', 'Selective Disclosure']}
+        ><IdentityArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="offchain"
-          index={3}
-          className="architecture-screen offchain-screen"
+          id="offchain" index={3} className="offchain-screen"
           eyebrow="03 / 09 · ORACLE & OFF-CHAIN COMPUTE"
-          title="业务结果在链外发生，"
-          accent="验证 Agent 从独立事实源主动取证。"
-          body="企业数据预言机验证来源、签名与时效，ACVM 隔离运行工具调用和隐私推理；原始数据留在企业域内，联盟链只验证状态承诺、回执根与零知识证明。"
-        >
-          <OffchainArchitecture />
-        </TechnicalSlide>
+          title="链外事实，"
+          accent="在链上形成可信终局。"
+          body="验证 Agent 经零信任网关渐进发现企业 API，从设备和独立预言机取证；原始数据留在本地，只提交承诺与证明。"
+          terms={['zkTLS / TLSNotary', 'TEE', 'Receipt Root']}
+        ><OffchainArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="box"
-          index={4}
-          className="security-screen box-screen"
-          eyebrow="04 / 09 · A3S-BOX"
-          title="工作负载运行在明确的隔离等级，"
-          accent="生命周期由唯一管理器持有。"
-          body="a3s-box 统一接收 SDK、CRI 与容器入口，根据硬件能力和策略选择 MicroVM 或显式 Sandbox，并生成可审计的执行租约与安全回执。"
-        >
-          <A3sBoxArchitecture />
-        </TechnicalSlide>
+          id="privacy" index={4} className="privacy-screen"
+          eyebrow="04 / 09 · PRIVATE EXECUTION"
+          title="a3s-box 隔离执行，"
+          accent="a3s-power 证明隐私推理。"
+          body="两者职责不同：前者管理 MicroVM 与生命周期，后者管理模型加载、推理和模型—硬件度量绑定。"
+          terms={['TEE', 'Remote Attestation', 'FHE', 'MPC']}
+        ><PrivacyArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="power"
-          index={5}
-          className="security-screen power-screen"
-          eyebrow="05 / 09 · A3S-POWER"
-          title="模型、代码与硬件度量绑定，"
-          accent="隐私推理结果可独立验证。"
-          body="加密模型与私密 Prompt 在隔离环境中加载，推理完成后输出模型哈希、平台度量和硬件签名，原始数据与模型明文不进入联盟链。"
-        >
-          <A3sPowerArchitecture />
-        </TechnicalSlide>
+          id="sentry" index={5} className="sentry-screen"
+          eyebrow="05 / 09 · ANYSENTRY"
+          title="安全信号先形成证据，"
+          accent="风险决定再进入执行边界。"
+          body="AnySentry 观测进程、工具、网络、文件和模型事件，分级判断风险；ACVM、零信任网关与内核 Guard 负责真正阻断。"
+        ><SentryArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="sentry"
-          index={6}
-          className="security-screen sentry-screen"
-          eyebrow="06 / 09 · ANYSENTRY"
-          title="运行时信号形成安全证据，"
-          accent="风险决定进入强制执行边界。"
-          body="AnySentry 采集进程、工具、网络、文件与模型事件，完成规范化和分级判断；ACVM、零信任网关与内核 Guard 执行放行、审批或阻断。"
-        >
-          <AnySentryArchitecture />
-        </TechnicalSlide>
+          id="proof" index={6} className="proof-screen"
+          eyebrow="06 / 09 · LONG-RUNNING TASK PROOF"
+          title="任务运行数月，"
+          accent="链上仍只验证一个完成证明。"
+          body="每个里程碑都继承状态根与上一步证明，暂停、重试和人工审批同样可追溯；递归证明把完整过程压缩为固定大小。"
+          terms={['IVC', 'Folding', 'Recursive ZK']}
+        ><LongTaskArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="proof"
-          index={7}
-          className="proof-screen"
-          eyebrow="07 / 09 · LONG-RUNNING TASK PROOF"
-          title="任务可以运行数月，"
-          accent="链上验证它是否按规则完成。"
-          body="连续状态承诺记录里程碑、暂停、重试与审批，IVC 和递归零知识证明将完整执行压缩为固定大小的完成证明。"
-        >
-          <LongTaskArchitecture />
-        </TechnicalSlide>
+          id="intelligence" index={7} className="intelligence-screen"
+          eyebrow="07 / 09 · PROOF OF INTELLIGENCE"
+          title="智能服务完成，"
+          accent="就是新的工作量证明。"
+          body="智能证明只承认真实用户需求、通过质量验收的结果和可验证执行证据，把无意义 Hash 竞赛替换为对用户有价值的智能服务。"
+          terms={['Proof of Intelligence', 'zkML', 'Remote Attestation', 'VRF']}
+        ><IntelligenceProofArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="chains"
-          index={8}
-          className="chains-screen"
+          id="chains" index={8} className="chains-screen"
           eyebrow="08 / 09 · CHAIN-AGNOSTIC DEPLOYMENT"
-          title="同一套 Agentic Contract 语义，"
-          accent="进入不同联盟链的治理边界。"
-          body="链外协处理器、原生执行器与 ACVM 应用链对应不同部署条件；身份、事件、证明和终局通过统一适配 ABI 映射到 BSN、FISCO BCOS、长安链、Fabric 与企业 EVM。"
-        >
-          <ChainArchitecture />
-        </TechnicalSlide>
+          title="ACVM 不替换区块链，"
+          accent="只替换复杂任务执行层。"
+          body="同一套 Agentic Contract 语义可作为链外协处理器、联盟链原生执行器或专用应用链，接入国内与企业链治理边界。"
+          terms={['Light Client', 'BFT / HotStuff', 'Receipt Root']}
+        ><ChainArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="stories"
-          index={9}
-          className="stories-screen"
-          eyebrow="09 / 09 · RESULT VERIFICATION SCENARIOS"
-          title="服务方提交业务结果，"
-          accent="验证 Agent 独立取证并共同确认。"
-          body="委托方签署验收规则，服务方申报结果，独立事实源出具证据，安全节点约束数据与工具权限，ACVM 内的验证 Agent 执行核验，再由联盟链节点共同确认业务终局。"
-        >
-          <ScenarioPatterns />
-        </TechnicalSlide>
+          id="stories" index={9} className="stories-screen"
+          eyebrow="09 / 09 · VERIFIED OUTCOME SCENARIOS"
+          title="选择场景，"
+          accent="看清每一方如何协同。"
+          body="拖拽图谱查看行业关系，点击场景即可看到委托、服务、事实取证、ACVM 验证和联盟链终局的完整流程。"
+        ><ScenarioGraph /></TechnicalSlide>
       </main>
     </div>
   );

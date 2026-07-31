@@ -3,4 +3,5 @@ dist/
 .DS_Store
 *.log
 coverage/
+.a3s-test/
 src/assets/*-keyed.png
