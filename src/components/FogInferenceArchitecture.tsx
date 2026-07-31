@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { AsciiGlobe } from './AsciiGlobe';
 import { DetailHint } from './DetailHint';
 import { Icon, type IconName } from './Icons';
 import { TechTerm } from './TechTerm';
@@ -99,7 +100,7 @@ export function FogInferenceArchitecture() {
   };
 
   return (
-    <div className={`diagram-panel fog-inference-panel fog-stage-${activeStage + 1}`} ref={panelRef}>
+    <div className={`diagram-panel fog-inference-panel fog-stage-${activeStage + 1} ${playing ? 'is-playing' : 'is-paused'}`} ref={panelRef}>
       <header className="panel-chrome">
         <span><i /><i /><i /></span>
         <code>BLOCKCHAIN FOG INFERENCE NETWORK</code>
@@ -131,18 +132,19 @@ export function FogInferenceArchitecture() {
 
       <div className="fog-network" aria-label="区块链协调的雾计算隐私推理网络动画">
         <svg viewBox="0 0 1000 330" preserveAspectRatio="none" aria-hidden="true">
-          <rect className="fog-trust-boundary" x="514" y="28" width="278" height="274" rx="22" />
-          <text className="fog-boundary-label" x="531" y="51">DISTRIBUTED FOG PRIVACY DOMAIN</text>
+          <text className="fog-boundary-label" x="531" y="42">ASCII FOG NETWORK / DISTRIBUTED PRIVACY DOMAIN</text>
           {routePaths.map((path, index) => (
             <path className={`fog-route ${activeStage === index ? 'is-active' : ''}`} d={path} key={path} />
           ))}
-          <circle className="fog-packet" r="5" key={activeStage}>
-            <animateMotion dur="1.6s" path={routePaths[activeStage]} repeatCount="indefinite" />
-          </circle>
+          {playing ? (
+            <circle className="fog-packet" r="5" key={activeStage}>
+              <animateMotion dur="1.6s" path={routePaths[activeStage]} repeatCount="indefinite" />
+            </circle>
+          ) : null}
           <path className="fog-ledger-line" d="M281 255H421M301 272H401M321 289H381" />
-          <circle className="fog-orbit" cx="652" cy="165" r="96" />
-          <path className="fog-mesh" d="M592 101 712 101 746 165 712 229 592 229 558 165ZM592 101 712 229M712 101 592 229M558 165H746" />
         </svg>
+
+        <AsciiGlobe running={playing && visible} activeStage={activeStage} />
 
         <button className={`fog-node fog-node--owner ${activeStage === 0 || activeStage === 5 ? 'is-active' : ''}`} type="button" onClick={() => selectStage(activeStage === 5 ? 5 : 0)} onMouseEnter={() => selectStage(activeStage === 5 ? 5 : 0)}>
           <Icon name="fingerprint" /><small>DATA OWNER</small><strong>数据拥有者</strong><span>明文不离开本地</span>
@@ -156,7 +158,6 @@ export function FogInferenceArchitecture() {
         <button className={`fog-node fog-node--validator ${activeStage === 3 ? 'is-active' : ''}`} type="button" onClick={() => selectStage(3)} onMouseEnter={() => selectStage(3)}>
           <Icon name="shield" /><small>FOG VALIDATORS</small><strong>独立 Validator</strong><span>证明 · 抽检 · 门限签名</span>
         </button>
-        <div className="fog-mini-nodes" aria-hidden="true"><i /><i /><i /><i /><i /></div>
       </div>
 
       <nav className="fog-stage-nav" aria-label="选择雾计算隐私推理步骤">

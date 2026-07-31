@@ -10,6 +10,10 @@ import {
 } from './components/FormalSpecArchitecture';
 import { LifecycleArchitecture } from './components/LifecycleArchitecture';
 import {
+  TechnicalBackdrop,
+  type TechnicalBackdropVariant,
+} from './components/TechnicalBackdrop';
+import {
   ChainArchitectureSimple,
   IdentityArchitectureSimple,
   IntelligenceProofArchitecture,
@@ -52,6 +56,25 @@ const navigation = [
   { id: 'chains', label: '多链部署', screens: ['chains'] },
   { id: 'stories', label: '应用网络', screens: ['stories'] },
 ] as const;
+
+const technicalBackdrops: Record<string, TechnicalBackdropVariant> = {
+  lifecycle: 'flow',
+  runtime: 'flow',
+  onchain: 'flow',
+  'spec-contract': 'state',
+  'spec-state': 'state',
+  'spec-receipt': 'state',
+  identity: 'identity',
+  offchain: 'identity',
+  privacy: 'fog',
+  fog: 'fog',
+  sentry: 'fog',
+  proof: 'proof',
+  intelligence: 'proof',
+  'spec-poi': 'proof',
+  chains: 'chains',
+  stories: 'network',
+};
 
 type MechanismComparison = {
   traditionalTitle: string;
@@ -142,6 +165,7 @@ function TechnicalSlide({
 }) {
   return (
     <section className={`screen technical-screen ${className}`} id={id} data-screen={index}>
+      <TechnicalBackdrop variant={technicalBackdrops[id] ?? 'flow'} />
       <div className="screen-inner technical-layout">
         <SectionHeading index={index} eyebrow={eyebrow} title={title} accent={accent} body={body} comparison={comparison} terms={terms} />
         <div className="technical-visual">
