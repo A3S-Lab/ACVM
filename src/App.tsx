@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
+import { FogInferenceArchitecture } from './components/FogInferenceArchitecture';
 import { Icon, LogoMark } from './components/Icons';
 import { ScenarioGraph } from './components/ScenarioGraph';
 import {
@@ -25,29 +26,30 @@ const githubUrl = 'https://github.com/A3S-Lab/ACVM';
 
 const screens = [
   ['top', 'ACVM'],
-  ['spec-state', '状态模型'],
-  ['spec-contract', '合约模型'],
-  ['spec-receipt', '回执转换'],
-  ['spec-poi', '智能证明链'],
   ['lifecycle', '完整生命周期'],
   ['runtime', '执行流程'],
   ['onchain', '链上执行'],
+  ['spec-contract', '合约模型'],
+  ['spec-state', '状态模型'],
+  ['spec-receipt', '回执转换'],
   ['identity', '身份与权限'],
   ['offchain', '链下核验'],
   ['privacy', '隐私环境'],
+  ['fog', '雾推理网络'],
   ['sentry', '风险控制'],
   ['proof', '长任务证明'],
   ['intelligence', '有效计算'],
+  ['spec-poi', '智能证明链'],
   ['chains', '链适配'],
   ['stories', '业务场景'],
 ] as const;
 
 const navigation = [
-  { id: 'spec-state', label: '技术说明', screens: ['spec-state', 'spec-contract', 'spec-receipt', 'spec-poi'] },
-  { id: 'lifecycle', label: '生命周期', screens: ['lifecycle'] },
-  { id: 'runtime', label: '执行与身份', screens: ['runtime', 'onchain', 'identity', 'offchain'] },
-  { id: 'privacy', label: '隐私与安全', screens: ['privacy', 'sentry'] },
-  { id: 'proof', label: '证明与多链', screens: ['proof', 'intelligence', 'chains'] },
+  { id: 'lifecycle', label: '工作原理', screens: ['lifecycle', 'runtime', 'onchain'] },
+  { id: 'spec-contract', label: '合约机制', screens: ['spec-contract', 'spec-state', 'spec-receipt'] },
+  { id: 'identity', label: '身份与安全', screens: ['identity', 'offchain', 'privacy', 'fog', 'sentry'] },
+  { id: 'proof', label: '证明与共识', screens: ['proof', 'intelligence', 'spec-poi'] },
+  { id: 'chains', label: '多链部署', screens: ['chains'] },
   { id: 'stories', label: '应用网络', screens: ['stories'] },
 ] as const;
 
@@ -228,6 +230,27 @@ function BlockchainBackdrop() {
   );
 }
 
+function ChapterRail({ activeScreen }: { activeScreen: number }) {
+  return (
+    <aside className="chapter-rail" aria-label="章节快速导航">
+      <header><span>CHAPTER</span><strong>{String(activeScreen).padStart(2, '0')} / {String(screens.length - 1).padStart(2, '0')}</strong></header>
+      <nav>
+        {screens.map(([id, label], index) => (
+          <a
+            href={`#${id}`}
+            className={activeScreen === index ? 'is-active' : ''}
+            aria-label={`${index === 0 ? '定义' : `第 ${index} 章`}：${label}`}
+            aria-current={activeScreen === index ? 'step' : undefined}
+            key={id}
+          >
+            <i /><span><b>{String(index).padStart(2, '0')}</b>{label}</span>
+          </a>
+        ))}
+      </nav>
+    </aside>
+  );
+}
+
 export function App() {
   const [activeScreen, setActiveScreen] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -354,7 +377,14 @@ export function App() {
         <a className="header-github" href={githubUrl} target="_blank" rel="noreferrer" aria-label="在 GitHub 查看 ACVM 仓库">
           <Icon name="github" /><span>GitHub</span>
         </a>
+        <span
+          className="reading-progress"
+          style={{ '--reading-progress': `${(activeScreen / (screens.length - 1)) * 100}%` } as CSSProperties}
+          aria-hidden="true"
+        />
       </header>
+
+      <ChapterRail activeScreen={activeScreen} />
 
       <main className="page-scroller">
         <section className="screen hero-screen" id="top" data-screen="0">
@@ -381,71 +411,7 @@ export function App() {
         </section>
 
         <TechnicalSlide
-          id="spec-state" index={1} className="formal-screen state-spec-screen"
-          eyebrow="FORMAL SPEC 01 / 04 · STATE MACHINE"
-          title="先定义状态，"
-          accent="再定义执行。"
-          body="ACVM 用状态机描述一次任务：输入、执行结果和回执共同决定下一状态。"
-          comparison={{
-            traditionalTitle: '只认识短交易',
-            traditional: '任务跨几天后，链上状态说不清谁做到哪一步。',
-            acvmTitle: '工作轨迹就是链上状态',
-            acvm: '每一步写入状态或回执根，能连续核验与追责。',
-          }}
-          terms={['Receipt Root', 'Proof-carrying Execution']}
-          figureLabel="FORMAL MODEL / DRAFT 0.1 · ACVM STATE TRANSITION"
-        ><StateModelArchitecture /></TechnicalSlide>
-
-        <TechnicalSlide
-          id="spec-contract" index={2} className="formal-screen contract-spec-screen"
-          eyebrow="FORMAL SPEC 02 / 04 · AGENTIC CONTRACT"
-          title="一份合约，"
-          accent="两类工作负载。"
-          body="部署必须同时提供 Worker 和 Validator；二者都是可由 a3s-box 运行的工作负载。"
-          comparison={{
-            traditionalTitle: '代码能执行，结果难验收',
-            traditional: '合约只知道调用返回，链下谁执行、谁验收常靠另一个系统补齐。',
-            acvmTitle: '执行与验收成对部署',
-            acvm: 'Worker 负责工作，Validator 独立验收；两边都留下链上回执。',
-          }}
-          terms={['Intent-centric', 'UCAN / ZCAP']}
-          figureLabel="ACVM FORMAL MODEL / DRAFT 0.1"
-        ><ContractModelArchitecture /></TechnicalSlide>
-
-        <TechnicalSlide
-          id="spec-receipt" index={3} className="formal-screen receipt-spec-screen"
-          eyebrow="FORMAL SPEC 03 / 04 · RECEIPT TRANSITION"
-          title="外部执行，"
-          accent="凭回执改变状态。"
-          body="任务先进入等待状态；只有回执通过验证，链上状态才继续推进。"
-          comparison={{
-            traditionalTitle: '外部数据只能信预言机',
-            traditional: '预言机说“是真的”，链上通常看不到执行过程。',
-            acvmTitle: '回执必须自带证据',
-            acvm: '验证通过才改状态，失败则保持原状态。',
-          }}
-          terms={['Receipt Root', 'Remote Attestation']}
-          figureLabel="ACVM FORMAL MODEL / DRAFT 0.1"
-        ><ReceiptModelArchitecture /></TechnicalSlide>
-
-        <TechnicalSlide
-          id="spec-poi" index={4} className="formal-screen poi-spec-screen"
-          eyebrow="FORMAL SPEC 04 / 04 · INTELLIGENCE-PROOF CHAIN"
-          title="智能证明，"
-          accent="只计算有效工作。"
-          body="真实需求、验收结果和执行证据组成 PoI，再参与出块与奖励。"
-          comparison={{
-            traditionalTitle: '奖励资源，不奖励结果',
-            traditional: 'PoW 奖励能耗，PoS 偏向资本，都不判断工作是否有用。',
-            acvmTitle: '只奖励被验收的工作',
-            acvm: '有需求、结果和执行证明，才生成 PoI。',
-          }}
-          terms={['Proof of Intelligence', 'VRF']}
-          figureLabel="INTELLIGENCE-PROOF CHAIN / DRAFT 0.1"
-        ><IntelligenceChainArchitecture /></TechnicalSlide>
-
-        <TechnicalSlide
-          id="lifecycle" index={5} className="lifecycle-screen"
+          id="lifecycle" index={1} className="lifecycle-screen"
           eyebrow="SYSTEM WALKTHROUGH · FULL LIFECYCLE"
           title="从部署到记账，"
           accent="每一步都看得见。"
@@ -461,8 +427,8 @@ export function App() {
         ><LifecycleArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="runtime" index={6} className="runtime-screen"
-          eyebrow="01 / 09 · EXECUTION TOPOLOGY"
+          id="runtime" index={2} className="runtime-screen"
+          eyebrow="01 / 10 · EXECUTION TOPOLOGY"
           title="规则写清楚，"
           accent="任务再开跑。"
           body="把执行者、权限和完成条件写进合约，ACVM 按状态推进任务。"
@@ -476,8 +442,8 @@ export function App() {
         ><RuntimeArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="onchain" index={7} className="onchain-screen"
-          eyebrow="02 / 09 · CHAIN-NATIVE EXECUTION"
+          id="onchain" index={3} className="onchain-screen"
+          eyebrow="02 / 10 · CHAIN-NATIVE EXECUTION"
           title="像 EVM 一样，"
           accent="节点一起执行。"
           body="确定性逻辑由节点共同执行，外部计算带着证明回链。"
@@ -491,8 +457,56 @@ export function App() {
         ><OnchainExecutionArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="identity" index={8} className="identity-screen"
-          eyebrow="03 / 09 · IDENTITY & CAPABILITY"
+          id="spec-contract" index={4} className="formal-screen contract-spec-screen"
+          eyebrow="FORMAL SPEC 01 / 04 · AGENTIC CONTRACT"
+          title="一份合约，"
+          accent="两类工作负载。"
+          body="部署必须同时提供 Worker 和 Validator；二者都是可由 a3s-box 运行的工作负载。"
+          comparison={{
+            traditionalTitle: '代码能执行，结果难验收',
+            traditional: '合约只知道调用返回，链下谁执行、谁验收常靠另一个系统补齐。',
+            acvmTitle: '执行与验收成对部署',
+            acvm: 'Worker 负责工作，Validator 独立验收；两边都留下链上回执。',
+          }}
+          terms={['Intent-centric', 'UCAN / ZCAP']}
+          figureLabel="ACVM FORMAL MODEL / DRAFT 0.1"
+        ><ContractModelArchitecture /></TechnicalSlide>
+
+        <TechnicalSlide
+          id="spec-state" index={5} className="formal-screen state-spec-screen"
+          eyebrow="FORMAL SPEC 02 / 04 · STATE MACHINE"
+          title="先定义状态，"
+          accent="再定义执行。"
+          body="ACVM 用状态机描述一次任务：输入、执行结果和回执共同决定下一状态。"
+          comparison={{
+            traditionalTitle: '只认识短交易',
+            traditional: '任务跨几天后，链上状态说不清谁做到哪一步。',
+            acvmTitle: '工作轨迹就是链上状态',
+            acvm: '每一步写入状态或回执根，能连续核验与追责。',
+          }}
+          terms={['Receipt Root', 'Proof-carrying Execution']}
+          figureLabel="FORMAL MODEL / DRAFT 0.1 · ACVM STATE TRANSITION"
+        ><StateModelArchitecture /></TechnicalSlide>
+
+        <TechnicalSlide
+          id="spec-receipt" index={6} className="formal-screen receipt-spec-screen"
+          eyebrow="FORMAL SPEC 03 / 04 · RECEIPT TRANSITION"
+          title="外部执行，"
+          accent="凭回执改变状态。"
+          body="任务先进入等待状态；只有回执通过验证，链上状态才继续推进。"
+          comparison={{
+            traditionalTitle: '外部数据只能信预言机',
+            traditional: '预言机说“是真的”，链上通常看不到执行过程。',
+            acvmTitle: '回执必须自带证据',
+            acvm: '验证通过才改状态，失败则保持原状态。',
+          }}
+          terms={['Receipt Root', 'Remote Attestation']}
+          figureLabel="ACVM FORMAL MODEL / DRAFT 0.1"
+        ><ReceiptModelArchitecture /></TechnicalSlide>
+
+        <TechnicalSlide
+          id="identity" index={7} className="identity-screen"
+          eyebrow="03 / 10 · IDENTITY & CAPABILITY"
           title="每个操作，"
           accent="都能追到责任人。"
           body="企业、Agent、合约和临时权限逐层绑定，每次操作都能追责。"
@@ -506,8 +520,8 @@ export function App() {
         ><IdentityArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="offchain" index={9} className="offchain-screen"
-          eyebrow="04 / 09 · ORACLE & OFF-CHAIN COMPUTE"
+          id="offchain" index={8} className="offchain-screen"
+          eyebrow="04 / 10 · ORACLE & OFF-CHAIN COMPUTE"
           title="数据留在本地，"
           accent="结果交给链上。"
           body="原始数据留在业务系统，链上只收状态根、回执和证明。"
@@ -521,8 +535,8 @@ export function App() {
         ><OffchainArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="privacy" index={10} className="privacy-screen"
-          eyebrow="05 / 09 · PRIVATE EXECUTION"
+          id="privacy" index={9} className="privacy-screen"
+          eyebrow="05 / 10 · PRIVATE EXECUTION"
           title="a3s-box 管隔离，"
           accent="a3s-power 管推理。"
           body="a3s-box 隔离任务，a3s-power 保护模型与输入。"
@@ -536,8 +550,24 @@ export function App() {
         ><PrivacyArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
+          id="fog" index={10} className="fog-screen"
+          eyebrow="06 / 10 · FOG PRIVACY INFERENCE"
+          title="推理靠近数据，"
+          accent="证明回到链上。"
+          body="区块链负责调度、授权和记账；分布式雾节点在隐私域内完成模型推理与独立核验。"
+          comparison={{
+            traditionalTitle: '云端集中推理，数据和故障都集中',
+            traditional: '原始数据跨域上传，网络延迟高；中心服务一旦失效，推理和审计同时中断。',
+            acvmTitle: '就近推理，多节点核验，链上追踪',
+            acvm: '明文留在本地或就近雾节点，Validator 独立验收，链上只记录承诺、证明和结算。',
+          }}
+          terms={['TEE', 'Remote Attestation', 'Receipt Root']}
+          figureLabel="BLOCKCHAIN FOG INFERENCE / PRIVACY-PRESERVING NETWORK"
+        ><FogInferenceArchitecture /></TechnicalSlide>
+
+        <TechnicalSlide
           id="sentry" index={11} className="sentry-screen"
-          eyebrow="06 / 09 · ANYSENTRY"
+          eyebrow="07 / 10 · ANYSENTRY"
           title="先看清风险，"
           accent="再决定放不放行。"
           body="AnySentry 在执行前检查进程、网络和工具调用。"
@@ -551,7 +581,7 @@ export function App() {
 
         <TechnicalSlide
           id="proof" index={12} className="proof-screen"
-          eyebrow="07 / 09 · LONG-RUNNING TASK PROOF"
+          eyebrow="08 / 10 · LONG-RUNNING TASK PROOF"
           title="任务跑几个月，"
           accent="证明也不会变大。"
           body="里程碑连续记录状态，最后折叠成一份固定大小的证明。"
@@ -566,7 +596,7 @@ export function App() {
 
         <TechnicalSlide
           id="intelligence" index={13} className="intelligence-screen"
-          eyebrow="08 / 09 · PROOF OF INTELLIGENCE"
+          eyebrow="09 / 10 · PROOF OF INTELLIGENCE"
           title="有用的计算，"
           accent="才写进账本。"
           body="真实任务、验收结果和执行回执一起生成 PoI。"
@@ -580,8 +610,24 @@ export function App() {
         ><IntelligenceProofArchitecture /></TechnicalSlide>
 
         <TechnicalSlide
-          id="chains" index={14} className="chains-screen"
-          eyebrow="09 / 09 · CHAIN-AGNOSTIC DEPLOYMENT"
+          id="spec-poi" index={14} className="formal-screen poi-spec-screen"
+          eyebrow="FORMAL SPEC 04 / 04 · INTELLIGENCE-PROOF CHAIN"
+          title="智能证明，"
+          accent="只计算有效工作。"
+          body="真实需求、验收结果和执行证据组成 PoI，再参与出块与奖励。"
+          comparison={{
+            traditionalTitle: '奖励资源，不奖励结果',
+            traditional: 'PoW 奖励能耗，PoS 偏向资本，都不判断工作是否有用。',
+            acvmTitle: '只奖励被验收的工作',
+            acvm: '有需求、结果和执行证明，才生成 PoI。',
+          }}
+          terms={['Proof of Intelligence', 'VRF']}
+          figureLabel="INTELLIGENCE-PROOF CHAIN / DRAFT 0.1"
+        ><IntelligenceChainArchitecture /></TechnicalSlide>
+
+        <TechnicalSlide
+          id="chains" index={15} className="chains-screen"
+          eyebrow="10 / 10 · CHAIN-AGNOSTIC DEPLOYMENT"
           title="保留原来的链，"
           accent="只替换执行层。"
           body="执行语义不变，通过适配器接入现有链或独立成链。"
@@ -595,7 +641,7 @@ export function App() {
         ><ChainArchitectureSimple /></TechnicalSlide>
 
         <TechnicalSlide
-          id="stories" index={15} className="stories-screen"
+          id="stories" index={16} className="stories-screen"
           eyebrow="APPLICATION NETWORK · INTERACTIVE GRAPH"
           title="一张运行中的"
           accent="ACVM 合约网络。"

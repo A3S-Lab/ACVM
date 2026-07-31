@@ -219,6 +219,11 @@ export function LifecycleArchitecture() {
               setActiveStep(index);
               setIsPlaying(false);
             }}
+            onMouseEnter={() => {
+              setActiveStep(index);
+              setIsPlaying(false);
+            }}
+            onFocus={() => setActiveStep(index)}
             aria-label={`查看第 ${step.code} 步：${step.title}`}
             aria-pressed={index === activeStep}
             key={step.code}

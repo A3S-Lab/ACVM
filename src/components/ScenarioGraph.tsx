@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
+import { DetailHint } from './DetailHint';
 import { Icon, type IconName } from './Icons';
 import { TechTerm, type TechKey } from './TechTerm';
 
@@ -249,11 +250,11 @@ export function ScenarioGraph() {
   const selectedIndex = scenarios.findIndex((scenario) => scenario.id === selectedId);
   const selected = scenarios[selectedIndex] ?? scenarios[0];
   const visibleScenarios = filter === 'all' ? scenarios : scenarios.filter((scenario) => scenario.participant === filter);
-  const journeySteps: Array<[string, string, string, IconName]> = [
-    ['01', '部署规则', selected.delegator, 'fingerprint'],
-    ['02', 'Worker 执行', selected.provider, 'terminal'],
-    ['03', 'Validator 核验', selected.evidence, 'eye'],
-    ['04', '链上记账', selected.finality, 'chain'],
+  const journeySteps: Array<[string, string, string, IconName, string, string]> = [
+    ['01', '部署规则', selected.delegator, 'fingerprint', '谁授权、允许做什么、何时算完成都在执行前冻结，Worker 和 Validator 引用同一版本。', '链上记录：意图摘要、调用方签名、策略版本、预算与 nonce。'],
+    ['02', 'Worker 执行', selected.provider, 'terminal', 'Worker 在 a3s-box 中按授权调用工具或模型，产出结果承诺和带签名的执行回执。', `验收输入：${selected.evidence}。`],
+    ['03', 'Validator 核验', selected.evidence, 'eye', `Validator 独立检查业务谓词：${selected.predicate}。`, '失败时不推进合约状态，并把拒绝原因写入可追溯回执。'],
+    ['04', '链上记账', selected.finality, 'chain', '回执、证明和终局条件通过后，共识节点只提交确定性状态变化。', `最终结果：${selected.finality}。`],
   ];
 
   const projected = useMemo(() => {
@@ -417,10 +418,19 @@ export function ScenarioGraph() {
             </dl>
           </header>
           <div className="scenario-steps" aria-label={`${selected.title}端到端业务流程`}>
-            {journeySteps.map(([code, label, detail, icon], index) => (
+            {journeySteps.map(([code, label, detail, icon, explanation, boundary], index) => (
               <section style={{ '--step-index': index } as React.CSSProperties} key={code}>
                 <span><Icon name={icon} /></span>
-                <p><small>{code} · {label}</small><strong>{detail}</strong></p>
+                <p>
+                  <DetailHint
+                    className="scenario-step-hint"
+                    category="场景执行细节"
+                    label={<><small>{code} · {label}</small><strong>{detail}</strong></>}
+                    title={`${selected.title} · ${label}`}
+                    summary={explanation}
+                    details={[{ label: '链上处理', value: boundary }]}
+                  />
+                </p>
               </section>
             ))}
           </div>
