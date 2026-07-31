@@ -89,6 +89,12 @@ function BoxDiagram() {
 function PowerDiagram() {
   return (
     <div className="module-diagram module-diagram--power">
+      <div className="power-inputs" aria-label="隐私推理输入">
+        <span><small>SEALED MODEL</small><strong>加密模型包</strong></span>
+        <span><small>PRIVATE CONTEXT</small><strong>私密 Prompt / 企业数据</strong></span>
+        <span><small>ANTI-REPLAY</small><strong>策略与一次性 Nonce</strong></span>
+      </div>
+      <i className="diagram-down power-input-down"><Icon name="arrow" /></i>
       <div className="power-box-boundary">
         <span className="power-box-label">a3s-box MicroVM · SEV-SNP / TDX</span>
         <div className="diagram-title">

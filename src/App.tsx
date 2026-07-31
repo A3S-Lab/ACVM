@@ -177,6 +177,61 @@ export function App() {
     return () => window.removeEventListener('hashchange', scrollToHash);
   }, []);
 
+  useEffect(() => {
+    const scroller = document.querySelector<HTMLElement>('.page-scroller');
+    if (!scroller) return undefined;
+
+    let locked = false;
+    let unlockTimer: number | undefined;
+    const desktop = () => window.matchMedia('(min-width: 961px)').matches;
+    const goToScreen = (nextIndex: number) => {
+      const bounded = Math.max(0, Math.min(screens.length - 1, nextIndex));
+      locked = true;
+      scroller.scrollTo({ top: bounded * scroller.clientHeight, behavior: 'smooth' });
+      window.clearTimeout(unlockTimer);
+      unlockTimer = window.setTimeout(() => {
+        locked = false;
+      }, 620);
+    };
+
+    const onWheel = (event: WheelEvent) => {
+      if (!desktop() || event.ctrlKey || Math.abs(event.deltaY) < 12 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      event.preventDefault();
+      if (locked) return;
+      const current = Math.round(scroller.scrollTop / Math.max(1, scroller.clientHeight));
+      goToScreen(current + (event.deltaY > 0 ? 1 : -1));
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (!desktop()) return;
+      const target = event.target as HTMLElement | null;
+      if (target?.matches('input, textarea, select, button, a, [contenteditable="true"]')) return;
+
+      const current = Math.round(scroller.scrollTop / Math.max(1, scroller.clientHeight));
+      if (event.key === 'PageDown' || (event.key === ' ' && !event.shiftKey)) {
+        event.preventDefault();
+        if (!locked) goToScreen(current + 1);
+      } else if (event.key === 'PageUp' || (event.key === ' ' && event.shiftKey)) {
+        event.preventDefault();
+        if (!locked) goToScreen(current - 1);
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        goToScreen(0);
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        goToScreen(screens.length - 1);
+      }
+    };
+
+    document.addEventListener('wheel', onWheel, { passive: false });
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('wheel', onWheel);
+      document.removeEventListener('keydown', onKeyDown);
+      window.clearTimeout(unlockTimer);
+    };
+  }, []);
+
   return (
     <div className="site-shell site-shell--calm">
       <a className="skip-link" href="#top">跳到主要内容</a>
@@ -222,18 +277,21 @@ export function App() {
             <div className="hero-copy">
               <span className="hero-eyebrow"><i /> ACVM · VERIFICATION AGENT VIRTUAL MACHINE</span>
               <h1>结果由服务方交付。<br /><em>可信由多方验证。</em></h1>
-              <p>ACVM 是运行面向“结果即服务”的去中心化可信验证 Agent 的 Agentic Contract 虚拟机。带身份的验证 Agent 在零信任边界内从独立预言机、企业 API 与隐私计算环境取证，生成可审计证明，再由联盟链多节点确认结果是否成立。</p>
+              <p>ACVM 运行专门验证“结果即服务”的去中心化可信验证 Agent。它们带着可追责身份，在零信任网络内向企业 API、设备和独立预言机取证；敏感数据在隐私计算环境内完成核验，证明交由联盟链共同确认。</p>
               <div className="hero-actions">
                 <a href="#runtime" className="button button--primary">理解验证如何运行 <Icon name="arrow" /></a>
                 <a href="#stories" className="button button--secondary">查看业务验证场景</a>
               </div>
-              <div className="hero-facts">
-                <span><Icon name="fingerprint" /><strong>验证者有身份</strong><small>DID · 能力证明 · 责任链</small></span>
-                <span><Icon name="eye" /><strong>证据来自多方</strong><small>预言机 · 企业 API · 设备</small></span>
-                <span><Icon name="chain" /><strong>结论共同确认</strong><small>门限签名 · 零知识证明 · 共识</small></span>
-              </div>
             </div>
             <HeroArchitecture />
+          </div>
+          <div className="hero-signal-strip" aria-label="ACVM 核心能力">
+            <div>
+              <span><Icon name="fingerprint" /><strong>验证者有身份</strong><small>DID · 能力证明 · 责任链</small></span>
+              <span><Icon name="eye" /><strong>证据来自多方</strong><small>预言机 · 企业 API · 设备</small></span>
+              <span><Icon name="receipt" /><strong>长期任务可证明</strong><small>IVC · Recursive ZK · Receipt Root</small></span>
+              <span><Icon name="chain" /><strong>结果共同确认</strong><small>门限签名 · 联盟链共识 · 审计终局</small></span>
+            </div>
           </div>
         </section>
 
@@ -254,7 +312,7 @@ export function App() {
           index={2}
           className="architecture-screen identity-screen"
           eyebrow="02 / 09 · IDENTITY & CAPABILITY"
-          title="身份从责任主体延伸到每次工具会话，"
+          title="身份贯穿每次工具会话，"
           accent="能力可证明、可缩小、可撤销。"
           body="组织、Agent、合约实例和临时会话形成连续责任链。验证方获得主体、能力范围和有效期证明，企业内部凭据与能力评分保持私密。"
         >

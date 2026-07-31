@@ -1181,7 +1181,6 @@ export function ScenarioPatterns() {
   const [locked, setLocked] = useState(true);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [rotation, setRotation] = useState<UniverseRotation>({ x: -0.22, y: 0.42 });
-  const [graphVisible, setGraphVisible] = useState(false);
   const [dragging, setDragging] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ x: number; y: number; rx: number; ry: number } | null>(null);
@@ -1201,38 +1200,6 @@ export function ScenarioPatterns() {
     window.addEventListener('resize', centerMobileGraph);
     return () => window.removeEventListener('resize', centerMobileGraph);
   }, []);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return undefined;
-    const observer = new IntersectionObserver(
-      ([entry]) => setGraphVisible(entry.isIntersecting),
-      { threshold: 0.18 },
-    );
-    observer.observe(canvas);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (
-      !graphVisible
-      || hoveredId
-      || window.matchMedia('(max-width: 960px)').matches
-      || window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    ) return undefined;
-
-    let frame = 0;
-    let previous = 0;
-    const rotate = (time: number) => {
-      if (time - previous >= 42 && !dragRef.current) {
-        previous = time;
-        setRotation((current) => ({ ...current, y: current.y + 0.0018 }));
-      }
-      frame = window.requestAnimationFrame(rotate);
-    };
-    frame = window.requestAnimationFrame(rotate);
-    return () => window.cancelAnimationFrame(frame);
-  }, [graphVisible, hoveredId]);
 
   const adjacency = useMemo(() => {
     const map = new Map(universeNodes.map((node) => [node.id, new Set<string>()]));
