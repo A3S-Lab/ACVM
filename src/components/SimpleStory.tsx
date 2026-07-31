@@ -309,8 +309,6 @@ function StoryPanel({ story, index }: { story: Story; index: number }) {
       id={story.id}
       aria-label={`${story.title}案例`}
     >
-      <SceneBackdrop storyId={story.id} />
-
       <div className="story-panel-content">
         <header className="story-panel-head">
           <div>
@@ -319,70 +317,109 @@ function StoryPanel({ story, index }: { story: Story; index: number }) {
             <p>{playbook.oneLine}</p>
           </div>
 
-          <div className="story-panel-actions">
-            <div className="mode-switch" aria-label="切换履约情况">
-              <button type="button" className={mode === 'normal' ? 'is-active' : ''} onClick={() => setMode('normal')}>
-                <Icon name="check" /> 正常履约
-              </button>
-              <button type="button" className={mode === 'risk' ? 'is-active' : ''} onClick={() => setMode('risk')}>
-                <Icon name="shield" /> 具体造假
+          <div className="story-head-side">
+            <div className="story-outcome">
+              <span><Icon name="receipt" /> 合约结果</span>
+              <strong>{mode === 'normal' ? story.receipt : 'ACVM 阻断结算，资金保持锁定'}</strong>
+              <small>{mode === 'normal' ? `${story.receiptLabel} · 多机构确认后执行` : 'BLOCK · 差异证据根进入审计账本'}</small>
+            </div>
+            <div className="story-panel-actions">
+              <div className="mode-switch" aria-label="切换履约情况">
+                <button type="button" className={mode === 'normal' ? 'is-active' : ''} aria-pressed={mode === 'normal'} onClick={() => setMode('normal')}>
+                  <Icon name="check" /> 正常履约
+                </button>
+                <button type="button" className={mode === 'risk' ? 'is-active' : ''} aria-pressed={mode === 'risk'} onClick={() => setMode('risk')}>
+                  <Icon name="shield" /> 具体造假
+                </button>
+              </div>
+              <button className="story-play" type="button" onClick={play} aria-label="播放四步业务流程" aria-pressed={playing}>
+                <Icon name={playing ? 'pause' : 'play'} /> {playing ? '演示中' : '播放流程'}
               </button>
             </div>
-            <button className="story-play" type="button" onClick={play} aria-label="播放四步业务流程">
-              <Icon name={playing ? 'pause' : 'play'} /> {playing ? '演示中' : '播放流程'}
-            </button>
           </div>
         </header>
 
-        <div className="legacy-contrast">
-          <span>传统智能合约</span>
-          <p>{story.legacyExecution}</p>
-          <code>result = true</code>
-        </div>
-
-        <div className="story-actors" aria-label="业务参与方">
-          <span><i>{story.nodes[0]}</i><strong>{participants.initiator.name}</strong><small>{participants.initiator.role}</small></span>
-          <em>协作</em>
-          <span><i>{story.nodes[1]}</i><strong>{participants.operator.name}</strong><small>{participants.operator.role}</small></span>
-          <em>取证</em>
-          <span><i><Icon name="terminal" /></i><strong>{participants.evidence.name}</strong><small>{participants.evidence.role}</small></span>
-          <em>裁决</em>
-          <span className="is-acvm"><i>AC</i><strong>ACVM</strong><small>改变合约状态并生成凭证</small></span>
-        </div>
-
-        <div className="story-step-track" style={{ '--story-progress': `${phase * 33.333}%` } as React.CSSProperties}>
-          {steps.map((step, stepIndex) => (
-            <button
-              type="button"
-              key={step.label}
-              className={stepIndex === phase ? 'is-active' : stepIndex < phase ? 'is-done' : ''}
-              onClick={() => {
-                stop();
-                setPhase(stepIndex);
-              }}
-              aria-current={stepIndex === phase ? 'step' : undefined}
-            >
-              <span>{stepIndex < phase ? <Icon name="check" /> : `0${stepIndex + 1}`}</span>
-              <small>{step.actor}</small>
-              <strong>{step.label}</strong>
-              <p>{step.title}</p>
-            </button>
-          ))}
-        </div>
-
-        <div className="story-step-detail" aria-live="polite">
-          <div>
-            <span>0{phase + 1}</span>
-            <small>{current.actor}</small>
+        <div
+          className={`story-theatre story-theatre--phase-${phase + 1}`}
+          style={{
+            '--story-progress': `${phase * 33.333}%`,
+            '--scene-x': `${(index % 4) * 33.333}%`,
+            '--scene-y': `${Math.floor(index / 4) * 50}%`,
+          } as React.CSSProperties}
+        >
+          <div className="story-theatre-bar">
+            <span><i /> LIVE CONTRACT</span>
+            <strong>沿业务时间播放，观察参与方如何协同</strong>
+            <small>{story.contract} · {story.amount}</small>
           </div>
-          <section>
-            <strong>{current.title}</strong>
-            <p>{current.detail}</p>
-          </section>
-          <aside>
-            <small>{mode === 'risk' && phase === 3 ? '控制结果' : '当前可验证产物'}</small>
-            <p>{current.artifact}</p>
-          </aside>
+
+          <div className="story-theatre-main">
+            <div className="story-world">
+              <SceneBackdrop storyId={story.id} />
+              <div className="story-world-floor" aria-hidden="true" />
+              <div className="story-industry-object" aria-hidden="true" />
+              <div className="story-world-path" aria-hidden="true"><i /><i /><i /></div>
+
+              <div className="story-actors" aria-label="业务参与方">
+                <span className="is-initiator"><i>{story.nodes[0]}</i><strong>{participants.initiator.name}</strong><small>{participants.initiator.role}</small></span>
+                <em>签约</em>
+                <span className="is-operator"><i>{story.nodes[1]}</i><strong>{participants.operator.name}</strong><small>{participants.operator.role}</small></span>
+                <em>业务</em>
+                <span className="is-evidence"><i><Icon name="terminal" /></i><strong>{participants.evidence.name}</strong><small>{participants.evidence.role}</small></span>
+                <em>核验</em>
+                <span className="is-acvm"><i>AC</i><strong>ACVM</strong><small>改变合约状态并生成凭证</small></span>
+              </div>
+
+              <div className="story-live-packet">
+                <span>{phase + 1}</span>
+                <strong>{current.label}</strong>
+              </div>
+            </div>
+
+            <aside className="story-narrative" aria-live="polite">
+              <div className="legacy-contrast">
+                <span>传统智能合约看到的</span>
+                <code>result = true</code>
+                <p>{story.legacyExecution}</p>
+              </div>
+
+              <div className="story-step-detail">
+                <div>
+                  <span>0{phase + 1}</span>
+                  <small>{current.actor}</small>
+                </div>
+                <section>
+                  <small>{current.label}</small>
+                  <strong>{current.title}</strong>
+                  <p>{current.detail}</p>
+                </section>
+                <aside>
+                  <small>{mode === 'risk' && phase === 3 ? '控制结果' : '当前可验证产物'}</small>
+                  <p>{current.artifact}</p>
+                </aside>
+              </div>
+            </aside>
+          </div>
+
+          <div className="story-step-track">
+            {steps.map((step, stepIndex) => (
+              <button
+                type="button"
+                key={step.label}
+                className={stepIndex === phase ? 'is-active' : stepIndex < phase ? 'is-done' : ''}
+                onClick={() => {
+                  stop();
+                  setPhase(stepIndex);
+                }}
+                aria-current={stepIndex === phase ? 'step' : undefined}
+              >
+                <span>{stepIndex < phase ? <Icon name="check" /> : `0${stepIndex + 1}`}</span>
+                <small>{step.actor}</small>
+                <strong>{step.label}</strong>
+                <p>{step.title}</p>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </article>

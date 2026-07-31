@@ -161,8 +161,16 @@ export function App() {
         </button>
 
         <nav className={menuOpen ? 'is-open' : ''} aria-label="主要导航">
-          {screens.slice(1).map(([id, label]) => (
-            <a href={`#${id}`} key={id} onClick={() => setMenuOpen(false)}>{label}</a>
+          {screens.slice(1).map(([id, label], index) => (
+            <a
+              href={`#${id}`}
+              key={id}
+              className={activeScreen === index + 1 ? 'is-active' : ''}
+              aria-current={activeScreen === index + 1 ? 'page' : undefined}
+              onClick={() => setMenuOpen(false)}
+            >
+              {label}
+            </a>
           ))}
         </nav>
 
