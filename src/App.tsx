@@ -490,15 +490,15 @@ export function App() {
           id="spec-contract" index={4} className="formal-screen contract-spec-screen"
           eyebrow="FORMAL SPEC 01 / 04 · AGENTIC CONTRACT"
           title="合约结构"
-          accent="Worker + Validator"
-          body="部署包必须同时包含 Worker 和 Validator。两者都是可由 a3s-box 启动的工作负载。"
+          accent="一个目录，两份工作负载"
+          body="开发者提交业务目录：Schema、Worker、Validator 和结算代码都在里面。a3s-box 的运行边界由系统固定。"
           comparison={{
-            traditionalTitle: '只部署执行代码',
-            traditional: '结果是否合格要靠外部系统或人工判断，验收规则没有和执行版本绑定。',
-            acvmTitle: '执行和验收分别部署',
-            acvm: 'Worker 产出结果，Validator 按固定规则验收，两边都提交签名回执。',
+            traditionalTitle: '代码和验收规则散落在不同服务',
+            traditional: '部署脚本临时拼装文件，版本号相同也无法证明 Worker、Schema 和验收代码完全一致。',
+            acvmTitle: '目录树就是版本边界',
+            acvm: '整棵业务目录生成同一个 Contract Root，Worker 与 Validator 缺一不可，任一文件变化都会产生新版本。',
           }}
-          terms={['Intent-centric', 'UCAN / ZCAP']}
+          terms={['Content-addressed Tree', 'Task File ABI']}
           figureLabel="ACVM FORMAL MODEL / DRAFT 0.1"
         ><ContractModelArchitecture /></TechnicalSlide>
 
@@ -506,15 +506,15 @@ export function App() {
           id="code-walkthrough" index={5} className="code-screen"
           eyebrow="BUILD WALKTHROUGH · TYPESCRIPT SDK"
           title="用 a3s-code 构建"
-          accent="一份合约，两份工作负载"
-          body="点击文件或步骤查看完整代码。鼠标移到带圆点的代码行，右侧会解释对应参数。"
+          accent="目录就是合约"
+          body="输入、证据、结果和裁决都走固定文件。点击文件或滚动步骤，查看 Worker 与 Validator 如何接力。"
           comparison={{
-            traditionalTitle: '执行代码和验收脚本各放一处',
-            traditional: '部署时很难确认两边引用的是不是同一规则、同一任务和同一版本。',
-            acvmTitle: 'Worker 与 Validator 一起锁定',
-            acvm: '合约根绑定两份镜像、权限、验收阈值和结算规则，再分别交给 a3s-box 运行。',
+            traditionalTitle: '函数参数在服务之间层层转发',
+            traditional: '输入、产物和验收结论散在接口、数据库和日志里，换一个服务就可能丢失上下文。',
+            acvmTitle: '每个阶段只认固定文件',
+            acvm: 'Worker 写结果，Validator 只读结果并写裁决；系统从任务文件生成回执根，运行配置不交给合约作者修改。',
           }}
-          terms={['Intent-centric', 'Receipt Root']}
+          terms={['Task File ABI', 'Content-addressed Tree']}
           figureLabel="A3S-CODE TYPESCRIPT SDK / CONTRACT WALKTHROUGH"
         ><ContractCodeWalkthrough /></TechnicalSlide>
 
@@ -522,15 +522,15 @@ export function App() {
           id="spec-state" index={6} className="formal-screen state-spec-screen"
           eyebrow="FORMAL SPEC 02 / 04 · STATE MACHINE"
           title="ACVM 状态模型"
-          accent="回执决定下一状态"
-          body="任务输入、当前状态和已验证回执共同计算下一状态。相同输入必须得到相同结果。"
+          accent="文件根决定下一状态"
+          body="任务输入根、当前状态和已验证回执共同计算下一状态。相同文件根必须得到相同结果。"
           comparison={{
             traditionalTitle: '链上只记录一次交易',
             traditional: '任务跨越多个区块后，账本无法直接说明执行进度和当前责任方。',
-            acvmTitle: '每一步都有状态根',
-            acvm: '等待、执行、验收、争议和完成都对应明确状态，可继续验证。',
+            acvmTitle: '每一步都有状态根和任务文件根',
+            acvm: '等待、执行、验收、争议和完成都绑定具体文件版本，不靠进程内存猜当前进度。',
           }}
-          terms={['Receipt Root', 'Proof-carrying Execution']}
+          terms={['Task File ABI', 'Receipt Root']}
           figureLabel="FORMAL MODEL / DRAFT 0.1 · ACVM STATE TRANSITION"
         ><StateModelArchitecture /></TechnicalSlide>
 
@@ -538,15 +538,15 @@ export function App() {
           id="spec-receipt" index={7} className="formal-screen receipt-spec-screen"
           eyebrow="FORMAL SPEC 03 / 04 · RECEIPT TRANSITION"
           title="回执验证"
-          accent="失败时状态不变"
-          body="Worker 和 Validator 提交回执。签名、版本、任务编号和验收条件全部通过后才更新状态。"
+          accent="先验文件根，再改状态"
+          body="系统从 Worker 和 Validator 的任务文件生成回执。签名、目录根、任务编号和验收条件全部通过后才更新状态。"
           comparison={{
-            traditionalTitle: '预言机只给链上一个结论',
-            traditional: '合约拿到返回值，却无法核对执行版本、数据来源和中间状态。',
-            acvmTitle: '回执包含验证材料',
-            acvm: '链上逐项检查签名、证明和状态绑定；任何一项失败都拒绝转换。',
+            traditionalTitle: '链上只收到一个返回值',
+            traditional: '合约不知道这个值对应哪份输入、哪批产物和哪次验收，中间文件无法复核。',
+            acvmTitle: '回执绑定整棵任务文件树',
+            acvm: '链上检查签名、文件根、证明和前序状态；任一文件被替换，状态转换都会被拒绝。',
           }}
-          terms={['Receipt Root', 'Remote Attestation']}
+          terms={['Task File ABI', 'Receipt Root']}
           figureLabel="ACVM FORMAL MODEL / DRAFT 0.1"
         ><ReceiptModelArchitecture /></TechnicalSlide>
 

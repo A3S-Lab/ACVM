@@ -35,17 +35,17 @@ const hints = {
   },
   contracts: {
     title: 'C · Contracts 合约状态',
-    summary: '保存 Agentic Contract 的规则、版本以及 Worker / Validator 工作负载承诺。',
+    summary: '保存 Agentic Contract 业务目录的内容根、版本以及 Worker / Validator 入口。',
     details: [
-      { label: '写入内容', value: '合约代码哈希、Manifest、策略、镜像摘要、升级权限和终局条件。' },
-      { label: '影响', value: '执行与验收必须引用同一合约版本，避免任务中途偷偷换规则或镜像。' },
+      { label: '写入内容', value: 'contract.ts、Schema、Worker、Validator 和结算代码共同生成的 Contract Tree Root。' },
+      { label: '影响', value: '执行与验收必须引用同一目录根，任务中途替换任何业务文件都会被识别为新版本。' },
     ],
   },
   tasks: {
     title: 'T · Tasks 任务状态',
     summary: '记录每个任务当前走到哪一步，以及等待、重试、超时和完成状态。',
     details: [
-      { label: '写入内容', value: 'taskId、意图摘要、当前阶段、责任方、截止时间和前序状态承诺。' },
+      { label: '写入内容', value: 'taskId、输入根、当前任务文件根、阶段、责任方、截止时间和前序状态承诺。' },
       { label: '影响', value: '长任务跨越多个区块时，T 保证暂停、恢复和重试仍属于同一条工作轨迹。' },
     ],
   },
@@ -53,7 +53,7 @@ const hints = {
     title: 'R · Receipts 回执状态',
     summary: '保存 Worker、Validator、工具和安全控制器产生的可验证执行事实。',
     details: [
-      { label: '写入内容', value: '输入/输出承诺、执行者签名、代码度量、时间、错误码和证明引用。' },
+      { label: '写入内容', value: '输入根、结果根、裁决根、执行者签名、时间、错误码和证明引用。' },
       { label: '影响', value: '状态转换必须引用对应回执；没有有效回执的链下结果不能推进任务。' },
     ],
   },
@@ -101,7 +101,7 @@ const hints = {
     title: 'ρ · 本次任务回执包',
     summary: '与同一 taskId 绑定的 Worker、Validator、工具与环境证明集合。',
     details: [
-      { label: '必须包含', value: '前序状态根、输出承诺、执行者签名、验证结果、证明和防重放字段。' },
+      { label: '必须包含', value: '前序状态根、任务文件根、执行者签名、验证结果、证明和防重放字段。' },
       { label: '验证失败', value: 'ρ 中任一必要项缺失、签名错误或版本不匹配，状态保持不变。' },
     ],
   },
@@ -131,39 +131,63 @@ const hints = {
   },
   agenticContract: {
     title: 'Cₐ · Agentic Contract 定义',
-    summary: '一个可部署合约单元，统一描述调用意图、策略、Worker、Validator 和终局规则。',
+    summary: '一个内容寻址的业务目录，统一包含数据格式、Worker、Validator 和结算逻辑。',
     details: [
-      { label: '部署结果', value: '五个部分共同形成合约 Manifest 和 Contract Root，任何部分变化都产生新版本。' },
-      { label: '关键区别', value: '执行工作负载与验收工作负载必须成对提供，不能只部署 Worker。' },
+      { label: '部署结果', value: '目录内每个业务文件参与 Contract Tree Root 计算，任何内容或路径变化都会产生新版本。' },
+      { label: '系统边界', value: '工具、文件系统和网络运行配置由 ACVM / a3s-box 固定，不属于用户提交的合约目录。' },
     ],
   },
-  policy: {
-    title: 'P · Policy 策略',
-    summary: '规定谁能做什么、可使用哪些工具、资源上限以及失败后的处理方式。',
+  definitionFile: {
+    title: 'M · contract.ts 业务定义',
+    summary: '声明合约名称、业务入口、验收阈值和结算方式，不包含系统运行配置。',
     details: [
-      { label: '检查时机', value: '部署、调用、工具访问、结果提交和状态终结都会再次检查相关策略。' },
-      { label: '失败时', value: '越权调用不进入 Worker；运行中越界由 AnySentry 阻断并生成安全回执。' },
+      { label: '可以修改', value: 'Worker / Validator 入口、业务阈值、计价规则和所引用的 Schema。' },
+      { label: '不能修改', value: 'a3s-box 的工具能力、文件系统边界、网络规则和轨迹采集方式没有用户配置入口。' },
+    ],
+  },
+  schemaFiles: {
+    title: 'S · schemas.ts 文件契约',
+    summary: '固定输入、Worker 结果和 Validator 裁决文件的结构与规范编码。',
+    details: [
+      { label: '运行前', value: '输入文件必须先通过 Schema，失败时不启动 Worker。' },
+      { label: '阶段间', value: '每个阶段只接收上一阶段已经验证并绑定到回执根的文件。' },
+    ],
+  },
+  contractTree: {
+    title: 'Tree · 内容寻址目录',
+    summary: '按规范路径和内容摘要计算整棵业务目录的 Merkle Root。',
+    details: [
+      { label: '参与计算', value: 'contract.ts、schemas.ts、worker/、validator/ 与 settle.ts。' },
+      { label: '不参与计算', value: '平台固定的工具、文件系统和网络运行配置不由合约作者提供。' },
+    ],
+  },
+  treeConcatenate: {
+    title: '∥ · 按目录顺序组合',
+    summary: '把业务定义、Schema、Worker、Validator 和结算文件按规范路径组合后计算目录根。',
+    details: [
+      { label: '固定顺序', value: 'M、S、W、V、F 只是公式缩写；实际计算按完整规范路径的字节序排序。' },
+      { label: '防歧义', value: '每个叶子都带相对路径、文件长度和内容摘要，不能通过改名或拼接得到同一棵树。' },
     ],
   },
   worker: {
     title: 'Wbox · Worker 工作负载',
-    summary: '由 a3s-box 启动的实际执行程序，负责调用工具、模型或业务系统产出结果。',
+    summary: '合约目录中的 worker/ 业务程序，由 a3s-box 在系统固定边界内启动。',
     details: [
-      { label: '部署内容', value: '镜像摘要、入口、资源限制、网络策略、工具权限和输出格式。' },
-      { label: '必须留下', value: '输入承诺、工具轨迹、输出承诺、运行环境和签名执行回执。' },
+      { label: '业务内容', value: 'Worker 入口、领域逻辑以及它所引用的输入与结果 Schema。' },
+      { label: '必须留下', value: '输入根、证据文件、结果文件、工具轨迹和签名执行回执。' },
     ],
   },
   validator: {
     title: 'Vbox · Validator 工作负载',
     summary: '独立于 Worker 的验收程序，用同一意图和规则判断结果是否可接受。',
     details: [
-      { label: '部署内容', value: '验收谓词、抽检或复算逻辑、证据来源、阈值和拒绝原因格式。' },
+      { label: '业务内容', value: '验收谓词、复算逻辑、裁决 Schema、阈值和拒绝原因格式。' },
       { label: '独立性', value: 'Validator 可由不同主体和隔离环境运行，避免 Worker 自己给自己验收。' },
     ],
   },
   finality: {
-    title: 'F · Finality 终局规则',
-    summary: '规定满足哪些确认条件后，任务才能完成、结算或释放权限。',
+    title: 'F · settle.ts 结算与终局',
+    summary: '读取已绑定的裁决文件，规定何时结算以及任务何时进入最终状态。',
     details: [
       { label: '可能条件', value: 'Validator 阈值、挑战期结束、BFT 最终确认、付款状态或外部审批。' },
       { label: '效果', value: 'F 成立后任务进入不可重复结算状态，并写入最终回执与状态根。' },
@@ -179,25 +203,25 @@ const hints = {
   },
   runBox: {
     title: 'Run_box(W) · 隔离执行',
-    summary: '按合约锁定的镜像、资源和权限在 a3s-box 中运行 Worker。',
+    summary: 'a3s-box 按平台固定边界运行 Worker，并把调用意图物化为任务输入文件。',
     details: [
-      { label: '输出', value: '业务结果、输出承诺、工具轨迹和 Worker Receipt。' },
-      { label: '异常', value: '超时、越权或镜像度量不符会终止任务并形成失败回执。' },
+      { label: '输出', value: '结果文件、证据文件、任务文件根、工具轨迹和 Worker Receipt。' },
+      { label: '系统控制', value: '工具、文件与网络边界不可由合约代码覆盖；越界会终止任务并生成失败回执。' },
     ],
   },
   verifyBox: {
     title: 'Verify_box(V) · 独立验收',
     summary: '在独立 a3s-box 中运行 Validator，对结果和证据执行固定验收规则。',
     details: [
-      { label: '输出', value: '通过/拒绝、谓词结果、证据引用和 Validator Receipt。' },
-      { label: '约束', value: '必须绑定相同 taskId、意图摘要、Worker 输出承诺和合约版本。' },
+      { label: '输出', value: '裁决文件、谓词结果、证据引用、任务文件根和 Validator Receipt。' },
+      { label: '约束', value: '必须绑定相同 taskId、输入根、Worker 输出根和合约目录根。' },
     ],
   },
   trace: {
     title: 'Trace(R) · 写入工作轨迹',
     summary: '把本次必要回执加入回执状态 R，并更新 Receipt Root。',
     details: [
-      { label: '链上保存', value: '回执摘要、签名者、时间、状态码和证明引用；大体量正文可留在链下。' },
+      { label: '链上保存', value: '任务文件根、回执摘要、签名者、时间、状态码和证明引用；正文文件留在链下。' },
       { label: '审计', value: '任何人可用具体回执和 Merkle 路径核对它是否包含在已确认根中。' },
     ],
   },
@@ -219,7 +243,7 @@ const hints = {
   },
   verifyReceipt: {
     title: 'Verify(ρ) · 回执验证器',
-    summary: '确定性检查回执包的签名、任务绑定、证明、版本和业务谓词。',
+    summary: '确定性检查回执包的签名、任务文件根、证明、合约目录根和业务谓词。',
     details: [
       { label: '返回 1', value: '所有必要检查通过，可以计算候选新状态。' },
       { label: '返回 0', value: '至少一项失败，状态不得改变，并记录可追溯的拒绝原因。' },
@@ -327,6 +351,14 @@ const hints = {
     details: [
       { label: '打开方式', value: '审计时提交原始输出和随机盐，重新计算承诺并与链上值比较。' },
       { label: '绑定', value: '必须同时绑定 taskId、代码版本和输入承诺，避免移花接木。' },
+    ],
+  },
+  taskTreeRoot: {
+    title: 'taskTreeRoot · 任务文件树根',
+    summary: '对当前 taskId 下输入、证据、结果、裁决和结算文件的内容寻址承诺。',
+    details: [
+      { label: '怎么生成', value: '系统按固定路径、规范编码和阶段顺序计算 Merkle Root，合约代码不能自选漏掉某个文件。' },
+      { label: '怎么使用', value: 'Worker、Validator 与结算回执逐级引用前一阶段根，任一文件被替换都会断开验证链。' },
     ],
   },
   proofField: {
@@ -492,11 +524,11 @@ export function StateModelArchitecture() {
 }
 
 const contractParts: Array<[HintKey, string, string, string]> = [
-  ['intent', 'I', '调用意图', '主体 · 请求 · 签名'],
-  ['policy', 'P', '策略', '能做什么'],
-  ['worker', 'W', 'Worker', '执行工作负载'],
-  ['validator', 'V', 'Validator', '核验工作负载'],
-  ['finality', 'F', '终局', '何时完成'],
+  ['definitionFile', 'M', 'contract.ts', '业务参数 · 入口'],
+  ['schemaFiles', 'S', 'schemas.ts', '输入 · 结果 · 裁决'],
+  ['worker', 'W', 'worker/', '执行工作负载'],
+  ['validator', 'V', 'validator/', '核验工作负载'],
+  ['finality', 'F', 'settle.ts', '结算与终局'],
 ];
 
 export function ContractModelArchitecture() {
@@ -506,13 +538,14 @@ export function ContractModelArchitecture() {
       <div className="formal-panel-body">
         <Equation
           number="ACVM.2"
-          title="Agentic Contract 五元组"
-          explanation="一份可部署合约同时冻结调用意图、权限策略、执行负载、验收负载和终局条件。"
+          title="Agentic Contract 目录树"
+          explanation="一份可部署合约由五类业务文件组成，整棵目录的内容根就是合约版本。"
         >
           <FormulaToken hint="agenticContract">C<sub>A</sub></FormulaToken>{' '}
-          <FormulaOperator hint="definition">≡</FormulaOperator>{' ('}
-          <FormulaToken hint="intent">I</FormulaToken>,{' '}
-          <FormulaToken hint="policy">P</FormulaToken>,{' '}
+          <FormulaOperator hint="definition">≡</FormulaOperator>{' '}
+          <FormulaToken hint="contractTree">Tree</FormulaToken>({' '}
+          <FormulaToken hint="definitionFile">M</FormulaToken>,{' '}
+          <FormulaToken hint="schemaFiles">S</FormulaToken>,{' '}
           <FormulaToken hint="worker">W<sub>box</sub></FormulaToken>,{' '}
           <FormulaToken hint="validator">V<sub>box</sub></FormulaToken>,{' '}
           <FormulaToken hint="finality">F</FormulaToken>)
@@ -530,7 +563,7 @@ export function ContractModelArchitecture() {
           ))}
         </div>
         <div className="contract-call">
-          <span><Icon name="fingerprint" /><small>CALLER</small><strong><FormulaToken hint="authorize">主体 + 权限</FormulaToken></strong></span>
+          <span><Icon name="terminal" /><small>CONTRACT TREE</small><strong><FormulaToken hint="contractTree">业务目录根</FormulaToken></strong></span>
           <i>→</i>
           <span className="is-contract"><Icon name="bolt" /><small>A3S-BOX / WORKER</small><strong><FormulaToken hint="runBox">执行任务</FormulaToken></strong></span>
           <i>→</i>
@@ -540,17 +573,19 @@ export function ContractModelArchitecture() {
         </div>
       </div>
       <footer className="formal-note">
-        <span>VALID CALL</span>
+        <span>CONTRACT ROOT</span>
         <strong>
-          <FormulaToken hint="authorize">Authorize</FormulaToken>(<FormulaToken hint="intent">I</FormulaToken>, <FormulaToken hint="policy">P</FormulaToken>) {' '}
-          <FormulaOperator hint="conjunction">∧</FormulaOperator>{' '}
-          <FormulaToken hint="runBox">Run_box</FormulaToken>(<FormulaToken hint="worker">W</FormulaToken>) {' '}
-          <FormulaOperator hint="conjunction">∧</FormulaOperator>{' '}
-          <FormulaToken hint="verifyBox">Verify_box</FormulaToken>(<FormulaToken hint="validator">V</FormulaToken>) {' '}
-          <FormulaOperator hint="conjunction">∧</FormulaOperator>{' '}
-          <FormulaToken hint="trace">Trace</FormulaToken>(<FormulaToken hint="receipts">R</FormulaToken>) {' '}
-          <FormulaOperator hint="conjunction">∧</FormulaOperator>{' '}
-          <FormulaToken hint="finalize">Finalize</FormulaToken>(<FormulaToken hint="finality">F</FormulaToken>)
+          <FormulaToken hint="contractTree">root(C<sub>A</sub>)</FormulaToken> ={' '}
+          <FormulaToken hint="hash">H<sub>tree</sub></FormulaToken>({' '}
+          <FormulaToken hint="definitionFile">M</FormulaToken>{' '}
+          <FormulaOperator hint="treeConcatenate">∥</FormulaOperator>{' '}
+          <FormulaToken hint="schemaFiles">S</FormulaToken>{' '}
+          <FormulaOperator hint="treeConcatenate">∥</FormulaOperator>{' '}
+          <FormulaToken hint="worker">W</FormulaToken>{' '}
+          <FormulaOperator hint="treeConcatenate">∥</FormulaOperator>{' '}
+          <FormulaToken hint="validator">V</FormulaToken>{' '}
+          <FormulaOperator hint="treeConcatenate">∥</FormulaOperator>{' '}
+          <FormulaToken hint="finality">F</FormulaToken>)
         </strong>
       </footer>
     </div>
@@ -558,15 +593,15 @@ export function ContractModelArchitecture() {
 }
 
 const receiptWorkers: Array<[string, string, IconName, HintKey]> = [
-  ['API', '业务事实', 'eye', 'receiptBundle'],
-  ['TEE', '私密计算', 'lock', 'executionProof'],
-  ['MODEL', '模型推理', 'spark', 'outputCommitment'],
+  ['INPUT', '任务输入', 'fingerprint', 'taskTreeRoot'],
+  ['OUTPUT', '结果与证据', 'bolt', 'outputCommitment'],
+  ['VERDICT', '独立裁决', 'shield', 'taskTreeRoot'],
 ];
 
 const receiptFields: Array<[string, HintKey]> = [
   ['taskId', 'taskId'],
   ['prevRoot', 'prevRoot'],
-  ['outputCommitment', 'outputCommitment'],
+  ['taskTreeRoot', 'taskTreeRoot'],
   ['proof', 'proofField'],
 ];
 
@@ -578,7 +613,7 @@ export function ReceiptModelArchitecture() {
         <Equation
           number="ACVM.3"
           title="回执驱动的状态转换"
-          explanation="先验证回执包；只有返回真值，才允许合约状态转换函数生成候选新状态。"
+          explanation="先验证回执包中的任务文件根；只有签名、前序根和业务谓词都通过，才生成候选新状态。"
         >
           <FormulaToken hint="verifyReceipt">Verify</FormulaToken>(<FormulaToken hint="receiptBundle">ρ</FormulaToken>) = <FormulaToken hint="trueValue">1</FormulaToken>{' '}
           <br className="mobile-equation-break" />
@@ -589,7 +624,7 @@ export function ReceiptModelArchitecture() {
         <div className="receipt-state-flow" aria-label="意图进入等待状态，外部执行返回回执后恢复链上状态">
           <article><span>01</span><Icon name="receipt" /><strong><FormulaToken hint="intent">提交意图</FormulaToken></strong><small>Intent I</small></article>
           <i>→</i>
-          <article className="is-pending"><span>02</span><Icon name="pause" /><strong>等待回执</strong><small>Pending</small></article>
+          <article className="is-pending"><span>02</span><Icon name="pause" /><strong>等待任务文件</strong><small>Pending</small></article>
           <i>→</i>
           <div className="receipt-worker-stack">
             {receiptWorkers.map(([title, detail, icon, hint]) => (
@@ -597,7 +632,7 @@ export function ReceiptModelArchitecture() {
             ))}
           </div>
           <i>→</i>
-          <article className="is-receipt"><span>03</span><Icon name="shield" /><strong><FormulaToken hint="verifyReceipt">核验回执</FormulaToken></strong><small>Receipt ρ</small></article>
+          <article className="is-receipt"><span>03</span><Icon name="shield" /><strong><FormulaToken hint="verifyReceipt">核验文件根</FormulaToken></strong><small>Receipt ρ</small></article>
           <i>→</i>
           <article><span>04</span><Icon name="chain" /><strong><FormulaToken hint="candidateState">提交状态</FormulaToken></strong><small>State Root</small></article>
         </div>

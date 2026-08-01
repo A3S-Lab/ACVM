@@ -26,80 +26,129 @@ const files: CodeFile[] = [
   {
     id: 'contract',
     filename: 'contract.ts',
-    code: `export const contract = {
+    code: `import { defineContract } from '@a3s-lab/acvm';
+import { inputSchema, resultSchema, verdictSchema } from './schemas';
+
+export default defineContract({
   name: 'geo-outcome',
   version: 1,
-  workloads: {
-    worker: {
-      entry: './worker.ts',
-      image: 'sha256:7f31…9c20',
-    },
-    validator: {
-      entry: './validator.ts',
-      image: 'sha256:23ab…e190',
-    },
+  tree: {
+    worker: './worker/index.ts',
+    validator: './validator/index.ts',
+    settle: './settle.ts',
   },
-  permissions: {
-    oracle: ['geo-citation-share', 'site-analytics'],
-    transfers: {
-      token: 'CNYC',
-      maxAmount: 200_000_000_000n,
-    },
+  schema: {
+    input: inputSchema,
+    output: resultSchema,
+    verdict: verdictSchema,
   },
-  predicate: { minDays: 30, minLiftBps: 800 },
-  settlement: { perLiftBps: 100_000_000n },
-} as const;`,
+  acceptance: {
+    minDays: 30,
+    minLiftBps: 800,
+  },
+  settlement: {
+    token: 'CNYC',
+    perLiftBps: 100_000_000n,
+    maxAmount: 200_000_000_000n,
+  },
+});`,
     notes: {
-      4: { title: 'workloads', body: '一次部署同时绑定 Worker 和 Validator，两份镜像缺一不可。' },
-      7: { title: 'worker.image', body: 'a3s-box 实际启动的 Worker 镜像必须匹配这个摘要。' },
-      11: { title: 'validator.image', body: '验收端使用独立镜像，执行方不能在任务完成后临时换规则。' },
-      14: { title: 'permissions', body: 'ctx 能访问哪些预言机、资产和最高转账金额在部署时冻结。' },
-      15: { title: 'oracle allowlist', body: 'Worker 和 Validator 只能请求合约列出的数据源。' },
-      16: { title: 'transfers', body: '转账能力由合约托管账户提供，不使用 Agent 自己的私钥。' },
-      18: { title: 'maxAmount', body: '单次任务最多转出 200,000 CNYC，超过上限时 ctx 会直接拒绝。' },
-      21: { title: 'predicate', body: '观察期至少 30 天，引用份额增量至少 800 bps，也就是 8pp。' },
-      22: { title: 'settlement', body: '每个有效 bps 对应 100 CNYC；1160 bps 最终结算 116,000 CNYC。' },
+      1: { title: 'defineContract', body: 'TypeScript 只描述业务目录的入口、数据格式和结算条件；运行环境由 ACVM 固定。' },
+      4: { title: '目录入口', body: 'contract.ts 是业务目录的入口文件。部署身份来自整棵目录的内容根，而不是这一份对象本身。' },
+      7: { title: 'tree', body: 'Worker、Validator 和结算代码必须都在同一目录树内；缺少任一入口就不能部署。' },
+      8: { title: 'worker/index.ts', body: 'Worker 负责读取任务文件并生成结果文件，由 a3s-box 以系统固定边界启动。' },
+      9: { title: 'validator/index.ts', body: 'Validator 独立读取输入、Worker 输出和证据文件，不能改写 Worker 目录。' },
+      12: { title: 'schema', body: '输入、输出和裁决文件都有版本化 Schema，文件内容不合格时不会进入下一阶段。' },
+      17: { title: 'acceptance', body: '这里是业务验收条件，不是工具、文件系统或网络配置。' },
+      21: { title: 'settlement', body: '业务目录声明计价方式与金额上限；实际转账仍由 ACVM 校验并执行。' },
+      24: { title: 'maxAmount', body: '单个任务最多结算 200,000 CNYC，超出时链上转账接口会拒绝。' },
+    },
+  },
+  {
+    id: 'schemas',
+    filename: 'schemas.ts',
+    code: `import { schema } from '@a3s-lab/acvm';
+
+export const inputSchema = schema.object({
+  querySetRoot: schema.string(),
+  siteVersion: schema.string(),
+  payout: schema.address(),
+});
+
+export const resultSchema = schema.object({
+  baselinePp: schema.number(),
+  artifactRoot: schema.digest(),
+  evidenceRoot: schema.digest(),
+});
+
+export const verdictSchema = schema.object({
+  passed: schema.boolean(),
+  liftBps: schema.integer(),
+  payout: schema.address(),
+});
+
+export type WorkOrder = schema.infer<typeof inputSchema>;
+export type WorkerResult = schema.infer<typeof resultSchema>;
+export type Verdict = schema.infer<typeof verdictSchema>;`,
+    notes: {
+      3: { title: 'inputSchema', body: '调用意图先被规范化成 /task/input/order.json；字段不完整时 Worker 不会启动。' },
+      9: { title: 'resultSchema', body: 'Worker 输出只传递必要业务值和文件承诺，不把整份工作区塞进交易。' },
+      15: { title: 'verdictSchema', body: 'Validator 的裁决文件使用独立 Schema，结算阶段只接受这个固定格式。' },
+      21: { title: 'TypeScript 类型', body: '运行时 Schema 和编译时类型来自同一处，避免代码与文件格式各写一份。' },
     },
   },
   {
     id: 'context',
     filename: 'ctx.d.ts',
-    code: `export type Address = string; // 0x-prefixed
+    code: `import type { Session } from '@a3s-lab/code';
 
-export type OracleResult<T> = {
-  value: T;
-  proof: string;
-  observedAt: number;
+export type ReadPath =
+  | '/task/input/order.json'
+  | '/task/output/result.json'
+  | '/task/evidence/baseline.json'
+  | '/task/verdict/result.json';
+
+export type WritePath =
+  | '/task/output/artifact.json'
+  | '/task/output/result.json'
+  | '/task/evidence/baseline.json'
+  | '/task/verdict/result.json'
+  | '/task/settlement/result.json';
+
+export type FileRef = {
+  path: WritePath;
+  digest: string;
+  size: number;
 };
 
 export interface AgenticContractContext {
   taskId: string;
-  caller: Address;
+  caller: string;
   block: { height: bigint; timestamp: number };
-  contract: {
-    address: Address;
-    escrow: Address;
-    settlementToken: Address;
+  code: { session: Session };
+  files: {
+    read<T>(path: ReadPath): Promise<T>;
+    write(path: WritePath, value: unknown): Promise<FileRef>;
   };
   oracle: {
     read<T>(request: {
       source: string;
       query: Record<string, unknown>;
       atBlock?: bigint;
-    }): Promise<OracleResult<T>>;
+    }): Promise<{ value: T; proof: string; observedAt: number }>;
   };
   chain: {
     transfer(request: {
-      token: Address;
-      to: Address;
+      token: string;
+      to: string;
       amount: bigint;
       memo?: string;
     }): Promise<{ txHash: string }>;
     emit(event: string, payload: unknown): Promise<void>;
   };
   receipt: {
-    commit(kind: string, payload: unknown):
-      Promise<{ root: string }>;
+    commit(kind: 'worker' | 'validator' | 'settlement'):
+      Promise<{ root: string; treeRoot: string }>;
   };
 }
 
@@ -107,147 +156,133 @@ declare global {
   const ctx: AgenticContractContext;
 }`,
     notes: {
-      9: { title: 'AgenticContractContext', body: 'ACVM 在工作负载启动时注入的只读全局上下文，不需要业务代码保存链私钥。' },
-      10: { title: 'taskId', body: '调用、Worker、Validator、回执和转账都引用同一个任务编号。' },
-      12: { title: 'block', body: '读取当前确定区块的高度与时间，避免预言机查询没有时间边界。' },
-      13: { title: 'contract', body: '提供当前合约地址、托管地址和允许结算的资产地址。' },
-      18: { title: 'ctx.oracle', body: '读取外部数据时同时返回值、来源证明和观测时间。' },
-      19: { title: 'oracle.read<T>', body: '泛型 T 描述返回数据结构；source 必须命中 Manifest 白名单。' },
-      25: { title: 'ctx.chain', body: '所有链操作先经过 ACVM 权限、额度、nonce 和状态检查。' },
-      26: { title: 'chain.transfer', body: '从合约托管账户转账，不能指定任意 from 地址绕过授权。' },
-      32: { title: 'chain.emit', body: '写入可索引事件，事件会和 taskId、交易哈希及回执根绑定。' },
-      34: { title: 'ctx.receipt', body: '把本阶段输入、输出和证明提交为规范化回执。' },
-      35: { title: 'receipt.commit', body: '返回 Merkle Root，链上只需保存根即可验证完整轨迹。' },
-      41: { title: 'global ctx', body: 'Worker 与 Validator 都可直接使用 ctx，但获得的能力由各自 Manifest 权限裁剪。' },
+      1: { title: 'a3s-code Session', body: 'a3s-box 先创建受系统约束的 Session，再通过 ctx 交给业务代码；作者没有运行配置入口。' },
+      3: { title: 'ReadPath', body: '可读取路径由协议固定。这里是在 TypeScript 中说明文件 ABI，不是让用户配置挂载权限。' },
+      9: { title: 'WritePath', body: '可写文件同样由协议固定；越界路径、符号链接绕过和覆盖系统文件都会被运行时拒绝。' },
+      16: { title: 'FileRef', body: '每次写入返回路径、内容摘要和字节数，后续回执直接引用这些稳定字段。' },
+      22: { title: 'AgenticContractContext', body: 'ctx 是 ACVM 注入的只读全局对象，业务代码不持有链私钥，也不能替换系统能力。' },
+      26: { title: 'ctx.code.session', body: '这是已由 a3s-box 配置好的 a3s-code Session；工具、文件系统和网络边界不在合约内暴露。' },
+      27: { title: 'ctx.files', body: '业务只按固定路径读写 JSON；ACVM 自动规范编码、计算摘要并记录文件事件。' },
+      31: { title: 'ctx.oracle', body: '外部观测返回值、来源证明和观测时间，业务代码再把它写入 evidence 文件。' },
+      38: { title: 'ctx.chain', body: '转账和事件由链上能力代理执行，仍要经过合约状态、额度、nonce 和回执检查。' },
+      47: { title: 'ctx.receipt', body: '提交阶段时，系统从当前任务文件生成 treeRoot，并把它绑定到签名回执。' },
+      53: { title: 'global ctx', body: 'Worker、Validator 和结算代码使用同一种调用方式，但系统按阶段提供不同的固定能力。' },
     },
   },
   {
     id: 'worker',
-    filename: 'worker.ts',
-    code: `import {
-  Agent, FileSessionStore, LocalWorkspaceBackend,
-  type SessionOptions,
-} from '@a3s-lab/code';
+    filename: 'worker/index.ts',
+    code: `import { resultSchema, type WorkOrder } from '../schemas';
 
 type GeoObservation = { sharePp: number; windowDays: number };
-type WorkOrder = { querySetRoot: string; siteVersion: string };
 
-const options: SessionOptions = {
-  planningMode: 'disabled',
-  workspaceBackend: new LocalWorkspaceBackend('/workspace'),
-  sessionStore: new FileSessionStore('/receipts/worker'),
-  autoSave: true,
-  permissionPolicy: {
-    allow: ['read*', 'write*', 'edit*', 'code_*'],
-    deny: ['bash*', 'git*'], defaultDecision: 'deny',
-  },
-};
+export async function run() {
+  const order = await ctx.files.read<WorkOrder>('/task/input/order.json');
 
-export async function run(order: WorkOrder) {
   const baseline = await ctx.oracle.read<GeoObservation>({
     source: 'geo-citation-share',
     query: { querySetRoot: order.querySetRoot },
     atBlock: ctx.block.height,
   });
 
-  const agent = await Agent.create('worker.acl');
-  const session = await agent.sessionAsync('/workspace', options);
-  const result = await session.send({
+  const baselineFile = await ctx.files.write(
+    '/task/evidence/baseline.json',
+    baseline,
+  );
+
+  const run = await ctx.code.session.send({
     prompt: 'Improve GEO for site version ' + order.siteVersion,
   });
-  await session.save();
-  const [latestRun] = (await session.runs()).slice(-1);
-  const receipt = await ctx.receipt.commit('worker', {
-    taskId: ctx.taskId,
-    baseline,
-    latestRun,
-    result,
+  await ctx.code.session.save();
+
+  const artifactFile = await ctx.files.write(
+    '/task/output/artifact.json',
+    { runId: run.id, result: run },
+  );
+
+  const output = resultSchema.parse({
+    baselinePp: baseline.value.sharePp,
+    artifactRoot: artifactFile.digest,
+    evidenceRoot: baselineFile.digest,
   });
-  await session.closeAsync();
-  await agent.close();
-  return { baselinePp: baseline.value.sharePp, receipt };
+  await ctx.files.write('/task/output/result.json', output);
+
+  return ctx.receipt.commit('worker');
 }`,
     notes: {
-      2: { title: '@a3s-lab/code', body: 'TypeScript SDK 提供 Agent、工作区、事件流和持久化 Session。' },
-      9: { title: 'SessionOptions', body: '运行配置经过 TypeScript 类型检查后再交给 a3s-code。' },
-      11: { title: 'LocalWorkspaceBackend', body: '文件与代码工具只能访问 a3s-box 挂载的 /workspace。' },
-      12: { title: 'FileSessionStore', body: 'Run、Trace、Artifact 和验证材料被持续保存。' },
-      14: { title: 'permissionPolicy', body: '这是 Agent 工具权限；它和 ctx 的链权限是两套独立闸门。' },
-      20: { title: 'run(order)', body: 'a3s-box 用签名 WorkOrder 调用这个入口。' },
-      21: { title: 'ctx.oracle.read', body: '执行前冻结 GEO 基线；返回值自带可写入回执的来源证明。' },
-      24: { title: 'atBlock', body: '把基线绑定到确定区块，之后不能挑一个更有利的历史值。' },
-      27: { title: 'Agent.create', body: '从 worker.acl 创建 Agent；模型和运行策略不写死在业务代码里。' },
-      28: { title: 'sessionAsync', body: '创建不阻塞 Node.js 事件循环的工作区会话。' },
-      29: { title: 'session.send', body: '让 Agent 完成网站分析与内容修改，工具调用全部进入事件轨迹。' },
-      33: { title: 'session.runs', body: '取得本次 a3s-code Run 快照，后续可按 runId 重放和审计。' },
-      34: { title: 'worker receipt', body: '把预言机基线、Agent Run 和输出一起提交，防止只交最后结果。' },
-      40: { title: 'closeAsync', body: '先关闭 Session，再关闭 Agent，释放 a3s-box 中的运行资源。' },
+      1: { title: '业务 Schema', body: 'Worker 直接复用合约目录中的结果 Schema，不再自行定义一份返回对象。' },
+      6: { title: '固定输入文件', body: '调用意图由 ACVM 写成 /task/input/order.json；Worker 只能读取，不能修改。' },
+      8: { title: 'ctx.oracle.read', body: '执行前冻结 GEO 基线，返回值同时带来源证明和观测时间。' },
+      11: { title: 'atBlock', body: '基线绑定到确定区块，Worker 不能事后挑选更有利的数据快照。' },
+      14: { title: 'evidence 文件', body: '外部观测先落成证据文件；系统自动记录写入事件并计算内容摘要。' },
+      19: { title: '预配置 Session', body: 'ctx.code.session 已由 a3s-box 创建。合约代码只使用它，不设置工具、目录或网络权限。' },
+      20: { title: 'Agent 运行', body: 'a3s-code 的每次模型输出和工具调用都属于当前 taskId 的运行轨迹。' },
+      24: { title: 'artifact 文件', body: '完整 Agent 产物写入 output 目录，Validator 通过文件摘要引用它。' },
+      29: { title: 'resultSchema.parse', body: '结果写盘前先做运行时校验，避免 TypeScript 编译通过但实际 JSON 缺字段。' },
+      34: { title: '结果文件', body: 'result.json 是 Worker 对外的唯一业务输出；后续阶段只认这个固定文件。' },
+      36: { title: 'Worker 回执', body: 'commit 不接收任意 payload，而是由系统对本阶段产生的文件树和运行轨迹统一承诺。' },
     },
   },
   {
     id: 'validator',
-    filename: 'validator.ts',
-    code: `import type { Address } from './ctx';
+    filename: 'validator/index.ts',
+    code: `import { verdictSchema, type WorkOrder, type WorkerResult } from '../schemas';
 
 type GeoObservation = { sharePp: number; windowDays: number };
-type Claim = {
-  baselinePp: number;
-  querySetRoot: string;
-  payout: Address;
-};
 
-export async function validate(claim: Claim) {
+export async function validate() {
+  const order = await ctx.files.read<WorkOrder>('/task/input/order.json');
+  const result = await ctx.files.read<WorkerResult>('/task/output/result.json');
+
   const observed = await ctx.oracle.read<GeoObservation>({
     source: 'geo-citation-share',
-    query: { querySetRoot: claim.querySetRoot },
+    query: { querySetRoot: order.querySetRoot },
     atBlock: ctx.block.height,
   });
 
   const liftBps = Math.round(
-    (observed.value.sharePp - claim.baselinePp) * 100,
+    (observed.value.sharePp - result.baselinePp) * 100,
   );
-  const passed = observed.value.windowDays >= 30
-    && liftBps >= 800;
-
-  return ctx.receipt.commit('validator', {
-    taskId: ctx.taskId,
-    passed,
+  const verdict = verdictSchema.parse({
+    passed: observed.value.windowDays >= 30
+      && liftBps >= 800,
     liftBps,
-    payout: claim.payout,
-    oracleProof: observed.proof,
-    observedAt: observed.observedAt,
-    });
+    payout: order.payout,
+  });
+
+  await ctx.files.write('/task/verdict/result.json', verdict);
+  return ctx.receipt.commit('validator');
 }`,
     notes: {
-      10: { title: 'validate(claim)', body: 'Validator 是第二个 a3s-box 工作负载，只接收 Worker 声明和证据引用。' },
-      11: { title: '独立预言机观测', body: 'Validator 重新读取同一签名问题集，不接受 Worker 自报的最终引用率。' },
-      14: { title: 'atBlock', body: '最终观测同样绑定区块高度，使观察窗口和数据快照可复核。' },
-      17: { title: 'liftBps', body: '引用份额差值转换成整数 bps，避免浮点值直接进入链上结算。' },
-      20: { title: 'passed', body: '只有观察期满 30 天且增量达到 800 bps 时才通过。' },
-      23: { title: 'validator receipt', body: '判断结果、增量、收款地址和预言机证明共同进入验收回执。' },
-      28: { title: 'oracleProof', body: '证明本次观测来自 Manifest 允许的数据源，而不是 Validator 手填。' },
+      5: { title: '独立工作负载', body: 'Validator 在另一台 a3s-box 上启动，只读取系统提供的任务输入和 Worker 结果。' },
+      6: { title: '同一输入文件', body: '验收与执行引用同一个 order.json，避免接口转发时替换任务参数。' },
+      7: { title: '只读 Worker 结果', body: 'Validator 读取 result.json，但不能修改 output 目录或 Worker 回执。' },
+      9: { title: '重新观测', body: 'Validator 不接受 Worker 自报的最终引用率，而是重新读取同一问题集。' },
+      15: { title: '整数差值', body: '引用份额差值转换成整数 bps，避免浮点值直接参与链上结算。' },
+      18: { title: '验收 Schema', body: '通过状态、收益增量和收款地址必须一起通过 verdictSchema。' },
+      25: { title: '裁决文件', body: 'Validator 只输出固定的 verdict/result.json，结算代码不接收临时对象。' },
+      26: { title: 'Validator 回执', body: '系统把裁决文件、重新观测证明和 Validator 运行轨迹一起生成回执根。' },
     },
   },
   {
     id: 'settlement',
     filename: 'settle.ts',
-    code: `import type { Address } from './ctx';
+    code: `import type { Verdict } from './schemas';
 
-type Verdict = {
-  passed: boolean;
-  liftBps: number;
-  payout: Address;
-};
+export async function settle() {
+  const verdict = await ctx.files.read<Verdict>('/task/verdict/result.json');
 
-export async function settle(verdict: Verdict) {
   if (!verdict.passed) {
     await ctx.chain.emit('GEORejected', { taskId: ctx.taskId });
-    return ctx.receipt.commit('settlement', { status: 'rejected' });
+    await ctx.files.write('/task/settlement/result.json', {
+      status: 'rejected',
+    });
+    return ctx.receipt.commit('settlement');
   }
 
   const amount = BigInt(verdict.liftBps) * 100_000_000n;
   const transfer = await ctx.chain.transfer({
-    token: ctx.contract.settlementToken,
+    token: 'CNYC',
     to: verdict.payout,
     amount,
     memo: ctx.taskId,
@@ -260,68 +295,69 @@ export async function settle(verdict: Verdict) {
     txHash: transfer.txHash,
   });
 
-  return ctx.receipt.commit('settlement', {
+  await ctx.files.write('/task/settlement/result.json', {
     status: 'paid',
     amount,
     txHash: transfer.txHash,
-    });
+  });
+  return ctx.receipt.commit('settlement');
 }`,
     notes: {
-      9: { title: 'settle(verdict)', body: '只有已验证回执才能进入结算入口，普通 Worker 无权直接调用。' },
-      10: { title: '拒绝分支', body: '验收未通过时只写拒绝事件与回执，不产生资产转移。' },
-      11: { title: 'ctx.chain.emit', body: '事件自动绑定当前合约、taskId、区块和调用者。' },
-      15: { title: 'amount', body: '1160 bps × 100 CNYC = 116,000 CNYC；使用 bigint 避免金额精度丢失。' },
-      16: { title: 'ctx.chain.transfer', body: 'ACVM 检查资产白名单、托管余额、额度、nonce 和 Validator 回执后才执行。' },
-      17: { title: 'settlementToken', body: '资产来自 Manifest 与当前合约上下文，业务代码不能临时换币种。' },
-      18: { title: 'payout', body: '收款地址已在 Validator 回执中绑定，结算阶段不能替换。' },
-      20: { title: 'memo', body: '把转账直接关联到 taskId，账本和工作轨迹可以双向查询。' },
-      23: { title: 'GEOSettled', body: '公开事件只放结算必要字段，完整证据仍通过回执根按需取回。' },
-      30: { title: 'settlement receipt', body: '最终回执同时记录支付状态、金额和交易哈希，生命周期至此闭合。' },
+      4: { title: '读取裁决文件', body: '结算入口不接收调用者传入的 verdict，只读取已经通过 Validator 回执绑定的文件。' },
+      6: { title: '拒绝分支', body: '验收未通过时只写拒绝事件和结算结果文件，不产生资产转移。' },
+      8: { title: '失败也落盘', body: '失败状态同样写入固定路径，因此完整生命周期不会只留下成功记录。' },
+      14: { title: 'amount', body: '1160 bps × 100 CNYC = 116,000 CNYC；使用 bigint 避免金额精度丢失。' },
+      15: { title: 'ctx.chain.transfer', body: 'ACVM 检查额度、托管余额、nonce 和 Validator 回执后才执行转账。' },
+      17: { title: 'payout', body: '收款地址来自已冻结的裁决文件，结算阶段不能替换。' },
+      19: { title: 'memo', body: '转账直接关联 taskId，账本记录与任务文件可以双向查询。' },
+      22: { title: 'GEOSettled', body: '公开事件只放结算必要字段，完整文件树仍通过回执根按需核验。' },
+      29: { title: '结算结果文件', body: '支付状态、金额和交易哈希先写入固定文件，再由系统生成最终回执。' },
+      34: { title: '最终回执', body: '结算回执绑定 transfer 交易、settlement/result.json 和前序 Validator 回执。' },
     },
   },
 ];
 
 const beats: CodeBeat[] = [
   {
-    id: 'contract', fileId: 'contract', layer: '01 / CONTRACT', title: '冻结两份工作负载',
-    body: 'Manifest 同时锁定 Worker、Validator、ctx 权限、验收阈值和结算上限。',
-    result: 'contractRoot · workerDigest · validatorDigest', focus: [4, 22],
+    id: 'contract', fileId: 'contract', layer: '01 / CONTRACT TREE', title: '提交完整业务目录',
+    body: '合约根绑定 contract.ts、Schema、Worker、Validator 和结算代码；任一文件变化都会产生新版本。',
+    result: 'contractTreeRoot · worker/ · validator/', focus: [4, 25],
   },
   {
-    id: 'context', fileId: 'context', layer: '02 / ACVM CONTEXT', title: 'ctx 提供链能力',
-    body: 'ACVM 向工作负载注入受权限约束的全局 ctx，不把链私钥交给 Agent。',
-    result: 'oracle · chain · receipt · taskId', focus: [9, 37],
+    id: 'schemas', fileId: 'schemas', layer: '02 / FILE SCHEMA', title: '先固定文件格式',
+    body: '输入、结果和裁决文件共用一份运行时 Schema 与 TypeScript 类型。',
+    result: 'order.json · result.json · verdict.json', focus: [3, 23],
   },
   {
-    id: 'worker-runtime', fileId: 'worker', layer: '03 / A3S-CODE', title: '配置 Agent 运行边界',
-    body: 'a3s-code 负责模型会话、工具权限、工作区和可追溯运行快照。',
-    result: 'SessionOptions · PermissionPolicy · FileSessionStore', focus: [9, 18],
+    id: 'context', fileId: 'context', layer: '03 / FIXED CONTEXT', title: '系统注入固定能力',
+    body: 'ctx 提供预配置的 a3s-code Session、固定文件 ABI、预言机、链操作和回执接口。',
+    result: 'code · files · oracle · chain · receipt', focus: [20, 49],
   },
   {
-    id: 'worker-run', fileId: 'worker', layer: '04 / WORKER', title: '读预言机并执行任务',
-    body: '先通过 ctx 冻结 GEO 基线，再让 Agent 修改内容，最后把 Run 与结果提交成回执。',
-    result: 'baselineProof · runId · workerReceipt', focus: [20, 39],
+    id: 'worker', fileId: 'worker', layer: '04 / WORKER', title: '输入、证据、结果都落盘',
+    body: 'Worker 从固定输入文件开始，把预言机证据、Agent 产物和规范化结果分别写入任务目录。',
+    result: 'evidenceRoot · artifactRoot · workerTreeRoot', focus: [5, 37],
   },
   {
-    id: 'validator', fileId: 'validator', layer: '05 / VALIDATOR', title: '独立观测结果',
-    body: 'Validator 重新读取同一问题集，只用整数谓词判断观察期和引用增量。',
-    result: 'passed · liftBps · oracleProof', focus: [10, 30],
+    id: 'validator', fileId: 'validator', layer: '05 / VALIDATOR', title: '只读结果，独立裁决',
+    body: 'Validator 读取同一输入和 Worker 结果，重新观测后只写 verdict/result.json。',
+    result: 'passed · liftBps · validatorTreeRoot', focus: [5, 27],
   },
   {
-    id: 'settlement', fileId: 'settlement', layer: '06 / SETTLEMENT', title: '验收后转账',
-    body: '通过后由 ctx 从合约托管账户转账，并把事件、交易哈希和回执根写回链上。',
-    result: 'transferTx · GEOSettled · settlementReceipt', focus: [9, 34],
+    id: 'settlement', fileId: 'settlement', layer: '06 / SETTLEMENT', title: '只认已绑定的裁决文件',
+    body: '结算代码读取 Validator 文件，通过后调用 ctx 转账，再把交易结果写回任务目录。',
+    result: 'transferTx · GEOSettled · settlementReceipt', focus: [3, 35],
   },
 ];
 
-const tokenPattern = /(\/\/.*$|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|\b(?:import|from|export|const|type|interface|declare|global|async|function|await|return|if|else|new|as|true|false|unknown|string|number|bigint|boolean|Promise)\b|\b\d[\d_]*(?:\.\d+)?n?\b|\b(?:ctx|oracle|chain|receipt|contract|block)\b|\b[A-Z][A-Za-z0-9_]*\b|\b[a-zA-Z_$][\w$]*(?=\s*\()|\b[a-zA-Z_$][\w$]*(?=\s*:)|[{}\[\](),.:;?<>+=*|&!\/-]+)/g;
+const tokenPattern = /(\/\/.*$|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|\b(?:import|from|export|default|const|type|interface|declare|global|async|function|await|return|if|else|new|as|true|false|unknown|string|number|bigint|boolean|Promise|typeof)\b|\b\d[\d_]*(?:\.\d+)?n?\b|\b(?:ctx|code|files|oracle|chain|receipt|contract|block|schema)\b|\b[A-Z][A-Za-z0-9_]*\b|\b[a-zA-Z_$][\w$]*(?=\s*\()|\b[a-zA-Z_$][\w$]*(?=\s*:)|[{}\[\](),.:;?<>+=*|&!\/-]+)/g;
 
 function tokenClass(token: string) {
   if (token.startsWith('//')) return 'tok-comment';
   if (token.startsWith("'") || token.startsWith('"')) return 'tok-string';
   if (/^\d/.test(token)) return 'tok-number';
-  if (/^(?:import|from|export|const|type|interface|declare|global|async|function|await|return|if|else|new|as|true|false|unknown|string|number|bigint|boolean|Promise)$/.test(token)) return 'tok-keyword';
-  if (/^(?:ctx|oracle|chain|receipt|contract|block)$/.test(token)) return 'tok-context';
+  if (/^(?:import|from|export|default|const|type|interface|declare|global|async|function|await|return|if|else|new|as|true|false|unknown|string|number|bigint|boolean|Promise|typeof)$/.test(token)) return 'tok-keyword';
+  if (/^(?:ctx|code|files|oracle|chain|receipt|contract|block|schema)$/.test(token)) return 'tok-context';
   if (/^[A-Z]/.test(token)) return 'tok-type';
   if (/^[a-zA-Z_$]/.test(token)) return 'tok-symbol';
   return 'tok-operator';
@@ -448,13 +484,14 @@ export function ContractCodeWalkthrough() {
                 className={activeFile.id === file.id ? 'is-active' : ''}
                 onClick={() => selectFile(file.id)}
                 aria-pressed={activeFile.id === file.id}
+                title={file.filename}
                 key={file.id}
               >
                 <i>TS</i><span>{file.filename}</span>
               </button>
             ))}
           </nav>
-          <footer><span>ACL</span><small>worker.acl</small><span>ACL</span><small>validator.acl</small></footer>
+          <footer><span>ROOT</span><small>contract tree</small><span>HASH</span><small>content addressed</small></footer>
         </aside>
 
         <section className="code-editor" aria-label={`${activeFile.filename} 代码`}>
@@ -509,8 +546,8 @@ export function ContractCodeWalkthrough() {
       </div>
 
       <footer className="code-walkthrough-status">
-        <span><i /> CTX CAPABILITIES BOUND</span>
-        <code>ORACLE → A3S-CODE → VALIDATOR → TRANSFER</code>
+        <span><i /> CONTRACT TREE LOCKED</span>
+        <code>INPUT FILES → WORKER → VERDICT → SETTLEMENT</code>
         <strong>A3S-BOX × 2</strong>
       </footer>
       <i

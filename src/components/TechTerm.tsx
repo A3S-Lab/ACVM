@@ -67,6 +67,16 @@ export const techNotes = {
     mechanism: '轻客户端持续同步可信区块头，并用包含证明检查某笔交易或状态是否属于已最终确认的区块。',
     boundary: '安全性取决于正确跟踪验证者集合和最终性规则；跨链消息还要防止长程攻击与错误同步起点。',
   },
+  'Content-addressed Tree': {
+    summary: '文件的路径与内容共同决定目录根；目录里任何业务文件变化，都会得到新的合约版本。',
+    mechanism: '部署端按规范路径排序文件，对内容做哈希，再逐层计算 Merkle Root。节点只接受与链上 Contract Root 完全一致的目录。',
+    boundary: '它固定的是业务文件，不开放运行环境配置；工具、文件系统、网络和轨迹采集由 ACVM 与 a3s-box 统一提供。',
+  },
+  'Task File ABI': {
+    summary: 'Worker、Validator 和结算阶段通过固定任务文件交接，不通过可随意变化的进程内对象传值。',
+    mechanism: 'ACVM 生成输入文件；Worker 写结果与证据；Validator 只读前序文件并写裁决；系统为每个阶段计算 taskTreeRoot。',
+    boundary: '合约作者只能读写协议允许的业务文件，不能修改目录边界、网络策略或工具配置，也不能选择性漏记文件。',
+  },
   'Intent-centric': {
     summary: '用户声明目标、约束和验收条件，系统负责选择具体执行路径。',
     mechanism: '签名意图先经过权限与策略检查，再由 Worker 执行、Validator 验收，最终以回执证明没有越过约束。',
