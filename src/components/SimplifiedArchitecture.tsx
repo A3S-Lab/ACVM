@@ -28,7 +28,7 @@ const architectureHints = {
   gas: {
     title: 'Gas · 确定性资源计量',
     summary: '限制一次链上状态转换能消耗的计算和存储资源。',
-    details: [{ label: '为什么', value: '防止合约无限循环或占满验证节点；所有节点按同一计价表计费。' }, { label: '边界', value: '链下 Worker 的 CPU/GPU 资源由租约计量，不直接等同于链上 Gas。' }],
+    details: [{ label: '作用', value: '防止合约无限循环或占满验证节点；所有节点按同一计价表计费。' }, { label: '边界', value: '链下 Worker 的 CPU/GPU 资源由租约计量，不直接等同于链上 Gas。' }],
   },
   storage: {
     title: 'Storage · 共识状态存储',

@@ -145,7 +145,7 @@ svg {
 .brand small {
   color: var(--faint);
   font-family: var(--mono);
-  font-size: 7px;
+  font-size: 10px;
   letter-spacing: 0.18em;
 }
 
@@ -233,13 +233,13 @@ svg {
   justify-items: center;
   gap: 3px;
   color: var(--faint);
-  font: 6px var(--mono);
+  font: 9px var(--mono);
   letter-spacing: 0.08em;
 }
 
 .chapter-rail > header strong {
   color: var(--muted);
-  font-size: 7px;
+  font-size: 10px;
   white-space: nowrap;
 }
 
@@ -288,7 +288,7 @@ svg {
   border-radius: 5px;
   background: #050505;
   color: var(--text);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
   opacity: 0;
   pointer-events: none;
   transform: translate(5px, -50%);
@@ -297,7 +297,7 @@ svg {
 
 .chapter-rail a > span b {
   color: var(--faint);
-  font-size: 7px;
+  font-size: 10px;
 }
 
 .chapter-rail a:hover > span,
@@ -350,7 +350,7 @@ svg {
   bottom: 14px;
   color: #474b55;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.16em;
 }
 
@@ -377,7 +377,7 @@ svg {
   gap: 10px;
   color: var(--accent);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 650;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -559,19 +559,19 @@ svg {
 
 .blockchain-block small {
   color: var(--accent);
-  font-size: 7px;
+  font-size: 10px;
   letter-spacing: 0.16em;
 }
 
 .blockchain-block strong {
   color: var(--text);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 560;
 }
 
 .blockchain-block code {
   color: var(--faint);
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .blockchain-block--one { right: 28%; top: 7%; opacity: 0.42; }
@@ -604,7 +604,7 @@ svg {
   border-bottom: 1px solid var(--line);
   color: var(--faint);
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.12em;
 }
 
@@ -631,7 +631,7 @@ svg {
 .panel-chrome > strong {
   justify-self: end;
   color: var(--accent);
-  font-size: 7px;
+  font-size: 10px;
   font-weight: 600;
 }
 
@@ -669,7 +669,7 @@ svg {
   top: 8px;
   left: 9px;
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 .hero-console-flow > section > svg {
@@ -684,7 +684,7 @@ svg {
 
 .hero-console-flow > section small {
   color: var(--muted);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .hero-console-flow > section.is-acvm {
@@ -709,7 +709,7 @@ svg {
   gap: 4px 10px;
   margin-top: 5px;
   color: var(--faint);
-  font: 7px var(--mono);
+  font: 10px var(--mono);
 }
 
 .hero-connector {
@@ -757,13 +757,13 @@ svg {
 
 .hero-chain-strip small {
   color: var(--faint);
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.08em;
 }
 
 .hero-chain-strip code {
   color: var(--muted);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .hero-chain-strip .is-current code {
@@ -798,7 +798,7 @@ svg {
   border-top: 1px solid var(--line);
   color: var(--faint);
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .hero-console > footer strong {
@@ -806,7 +806,7 @@ svg {
   align-items: center;
   gap: 7px;
   color: var(--good);
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .hero-console > footer svg {
@@ -822,7 +822,7 @@ svg {
   align-items: center;
   gap: 10px;
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.13em;
 }
 
@@ -880,7 +880,7 @@ svg {
 .backdrop-illustration text {
   fill: rgba(242, 243, 245, 0.2);
   stroke: none;
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.16em;
 }
 
@@ -943,7 +943,7 @@ svg {
 .chapter-progress {
   flex: none;
   color: var(--faint);
-  font: 700 9px var(--mono);
+  font: 700 11px var(--mono);
   letter-spacing: 0.1em;
   white-space: nowrap;
 }
@@ -1038,7 +1038,7 @@ svg {
 
 .mechanism-compare small {
   color: var(--faint);
-  font: 700 10px var(--mono);
+  font: 700 12px var(--mono);
   letter-spacing: 0.08em;
 }
 
@@ -1122,7 +1122,7 @@ svg {
   position: fixed;
   z-index: 1000;
   width: min(480px, calc(100vw - 24px));
-  max-height: calc(100vh - 24px);
+  max-height: calc(100vh - var(--header-h) - 22px);
   overflow: auto;
   display: block;
   padding: 16px;
@@ -1145,7 +1145,7 @@ svg {
   display: block;
   margin-bottom: 7px;
   color: var(--muted);
-  font: 700 8px var(--mono);
+  font: 700 10px var(--mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -1181,14 +1181,14 @@ svg {
 
 .detail-tooltip dt {
   color: var(--faint);
-  font: 8px/1.55 var(--mono);
+  font: 10px/1.55 var(--mono);
   letter-spacing: 0.06em;
 }
 
 .detail-tooltip dd {
   margin: 0;
   color: var(--text);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.55;
 }
 
@@ -1210,7 +1210,7 @@ svg {
 .detail-derivation > header small,
 .detail-derivation > header span {
   color: var(--faint);
-  font: 700 7px/1.4 var(--mono);
+  font: 700 10px/1.4 var(--mono);
   letter-spacing: 0.1em;
 }
 
@@ -1228,7 +1228,7 @@ svg {
   border-radius: 5px;
   background: #000;
   color: #f3eff8;
-  font: 700 11px/1.6 var(--mono);
+  font: 700 12px/1.6 var(--mono);
   white-space: pre-wrap;
 }
 
@@ -1265,14 +1265,14 @@ svg {
 
 .detail-derivation li > span {
   color: var(--faint);
-  font: 700 8px/1.55 var(--mono);
+  font: 700 10px/1.55 var(--mono);
 }
 
 .detail-derivation li code {
   display: block;
   margin-bottom: 2px;
   color: #d8c7ee;
-  font: 700 9px/1.5 var(--mono);
+  font: 700 11px/1.5 var(--mono);
   overflow-wrap: anywhere;
 }
 
@@ -1281,7 +1281,7 @@ svg {
 .detail-assumptions {
   margin: 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.55;
 }
 
@@ -1292,7 +1292,7 @@ svg {
 
 .detail-verifier > small {
   color: var(--accent-cyan);
-  font: 800 7px/1.4 var(--mono);
+  font: 800 10px/1.4 var(--mono);
   letter-spacing: 0.12em;
 }
 
@@ -1345,7 +1345,7 @@ svg {
   align-items: center;
   gap: 5px;
   color: var(--accent);
-  font: 11px var(--mono);
+  font: 12px var(--mono);
   cursor: help;
   outline: none;
   border-bottom: 0;
@@ -1363,7 +1363,7 @@ svg {
   border: 1px solid var(--line);
   border-radius: 4px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
   font-style: normal;
 }
 
@@ -1379,7 +1379,7 @@ svg {
   min-height: 24px;
   padding: 8px 2px 0;
   color: var(--faint);
-  font: 7px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.11em;
 }
 
@@ -1411,7 +1411,7 @@ svg {
   border-radius: 6px;
   background: #000;
   color: var(--text);
-  font: 700 8px var(--mono);
+  font: 700 10px var(--mono);
   letter-spacing: 0.08em;
   cursor: pointer;
 }
@@ -1443,7 +1443,7 @@ svg {
 .lifecycle-current > div > small,
 .lifecycle-current > strong small {
   color: var(--faint);
-  font: 700 8px var(--mono);
+  font: 700 10px var(--mono);
   letter-spacing: 0.12em;
 }
 
@@ -1481,7 +1481,7 @@ svg {
   border: 1px solid var(--line-strong);
   border-radius: 7px;
   color: var(--text);
-  font: 600 10px/1.4 var(--mono);
+  font: 600 12px/1.4 var(--mono);
   overflow-wrap: anywhere;
 }
 
@@ -1562,7 +1562,7 @@ svg {
 
 .lifecycle-step > span b {
   color: var(--faint);
-  font: 700 9px var(--mono);
+  font: 700 11px var(--mono);
 }
 
 .lifecycle-step > span svg {
@@ -1578,7 +1578,7 @@ svg {
 
 .lifecycle-step > small {
   color: var(--faint);
-  font: 8px/1.35 var(--mono);
+  font: 10px/1.35 var(--mono);
 }
 
 .lifecycle-step.is-past {
@@ -1623,7 +1623,7 @@ svg {
   padding: 0 14px;
   border-top: 1px solid var(--line);
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.06em;
 }
 
@@ -1694,7 +1694,7 @@ svg {
 
 .formal-equation small {
   color: var(--faint);
-  font: 10px var(--mono);
+  font: 12px var(--mono);
   letter-spacing: 0.1em;
 }
 
@@ -1709,7 +1709,7 @@ svg {
   border: 1px solid var(--line);
   border-radius: 4px;
   color: var(--muted);
-  font-size: 7px;
+  font-size: 10px;
   letter-spacing: 0.04em;
 }
 
@@ -1727,7 +1727,7 @@ svg {
 
 .formal-equation > span {
   color: var(--faint);
-  font: 10px var(--mono);
+  font: 12px var(--mono);
 }
 
 .mobile-equation-break {
@@ -1780,7 +1780,7 @@ svg {
 .state-part-grid article small,
 .contract-part article small {
   color: var(--faint);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .formal-transition {
@@ -1803,7 +1803,7 @@ svg {
 
 .formal-transition > span small {
   color: var(--faint);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .formal-transition > span strong {
@@ -1838,7 +1838,7 @@ svg {
 
 .formal-transition b {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 500;
 }
@@ -1855,13 +1855,13 @@ svg {
 
 .formal-note > span {
   color: var(--faint);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
   letter-spacing: 0.1em;
 }
 
 .formal-note strong {
   color: var(--muted);
-  font: 11px var(--mono);
+  font: 12px var(--mono);
   font-weight: 500;
 }
 
@@ -1924,7 +1924,7 @@ svg {
 
 .contract-call small {
   color: var(--faint);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .contract-call strong {
@@ -1958,7 +1958,7 @@ svg {
   top: 9px;
   left: 9px;
   color: var(--faint);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .receipt-state-flow article svg {
@@ -1972,7 +1972,7 @@ svg {
 
 .receipt-state-flow article small {
   color: var(--faint);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .receipt-worker-stack {
@@ -1998,12 +1998,12 @@ svg {
 }
 
 .receipt-worker-stack b {
-  font: 10px var(--mono);
+  font: 12px var(--mono);
 }
 
 .receipt-worker-stack small {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .receipt-fields {
@@ -2017,7 +2017,7 @@ svg {
   border: 1px solid var(--line);
   border-radius: 6px;
   color: var(--muted);
-  font: 10px var(--mono);
+  font: 12px var(--mono);
   text-align: center;
 }
 
@@ -2049,7 +2049,7 @@ svg {
 
 .poi-proof-part small {
   color: var(--faint);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .poi-chain-flow {
@@ -2078,7 +2078,7 @@ svg {
 
 .poi-chain-flow small {
   color: var(--faint);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .poi-chain-flow strong {
@@ -2087,7 +2087,7 @@ svg {
 
 .poi-chain-flow span {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .flow-arrow {
@@ -2146,7 +2146,7 @@ svg {
   padding: 0 18px;
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 .diagram-statusline span {
@@ -2196,7 +2196,7 @@ svg {
   justify-content: space-between;
   gap: 12px;
   color: var(--faint);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
   letter-spacing: 0.09em;
 }
 
@@ -2286,12 +2286,12 @@ svg {
 
 .topology-node-layer text {
   fill: var(--muted);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .topology-node-layer tspan {
   fill: var(--faint);
-  font-size: 6.5px;
+  font-size: 10px;
   letter-spacing: 0.08em;
 }
 
@@ -2319,7 +2319,7 @@ svg {
 
 .topology-core-detail {
   fill: var(--faint);
-  font: 6px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.04em;
 }
 
@@ -2374,7 +2374,7 @@ svg {
   padding: 6px 8px;
   background: var(--surface);
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.08em;
   white-space: nowrap;
   transform: translate(-50%, -50%) rotate(-90deg);
@@ -2411,13 +2411,13 @@ svg {
 
 .validator-nodes text {
   fill: var(--text);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .validator-labels text {
   fill: var(--faint);
-  font-size: 7px;
+  font-size: 10px;
   letter-spacing: 0.06em;
 }
 
@@ -2437,13 +2437,13 @@ svg {
 
 .state-transition-code {
   fill: var(--text);
-  font-size: 11px;
+  font-size: 12px;
   overflow: visible;
 }
 
 .state-transition-note {
   fill: var(--faint);
-  font-size: 6.5px;
+  font-size: 10px;
   letter-spacing: 0.04em;
   overflow: visible;
 }
@@ -2462,7 +2462,7 @@ svg {
 
 .state-transition-semantics {
   color: var(--faint);
-  font-size: 6.5px;
+  font-size: 10px;
   letter-spacing: 0;
 }
 
@@ -2482,7 +2482,7 @@ svg {
 .block-input-label,
 .state-output-label {
   fill: var(--muted);
-  font-size: 7.5px;
+  font-size: 10px;
   letter-spacing: 0.1em;
 }
 
@@ -2508,7 +2508,7 @@ svg {
 
 .external-domain article > span {
   color: var(--faint);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .external-domain article > svg {
@@ -2530,7 +2530,7 @@ svg {
 
 .external-domain article small {
   color: var(--muted);
-  font: 9px/1.4 var(--mono);
+  font: 11px/1.4 var(--mono);
 }
 
 .external-domain > footer {
@@ -2555,14 +2555,14 @@ svg {
 
 .external-domain > footer small {
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.08em;
 }
 
 .external-domain > footer strong {
   overflow: hidden;
   color: var(--muted);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -2576,7 +2576,7 @@ svg {
   padding: 0 16px;
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .onchain-legend span {
@@ -2631,7 +2631,7 @@ svg {
 .runtime-package small,
 .runtime-package code {
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.1em;
 }
 
@@ -2676,7 +2676,7 @@ svg {
   top: 10px;
   right: 10px;
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 .runtime-flow .flow-node svg {
@@ -2691,7 +2691,7 @@ svg {
 
 .runtime-flow .flow-node small {
   color: var(--muted);
-  font: 9px/1.5 var(--mono);
+  font: 11px/1.5 var(--mono);
 }
 
 /* Identity */
@@ -2718,7 +2718,7 @@ svg {
   position: absolute;
   top: 8px;
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 .identity-line article svg {
@@ -2733,7 +2733,7 @@ svg {
 
 .identity-line article small {
   color: var(--muted);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .zk-capability-flow {
@@ -2755,7 +2755,7 @@ svg {
 
 .zk-capability-flow > section > small {
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.12em;
 }
 
@@ -2766,7 +2766,7 @@ svg {
 
 .zk-capability-flow > section > span {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .zk-capability-flow > section.is-proof {
@@ -2805,7 +2805,7 @@ svg {
   border-radius: 5px;
   background: #000;
   color: var(--text);
-  font: 700 8px var(--mono);
+  font: 700 10px var(--mono);
   letter-spacing: 0.08em;
   cursor: pointer;
 }
@@ -2858,9 +2858,9 @@ svg {
 }
 
 .ans-current > span { color: var(--text); font: 700 22px var(--mono); }
-.ans-current p { margin: 0; font-size: 10px; line-height: 1.45; }
+.ans-current p { margin: 0; font-size: 12px; line-height: 1.45; }
 .ans-current small, .ans-current strong { display: block; }
-.ans-current small { margin-bottom: 3px; color: var(--faint); font: 7px var(--mono); letter-spacing: 0.08em; }
+.ans-current small { margin-bottom: 3px; color: var(--faint); font: 10px var(--mono); letter-spacing: 0.08em; }
 .ans-current strong { margin-bottom: 3px; color: var(--text); font-size: 13px; }
 
 .ans-caller,
@@ -2886,9 +2886,9 @@ svg {
 }
 
 .ans-caller > svg { grid-row: 1 / 4; align-self: center; width: 22px; height: 22px; color: var(--text); }
-.ans-caller small, .ans-ledger small, .ans-validator small { color: var(--faint); font: 7px var(--mono); letter-spacing: 0.06em; }
-.ans-caller strong { overflow: hidden; color: var(--text); font: 600 10px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
-.ans-caller code { overflow: hidden; color: var(--muted); font: 7px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
+.ans-caller small, .ans-ledger small, .ans-validator small { color: var(--faint); font: 10px var(--mono); letter-spacing: 0.06em; }
+.ans-caller strong { overflow: hidden; color: var(--text); font: 600 12px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
+.ans-caller code { overflow: hidden; color: var(--muted); font: 10px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
 
 .ans-resolver {
   position: absolute;
@@ -2910,14 +2910,14 @@ svg {
   box-shadow: 0 0 0 5px rgba(242, 243, 245, 0.025);
 }
 
-.ans-resolver > span { display: flex; align-items: center; gap: 6px; color: var(--faint); font: 7px var(--mono); letter-spacing: 0.07em; }
+.ans-resolver > span { display: flex; align-items: center; gap: 6px; color: var(--faint); font: 10px var(--mono); letter-spacing: 0.07em; }
 .ans-resolver > span i { width: 5px; height: 5px; border-radius: 50%; background: var(--text); animation: backdrop-pulse 1.8s ease-in-out infinite; }
 .ans-resolver > strong { margin-top: 5px; font: 800 30px var(--mono); letter-spacing: -0.06em; }
-.ans-resolver > small { color: var(--muted); font-size: 10px; }
+.ans-resolver > small { color: var(--muted); font-size: 12px; }
 .ans-resolver dl { width: 100%; display: grid; gap: 3px; margin: 10px 0 0; padding-top: 8px; border-top: 1px solid var(--line-soft); }
 .ans-resolver dl > div { min-width: 0; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 6px; text-align: left; }
-.ans-resolver dt { color: var(--faint); font: 7px/1.4 var(--mono); }
-.ans-resolver dd { overflow: hidden; margin: 0; color: var(--text); font: 8px/1.4 var(--mono); text-overflow: ellipsis; white-space: nowrap; }
+.ans-resolver dt { color: var(--faint); font: 10px/1.4 var(--mono); }
+.ans-resolver dd { overflow: hidden; margin: 0; color: var(--text); font: 10px/1.4 var(--mono); text-overflow: ellipsis; white-space: nowrap; }
 
 .ans-candidates {
   position: absolute;
@@ -2953,9 +2953,9 @@ svg {
 .ans-candidates button > svg { width: 20px; height: 20px; }
 .ans-candidates button > span { min-width: 0; display: grid; gap: 2px; }
 .ans-candidates small, .ans-candidates strong, .ans-candidates code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ans-candidates small { color: var(--faint); font: 7px var(--mono); }
-.ans-candidates strong { color: inherit; font: 650 10px var(--mono); }
-.ans-candidates code { color: var(--muted); font: 7px var(--mono); }
+.ans-candidates small { color: var(--faint); font: 10px var(--mono); }
+.ans-candidates strong { color: inherit; font: 650 12px var(--mono); }
+.ans-candidates code { color: var(--muted); font: 10px var(--mono); }
 
 .ans-ledger,
 .ans-validator {
@@ -2971,13 +2971,13 @@ svg {
 .ans-validator { left: 28%; width: 31%; }
 .ans-ledger svg, .ans-validator svg { width: 17px; height: 17px; color: var(--text); }
 .ans-ledger span, .ans-validator span { min-width: 0; display: grid; gap: 2px; }
-.ans-ledger strong, .ans-validator strong { overflow: hidden; color: var(--text); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.ans-ledger strong, .ans-validator strong { overflow: hidden; color: var(--text); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
 
 .ans-stage-nav { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border-bottom: 1px solid var(--line); }
 .ans-stage-nav button { min-width: 0; display: grid; align-content: center; gap: 4px; padding: 6px 8px; border: 0; border-right: 1px solid var(--line); background: #020202; color: var(--faint); text-align: left; cursor: pointer; }
 .ans-stage-nav button:last-child { border-right: 0; }
-.ans-stage-nav button span { font: 8px var(--mono); }
-.ans-stage-nav button strong { overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.ans-stage-nav button span { font: 10px var(--mono); }
+.ans-stage-nav button strong { overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 .ans-stage-nav button:hover, .ans-stage-nav button.is-active { background: var(--text); color: #000; }
 
 .ans-design { min-width: 0; display: grid; grid-template-columns: 1fr 1fr 0.92fr; background: #020202; }
@@ -2985,11 +2985,11 @@ svg {
 .ans-design-card, .ans-answer { min-width: 0; min-height: 92px; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 0; border-right: 1px solid var(--line); }
 .ans-design-card > svg { flex: 0 0 auto; width: 22px; height: 22px; color: var(--text); }
 .ans-design-card > span { min-width: 0; display: grid; gap: 4px; }
-.ans-design-card small, .ans-answer small { color: var(--faint); font: 7px var(--mono); letter-spacing: 0.07em; }
+.ans-design-card small, .ans-answer small { color: var(--faint); font: 10px var(--mono); letter-spacing: 0.07em; }
 .ans-design-card strong { color: var(--text); font-size: 12px; }
 .ans-answer { align-items: flex-start; justify-content: center; flex-direction: column; border-right: 0; }
-.ans-answer strong { width: 100%; overflow: hidden; color: var(--text); font: 9px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
-.ans-answer span { color: var(--muted); font-size: 10px; }
+.ans-answer strong { width: 100%; overflow: hidden; color: var(--text); font: 11px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
+.ans-answer span { color: var(--muted); font-size: 12px; }
 
 /* Off-chain */
 .domain-flow {
@@ -3027,7 +3027,7 @@ svg {
 
 .domain-flow > section > small {
   color: var(--faint);
-  font: 7px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.08em;
 }
 
@@ -3037,7 +3037,7 @@ svg {
 
 .domain-flow > section > span {
   color: var(--muted);
-  font: 8px/1.55 var(--mono);
+  font: 10px/1.55 var(--mono);
 }
 
 .domain-flow .source-domain {
@@ -3059,7 +3059,7 @@ svg {
   padding: 0 13px;
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .privacy-boundary svg {
@@ -3071,7 +3071,7 @@ svg {
 .privacy-boundary code {
   margin-left: auto;
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 /* Privacy */
@@ -3110,7 +3110,7 @@ svg {
 
 .privacy-lanes article > header small {
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.1em;
 }
 
@@ -3122,7 +3122,7 @@ svg {
   min-height: 0;
   margin: 12px 0 14px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.7;
 }
 
@@ -3153,17 +3153,17 @@ svg {
   left: 8px;
   top: 10px;
   color: var(--faint);
-  font: 7px var(--mono);
+  font: 10px var(--mono);
   font-style: normal;
 }
 
 .mini-pipeline strong {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .mini-pipeline small {
   color: var(--muted);
-  font: 8px/1.5 var(--mono);
+  font: 10px/1.5 var(--mono);
 }
 
 .privacy-composition {
@@ -3177,7 +3177,7 @@ svg {
   gap: 12px;
   border-top: 1px solid var(--line);
   background: var(--bg-soft);
-  font: 10px var(--mono);
+  font: 12px var(--mono);
 }
 
 .privacy-composition span {
@@ -3188,7 +3188,7 @@ svg {
 
 .privacy-composition span i {
   color: var(--muted);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
   font-style: normal;
 }
 
@@ -3231,7 +3231,7 @@ svg {
   position: absolute;
   top: 14px;
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.1em;
 }
 
@@ -3248,7 +3248,7 @@ svg {
 .sentry-flow section > p {
   margin: 0;
   color: var(--muted);
-  font: 10px/1.75 var(--mono);
+  font: 12px/1.75 var(--mono);
 }
 
 .decision-line {
@@ -3266,7 +3266,7 @@ svg {
   padding: 6px 9px;
   color: var(--muted);
   background: var(--surface-2);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 .decision-line > span.is-allow { color: var(--good); }
@@ -3280,7 +3280,7 @@ svg {
 
 .decision-line > strong {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -3331,12 +3331,12 @@ svg {
 }
 
 .milestone strong {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .milestone small {
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 .folding-line {
@@ -3353,7 +3353,7 @@ svg {
 
 .folding-line code {
   color: var(--accent);
-  font: 11px var(--mono);
+  font: 12px var(--mono);
 }
 
 .folding-line > i {
@@ -3382,7 +3382,7 @@ svg {
 
 .folding-line > section small {
   color: var(--faint);
-  font: 7px var(--mono);
+  font: 10px var(--mono);
 }
 
 .folding-line > section strong {
@@ -3405,7 +3405,7 @@ svg {
   gap: 9px;
   padding: 0 22px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .proof-public-private > span + span {
@@ -3420,7 +3420,7 @@ svg {
 
 .proof-public-private strong {
   color: var(--text);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 /* Blockchain-coordinated fog inference network */
@@ -3447,7 +3447,7 @@ svg {
   border-radius: 5px;
   background: #000;
   color: var(--text);
-  font: 700 8px var(--mono);
+  font: 700 10px var(--mono);
   letter-spacing: 0.08em;
   cursor: pointer;
 }
@@ -3485,7 +3485,7 @@ svg {
   display: block;
   margin-bottom: 3px;
   color: var(--faint);
-  font: 7px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.12em;
 }
 
@@ -3498,7 +3498,7 @@ svg {
   margin-bottom: 5px;
   overflow: hidden;
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -3519,7 +3519,7 @@ svg {
 .fog-current p {
   margin: 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.45;
 }
 
@@ -3533,7 +3533,7 @@ svg {
 
 .fog-record-hint code {
   color: var(--muted);
-  font: 8px/1.55 var(--mono);
+  font: 10px/1.55 var(--mono);
 }
 
 .fog-network {
@@ -3553,7 +3553,7 @@ svg {
 
 .fog-boundary-label {
   fill: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.08em;
 }
 
@@ -3693,17 +3693,17 @@ svg {
 
 .fog-node small {
   color: var(--faint);
-  font: 7px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.08em;
 }
 
 .fog-node strong {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .fog-node span {
   color: var(--faint);
-  font: 7px/1.4 var(--mono);
+  font: 10px/1.4 var(--mono);
 }
 
 .fog-node:hover,
@@ -3771,12 +3771,12 @@ svg {
 }
 
 .fog-stage-nav button span {
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 .fog-stage-nav button strong {
   overflow: hidden;
-  font-size: 10px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -3801,7 +3801,7 @@ svg {
 .fog-terms > span {
   overflow: hidden;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -3812,7 +3812,7 @@ svg {
 }
 
 .fog-terms .tech-term {
-  font-size: 8px;
+  font-size: 10px;
 }
 
 /* Proof of Intelligence */
@@ -3845,7 +3845,7 @@ svg {
   position: absolute;
   top: 9px;
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 .poi-flow article svg {
@@ -3861,7 +3861,7 @@ svg {
 .poi-flow article small {
   max-width: 140px;
   color: var(--muted);
-  font: 8px/1.55 var(--mono);
+  font: 10px/1.55 var(--mono);
 }
 
 .poi-equation {
@@ -3877,13 +3877,13 @@ svg {
 
 .poi-equation code {
   color: var(--accent);
-  font: 10px var(--mono);
+  font: 12px var(--mono);
 }
 
 .poi-equation span {
   max-width: 270px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.5;
 }
 
@@ -3908,7 +3908,7 @@ svg {
 
 .poi-finality section small {
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.1em;
 }
 
@@ -3918,7 +3918,7 @@ svg {
 
 .poi-finality section span {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 /* Chain */
@@ -3946,17 +3946,17 @@ svg {
 .deploy-modes i {
   grid-row: span 2;
   color: var(--accent);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   font-style: normal;
 }
 
 .deploy-modes strong {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .deploy-modes small {
   color: var(--muted);
-  font: 7px var(--mono);
+  font: 10px var(--mono);
 }
 
 .acvm-core,
@@ -3989,7 +3989,7 @@ svg {
 .acvm-core small,
 .adapter-core small {
   color: var(--faint);
-  font: 7px var(--mono);
+  font: 10px var(--mono);
 }
 
 .acvm-core strong,
@@ -4000,7 +4000,7 @@ svg {
 .acvm-core span,
 .adapter-core span {
   color: var(--muted);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 .chain-target-list {
@@ -4013,7 +4013,7 @@ svg {
   padding: 9px 11px;
   border-left: 1px solid var(--line);
   color: var(--muted);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .chain-target-list > span:nth-child(-n + 3) {
@@ -4030,12 +4030,12 @@ svg {
   gap: 10px;
   padding: 0 20px;
   border-top: 1px solid var(--line);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .chain-keeps > span {
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 .chain-keeps > strong {
@@ -4083,7 +4083,7 @@ svg {
   border: 0;
   background: transparent;
   color: var(--muted);
-  font: 700 8px var(--mono);
+  font: 700 10px var(--mono);
   letter-spacing: 0.08em;
   cursor: pointer;
 }
@@ -4101,7 +4101,7 @@ svg {
   border: 1px solid var(--line);
   border-radius: 50%;
   color: inherit;
-  font: 8px/1 var(--mono);
+  font: 10px/1 var(--mono);
   font-style: normal;
 }
 
@@ -4111,7 +4111,7 @@ svg {
   justify-content: flex-end;
   gap: 7px;
   color: var(--muted);
-  font: 700 7px var(--mono);
+  font: 700 10px var(--mono);
   letter-spacing: 0.08em;
   white-space: nowrap;
 }
@@ -4124,7 +4124,7 @@ svg {
   border: 1px solid var(--line);
   border-radius: 50%;
   color: var(--text);
-  font: 10px/1 var(--mono);
+  font: 12px/1 var(--mono);
   font-style: normal;
   animation: code-scroll-cue 1.5s ease-in-out infinite;
 }
@@ -4152,12 +4152,12 @@ svg {
   padding: 0 11px;
   border-bottom: 1px solid var(--line-soft);
   color: var(--muted);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .code-file-tree > header span {
   color: var(--faint);
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .code-file-tree > header strong {
@@ -4199,13 +4199,13 @@ svg {
 
 .code-file-tree nav button i {
   color: inherit;
-  font: 700 8px var(--mono);
+  font: 700 10px var(--mono);
   font-style: normal;
 }
 
 .code-file-tree nav button span {
   overflow: hidden;
-  font: 10px var(--mono);
+  font: 12px var(--mono);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -4218,7 +4218,7 @@ svg {
   padding: 12px 10px;
   border-top: 1px solid var(--line-soft);
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 .code-file-tree > footer span {
@@ -4249,7 +4249,7 @@ svg {
   padding: 0 12px;
   border-bottom: 1px solid var(--line-soft);
   color: var(--muted);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .code-editor > header > span,
@@ -4269,13 +4269,13 @@ svg {
 
 .code-editor > header i {
   color: var(--muted);
-  font: 700 8px var(--mono);
+  font: 700 10px var(--mono);
   font-style: normal;
 }
 
 .code-editor > header small {
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 .code-editor > header button {
@@ -4285,7 +4285,7 @@ svg {
   border-radius: 4px;
   background: #020202;
   color: var(--muted);
-  font: 700 7px var(--mono);
+  font: 700 10px var(--mono);
   letter-spacing: 0.08em;
   cursor: pointer;
 }
@@ -4343,14 +4343,14 @@ svg {
 .code-lines > div > span {
   padding-right: 10px;
   color: rgba(242, 243, 245, 0.26);
-  font: 9px/21px var(--mono);
+  font: 11px/21px var(--mono);
   text-align: right;
   user-select: none;
 }
 
 .code-lines > div > code {
   color: inherit;
-  font: 11.5px/21px var(--mono);
+  font: 12px/21px var(--mono);
   white-space: pre;
 }
 
@@ -4420,7 +4420,7 @@ svg {
   padding: 0 12px;
   border-bottom: 1px solid var(--line-soft);
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.08em;
 }
 
@@ -4480,7 +4480,7 @@ svg {
 .code-stage-rail nav button small {
   overflow: hidden;
   color: inherit;
-  font: 7px var(--mono);
+  font: 10px var(--mono);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -4488,7 +4488,7 @@ svg {
 .code-stage-rail nav button strong {
   overflow: hidden;
   color: inherit;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 650;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -4505,7 +4505,7 @@ svg {
   display: block;
   margin-bottom: 7px;
   color: var(--faint);
-  font: 7px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.08em;
 }
 
@@ -4520,7 +4520,7 @@ svg {
 .code-line-inspector > p {
   margin: 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.6;
 }
 
@@ -4530,7 +4530,7 @@ svg {
   padding-top: 9px;
   border-top: 1px solid var(--line-soft);
   color: var(--text);
-  font: 8px/1.6 var(--mono);
+  font: 10px/1.6 var(--mono);
 }
 
 .code-line-inspector.is-inspecting {
@@ -4546,7 +4546,7 @@ svg {
   padding: 0 11px;
   border-top: 1px solid var(--line);
   color: var(--faint);
-  font: 7px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.05em;
 }
 
@@ -4648,7 +4648,7 @@ svg {
   padding: 0 12px;
   border-bottom: 1px solid var(--line-soft);
   color: var(--faint);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
   letter-spacing: 0.09em;
 }
 
@@ -4715,7 +4715,7 @@ svg {
 
 .graph-node--core strong {
   max-width: 54px;
-  font: 10px/1.2 var(--mono);
+  font: 12px/1.2 var(--mono);
   text-align: center;
 }
 
@@ -4745,7 +4745,7 @@ svg {
 
 .graph-node--participant strong {
   max-width: 42px;
-  font: 10px/1.25 var(--mono);
+  font: 12px/1.25 var(--mono);
 }
 
 .graph-node--contract {
@@ -4782,7 +4782,7 @@ svg {
   max-width: 110px;
   transform: translateX(-50%);
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.3;
   pointer-events: none;
   opacity: 0;
@@ -4793,7 +4793,7 @@ svg {
   display: block;
   margin-bottom: 2px;
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.04em;
 }
 
@@ -4828,7 +4828,7 @@ svg {
   padding: 0 12px;
   border-top: 1px solid var(--line-soft);
   color: var(--faint);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .scenario-space > footer span::before {
@@ -4893,7 +4893,7 @@ svg {
 
 .scenario-detail > header > span {
   color: var(--accent);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
   letter-spacing: 0.1em;
 }
 
@@ -4950,7 +4950,7 @@ svg {
 .contract-deployment dt {
   margin-bottom: 4px;
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.08em;
 }
 
@@ -4958,7 +4958,7 @@ svg {
   margin: 0;
   overflow: hidden;
   color: var(--text);
-  font: 10px var(--mono);
+  font: 12px var(--mono);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -5034,7 +5034,7 @@ svg {
 
 .scenario-steps small {
   color: var(--accent);
-  font: 10px var(--mono);
+  font: 12px var(--mono);
   letter-spacing: 0.08em;
 }
 
@@ -5062,7 +5062,7 @@ svg {
   align-items: center;
   gap: 6px;
   color: var(--good);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
 }
 
 .scenario-detail > footer > span i {
@@ -5080,7 +5080,7 @@ svg {
 }
 
 .scenario-detail > footer .tech-term {
-  font-size: 9px;
+  font-size: 11px;
 }
 
 /* Scenario explorer v2: filter first, inspect second. */
@@ -5113,7 +5113,7 @@ svg {
   align-items: center;
   gap: 7px;
   color: var(--text);
-  font: 700 9px var(--mono);
+  font: 700 11px var(--mono);
   letter-spacing: 0.1em;
 }
 
@@ -5126,7 +5126,7 @@ svg {
 
 .scenario-toolbar > div > strong {
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   letter-spacing: 0.08em;
 }
 
@@ -5153,7 +5153,7 @@ svg {
 
 .scenario-toolbar nav button small {
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 .scenario-toolbar nav button.is-active {
@@ -5207,7 +5207,7 @@ svg {
   border-radius: 5px;
   background: #000;
   color: var(--muted);
-  font: 9px var(--mono);
+  font: 11px var(--mono);
   cursor: pointer;
 }
 
@@ -5278,7 +5278,7 @@ svg {
   grid-row: 1 / 3;
   align-self: center;
   color: var(--faint);
-  font: 700 9px var(--mono);
+  font: 700 11px var(--mono);
 }
 
 .scenario-picker button > strong {
@@ -5292,7 +5292,7 @@ svg {
 .scenario-picker button > small {
   overflow: hidden;
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -5334,7 +5334,7 @@ svg {
   border: 1px solid var(--line);
   border-radius: 5px;
   color: var(--muted);
-  font: 700 8px var(--mono);
+  font: 700 10px var(--mono);
   letter-spacing: 0.08em;
 }
 
@@ -5368,11 +5368,11 @@ svg {
 }
 
 .contract-deployment dt {
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .contract-deployment dd {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .scenario-steps {
@@ -5436,14 +5436,14 @@ svg {
 
 .scenario-detail > footer > span {
   color: var(--text);
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.06em;
 }
 
 /* Readability pass: technical labels should remain readable at a glance. */
 .diagram-panel small,
 .diagram-panel code {
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .diagram-panel .diagram-statusline,
@@ -5451,7 +5451,7 @@ svg {
 .diagram-panel .decision-line,
 .diagram-panel .proof-public-private,
 .diagram-panel .chain-keeps {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 /* A3S dark surface language */
@@ -5616,7 +5616,7 @@ a:focus-visible,
   }
 
   .tech-term {
-    font-size: 10px;
+    font-size: 12px;
   }
 }
 
@@ -5645,7 +5645,7 @@ a:focus-visible,
   .section-terms { margin-top: 16px; }
   .code-walkthrough-body { grid-template-columns: 108px minmax(0, 1fr) 182px; }
   .code-file-tree nav button { grid-template-columns: 18px minmax(0, 1fr); padding: 0 7px; }
-  .code-file-tree nav button span { font-size: 9px; }
+  .code-file-tree nav button span { font-size: 11px; }
   .code-file-tree > footer { display: none; }
   .code-stage-rail nav button { padding-right: 7px; padding-left: 7px; }
   .code-line-inspector { padding-right: 10px; padding-left: 10px; }
@@ -5655,7 +5655,7 @@ a:focus-visible,
   .ans-candidates { width: 28%; }
   .ans-design-card,
   .ans-answer { padding-right: 9px; padding-left: 9px; }
-  .ans-design-card strong { font-size: 11px; }
+  .ans-design-card strong { font-size: 12px; }
   .fog-current { width: 36%; margin-top: 12px; margin-left: 12px; }
   .fog-stage-nav { width: 38%; margin-bottom: 12px; margin-left: 12px; }
   .fog-node { min-width: 105px; min-height: 54px; padding: 7px; }
@@ -5665,11 +5665,11 @@ a:focus-visible,
   .lifecycle-current { grid-template-columns: 54px minmax(0, 1fr) 128px; gap: 12px; padding: 12px 14px; }
   .lifecycle-current-index { font-size: 27px; }
   .lifecycle-current h3 { font-size: 17px; }
-  .lifecycle-current p { font-size: 11px; }
+  .lifecycle-current p { font-size: 12px; }
   .lifecycle-flow { grid-template-rows: repeat(2, 105px); gap: 42px 12px; min-height: 286px; padding: 14px 12px; }
   .lifecycle-step { min-height: 105px; gap: 5px; padding: 10px; }
   .lifecycle-step > strong { font-size: 12px; }
-  .lifecycle-step > small { font-size: 7px; }
+  .lifecycle-step > small { font-size: 10px; }
   .stories-screen .technical-layout { grid-template-columns: 250px minmax(700px, 1fr); gap: 26px; }
   .scenario-detail > header { padding: 14px; }
   .scenario-steps { padding: 0; }
@@ -5837,7 +5837,7 @@ a:focus-visible,
   }
 
   .hero-console-flow > section > small {
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .hero-console-flow > section.is-acvm > div {
@@ -5880,7 +5880,7 @@ a:focus-visible,
   }
 
   .chapter-progress {
-    font-size: 8px;
+    font-size: 10px;
   }
 
   .section-heading h2 {
@@ -6618,7 +6618,7 @@ a:focus-visible,
   }
 
   .brand small {
-    font-size: 6px;
+    font-size: 9px;
   }
 
   .screen-inner {
@@ -6628,7 +6628,7 @@ a:focus-visible,
 
   .hero-eyebrow,
   .section-eyebrow {
-    font-size: 8px;
+    font-size: 10px;
   }
 
   .hero-copy h1 {
@@ -6777,7 +6777,7 @@ a:focus-visible,
   }
 
   .code-lines > div > code {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .code-stage-rail {
@@ -6798,7 +6798,7 @@ a:focus-visible,
 
   .code-walkthrough-status {
     gap: 8px;
-    font-size: 6px;
+    font-size: 9px;
   }
 
   .ans-panel {
@@ -6999,7 +6999,7 @@ a:focus-visible,
   }
 
   .runtime-package strong {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .privacy-lanes > article {
@@ -7041,7 +7041,7 @@ a:focus-visible,
 
   .graph-node--contract > span {
     max-width: 84px;
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .scenario-detail > footer {
@@ -7870,7 +7870,7 @@ body {
 
 .property-tabs small {
   color: inherit;
-  font: 700 7px var(--mono);
+  font: 700 10px var(--mono);
   letter-spacing: 0.1em;
 }
 
@@ -7905,7 +7905,7 @@ body {
 
 .property-controls > header small {
   color: var(--faint);
-  font: 700 7px var(--mono);
+  font: 700 10px var(--mono);
   letter-spacing: 0.1em;
 }
 
@@ -7932,18 +7932,18 @@ body {
   gap: 6px;
   border: 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .property-parameter code {
   min-width: 24px;
   color: #c7a5fb;
-  font: 800 10px var(--mono);
+  font: 800 12px var(--mono);
 }
 
 .property-control > span > strong {
   color: var(--text);
-  font: 700 10px var(--mono);
+  font: 700 12px var(--mono);
   white-space: nowrap;
 }
 
@@ -7980,7 +7980,7 @@ body {
 
 .property-proof > header small {
   color: var(--faint);
-  font: 700 7px var(--mono);
+  font: 700 10px var(--mono);
   letter-spacing: 0.1em;
 }
 
@@ -8001,7 +8001,7 @@ body {
   border: 1px solid var(--line);
   border-radius: 6px;
   color: var(--muted);
-  font: 700 8px var(--mono);
+  font: 700 10px var(--mono);
 }
 
 .property-proof > header > b i {
@@ -8033,7 +8033,7 @@ body {
   border-radius: 6px;
   background: #000;
   color: #eee8f5;
-  font: 700 11px/1.55 var(--mono);
+  font: 700 12px/1.55 var(--mono);
   white-space: pre-wrap;
 }
 
@@ -8041,7 +8041,7 @@ body {
   margin-top: -5px;
   border-left-color: var(--blue);
   color: #b9c8e2;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .property-proof > ol {
@@ -8062,21 +8062,21 @@ body {
 
 .property-proof > ol li > span {
   color: var(--faint);
-  font: 700 8px/1.5 var(--mono);
+  font: 700 10px/1.5 var(--mono);
 }
 
 .property-proof > ol code {
   display: block;
   margin-bottom: 3px;
   color: #d7c0f5;
-  font: 700 9px/1.5 var(--mono);
+  font: 700 11px/1.5 var(--mono);
   overflow-wrap: anywhere;
 }
 
 .property-proof > ol p {
   margin: 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.48;
 }
 
@@ -8101,14 +8101,14 @@ body {
 
 .property-proof > dl dt {
   color: var(--faint);
-  font: 8px var(--mono);
+  font: 10px var(--mono);
 }
 
 .property-proof > dl dd {
   overflow: hidden;
   margin: 0;
   color: var(--text);
-  font: 700 9px var(--mono);
+  font: 700 11px var(--mono);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -8124,7 +8124,7 @@ body {
   padding: 9px 10px;
   border: 1px dashed var(--line);
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -8132,7 +8132,7 @@ body {
   display: block;
   margin-bottom: 3px;
   color: var(--text);
-  font: 700 7px var(--mono);
+  font: 700 10px var(--mono);
   letter-spacing: 0.08em;
 }
 
@@ -8145,7 +8145,7 @@ body {
   padding: 0 12px;
   border-top: 1px solid var(--line);
   color: var(--faint);
-  font: 7px var(--mono);
+  font: 10px var(--mono);
 }
 
 .property-status span {
@@ -8177,7 +8177,7 @@ body {
   }
 
   .property-proof > header strong {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 
@@ -8230,12 +8230,16 @@ body {
 }
 
 @media (max-width: 520px) {
+  .detail-tooltip {
+    max-height: calc(100vh - 32px);
+  }
+
   .system-properties-panel {
     min-height: 980px;
   }
 
   .property-tabs strong {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .property-controls {
@@ -8253,5 +8257,33 @@ body {
   .property-proof > dl,
   .property-proof > footer {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 761px) and (max-height: 820px) {
+  .scenario-detail > header {
+    padding: 11px 14px 9px;
+  }
+
+  .scenario-detail h3 {
+    margin: 8px 0 5px;
+  }
+
+  .contract-deployment {
+    margin-top: 7px;
+  }
+
+  .contract-deployment > div {
+    padding-block: 6px;
+  }
+
+  .scenario-steps {
+    overflow-y: auto;
+    grid-template-rows: repeat(4, auto);
+    scrollbar-width: thin;
+  }
+
+  .scenario-steps > section {
+    min-height: 72px;
   }
 }

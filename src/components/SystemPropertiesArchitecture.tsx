@@ -136,15 +136,15 @@ export function SystemPropertiesArchitecture() {
       availability: {
         code: 'A / QUORUM AVAILABILITY',
         label: taskAvailability >= availabilitySlo ? '达到 99% 目标' : '低于 99% 目标',
-        claim: '只要共识法定人数、至少一个 Worker 和证明存储同时可达，任务路径就仍可推进。',
+        claim: '任务推进需要 BFT 法定人数、Worker 和证明数据同时可用。',
         formula: 'Aq = Σₖ₌Qᴺ C(N,k)·pᵏ·(1−p)ᴺ⁻ᵏ;  Atask ≈ Aq·Aw·As',
         calculation: `N=${nodeCount}, Q=${quorum}, pn=${p.toFixed(3)}, pw=${workerP.toFixed(3)}; Aq=${percent(quorumAvailability)}; Aw=1−(1−pw)^${workerReplicas}=${percent(workerAvailability)}`,
         result: percent(taskAvailability),
         valid: taskAvailability >= availabilitySlo,
         steps: [
-          [`N=3f+1=${nodeCount}; Q=2f+1=${quorum}`, '先从拜占庭容错条件得到节点总数和可提交法定人数。'],
-          [`Aq=Σₖ₌${quorum}^${nodeCount} Binomial(k;${nodeCount},${p.toFixed(2)})=${percent(quorumAvailability)}`, '把“在线节点数不少于 Q”写成二项分布尾概率。'],
-          [`Atask≈Aq·Aw·As=${percent(taskAvailability)}`, '在独立故障域假设下，把共识、Worker 池和证明存储视为串联系统。'],
+          [`N=3f+1=${nodeCount}; Q=2f+1=${quorum}`, '由拜占庭容错条件得到节点数与法定人数。'],
+          [`Aq=Σₖ₌${quorum}^${nodeCount} Binomial(k;${nodeCount},${p.toFixed(2)})=${percent(quorumAvailability)}`, '在线节点不少于 Q 的二项分布尾概率。'],
+          [`Atask≈Aq·Aw·As=${percent(taskAvailability)}`, '独立故障域下，三项按串联系统计算。'],
         ],
         metrics: [['共识可用', percent(quorumAvailability)], ['Worker 可用', percent(workerAvailability)], ['证明存储', percent(proofStoreAvailability)], ['目标 SLO', '≥ 99.000%'], ['不可用概率', percent(1 - taskAvailability, 5)]],
         assumptions: '共识节点、Worker 和证明存储的故障近似独立；各概率在目标观测窗口内稳定；三类资源不共享同一故障域。',
@@ -153,14 +153,14 @@ export function SystemPropertiesArchitecture() {
       stability: {
         code: 'S / SAFETY + QUEUE STABILITY',
         label: stable ? '稳定区间' : '已进入积压区',
-        claim: '稳定性同时要求状态不会分叉、结算不会重复，而且长期任务到达率低于可服务能力。',
+        claim: '安全、单次结算和队列稳态必须同时成立。',
         formula: 'Safety: |Q₁∩Q₂|≥f+1;  Queue: ρ=λ/(cμ)<1;  Idempotence: Spentₜ⊆Spentₜ₊₁',
         calculation: `ρ=${arrivalRate}/(${workerCount}×${serviceRate})=${number(utilization, 3)}; margin=cμ−λ=${capacity - arrivalRate} task/s`,
         result: stable ? `ρ ${number(utilization, 3)} < 1` : `ρ ${number(utilization, 3)} ≥ 1`,
         valid: stable,
         steps: [
-          [`|Q₁∩Q₂|≥${intersection}`, `两个 ${quorum} 票法定人数至少重叠 ${intersection} 个节点，其中至少一个诚实节点不会确认冲突锁。`],
-          ['Spent(taskId): 0→1, never 1→0', '结算状态单调增长，重试只能读取已结算结果，不能再次转账。'],
+          [`|Q₁∩Q₂|≥${intersection}`, `两个法定人数至少重叠 ${intersection} 个节点，包含至少一个诚实节点。`],
+          ['Spent(taskId): 0→1, never 1→0', '结算状态只增不减，重试不会重复转账。'],
           [`ρ=λ/(cμ)=${number(utilization, 3)}`, stable ? 'ρ<1，平均服务能力高于到达率，理想池化队列存在稳态。' : 'ρ≥1，输入长期快于处理能力，队列期望长度会无界增长。'],
         ],
         metrics: [['到达率 λ', `${arrivalRate} task/s`], ['总服务率 cμ', `${capacity} task/s`], ['容量余量', `${capacity - arrivalRate} task/s`], ['W≈1/(cμ−λ)', stable ? `${number(responseApprox * 1000, 1)} ms` : '∞'], ['L=λW', number(queueApprox, 2)]],
@@ -169,16 +169,16 @@ export function SystemPropertiesArchitecture() {
       },
       efficiency: {
         code: 'E / VERIFY INSTEAD OF RE-EXECUTE',
-        label: '计算节省模型',
-        claim: '高效性来自把 N 次重计算改成 1 次 Worker 计算、少量独立验收和 N 次便宜验证。',
+        label: '计算节省',
+        claim: '比较全节点重算与执行一次后验证的总节点时间。',
         formula: 'CEVM=N·Cexec;  CACVM=Cexec+Cprove+q·Cval+N·Cverify;  η=1−CACVM/CEVM',
         calculation: `CEVM=${executionNodes}×${taskCost}=${traditionalCost.toLocaleString()} node·ms; CACVM=${taskCost}+${proofCost}+${validatorCount}×${validatorCost}+${executionNodes}×${verifyCost}=${acvmCost.toLocaleString()} node·ms`,
         result: percent(saving, 1),
         valid: saving > 0,
         steps: [
-          [`CEVM=${traditionalCost.toLocaleString()} node·ms`, '传统全复制执行要求每个共识节点承担完整任务成本。'],
-          [`CACVM=${acvmCost.toLocaleString()} node·ms`, 'ACVM 计入一次主任务、证明生成、独立验收和所有共识节点的证明验证，没有省略证明开销。'],
-          [`η=1−CACVM/CEVM=${percent(saving, 1)}`, '两种方案在相同任务语义下比较总节点计算量。'],
+          [`CEVM=${traditionalCost.toLocaleString()} node·ms`, '每个共识节点承担完整任务成本。'],
+          [`CACVM=${acvmCost.toLocaleString()} node·ms`, '计入执行、证明生成、独立验收和节点验证。'],
+          [`η=1−CACVM/CEVM=${percent(saving, 1)}`, '按相同任务语义比较总节点计算量。'],
         ],
         metrics: [['完整执行次数', `N → 1`], ['证明生成 Cprove', `${proofCost.toLocaleString()} node·ms`], ['Validator 单次成本', `15% × Cexec = ${validatorCost.toLocaleString()}`], ['证明验证总成本', `${executionNodes * verifyCost} node·ms`], ['链上回执根', '32 B / batch'], ['1024 条包含路径', `${merklePathBytes} B = O(log m)`]],
         assumptions: '计算统一折算为等效 node·ms；Worker 结果可由显著更便宜的证明或验收验证；Validator 单次成本暂按 0.15×Cexec 建模；任务语义和安全强度相同。',
@@ -207,7 +207,7 @@ export function SystemPropertiesArchitecture() {
 
       <div className="property-body">
         <section className="property-controls" aria-label="公式参数">
-          <header><small>MODEL INPUT</small><strong>拖动参数，结果会重算</strong></header>
+          <header><small>MODEL INPUT</small><strong>参数</strong></header>
           {active === 'availability' ? (
             <>
               <RangeControl label="容错节点数" symbol="f" value={faults} min={1} max={6} step={1} summary="系统允许同时出现的拜占庭或离线节点上限。" effect="f 每增加 1，BFT 节点数增加 3，法定人数增加 2。" onChange={setFaults} />

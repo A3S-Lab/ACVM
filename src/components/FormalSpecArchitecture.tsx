@@ -15,15 +15,15 @@ const hints = {
     summary: '某个区块高度上，ACVM 对身份、合约、任务、回执和证明的完整账本快照。',
     details: [
       { label: '从哪来', value: '由上一状态执行已确认交易后得到，并由共识节点共同保存。' },
-      { label: '怎么验证', value: '五个子状态按固定编码计算状态根；任一字段变化都会得到不同的 root(Σ)。' },
+      { label: '验证', value: '五个子状态按固定编码计算状态根；任一字段变化都会得到不同的 root(Σ)。' },
     ],
   },
   definition: {
     title: '≡ · 定义为',
     summary: '表示左侧对象在本规范中由右侧结构精确定义，不是一次运行时比较。',
     details: [
-      { label: '怎么读', value: '“Σ 定义为由 A、C、T、R、P 组成的五元组”。' },
-      { label: '为什么', value: '固定结构后，不同节点才能按同一顺序编码并计算相同状态根。' },
+      { label: '含义', value: '“Σ 定义为由 A、C、T、R、P 组成的五元组”。' },
+      { label: '作用', value: '固定结构后，不同节点才能按同一顺序编码并计算相同状态根。' },
     ],
   },
   actors: {
@@ -110,7 +110,7 @@ const hints = {
     title: 'root(Σ) · 世界状态根',
     summary: '对整个 ACVM 世界状态的短密码学承诺，用于区块头、状态同步和审计。',
     details: [
-      { label: '怎么生成', value: 'A、C、T、R、P 分别规范编码后，按固定顺序组合并哈希。' },
+      { label: '计算', value: 'A、C、T、R、P 分别规范编码后，按固定顺序组合并哈希。' },
       { label: '能证明什么', value: '相同 root 表示节点承诺同一状态；配合包含证明可核验某条具体记录。' },
     ],
   },
@@ -318,7 +318,7 @@ const hints = {
     title: '¬Replay · 未发生重放',
     summary: '证明当前需求、回执和证明尚未被用于另一笔有效贡献。',
     details: [
-      { label: '怎么检查', value: '查询 nonce、taskId、输出承诺和已消费回执集合。' },
+      { label: '检查', value: '查询 nonce、taskId、输出承诺和已消费回执集合。' },
       { label: '失败时', value: '重复提交直接拒绝，不增加 PoI 计分，也不再次结算。' },
     ],
   },
@@ -326,7 +326,7 @@ const hints = {
     title: '¬ · 逻辑否定',
     summary: '要求后面的 Replay 条件为假，即这份工作记录没有被重复使用。',
     details: [
-      { label: '怎么读', value: '“NOT Replay”或“不是重放”。' },
+      { label: '含义', value: '“NOT Replay”或“不是重放”。' },
       { label: '作用', value: '把防重放从可选检查提升为生成 PoI 的必要条件。' },
     ],
   },
@@ -358,8 +358,8 @@ const hints = {
     title: 'taskTreeRoot · 任务文件树根',
     summary: '对当前 taskId 下输入、证据、结果、裁决和结算文件的内容寻址承诺。',
     details: [
-      { label: '怎么生成', value: '系统按固定路径、规范编码和阶段顺序计算 Merkle Root，合约代码不能自选漏掉某个文件。' },
-      { label: '怎么使用', value: 'Worker、Validator 与结算回执逐级引用前一阶段根，任一文件被替换都会断开验证链。' },
+      { label: '计算', value: '系统按固定路径、规范编码和阶段顺序计算 Merkle Root，合约代码不能自选漏掉某个文件。' },
+      { label: '用途', value: 'Worker、Validator 与结算回执逐级引用前一阶段根，任一文件被替换都会断开验证链。' },
     ],
   },
   proofField: {
@@ -499,7 +499,7 @@ function Equation({
           label="悬停符号"
           title={title}
           summary={explanation}
-          details={[{ label: '怎么使用', value: '把鼠标移到每个带虚线的符号上，可查看它的数据来源、验证方式和失败影响。' }]}
+          details={[{ label: '操作', value: '将鼠标移到带虚线的符号上，可查看数据来源、验证方式和失败影响。' }]}
         />
       </small>
       <strong>{children}</strong>

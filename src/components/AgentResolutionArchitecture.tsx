@@ -165,7 +165,7 @@ export function AgentResolutionArchitecture() {
         <DetailHint
           className="ans-design-card"
           category="社会计算 · 奖励设计"
-          label={<><Icon name="receipt" /><span><small>REWARD DESIGN</small><strong>为什么愿意服务</strong></span></>}
+          label={<><Icon name="receipt" /><span><small>REWARD DESIGN</small><strong>服务激励</strong></span></>}
           title="奖励设计"
           summary="把服务费、Validator 费用、保证金和信誉增量绑定到通过验收的结果，而不是绑定到调用次数。"
           details={[
@@ -178,7 +178,7 @@ export function AgentResolutionArchitecture() {
         <DetailHint
           className="ans-design-card"
           category="社会计算 · 信息设计"
-          label={<><Icon name="eye" /><span><small>INFORMATION DESIGN</small><strong>凭什么相信服务</strong></span></>}
+          label={<><Icon name="eye" /><span><small>INFORMATION DESIGN</small><strong>可信信号</strong></span></>}
           title="信息设计"
           summary="ANS 只公开做决策需要的信号：签名能力、有效期、任务类型信誉、价格、Validator 和可验证历史。"
           details={[

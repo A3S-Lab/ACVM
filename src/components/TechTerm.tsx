@@ -374,7 +374,7 @@ export function TechTerm({
       title={term}
       summary={note.summary}
       details={[
-        { label: '怎么工作', value: note.mechanism },
+        { label: '机制', value: note.mechanism },
         { label: '注意边界', value: note.boundary },
       ]}
       derivation={techProofs[term]}
