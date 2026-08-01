@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { DetailHint, type DetailRow } from './DetailHint';
+import { DetailHint, type DetailRow, type ProofDerivation } from './DetailHint';
+import { derivations } from './DerivationLibrary';
 import { Icon, type IconName } from './Icons';
 
 type Hint = {
@@ -397,6 +398,57 @@ const hints = {
 
 type HintKey = keyof typeof hints;
 
+const formalDerivations: Record<HintKey, ProofDerivation> = {
+  worldState: derivations.worldState,
+  definition: derivations.canonicalEncoding,
+  actors: derivations.identityAuthorization,
+  contracts: derivations.contractTree,
+  tasks: derivations.taskState,
+  receipts: derivations.receiptMerkle,
+  proofs: derivations.proofSoundness,
+  currentState: derivations.deterministicState,
+  nextState: derivations.deterministicState,
+  transition: derivations.deterministicState,
+  intent: derivations.signedIntent,
+  receiptBundle: derivations.receiptBundle,
+  root: derivations.worldState,
+  hash: derivations.hashBinding,
+  concatenate: derivations.canonicalEncoding,
+  agenticContract: derivations.contractTree,
+  definitionFile: derivations.contractTree,
+  schemaFiles: derivations.schemaValidation,
+  contractTree: derivations.contractTree,
+  treeConcatenate: derivations.canonicalEncoding,
+  worker: derivations.workerExecution,
+  validator: derivations.validatorDecision,
+  finality: derivations.bftFinality,
+  authorize: derivations.identityAuthorization,
+  runBox: derivations.workerExecution,
+  verifyBox: derivations.validatorDecision,
+  trace: derivations.receiptMerkle,
+  finalize: derivations.bftFinality,
+  conjunction: derivations.booleanConjunction,
+  verifyReceipt: derivations.receiptVerification,
+  trueValue: derivations.booleanConjunction,
+  falseValue: derivations.booleanConjunction,
+  implies: derivations.implication,
+  candidateState: derivations.deterministicState,
+  poi: derivations.poi,
+  signedDemand: derivations.signedIntent,
+  acceptedResult: derivations.validatorDecision,
+  executionProof: derivations.proofSoundness,
+  antiReplay: derivations.antiReplay,
+  negation: derivations.implication,
+  taskId: derivations.antiReplay,
+  prevRoot: derivations.hashChain,
+  outputCommitment: derivations.hashBinding,
+  taskTreeRoot: derivations.contractTree,
+  proofField: derivations.proofSoundness,
+  bftVrf: derivations.vrfBft,
+  stateRoot: derivations.worldState,
+  poiRoot: derivations.receiptMerkle,
+};
+
 function FormulaToken({ hint, children, className = '' }: { hint: HintKey; children: ReactNode; className?: string }) {
   const note = hints[hint];
   return (
@@ -407,6 +459,7 @@ function FormulaToken({ hint, children, className = '' }: { hint: HintKey; child
       title={note.title}
       summary={note.summary}
       details={note.details}
+      derivation={formalDerivations[hint]}
     />
   );
 }

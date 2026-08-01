@@ -14,6 +14,20 @@ export type DetailRow = {
   value: string;
 };
 
+export type DerivationStep = {
+  expression: string;
+  explanation: string;
+};
+
+export type ProofDerivation = {
+  formula: string;
+  symbols: readonly DetailRow[];
+  steps: readonly DerivationStep[];
+  verifier: string;
+  validity: string;
+  assumptions?: string;
+};
+
 type Placement = {
   top: number;
   left: number;
@@ -26,6 +40,7 @@ export function DetailHint({
   title,
   summary,
   details = [],
+  derivation,
   category = '技术细节',
   className = '',
 }: {
@@ -33,12 +48,13 @@ export function DetailHint({
   title: string;
   summary: string;
   details?: readonly DetailRow[];
+  derivation?: ProofDerivation;
   category?: string;
   className?: string;
 }) {
   const tooltipId = useId();
   const targetRef = useRef<HTMLSpanElement>(null);
-  const tooltipRef = useRef<HTMLSpanElement>(null);
+  const tooltipRef = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
   const [placement, setPlacement] = useState<Placement>({ top: -9999, left: -9999, ready: false, side: 'top' });
@@ -95,7 +111,8 @@ export function DetailHint({
   useEffect(() => {
     if (!pinned) return undefined;
     const closeOutside = (event: PointerEvent) => {
-      if (!targetRef.current?.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (!targetRef.current?.contains(target) && !tooltipRef.current?.contains(target)) {
         setPinned(false);
         setOpen(false);
       }
@@ -149,9 +166,10 @@ export function DetailHint({
         {label}
       </span>
       {open && typeof document !== 'undefined' ? createPortal(
-        <span
+        <aside
           className="detail-tooltip"
           data-side={placement.side}
+          data-pinned={pinned}
           id={tooltipId}
           ref={tooltipRef}
           role="tooltip"
@@ -170,8 +188,33 @@ export function DetailHint({
               ))}
             </dl>
           ) : null}
+          {derivation ? (
+            <section className="detail-derivation">
+              <header><small>FIRST-PRINCIPLES DERIVATION</small><span>点击固定后可滚动</span></header>
+              <code className="detail-formula">{derivation.formula}</code>
+              <dl className="detail-symbols">
+                {derivation.symbols.map((symbol) => (
+                  <div key={symbol.label}><dt>{symbol.label}</dt><dd>{symbol.value}</dd></div>
+                ))}
+              </dl>
+              <ol>
+                {derivation.steps.map((step, index) => (
+                  <li key={`${index}-${step.expression}`}>
+                    <span>{String(index + 1).padStart(2, '0')}</span>
+                    <div><code>{step.expression}</code><p>{step.explanation}</p></div>
+                  </li>
+                ))}
+              </ol>
+              <div className="detail-verifier">
+                <small>VALID IFF</small>
+                <code>{derivation.verifier}</code>
+                <p>{derivation.validity}</p>
+              </div>
+              {derivation.assumptions ? <p className="detail-assumptions"><b>前提：</b>{derivation.assumptions}</p> : null}
+            </section>
+          ) : null}
           <i aria-hidden="true" />
-        </span>,
+        </aside>,
         document.body,
       ) : null}
     </>

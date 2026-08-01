@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { DetailHint, type DetailRow } from './DetailHint';
+import { DetailHint, type DetailRow, type ProofDerivation } from './DetailHint';
+import { derivations } from './DerivationLibrary';
 import { Icon, type IconName } from './Icons';
 
 type ArchitectureHint = {
@@ -153,6 +154,37 @@ const architectureHints = {
 
 type ArchitectureHintKey = keyof typeof architectureHints;
 
+const architectureDerivations: Record<ArchitectureHintKey, ProofDerivation> = {
+  currentState: derivations.deterministicState,
+  stateArrow: derivations.deterministicState,
+  nextState: derivations.deterministicState,
+  gas: derivations.gasBound,
+  storage: derivations.worldState,
+  revert: derivations.atomicRevert,
+  receiptRoot: derivations.receiptMerkle,
+  proof: derivations.proofSoundness,
+  attestation: derivations.remoteAttestation,
+  capabilityProof: derivations.zkCapability,
+  identityCommitment: derivations.pedersenCommitment,
+  stateRoot: derivations.worldState,
+  initialProof: derivations.folding,
+  delta: derivations.hashChain,
+  fold: derivations.folding,
+  recursiveProof: derivations.folding,
+  commitmentStart: derivations.hashChain,
+  commitmentEnd: derivations.hashChain,
+  ruleHash: derivations.hashBinding,
+  signedDemand: derivations.signedIntent,
+  acceptedResult: derivations.validatorDecision,
+  attestedExecution: derivations.remoteAttestation,
+  antiReplay: derivations.antiReplay,
+  poi: derivations.poi,
+  identitySemantic: derivations.semanticAdapter,
+  eventSemantic: derivations.eventLog,
+  stateSemantic: derivations.semanticAdapter,
+  proofSemantic: derivations.semanticAdapter,
+};
+
 function ArchitectureDetail({ hint, children, className = '' }: { hint: ArchitectureHintKey; children: ReactNode; className?: string }) {
   const note = architectureHints[hint];
   return (
@@ -163,6 +195,7 @@ function ArchitectureDetail({ hint, children, className = '' }: { hint: Architec
       title={note.title}
       summary={note.summary}
       details={note.details}
+      derivation={architectureDerivations[hint]}
     />
   );
 }

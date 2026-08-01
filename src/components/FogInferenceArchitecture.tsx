@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AsciiGlobe } from './AsciiGlobe';
 import { DetailHint } from './DetailHint';
+import { derivations } from './DerivationLibrary';
 import { Icon, type IconName } from './Icons';
 import { TechTerm } from './TechTerm';
 
@@ -73,6 +74,15 @@ const routePaths = [
   'M832 76 C706 158 560 166 430 88',
 ];
 
+const stageDerivations = [
+  derivations.signedIntent,
+  derivations.identityAuthorization,
+  derivations.workerExecution,
+  derivations.validatorDecision,
+  derivations.receiptVerification,
+  derivations.bftFinality,
+] as const;
+
 export function FogInferenceArchitecture() {
   const panelRef = useRef<HTMLDivElement>(null);
   const [activeStage, setActiveStage] = useState(0);
@@ -127,6 +137,7 @@ export function FogInferenceArchitecture() {
             { label: '查记录', value: '用 taskId、合约版本和前序状态根可以按顺序查到每一份回执。' },
             { label: '不写链', value: '原始输入、模型文件和完整推理上下文不会写入区块。' },
           ]}
+          derivation={stageDerivations[activeStage]}
         />
       </section>
 

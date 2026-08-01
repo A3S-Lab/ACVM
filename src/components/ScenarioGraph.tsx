@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { DetailHint } from './DetailHint';
+import { derivations } from './DerivationLibrary';
 import { Icon, type IconName } from './Icons';
 import { TechTerm, type TechKey } from './TechTerm';
 
@@ -215,6 +216,13 @@ const graphLinks = [
   ...scenarios.map((scenario) => [`participant-${scenario.participant}`, `contract-${scenario.id}`] as const),
 ];
 
+const journeyDerivations = [
+  derivations.signedIntent,
+  derivations.workerExecution,
+  derivations.validatorDecision,
+  derivations.bftFinality,
+] as const;
+
 const graphNodeById = new Map(graphNodes.map((node) => [node.id, node]));
 
 const participantFilters: Array<[ParticipantFilter, string]> = [
@@ -429,6 +437,7 @@ export function ScenarioGraph() {
                     title={`${selected.title} · ${label}`}
                     summary={explanation}
                     details={[{ label: '链上处理', value: boundary }]}
+                    derivation={journeyDerivations[index]}
                   />
                 </p>
               </section>

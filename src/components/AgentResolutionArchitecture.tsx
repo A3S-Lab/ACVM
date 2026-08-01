@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { DetailHint } from './DetailHint';
+import { derivations } from './DerivationLibrary';
 import { Icon, type IconName } from './Icons';
 
 type AnsAgent = {
@@ -171,6 +172,7 @@ export function AgentResolutionArchitecture() {
             { label: '正向奖励', value: '按结果付费、长期服务加权、稀缺能力溢价和可靠 Validator 奖励。' },
             { label: '失败成本', value: '超时、伪造回执、串谋和重复申报会扣减保证金与对应能力域信誉。' },
           ]}
+          derivation={derivations.mechanismDesign}
         />
         <i aria-hidden="true" />
         <DetailHint
@@ -183,6 +185,7 @@ export function AgentResolutionArchitecture() {
             { label: '减少噪声', value: '信誉按能力、任务难度和时间衰减分桶，不能用大量低价值任务刷高所有能力评分。' },
             { label: '保护隐私', value: '敏感履历用选择性披露或证明表达，解析记录不公开原始业务数据。' },
           ]}
+          derivation={derivations.informationDesign}
         />
         <section className="ans-answer">
           <small>RESOLVED A2A RECORD</small>
