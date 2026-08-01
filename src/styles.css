@@ -6,9 +6,9 @@
   --surface: #07040c;
   --surface-2: #0c0714;
   --surface-3: #140b20;
-  --line: rgba(190, 150, 255, 0.16);
-  --line-soft: rgba(190, 150, 255, 0.085);
-  --line-strong: rgba(183, 133, 255, 0.36);
+  --line: rgba(255, 255, 255, 0.11);
+  --line-soft: rgba(255, 255, 255, 0.06);
+  --line-strong: rgba(255, 255, 255, 0.22);
   --text: #faf8ff;
   --muted: #aaa3b5;
   --faint: #706779;
@@ -6941,7 +6941,7 @@ a:focus-visible,
   }
 }
 
-/* Pure-black visual system: violet leads, blue only marks moving data. */
+/* Pure-black visual system: neutral by default, violet marks current state. */
 ::selection {
   color: #fff;
   background: rgba(var(--purple-rgb), 0.42);
@@ -6961,7 +6961,7 @@ body {
   height: 62px;
   grid-template-columns: auto 1fr auto;
   padding: 0 10px 0 18px;
-  border: 1px solid rgba(190, 150, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
   background: rgba(3, 2, 5, 0.9);
   box-shadow: 0 18px 60px rgba(0, 0, 0, 0.48), inset 0 1px rgba(255, 255, 255, 0.025);
@@ -6991,15 +6991,15 @@ body {
 .site-header nav a:hover,
 .site-header nav a.is-active {
   color: #fff;
-  background: rgba(var(--purple-rgb), 0.09);
+  background: rgba(255, 255, 255, 0.055);
 }
 
 .header-github {
   padding: 10px 14px;
-  border-color: rgba(var(--purple-rgb), 0.26);
+  border-color: rgba(255, 255, 255, 0.14);
   border-radius: 10px;
-  color: #e4d7ff;
-  background: rgba(var(--purple-rgb), 0.075);
+  color: #c8c4ce;
+  background: rgba(255, 255, 255, 0.035);
 }
 
 .header-github:hover {
@@ -7040,7 +7040,7 @@ body {
 }
 
 .chapter-rail a > span {
-  border-color: rgba(190, 150, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.12);
   background: rgba(4, 2, 7, 0.94);
   box-shadow: 0 12px 34px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(12px);
@@ -7057,24 +7057,29 @@ body {
 
 .hero-eyebrow,
 .section-eyebrow {
-  color: var(--violet);
+  color: #8b8492;
+}
+
+.hero-eyebrow i,
+.section-eyebrow i {
+  background: var(--violet);
 }
 
 .hero-copy h1 em,
 .section-heading h2 em {
-  color: #b98cff;
+  color: #ded9e4;
   background: none;
   -webkit-text-fill-color: currentColor;
 }
 
 .hero-benefits li {
-  border-color: rgba(190, 150, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.1);
   background: #050307;
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.02);
 }
 
 .hero-benefits svg {
-  color: var(--violet);
+  color: #9a93a1;
 }
 
 .button--primary {
@@ -7091,7 +7096,7 @@ body {
 }
 
 .button--secondary {
-  border-color: rgba(190, 150, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.12);
   background: #030205;
 }
 
@@ -7102,7 +7107,7 @@ body {
 }
 
 .blockchain-backdrop path {
-  stroke: rgba(190, 150, 255, 0.16);
+  stroke: rgba(255, 255, 255, 0.08);
 }
 
 .blockchain-backdrop circle {
@@ -7111,7 +7116,7 @@ body {
 }
 
 .blockchain-block {
-  border-color: rgba(190, 150, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.1);
   background: rgba(4, 2, 7, 0.9);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28);
   backdrop-filter: blur(10px);
@@ -7119,7 +7124,7 @@ body {
 
 .hero-console,
 .diagram-panel {
-  border-color: rgba(190, 150, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.13);
   border-radius: 20px;
   background: rgba(4, 2, 7, 0.94);
   box-shadow: 0 38px 100px rgba(0, 0, 0, 0.58), inset 0 1px rgba(255, 255, 255, 0.025);
@@ -7127,7 +7132,7 @@ body {
 }
 
 .panel-chrome {
-  border-bottom-color: rgba(190, 150, 255, 0.11);
+  border-bottom-color: rgba(255, 255, 255, 0.085);
   background: rgba(3, 2, 5, 0.72);
 }
 
@@ -7162,7 +7167,7 @@ body {
 }
 
 .technical-backdrop {
-  color: var(--violet);
+  color: #514b58;
 }
 
 .backdrop-frame {
@@ -7170,11 +7175,11 @@ body {
 }
 
 .backdrop-illustration {
-  stroke: rgba(190, 150, 255, 0.13);
+  stroke: rgba(255, 255, 255, 0.07);
 }
 
 .backdrop-illustration text {
-  fill: rgba(190, 150, 255, 0.19);
+  fill: rgba(255, 255, 255, 0.09);
 }
 
 .backdrop-soft {
@@ -7182,7 +7187,7 @@ body {
 }
 
 .backdrop-orbit {
-  stroke: rgba(190, 150, 255, 0.12);
+  stroke: rgba(255, 255, 255, 0.065);
 }
 
 .backdrop-pulse {
@@ -7196,7 +7201,7 @@ body {
 }
 
 .section-heading {
-  border-top-color: rgba(var(--purple-rgb), 0.22);
+  border-top-color: rgba(255, 255, 255, 0.11);
 }
 
 .mechanism-compare > section {
@@ -7210,9 +7215,9 @@ body {
 }
 
 .mechanism-compare > .is-acvm {
-  border-color: rgba(var(--purple-rgb), 0.48);
-  background: rgba(var(--purple-rgb), 0.095);
-  box-shadow: inset 0 0 28px rgba(var(--purple-rgb), 0.035), 0 10px 28px rgba(0, 0, 0, 0.16);
+  border-color: rgba(255, 255, 255, 0.16);
+  background: #050307;
+  box-shadow: inset 2px 0 var(--violet), 0 10px 28px rgba(0, 0, 0, 0.16);
 }
 
 .mechanism-compare > i,
@@ -7231,7 +7236,7 @@ body {
 }
 
 .detail-hint {
-  border-bottom-color: rgba(var(--purple-rgb), 0.52);
+  border-bottom-color: rgba(255, 255, 255, 0.26);
 }
 
 .detail-hint:hover,
@@ -7244,7 +7249,7 @@ body {
 
 .detail-tooltip,
 .detail-tooltip > i {
-  border-color: rgba(var(--purple-rgb), 0.28);
+  border-color: rgba(255, 255, 255, 0.17);
   background: rgba(4, 2, 7, 0.98);
 }
 
@@ -7256,7 +7261,16 @@ body {
 .tech-term,
 .formula-token,
 .technical-detail-token {
-  color: var(--violet);
+  color: #aaa3b2;
+}
+
+.tech-term:hover,
+.tech-term:focus-visible,
+.formula-token:hover,
+.formula-token:focus-visible,
+.technical-detail-token:hover,
+.technical-detail-token:focus-visible {
+  color: #c6a2ff;
 }
 
 /* Glass surfaces used by the current technical chapters. */
@@ -7269,9 +7283,9 @@ body {
 }
 
 :is(.lifecycle-control, .ans-play-control, .fog-play-control) {
-  border-color: rgba(var(--purple-rgb), 0.28);
-  color: #e8dcff;
-  background: rgba(var(--purple-rgb), 0.08);
+  border-color: rgba(255, 255, 255, 0.13);
+  color: #c9c4cf;
+  background: rgba(255, 255, 255, 0.035);
 }
 
 :is(.lifecycle-control, .ans-play-control, .fog-play-control):hover {
@@ -7290,12 +7304,12 @@ body {
 .scenario-toolbar,
 .scenario-picker button,
 .contract-deployment > div {
-  border-color: rgba(190, 150, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.1);
   background: rgba(4, 2, 7, 0.88);
 }
 
 .lifecycle-step {
-  border-color: rgba(190, 150, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.1);
   background: rgba(4, 2, 7, 0.94);
 }
 
@@ -7333,8 +7347,8 @@ body {
 /* ANS keeps the launch-era network-map hierarchy. */
 .ans-network {
   background:
-    linear-gradient(rgba(var(--purple-rgb), 0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(var(--purple-rgb), 0.018) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
   background-size: 32px 32px;
 }
 
@@ -7342,12 +7356,18 @@ body {
   stroke: rgba(255, 255, 255, 0.1);
 }
 
-.ans-current > span,
-.ans-current strong,
+.ans-current > span {
+  color: var(--violet);
+}
+
+.ans-current strong {
+  color: var(--text);
+}
+
 .ans-caller > svg,
 .ans-ledger svg,
 .ans-validator svg {
-  color: var(--violet);
+  color: #8f8898;
 }
 
 .ans-resolver {
@@ -7365,9 +7385,9 @@ body {
 .ans-candidates button:hover,
 .ans-candidates button:focus-visible,
 .ans-candidates button.is-active {
-  border-color: rgba(var(--purple-rgb), 0.52);
+  border-color: rgba(255, 255, 255, 0.18);
   color: #eee5ff;
-  background: rgba(var(--purple-rgb), 0.11);
+  background: #07040b;
   box-shadow: inset 2px 0 var(--violet), 0 10px 26px rgba(0, 0, 0, 0.22);
 }
 
@@ -7379,14 +7399,15 @@ body {
 .ans-stage-nav button:hover,
 .ans-stage-nav button.is-active {
   color: #fff;
-  background: linear-gradient(135deg, #b47cff, #7c3aed);
+  background: #0a0610;
+  box-shadow: inset 0 2px var(--violet);
 }
 
 .ans-design-card > svg {
-  color: var(--violet);
+  color: #8f8898;
 }
 
-/* The fog globe stays dominant, with blue routes and violet land mass. */
+/* The fog globe stays dominant; violet marks the active route and blue the packet. */
 .fog-current,
 .fog-stage-nav,
 .fog-stage-nav button {
@@ -7399,22 +7420,22 @@ body {
 }
 
 .ascii-globe {
-  color: var(--violet);
+  color: #9b95a0;
 }
 
 .ascii-globe::before {
-  border-color: rgba(var(--purple-rgb), 0.26);
-  box-shadow: inset 0 0 32px rgba(var(--purple-rgb), 0.04), 0 0 46px rgba(var(--purple-rgb), 0.09);
+  border-color: rgba(255, 255, 255, 0.13);
+  box-shadow: inset 0 0 32px rgba(255, 255, 255, 0.018);
 }
 
 .ascii-globe::after,
 .ascii-globe-axis {
-  border-color: rgba(154, 135, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .ascii-globe pre {
-  color: rgba(183, 133, 255, 0.64);
-  text-shadow: 0 0 9px rgba(var(--purple-rgb), 0.22);
+  color: rgba(218, 214, 222, 0.43);
+  text-shadow: none;
 }
 
 .ascii-globe-caption {
@@ -7429,9 +7450,9 @@ body {
 .fog-node:hover,
 .fog-node:focus-visible,
 .fog-node.is-active {
-  border-color: rgba(var(--purple-rgb), 0.54);
-  color: #efe7ff;
-  background: rgba(var(--purple-rgb), 0.11);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #f1eef4;
+  background: #07040b;
 }
 
 .fog-node.is-active {
@@ -7441,14 +7462,15 @@ body {
 .fog-stage-nav button:hover,
 .fog-stage-nav button.is-active {
   color: #fff;
-  background: linear-gradient(135deg, #b47cff, #7c3aed);
+  background: #0a0610;
+  box-shadow: inset 2px 0 var(--violet);
 }
 
 /* Scroll-driven TypeScript editor: real token colours, not grayscale. */
 .code-walkthrough-panel {
-  border-color: rgba(var(--purple-rgb), 0.3);
+  border-color: rgba(255, 255, 255, 0.14);
   background: #020103;
-  box-shadow: 0 34px 100px rgba(0, 0, 0, 0.62), 0 0 48px rgba(var(--purple-rgb), 0.065);
+  box-shadow: 0 34px 100px rgba(0, 0, 0, 0.62);
 }
 
 .code-walkthrough-panel:focus-visible {
@@ -7466,9 +7488,9 @@ body {
 }
 
 .code-editor > header button {
-  border-color: rgba(var(--purple-rgb), 0.24);
+  border-color: rgba(255, 255, 255, 0.13);
   color: #b4a4c6;
-  background: rgba(var(--purple-rgb), 0.06);
+  background: rgba(255, 255, 255, 0.025);
 }
 
 .code-editor > header button:hover,
@@ -7491,7 +7513,7 @@ body {
   border-left-color: rgba(var(--purple-rgb), 0.76);
   color: #ddd7e5;
   opacity: 1;
-  background: linear-gradient(90deg, rgba(var(--purple-rgb), 0.09), rgba(var(--purple-rgb), 0.02) 58%, transparent);
+  background: linear-gradient(90deg, rgba(var(--purple-rgb), 0.055), transparent 62%);
 }
 
 .code-lines > div.has-note:hover,
@@ -7551,15 +7573,15 @@ body {
 .code-file-tree nav button:focus-visible,
 .code-file-tree nav button.is-active {
   border-left-color: var(--violet);
-  color: #eee5ff;
-  background: rgba(var(--purple-rgb), 0.1);
+  color: #eeeaf1;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .code-stage-rail nav button:hover,
 .code-stage-rail nav button:focus-visible,
 .code-stage-rail nav button.is-active {
-  color: #eee5ff;
-  background: rgba(var(--purple-rgb), 0.09);
+  color: #eeeaf1;
+  background: rgba(255, 255, 255, 0.035);
 }
 
 .code-stage-rail nav button.is-active > i {
@@ -7600,15 +7622,15 @@ body {
 
 .scenario-picker button:hover,
 .scenario-picker button.is-active {
-  border-color: rgba(var(--purple-rgb), 0.54);
-  color: #eee5ff;
-  background: rgba(var(--purple-rgb), 0.11);
-  box-shadow: 0 0 24px rgba(var(--purple-rgb), 0.09);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #eeeaf1;
+  background: #07040b;
+  box-shadow: inset 2px 0 var(--violet);
 }
 
 .scenario-steps > section > span {
-  border: 1px solid rgba(var(--purple-rgb), 0.24);
-  background: rgba(var(--purple-rgb), 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #050307;
 }
 
 .ans-screen .section-heading h2 {
@@ -7627,7 +7649,7 @@ body {
   .site-header nav {
     inset: 80px 10px auto;
     padding: 8px 14px 14px;
-    border: 1px solid rgba(var(--purple-rgb), 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.13);
     border-radius: 14px;
     background: rgba(3, 2, 5, 0.98);
     box-shadow: 0 22px 58px rgba(0, 0, 0, 0.44);
