@@ -277,4 +277,28 @@ export const derivations = {
     '期望得分在如实报告 q=p 时唯一最大，因此理性 Agent 没有夸大或压低成功概率的收益。',
     '结果 o 可被可靠验收；任务选择偏差和串谋需单独校正；信誉只作为信号，不能替代本次执行证明。',
   ),
+  disputeProtocol: derive(
+    'ChallengeOK = [t≤taccept+Δ] ∧ Bind(e′,taskId,ruleHash,prevRoot) ∧ VerifyCounter(e′)=1;  Final = Resolve(Qold,Qappeal,e,e′)',
+    [['Δ', '合约预先规定的挑战窗口。'], ['e/e′', '原验收证据与挑战者提交的反证。'], ['Qold/Qappeal', '原 Validator 证书与独立复核证书。']],
+    [['Freeze provisional result', '原验收先进入可挑战状态，资金和贡献记录暂不最终释放。'], ['Verify counter-evidence', '反证必须绑定同一任务、规则和前序根，并在窗口内通过确定性检查。'], ['Resolve and slash', '独立复核产生终局证书；错误一方的保证金按合约规则罚没，状态只提交一次。']],
+    'Finalized ⇔ valid(Qappeal) ∧ |signers(Qold)∩signers(Qappeal)|≤policyLimit ∧ outcome∈{uphold,reject}',
+    '挑战时限、反证绑定、复核独立性和终局证书全部有效时，争议结果才推进合约状态。',
+    '复核集合与原 Validator 不被同一主体控制；证据可取回；罚没规模足以覆盖作恶收益。',
+  ),
+  taskDag: derive(
+    'Bparent = Bres + Σᵢ Bi;  Ri = H(taskIdi∥scopei∥outputRooti∥verdicti);  Rparent = Merkle(sort(taskIdi,Ri))',
+    [['Bi', '委托给第 i 个子合约的预算上限。'], ['scopei', '父任务签发给子 Agent 的最小能力范围。'], ['Ri/Rparent', '子任务回执与父任务聚合回执根。']],
+    [['Resolve and delegate', '父合约通过 ANS 解析服务 Agent，并签发带预算、期限和能力范围的子任务。'], ['Execute and verify', '每个子合约分别运行 Worker 与 Validator，输出独立回执，失败不会伪装成父任务成功。'], ['Aggregate receipts', '父合约按 taskId 排序聚合通过的子回执，并检查预算守恒和依赖边完整。']],
+    'Σᵢ spenti≤Bparent ∧ ∀required i: Verify(Ri)=1 ∧ DAG is acyclic ∧ MerkleVerify(Rparent,Ri,pathi)=1',
+    '预算不超发、能力不扩大、依赖图无环且全部必需子任务回执有效时，父任务才可结算。',
+    'ANS 记录新鲜；父任务明确必需与可选子任务；子合约不能修改 a3s-box 的系统运行边界。',
+  ),
+  socialSimulation: derive(
+    'xₜ₊₁=Fθ(xₜ,aₜ,ξₜ);  μ̂=(1/K)Σₖ g(τₖ);  CI95=μ̂±1.96·s/√K;  simRoot=Merkle(runIdₖ∥seedₖ∥traceRootₖ)',
+    [['Fθ', '由 modelRoot 与 ruleRoot 固定的社会状态转换模型。'], ['ξₜ/seedₖ', '由已承诺随机种子生成的随机事件。'], ['K/τₖ', '独立重复实验数量与第 k 条完整仿真轨迹。']],
+    [['Commit assumptions', '先冻结群体参数、行为规则、数据版本、干预方案和随机种子生成方式。'], ['Run independent replicas', '不同机构、企业和个人节点运行 K 次实验，每次提交轨迹根和结果摘要。'], ['Validate statistics', 'Validator 抽样复算轨迹、检查种子唯一性，再从通过的实验计算均值、方差和置信区间。']],
+    '∀k: VerifyRun(modelRoot,ruleRoot,dataRoot,seedₖ,traceRootₖ)=1 ∧ seeds unique ∧ K≥Kmin',
+    '验证通过只证明在已声明模型与数据假设下正确执行并统计，不证明模拟结论必然等于现实。',
+    '重复实验近似独立；统计量有有限方差；外部现实有效性需要回测、校准和领域专家另行评估。',
+  ),
 } as const;
