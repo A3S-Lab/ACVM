@@ -14,7 +14,7 @@ import {
 <LessonChapter
   id="identity"
   className="identity-screen"
-  eyebrow="PART VI · TRUST / IDENTITY & CAPABILITY"
+  eyebrow="PART VII · TRUST / IDENTITY & CAPABILITY"
   title="身份与权限"
   accent="签名者、角色和能力必须分别验证"
   body="调用方、Agent、Worker 和 Validator 分别绑定身份、角色、能力凭证与有效期。"
@@ -28,7 +28,7 @@ import {
   visual={<IdentityArchitectureSimple />}
 >
 
-### 身份回答“谁”，能力回答“能做什么”
+### 身份、角色与能力
 
 链上地址能验证签名，却不天然说明签名者是受许可的医疗模型、采购审批员或本任务 Validator。ACVM 概念模型因此把稳定身份、角色资格和本次最小权限拆开：DID 标识主体，VC 声明资质，UCAN/ZCAP 一类能力凭证限制资源、动作、期限与委托深度。
 
@@ -50,7 +50,7 @@ function authorize(request: ToolRequest, capability: Capability, task: Task) {
 <LessonChapter
   id="offchain"
   className="offchain-screen"
-  eyebrow="PART VI · TRUST / OFF-CHAIN DATA"
+  eyebrow="PART VII · TRUST / OFF-CHAIN DATA"
   title="链下核验"
   accent="数据留域，承诺与证据跨域"
   body="原始数据留在业务系统，链上只保存承诺、回执和证明。"
@@ -64,7 +64,7 @@ function authorize(request: ToolRequest, capability: Capability, task: Task) {
   visual={<OffchainArchitectureSimple />}
 >
 
-### 不移动原始数据，移动可验证陈述
+### 链下数据承诺
 
 业务数据库、HTTPS API 和对象存储中的明文通常不应复制到链上。执行者可以对规范化输入与输出做承诺，并附带来源证明、时间窗口和随机挑战。链上只保存固定大小的根与验证结果。
 
@@ -86,9 +86,9 @@ zkTLS/TLSNotary 一类技术可以证明“该 HTTPS 端点返回过指定字段
 <LessonChapter
   id="privacy"
   className="privacy-screen"
-  eyebrow="PART VI · TRUST / ISOLATED EXECUTION"
+  eyebrow="PART VII · TRUST / ISOLATED EXECUTION"
   title="隐私执行"
-  accent="让明文停留在受控执行域"
+  accent="明文限制在受控执行域"
   body="a3s-box 管理隔离工作负载，a3s-power 在隔离环境中加载模型并完成推理。"
   comparison={{
     traditionalTitle: '复制执行扩大数据暴露面',
@@ -100,7 +100,7 @@ zkTLS/TLSNotary 一类技术可以证明“该 HTTPS 端点返回过指定字段
   visual={<PrivacyArchitecture />}
 >
 
-### 远程证明验证的是环境，不是业务质量
+### 远程证明的验证范围
 
 TEE 可以生成 quote，把代码度量、模型哈希、平台安全版本、输入输出承诺和本次 nonce 绑定到硬件证明密钥。验证方检查厂商证书链、固件撤销状态与白名单后，确认预期工作负载在隔离环境中运行过。
 
@@ -122,9 +122,9 @@ TEE 不会判断模型答案是否正确，也无法消除硬件供应链和侧�
 <LessonChapter
   id="fog"
   className="fog-screen"
-  eyebrow="PART VI · TRUST / FOG INFERENCE"
+  eyebrow="PART VII · TRUST / FOG INFERENCE"
   title="雾计算推理网络"
-  accent="让数据就近处理，证据全局可核验"
+  accent="就近处理数据，公开验证证据"
   body="任务分配到附近的 Worker，独立 Validator 验收，链上记录结果。"
   comparison={{
     traditionalTitle: '集中推理增加传输与单点风险',
@@ -137,7 +137,7 @@ TEE 不会判断模型答案是否正确，也无法消除硬件供应链和侧�
   visual={<FogInferenceArchitecture />}
 >
 
-### 调度必须同时考虑距离与可信度
+### Worker 调度条件
 
 就近执行降低原始数据传输和响应时间，但不能只选延迟最低的节点。调度器还应检查模型版本、硬件能力、证明支持、司法区域、历史可用性与独立 Validator 覆盖。
 
@@ -153,16 +153,16 @@ function score(worker: Worker, task: Task) {
 }
 ```
 
-这段权重只是教程示例。生产调度必须公开单位、归一化方式、抗刷分规则和失败回退，并避免由同一运营方同时控制 Worker 与 Validator。
+该权重仅用于说明字段。生产调度必须公开单位、归一化方式、抗刷分规则和失败回退，并避免由同一运营方同时控制 Worker 与 Validator。
 
 </LessonChapter>
 
 <LessonChapter
   id="sentry"
   className="sentry-screen"
-  eyebrow="PART VI · TRUST / RUNTIME POLICY"
+  eyebrow="PART VII · TRUST / RUNTIME POLICY"
   title="执行前风控"
-  accent="把进程、网络和工具限制写入策略"
+  accent="进程、网络和工具受策略约束"
   body="AnySentry 检查镜像、权限和网络策略，并记录运行期异常。"
   comparison={{
     traditionalTitle: '账本看不到运行期行为',
@@ -173,7 +173,7 @@ function score(worker: Worker, task: Task) {
   visual={<SentryArchitectureSimple />}
 >
 
-### 安全策略要在执行前生效
+### 执行策略
 
 Agent 的危险不只来自错误输出，还来自执行过程中的越权网络、敏感文件读取、工具滥用和供应链镜像。运行时应在启动前冻结镜像度量、文件挂载、出站域名、工具能力与资源上限，并为每次决策生成可追踪事件。
 
@@ -196,7 +196,7 @@ ACL 片段表达的是产品配置方向；真实文件必须由 A3S ACL SDK 按
 <LessonChapter
   id="proof"
   className="proof-screen"
-  eyebrow="PART VI · TRUST / LONG-RUNNING TASK"
+  eyebrow="PART VII · TRUST / LONG-RUNNING TASK"
   title="长任务证明"
   accent="按里程碑继承状态承诺"
   body="每个里程碑引用前序承诺，任务结束时折叠为一份最终证明。"
@@ -210,7 +210,7 @@ ACL 片段表达的是产品配置方向；真实文件必须由 A3S ACL SDK 按
   visual={<LongTaskArchitectureSimple />}
 >
 
-### 证明每一步都接在正确的前一步之后
+### 增量证明
 
 长任务可将第 `i` 步状态承诺记为 `zᵢ`，并证明关系 `R(zᵢ, inputᵢ, receiptᵢ, zᵢ₊₁) = 1`。IVC 或 folding 让新一步把旧证明状态一起累积，最终链上只验证固定大小的终结证明。
 
@@ -221,16 +221,16 @@ public inputs: taskId, contractRoot, z0, zn, ruleHash, stepCount
 final check:   Verify(vk, publicInputs, foldedProof) = true
 ```
 
-这条路线只适合能被精确定义为电路关系的部分。人工审批、开放式写作和不确定工具调用仍要先变成签名回执或其他可验证输入。
+增量证明只覆盖能被精确定义为电路关系的步骤。人工审批、开放式写作和不确定工具调用仍需转成签名回执或其他可验证输入。
 
 </LessonChapter>
 
 <LessonChapter
   id="intelligence"
   className="intelligence-screen"
-  eyebrow="PART VI · TRUST / PROOF OF INTELLIGENCE"
+  eyebrow="PART VII · TRUST / PROOF OF INTELLIGENCE"
   title="有效计算"
-  accent="把真实需求、工作与验收绑定"
+  accent="需求、执行与验收绑定同一任务"
   body="PoI 把需求签名、执行证明、验收结果和防重放字段绑定到同一任务。"
   comparison={{
     traditionalTitle: 'PoW / PoS 不验证业务结果',
@@ -242,9 +242,9 @@ final check:   Verify(vk, publicInputs, foldedProof) = true
   visual={<IntelligenceProofArchitecture />}
 >
 
-### PoI 是协议提案，不是“智能分数”
+### PoI 的定义与限制
 
-课程里的 Proof of Intelligence 指一种贡献凭证：任务必须由真实需求方签名，输出必须绑定冻结输入和执行上下文，Validator 必须按预先声明的条件验收，nonce 必须未使用。它不声称能客观测量通用智能。
+此处的 Proof of Intelligence 是一种贡献凭证，不是通用智能评分。有效凭证要求需求方签名任务，输出绑定冻结输入和执行上下文，Validator 按预先声明的条件验收，并且 nonce 尚未使用。
 
 ```ts file="poi-eligibility.ts"
 function eligibleForContribution(task: Task, proof: ExecutionProof, verdict: Verdict) {
@@ -258,17 +258,17 @@ function eligibleForContribution(task: Task, proof: ExecutionProof, verdict: Ver
 }
 ```
 
-最大的机制风险是自交易、低价值刷单、Validator 串谋和任务难度不可比。生产协议必须定义独立性、价值权重、声誉衰减和审计抽样。
+主要机制风险包括自交易、低价值刷单、Validator 串谋和任务难度不可比。生产协议必须定义独立性、价值权重、声誉衰减和审计抽样。
 
 </LessonChapter>
 
 <LessonChapter
   id="spec-poi"
   className="formal-screen poi-spec-screen"
-  eyebrow="PART VI · TRUST / INTELLIGENCE-PROOF CHAIN"
-  title="PoI 共识"
-  accent="已验收贡献如何影响调度或提议权"
-  body="有效 PoI 可用于信誉、任务调度和区块提议者选择。"
+  eyebrow="PART VII · TRUST / INTELLIGENCE-PROOF CHAIN"
+  title="PoI 与提议者选择"
+  accent="贡献只提供权重信号"
+  body="有效 PoI 可用于信誉、任务调度或候选权重；区块确认仍由 BFT、PoS 等共识协议完成。"
   comparison={{
     traditionalTitle: '资源投入不代表有效产出',
     traditional: '能耗和质押额不包含业务验收。',
@@ -280,7 +280,7 @@ function eligibleForContribution(task: Task, proof: ExecutionProof, verdict: Ver
   visual={<IntelligenceChainArchitecture />}
 >
 
-### 把贡献用于共识前，要先保护安全底座
+### PoI 只提供候选权重
 
 PoI 可以作为信誉或任务调度信号；若进一步参与区块提议者选择，则必须定义权重上限、时间衰减、女巫成本与随机抽样。VRF 可以从合格候选集中产生可验证随机选择，但无法修复候选集合本身被操纵的问题。
 
@@ -295,6 +295,6 @@ weight_i = min(MAX_WEIGHT,
 selected_i ⇔ VRF(sk_i, epochSeed) / weight_i < threshold
 ```
 
-在完整安全证明、攻击模拟和可运行实现之前，这应被视为研究方向。成熟部署可以先把 PoI 用作非安全关键的排名信号，而把共识安全留给经过验证的 BFT 或 PoS 机制。
+在完成安全证明、攻击模拟和可运行实现前，PoI 只适合作为非安全关键的排名信号。共识安全仍由已有 BFT 或 PoS 协议承担。
 
 </LessonChapter>

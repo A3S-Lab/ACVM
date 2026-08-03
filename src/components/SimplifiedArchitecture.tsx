@@ -642,7 +642,7 @@ export function IntelligenceProofArchitecture() {
         <section>
           <small>开放网络</small>
           <strong>用 VRF 选出区块提议者</strong>
-          <span>只从有效 PoI 中抽签</span>
+          <span>PoI 只提供候选权重</span>
         </section>
       </div>
     </div>

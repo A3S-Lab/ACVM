@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import './styles.css';
 import './foundations.css';
+import './consensus.css';
 import './lesson.css';
 
 createRoot(document.getElementById('root')!).render(

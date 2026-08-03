@@ -12,9 +12,9 @@ import { MotionPlayer } from '../remotion/MotionPlayer'
 <LessonChapter
   id="spec-contract"
   className="formal-screen contract-spec-screen"
-  eyebrow="PART IV · ACVM / FORMAL SPEC 01"
+  eyebrow="PART V · ACVM / FORMAL SPEC 01"
   title="Agentic Contract"
-  accent="先冻结任务规则，再允许链下执行"
+  accent="任务规则由目录根固定"
   body="一个合约目录包含 Schema、Worker、Validator 和结算代码；目录根就是部署版本。"
   comparison={{
     traditionalTitle: '版本只覆盖链上代码',
@@ -27,9 +27,9 @@ import { MotionPlayer } from '../remotion/MotionPlayer'
   visual={<ContractModelArchitecture />}
 >
 
-### 先读懂仓库的性质
+### 仓库当前提供什么
 
-当前 ACVM 仓库是一套**交互式协议教程与概念规格**：它通过状态图、公式和 TypeScript 示例描述 Agentic Contract VM 应有的边界，并不是已经可以部署任务的完整虚拟机实现。因此本部分会分别标注协议不变量、示例接口与未来可选技术，不把设计图误写成生产能力。
+当前 ACVM 仓库提供**交互式协议教程与概念规格**，用状态图、公式和 TypeScript 示例描述 Agentic Contract VM 的设计边界。仓库尚未包含可部署任务的完整虚拟机实现。文中出现的接口是说明性设计；协议不变量和待选技术会明确标注。
 
 ACVM 的第一项设计决定是把业务契约从“一个链上函数”扩展为内容寻址目录。Schema 冻结输入输出结构，Worker 描述执行，Validator 描述验收，Settlement 描述满足什么条件才可结算；规范排序和哈希后得到 `contractRoot`。
 
@@ -53,9 +53,9 @@ contractRoot = MerkleRoot(canonicalPath || hash(fileBytes))
 <LessonChapter
   id="code-walkthrough"
   className="code-screen"
-  eyebrow="PART IV · ACVM / TYPESCRIPT WALKTHROUGH"
+  eyebrow="PART V · ACVM / TYPESCRIPT WALKTHROUGH"
   title="TypeScript SDK"
-  accent="沿任务文件理解角色边界"
+  accent="任务文件规定角色交接"
   body="沿文件列表滚动，查看 Worker 写结果、Validator 写裁决、settle.ts 完成结算。"
   comparison={{
     traditionalTitle: '接口传值缺少统一证据',
@@ -70,7 +70,7 @@ contractRoot = MerkleRoot(canonicalPath || hash(fileBytes))
 
 ### 最小合约清单
 
-下面是课程使用的**说明性接口**，用于解释职责分离，不代表仓库已经发布了同名 SDK。重点观察：业务目录声明入口和约束，而运行时注入文件、预言机、链适配器与回执能力。
+以下代码是用于说明职责分离的**示例接口**，仓库尚未发布同名 SDK。业务目录声明入口和约束；运行时注入文件、预言机、链适配器与回执能力。
 
 ```ts file="contract.ts"
 import { defineContract } from '@a3s-lab/acvm'
@@ -111,7 +111,7 @@ Validator 不复用 Worker 的进程内对象，而是从固定路径读取输�
 <LessonChapter
   id="lifecycle"
   className="lifecycle-screen"
-  eyebrow="PART IV · ACVM / FULL LIFECYCLE"
+  eyebrow="PART V · ACVM / FULL LIFECYCLE"
   title="合约生命周期"
   accent="一条 taskId 串起异步工作"
   body="动画依次展示部署、调用、执行、验收、证明、共识和结算。点击节点可查看链上记录。"
@@ -126,7 +126,7 @@ Validator 不复用 Worker 的进程内对象，而是从固定路径读取输�
   visual={<LifecycleArchitecture />}
 >
 
-### 七个阶段，三类可信事实
+### 七个阶段与三类记录
 
 部署阶段确定 `contractRoot`；调用阶段把签名 Intent、输入根、预算和期限绑定为 `taskId`；执行与验收阶段分别产出 Worker 和 Validator 回执；共识阶段只验证确定性证据；结算阶段转移资产并封闭 nonce。
 
@@ -143,9 +143,9 @@ Validator 不复用 Worker 的进程内对象，而是从固定路径读取输�
 <LessonChapter
   id="runtime"
   className="runtime-screen"
-  eyebrow="PART IV · ACVM / RUNTIME TOPOLOGY"
+  eyebrow="PART V · ACVM / RUNTIME TOPOLOGY"
   title="ACVM 执行拓扑"
-  accent="核心只推进可验证状态"
+  accent="回执驱动状态转换"
   body="合约定义调用方、Worker、Validator、权限和完成条件，ACVM 按回执推进状态。"
   comparison={{
     traditionalTitle: '状态分散在多个服务',
@@ -179,9 +179,9 @@ function transition(state: TaskState, receipt: Receipt): TaskState {
 <LessonChapter
   id="onchain"
   className="onchain-screen"
-  eyebrow="PART IV · ACVM / CONSENSUS BOUNDARY"
+  eyebrow="PART V · ACVM / CONSENSUS BOUNDARY"
   title="链上执行边界"
-  accent="昂贵工作执行一次，便宜证据重复验证"
+  accent="链上检查低成本证据"
   body="共识节点只执行权限、Gas、证明验证和状态更新；模型、API 与长任务在链下运行。"
   comparison={{
     traditionalTitle: '全节点重跑外部计算',
@@ -212,6 +212,6 @@ OFF CHAIN
   produce(output, evidence)
 ```
 
-目标不是让链相信 Worker，而是让链只接受一个**验证成本可控、输入明确、失败可判定**的状态转换。证明系统或 Validator 网络只是实现这个验证接口的不同后端。
+链只接受**验证成本可控、输入明确、失败可判定**的状态转换，无需信任 Worker 本身。证明系统和 Validator 网络是该验证接口的两类后端。
 
 </LessonChapter>

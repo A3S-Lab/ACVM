@@ -10,7 +10,7 @@ import { SystemPropertiesArchitecture } from '../components/SystemPropertiesArch
 <LessonChapter
   id="spec-state"
   className="formal-screen state-spec-screen"
-  eyebrow="PART V · ACVM STATE / FORMAL SPEC 02"
+  eyebrow="PART VI · ACVM STATE / FORMAL SPEC 02"
   title="状态模型"
   accent="只有有效回执才能推进"
   body="当前状态、任务文件根和已验证回执共同计算下一状态。"
@@ -25,7 +25,7 @@ import { SystemPropertiesArchitecture } from '../components/SystemPropertiesArch
   visual={<StateModelArchitecture />}
 >
 
-### 把异步流程写成确定性函数
+### 确定性状态转换
 
 任务状态可抽象为 `S = (phase, contractRoot, taskTreeRoot, roles, budget, deadlines, nonces)`。节点接收回执 `R` 后先运行验证谓词，再调用状态转换函数。只要序列化、哈希和错误码都规范化，不同节点就能得到相同新根。
 
@@ -53,7 +53,7 @@ function apply(state: TaskState, receipt: VerifiedReceipt): TaskState {
 <LessonChapter
   id="spec-receipt"
   className="formal-screen receipt-spec-screen"
-  eyebrow="PART V · ACVM STATE / FORMAL SPEC 03"
+  eyebrow="PART VI · ACVM STATE / FORMAL SPEC 03"
   title="回执验证"
   accent="验证上下文，而不只是返回值"
   body="回执绑定任务、目录、输入、输出和签名；全部通过后才更新状态。"
@@ -68,7 +68,7 @@ function apply(state: TaskState, receipt: VerifiedReceipt): TaskState {
   visual={<ReceiptModelArchitecture />}
 >
 
-### 一个可验证回执的最小绑定
+### 回执的必填绑定
 
 回执不是普通日志。它至少需要引用任务身份、合约版本、前后任务文件根、角色、时效与 nonce，并由对应责任主体签名。若执行使用 TEE、zkML 或外部数据证明，相应证据摘要也应进入签名消息。
 
@@ -92,9 +92,9 @@ Merkle Root 证明文件集合没有被替换，不会自动证明文件里的�
 <LessonChapter
   id="dispute"
   className="dispute-screen"
-  eyebrow="PART V · ACVM STATE / CHALLENGE & FINALITY"
+  eyebrow="PART VI · ACVM STATE / CHALLENGE & FINALITY"
   title="争议协议"
-  accent="先暂定接受，再允许反证"
+  accent="暂定状态与挑战窗口"
   body="结果先进入挑战期；反证、独立复核和保证金共同决定终局。"
   comparison={{
     traditionalTitle: '验收结果立即生效',
@@ -125,7 +125,7 @@ submitted → provisional → finalized → settled
 <LessonChapter
   id="properties"
   className="properties-screen"
-  eyebrow="PART V · ACVM STATE / SYSTEM BOUNDARIES"
+  eyebrow="PART VI · ACVM STATE / SYSTEM BOUNDARIES"
   title="系统边界"
   accent="用公式暴露可用性、稳定性与成本"
   body="调整故障率、负载和成本，公式会重算结果与失效条件。"
@@ -140,7 +140,7 @@ submitted → provisional → finalized → settled
   visual={<SystemPropertiesArchitecture />}
 >
 
-### 三个上线前必须回答的问题
+### 可用性、稳定性与成本
 
 **可用性**取决于角色冗余和门限。若 `n = 3f + 1` 的 BFT Validator 集需要 `2f + 1` 票，系统只能容忍至多 `f` 个拜占庭故障；Worker 的重试策略不能改变这个安全阈值。
 
@@ -148,6 +148,6 @@ submitted → provisional → finalized → settled
 
 **效率**要比较链下执行成本、证据生成成本和全网验证成本。理想情况是 `C_execute + C_prove + n·C_verify` 显著低于 `n·C_execute`，否则“执行一次、多方验证”没有带来系统收益。
 
-> 这些公式是设计检查表，不是仓库当前性能结论；真实参数必须由实现与基准测试给出。
+这些公式用于检查设计边界，不代表仓库当前的性能。真实参数必须来自实现与基准测试。
 
 </LessonChapter>

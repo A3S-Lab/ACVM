@@ -59,7 +59,7 @@ export default defineContract({
       8: { title: 'worker/index.ts', body: 'Worker 负责读取任务文件并生成结果文件，由 a3s-box 以系统固定边界启动。' },
       9: { title: 'validator/index.ts', body: 'Validator 独立读取输入、Worker 输出和证据文件，不能改写 Worker 目录。' },
       12: { title: 'schema', body: '输入、输出和裁决文件都有版本化 Schema，文件内容不合格时不会进入下一阶段。' },
-      17: { title: 'acceptance', body: '这里是业务验收条件，不是工具、文件系统或网络配置。' },
+      17: { title: 'acceptance', body: '该字段只定义业务验收条件；工具、文件系统和网络配置由运行时管理。' },
       21: { title: 'settlement', body: '业务目录声明计价方式与金额上限；实际转账仍由 ACVM 校验并执行。' },
       24: { title: 'maxAmount', body: '单个任务最多结算 200,000 CNYC，超出时链上转账接口会拒绝。' },
     },
@@ -157,7 +157,7 @@ declare global {
 }`,
     notes: {
       1: { title: 'a3s-code Session', body: 'a3s-box 先创建受系统约束的 Session，再通过 ctx 交给业务代码；作者没有运行配置入口。' },
-      3: { title: 'ReadPath', body: '可读取路径由协议固定。这里是在 TypeScript 中说明文件 ABI，不是让用户配置挂载权限。' },
+      3: { title: 'ReadPath', body: '协议固定可读取路径。这个类型描述文件 ABI，不负责配置挂载权限。' },
       9: { title: 'WritePath', body: '可写文件同样由协议固定；越界路径、符号链接绕过和覆盖系统文件都会被运行时拒绝。' },
       16: { title: 'FileRef', body: '每次写入返回路径、内容摘要和字节数，后续回执直接引用这些稳定字段。' },
       22: { title: 'AgenticContractContext', body: 'ctx 是 ACVM 注入的只读全局对象，业务代码不持有链私钥，也不能替换系统能力。' },

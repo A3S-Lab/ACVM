@@ -2,6 +2,7 @@ import { useEffect, useState, type CSSProperties } from 'react';
 import { CourseJourney } from './components/CourseJourney';
 import { Icon, LogoMark } from './components/Icons';
 import FoundationsCourse from './content/01-foundations.mdx';
+import ExecutionCourse from './content/01b-execution.mdx';
 import AcvmContractCourse from './content/02-acvm-contract.mdx';
 import AcvmStateCourse from './content/03-acvm-state.mdx';
 import AcvmTrustCourse from './content/04-acvm-trust.mdx';
@@ -213,12 +214,12 @@ export function App() {
           <div className="screen-inner hero-layout">
             <div className="hero-copy">
               <span className="hero-eyebrow"><i /> 00 / COURSE MAP · BITCOIN → ETHEREUM → ACVM</span>
-              <h1>从可信账本<br /><em className="hero-full-name">到可验证智能。</em></h1>
-              <p>沿一笔交易的演化路线，先理解比特币如何统一所有权，再理解以太坊如何统一程序状态，最后推导 ACVM 如何让链下 Agent 的工作进入链上结算。</p>
+              <h1>比特币、以太坊<br /><em className="hero-full-name">与 ACVM</em></h1>
+              <p>课程以一笔交易为线索：比特币确定所有权和交易顺序，以太坊执行确定性的程序状态转换，ACVM 则验证链下 Agent 产生的回执并完成结算。</p>
               <ul className="hero-benefits" aria-label="课程三阶段">
-                <li><Icon name="key" />Bitcoin：可信账本</li>
-                <li><Icon name="terminal" />Ethereum：可编程状态</li>
-                <li><Icon name="brain" />ACVM：可验证智能执行</li>
+                <li><Icon name="key" />Bitcoin：所有权与排序</li>
+                <li><Icon name="terminal" />Ethereum：状态转换</li>
+                <li><Icon name="brain" />ACVM：任务回执与结算</li>
               </ul>
               <div className="hero-actions">
                 <a href="#btc-ledger" className="button button--primary">从比特币开始 <Icon name="arrow" /></a>
@@ -232,6 +233,7 @@ export function App() {
         </section>
 
         <FoundationsCourse />
+        <ExecutionCourse />
         <AcvmContractCourse />
         <AcvmStateCourse />
         <AcvmTrustCourse />

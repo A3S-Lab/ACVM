@@ -1,0 +1,372 @@
+import { Code } from '../components/Code'
+import { LessonChapter } from '../components/LessonChapter'
+import {
+  DeterminismBoundaryArchitecture,
+  EthereumStateArchitecture,
+  EthereumTransactionArchitecture,
+  EvmArchitecture,
+} from '../components/EthereumFoundations'
+import {
+  AgenticContractBridgeArchitecture,
+  AiConsensusGapArchitecture,
+  VerifiableExecutionArchitecture,
+  VerificationSpectrumArchitecture,
+} from '../components/AiBlockchainFoundations'
+import { AcvmExecutionBoundaryArchitecture } from '../components/AcvmExecutionBoundary'
+import { MotionPlayer } from '../remotion/MotionPlayer'
+
+<LessonChapter
+  id="eth-state"
+  className="foundation-screen eth-state-screen"
+  eyebrow="PART III · ETHEREUM / 01"
+  title="从 UTXO 到全局状态"
+  accent="交易变成确定性的状态转换"
+  body="比特币维护未花费输出集合；以太坊维护账户、合约代码和持久存储。区块中的交易按顺序执行，共同产生新的 stateRoot。"
+  comparison={{
+    traditionalLabel: 'BITCOIN',
+    traditionalTitle: '状态围绕可花费输出组织',
+    traditional: '每笔交易消费旧输出并创建新输出。',
+    acvmLabel: 'ETHEREUM',
+    acvmTitle: '状态围绕账户和程序组织',
+    acvm: '合约可以读取并修改长期存储。',
+  }}
+  figureLabel="STATE MODEL / UTXO SET → ETHEREUM WORLD STATE"
+  visual={<EthereumStateArchitecture />}
+>
+
+### 世界状态怎样变化
+
+以太坊把协议写成状态转换函数。给定相同前态、交易和区块上下文，所有节点必须算出相同后态：
+
+```text file="state-transition.txt"
+Bitcoin:  UTXO_set' = spend(UTXO_set, transaction)
+Ethereum: S' = EVM(S, transaction, blockContext)
+```
+
+外部账户保存 nonce 和余额；合约账户还关联字节码与存储。区块头中的 `stateRoot` 承诺执行完该区块全部交易后的世界状态。节点不接受提议者直接给出的结果，而是按相同顺序执行交易并核对根承诺。
+
+这个模型能表达代币、订单、借贷仓位和治理投票，也带来明确成本：每个验证节点都要重放程序并维护可验证状态。
+
+</LessonChapter>
+
+<LessonChapter
+  id="eth-evm"
+  className="foundation-screen eth-evm-screen"
+  eyebrow="PART III · ETHEREUM / 02"
+  title="EVM 怎样执行合约"
+  accent="同一输入必须得到同一后态"
+  body="Solidity 编译为 EVM 字节码。交易确定调用目标和 calldata，EVM 在栈、内存与持久存储上执行操作码。每个验证节点都运行同一过程。"
+  comparison={{
+    traditionalLabel: 'BITCOIN SCRIPT',
+    traditionalTitle: '检查输出能否被花费',
+    traditional: '脚本主要描述价值的解锁条件。',
+    acvmLabel: 'EVM',
+    acvmTitle: '执行通用状态转换',
+    acvm: '合约能够组合调用、写入存储并生成日志。',
+  }}
+  figureLabel="EVM / SIGNED CALL → OPCODES → STATE + RECEIPT"
+  visual={<EvmArchitecture />}
+>
+
+### 合约不是后台服务
+
+部署交易把字节码写入链上。后续调用携带目标地址、calldata、费用参数和 Gas 上限。EVM 执行完成后得到状态变化、事件日志、返回值和 Gas 用量；失败调用回滚业务状态。
+
+```solidity file="Counter.sol"
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+contract Counter {
+    uint256 public value;
+    event Incremented(address indexed caller, uint256 nextValue);
+
+    function increment() external {
+        value += 1;
+        emit Incremented(msg.sender, value);
+    }
+}
+```
+
+验证者会重放 `increment()`。EVM 不能在执行中读取本机文件、调用 HTTP 服务或使用节点自己的时钟，因为这些输入无法保证在所有节点上相同。
+
+资料：[Ethereum Virtual Machine](https://ethereum.org/en/developers/docs/evm/)
+
+</LessonChapter>
+
+<LessonChapter
+  id="eth-transaction"
+  className="foundation-screen eth-transaction-screen"
+  eyebrow="PART III · ETHEREUM / 03"
+  title="Gas 与交易生命周期"
+  accent="提议者排序，验证者重放"
+  body="钱包签名后，交易进入节点交易池。区块提议者选择顺序，其他验证者检查区块并重放 EVM。Gas 限制每笔交易占用的共识资源。"
+  comparison={{
+    traditionalLabel: '无资源上限',
+    traditionalTitle: '死循环可占满执行节点',
+    traditional: '共识执行不能依赖操作系统强制终止。',
+    acvmLabel: 'GAS METERING',
+    acvmTitle: '每个操作码都有资源价格',
+    acvm: 'Gas 耗尽会回滚状态，已消耗资源仍需付费。',
+  }}
+  figureLabel="ETHEREUM TRANSACTION / SIGN → PROPOSE → EXECUTE → RECEIPT → FINALITY"
+  visual={<EthereumTransactionArchitecture />}
+>
+
+### 一笔调用经过哪些检查
+
+账户 nonce 防止旧交易重复执行；签名证明发送者授权；费用字段决定交易能否进入区块以及提议者可得的小费。交易进入区块后，EVM 逐条扣除 Gas，并把执行结果写入回执。
+
+```ts file="transaction-envelope.ts"
+const transaction = {
+  chainId: 1n,
+  nonce: 42n,
+  to: counterAddress,
+  data: encodeFunctionData({ functionName: 'increment' }),
+  gasLimit: 80_000n,
+  maxFeePerGas: parseGwei('30'),
+  maxPriorityFeePerGas: parseGwei('2'),
+}
+```
+
+提议者能决定候选区块中的交易排序，却不能随意指定执行结果。其他节点会检查签名、nonce、余额、Gas、操作码和最终状态根。无效区块无法通过共识验证。
+
+</LessonChapter>
+
+<LessonChapter
+  id="eth-boundary"
+  className="foundation-screen eth-boundary-screen"
+  eyebrow="PART III · ETHEREUM / 04"
+  title="共识执行的边界"
+  accent="外部事实必须先成为可验证输入"
+  body="EVM 能检查签名、哈希和链上状态，却不能主动查询天气、价格或物流。预言机把外部观察提交上链，合约再按确定性规则处理。"
+  comparison={{
+    traditionalLabel: '共识域内',
+    traditionalTitle: '节点拥有相同输入',
+    traditional: '操作码和状态转换能够被全网重放。',
+    acvmLabel: '外部世界',
+    acvmTitle: '观察结果由协议引入',
+    acvm: '来源、时效、聚合和争议规则需要单独定义。',
+  }}
+  figureLabel="CONSENSUS BOUNDARY / DETERMINISTIC CORE ↔ EXTERNAL WORLD"
+  visual={<DeterminismBoundaryArchitecture />}
+>
+
+### 预言机解决输入问题，不保证事实天然可信
+
+如果节点在执行合约时分别请求同一个 API，响应可能因时间、地区、网络故障或服务端状态而不同。协议因此要求外部观察先被签名、聚合或证明，再作为交易输入提交。
+
+```solidity file="PriceConsumer.sol"
+function fulfillPrice(uint256 requestId, uint256 price, bytes calldata proof)
+    external
+{
+    require(requestId == pendingRequest, "unexpected request");
+    require(oracleRegistry.verify(msg.sender, price, proof), "bad evidence");
+    latestPrice = price;
+}
+```
+
+`verify` 只能检查协议规定的证据。数据源是否可靠、报价是否过期、多少来源构成法定人数以及故障时怎样处理，都属于预言机的信任模型。
+
+</LessonChapter>
+
+<LessonChapter
+  id="ai-gap"
+  className="foundation-screen ai-gap-screen"
+  eyebrow="PART IV · AI × BLOCKCHAIN / 01"
+  title="AI 负载为什么不适合全网重放"
+  accent="输出、成本、隐私和时限都不匹配"
+  body="模型推理可能依赖概率采样、GPU 算子、私有数据和外部工具。让每个验证者完整复算，会扩大成本和数据暴露，并增加共识分歧。"
+  comparison={{
+    traditionalLabel: 'EVM 执行方式',
+    traditionalTitle: '所有验证者重放同一程序',
+    traditional: '适合短小、封闭、确定的状态转换。',
+    acvmLabel: 'AI / AGENT WORK',
+    acvmTitle: '一次执行，提交证据',
+    acvm: '验证者检查承诺、回执、证明或验收结论。',
+  }}
+  figureLabel="AI CONSENSUS GAP / REPLICATED EXECUTION DOES NOT SCALE"
+  visual={<AiConsensusGapArchitecture />}
+>
+
+### 固定随机种子仍不够
+
+固定种子只能减少采样差异。模型版本、量化方式、GPU 内核、浮点舍入和外部数据快照仍可能改变输出。模型权重和推理成本也不会因固定种子而缩小。
+
+Agent 还会产生不可重复的副作用，例如发送邮件、创建订单、付款或请求人工审批。如果每个验证者都重放这些步骤，同一动作会执行多次。长任务也可能跨越多个区块，无法在单笔交易的 Gas 和时间边界内完成。
+
+适合全网执行的逻辑应继续放在 EVM 或其他确定性 VM 中。模型、API、文件、私密数据和外部副作用则需要链下执行协议。
+
+</LessonChapter>
+
+<LessonChapter
+  id="acvm-execution-boundary"
+  className="foundation-screen acvm-execution-boundary-screen"
+  eyebrow="PART IV · AI × BLOCKCHAIN / 02"
+  title="EVM 与 ACVM 执行边界"
+  accent="EVM 重放，ACVM 验回执"
+  body="ACVM 的共识核心仍在链上运行：检查授权、状态前置条件、回执和结算。模型推理与工具调用不由每个验证者重复执行。"
+  comparison={{
+    traditionalLabel: 'EVM',
+    traditionalTitle: '验证者重算业务逻辑',
+    traditional: '状态由封闭、确定、资源受限的字节码产生。',
+    acvmLabel: 'ACVM',
+    acvmTitle: '验证者重算验证逻辑',
+    acvm: '外部工作产生回执，链上验证后推进任务状态。',
+  }}
+  figureLabel="EXECUTION BOUNDARY / REPLAY PROGRAMS OR VERIFY RECEIPTS"
+  visual={<AcvmExecutionBoundaryArchitecture />}
+>
+
+### 两种状态转换
+
+EVM 把业务计算放进共识执行。每个验证者读取相同前态和交易，执行相同字节码：
+
+```text file="evm-vs-acvm.txt"
+EVM:
+  S' = EVM(S, tx, blockContext)
+
+ACVM:
+  result, evidence = Exec_offchain(intent, frozenEnvironment)
+  S' = Apply(S, Verify(receipt, evidence))
+```
+
+ACVM 不是“完全不上链”。链上部分仍然确定性执行，并检查：
+
+- 调用者签名、角色权限、nonce、预算和 deadline；
+- `contractRoot`、`inputRoot`、`outputRoot` 与前序状态根；
+- Validator 裁决、证明或挑战期是否满足协议；
+- 当前状态能否接收该回执，以及资产怎样结算。
+
+链下部分负责模型推理、网络请求、文件处理、外部工具和人工审批。每项工作只执行所需次数；验证者复核协议声明的命题，不复制全部副作用。
+
+### zkML 和 TEE 改变的是证据形式
+
+zkML 在链下完成推理和证明生成，链上验证证明；TEE 在受信硬件内执行并签发远程证明；乐观机制先接受结果，在挑战时验证反证。这些方案都没有把大型模型变成由所有共识节点直接重放的 EVM 指令。
+
+小型、确定、可在 Gas 内完成的规则没有必要移出链上。ACVM 处理的是超出这一边界的异步外部工作。
+
+</LessonChapter>
+
+<LessonChapter
+  id="ai-execution"
+  className="foundation-screen ai-execution-screen"
+  eyebrow="PART IV · AI × BLOCKCHAIN / 03"
+  title="可验证链下执行"
+  accent="任务参数冻结后再分派执行"
+  body="用户签名目标、输入根、执行版本、预算和验收规则。Worker 产生结果与回执，Validator 独立检查，结算合约只处理有效证据。"
+  comparison={{
+    traditionalLabel: '普通 API',
+    traditionalTitle: '服务返回一个结果',
+    traditional: '输入版本、执行环境和责任记录通常留在服务内部。',
+    acvmLabel: 'PROOF-CARRYING',
+    acvmTitle: '结果绑定执行上下文',
+    acvm: '任务、输入、输出、版本和防重放字段一起提交。',
+  }}
+  figureLabel="VERIFIABLE OFF-CHAIN COMPUTE / REQUEST → WORK → VERIFY → SETTLE"
+  visual={<VerifiableExecutionArchitecture />}
+>
+
+### 回执需要绑定哪些数据
+
+请求阶段生成不可变的任务标识和输入承诺。Worker 只能对该任务提交输出；Validator 从固定输入、输出和验收规则作出裁决；链上结算检查状态连续性与防重放字段。
+
+```ts file="task-receipt.ts"
+type TaskReceipt = {
+  taskId: string
+  intentHash: `0x${string}`
+  inputRoot: `0x${string}`
+  outputRoot: `0x${string}`
+  codeHash: `0x${string}`
+  previousStateRoot: `0x${string}`
+  nonce: bigint
+  workerSignature: `0x${string}`
+  validatorVerdict?: 'accepted' | 'rejected'
+}
+
+function canSettle(receipt: TaskReceipt, state: TaskState) {
+  return state.taskId === receipt.taskId
+    && state.inputRoot === receipt.inputRoot
+    && state.root === receipt.previousStateRoot
+    && !state.spentNonces.has(receipt.nonce)
+    && receipt.validatorVerdict === 'accepted'
+}
+```
+
+<MotionPlayer scene="verifiable-execution" caption="Intent、Worker 回执、Validator 裁决与结算状态保持同一 taskId" />
+
+</LessonChapter>
+
+<LessonChapter
+  id="ai-verification"
+  className="foundation-screen ai-verification-screen"
+  eyebrow="PART IV · AI × BLOCKCHAIN / 04"
+  title="AI 结果怎样验证"
+  accent="先定义命题，再选择证据"
+  body="重复执行、乐观挑战、TEE、zkML 和结果验收各自证明不同事实。协议需要写明验证对象、剩余信任、成本和失败处理。"
+  comparison={{
+    traditionalLabel: '模糊声明',
+    traditionalTitle: '结果已经通过 AI 验证',
+    traditional: '没有说明验证了执行、数据来源还是结果质量。',
+    acvmLabel: '明确命题',
+    acvmTitle: '每类证据对应一项可判定条件',
+    acvm: '无法证明的部分进入治理、保证金或人工复核。',
+  }}
+  figureLabel="VERIFICATION METHODS / CLAIM · TRUST · COST · FAILURE"
+  visual={<VerificationSpectrumArchitecture />}
+>
+
+### 五类验证方法
+
+- **重复执行**：多个独立执行者对冻结输入运行确定性任务，比较结果；成本随执行者数量增加。
+- **乐观挑战**：结果先进入待确认状态；监控者在挑战期内提交可验证反证，终局时间较长。
+- **TEE 远程证明**：证明指定代码在认可的隔离环境内运行；仍需信任硬件、固件和证明服务。
+- **zkML**：证明固定电路对承诺输入产生指定输出；数据真实性、模型选择和业务价值不由计算证明覆盖。
+- **结果验收**：Validator 按测试集、评分规则或人工判断评估质量；需要防止串谋并提供申诉流程。
+
+“程序按规则执行”“输入来自可靠来源”“输出满足业务目标”是三个命题，证据和故障处理应分别定义。
+
+</LessonChapter>
+
+<LessonChapter
+  id="agentic-bridge"
+  className="foundation-screen agentic-bridge-screen"
+  eyebrow="PART IV · AI × BLOCKCHAIN / 05"
+  title="从智能合约到智能体合约"
+  accent="原子调用扩展为跨区块任务"
+  body="Agent 任务会等待外部数据、调用工具、委托子任务并经过人工审批。合约需要显式记录阶段、权限、预算、回执、超时和验收。"
+  comparison={{
+    traditionalLabel: 'SMART CONTRACT',
+    traditionalTitle: '交易内原子执行',
+    traditional: '适合确定、同步且能在 Gas 上限内完成的逻辑。',
+    acvmLabel: 'AGENTIC CONTRACT',
+    acvmTitle: '回执驱动异步状态机',
+    acvm: '任务跨区块推进，每次转换都要验证前置条件。',
+  }}
+  figureLabel="SMART CONTRACT → AGENTIC CONTRACT / ASYNC VERIFIED STATE"
+  visual={<AgenticContractBridgeArchitecture />}
+>
+
+### 任务状态必须连续
+
+链上只看到最终字符串时，无法判断任务使用了哪份输入、由谁执行、经历了哪些授权以及是否重复结算。状态机把这些条件写入每一次转换。
+
+```ts file="agentic-state-machine.ts"
+type TaskState =
+  | 'requested'
+  | 'assigned'
+  | 'running'
+  | 'submitted'
+  | 'accepted'
+  | 'settled'
+
+function applyReceipt(state: TaskState, receipt: VerifiedReceipt): TaskState {
+  if (state === 'running' && receipt.kind === 'worker') return 'submitted'
+  if (state === 'submitted' && receipt.kind === 'validator') return 'accepted'
+  if (state === 'accepted' && receipt.kind === 'settlement') return 'settled'
+  throw new Error('receipt is invalid for the current state')
+}
+```
+
+ACVM 合约模型由此需要四组定义：任务目录、状态转换、角色权限和结算条件。
+
+</LessonChapter>

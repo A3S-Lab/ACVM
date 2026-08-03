@@ -7,47 +7,45 @@ import {
   UtxoTransactionArchitecture,
 } from '../components/BitcoinFoundations'
 import {
-  DeterminismBoundaryArchitecture,
-  EthereumStateArchitecture,
-  EthereumTransactionArchitecture,
-  EvmArchitecture,
-} from '../components/EthereumFoundations'
-import {
-  AgenticContractBridgeArchitecture,
-  AiConsensusGapArchitecture,
-  VerifiableExecutionArchitecture,
-  VerificationSpectrumArchitecture,
-} from '../components/AiBlockchainFoundations'
+  BftConsensusArchitecture,
+  ConsensusAnatomyArchitecture,
+  GovernanceConsensusArchitecture,
+  ProofOfStakeArchitecture,
+} from '../components/ConsensusArchitectures'
 import { MotionPlayer } from '../remotion/MotionPlayer'
 
 <LessonChapter
   id="btc-ledger"
   className="foundation-screen btc-ledger-screen"
   eyebrow="PART I · BITCOIN / 01"
-  title="为什么需要比特币"
-  accent="没有中心账本，仍只认一份历史"
-  body="数字签名能证明谁授权了交易，却不能单独阻止同一笔钱被签两次。比特币把所有权验证、交易排序和经济成本组合成公开账本。"
+  title="双花问题"
+  accent="合法签名不能确定交易顺序"
+  body="数字签名证明私钥持有者授权了交易，却无法阻止同一个 UTXO 被签给两个收款人。比特币还需要一套公开的排序与收敛规则。"
   comparison={{
-    traditionalLabel: '核心问题',
-    traditionalTitle: '复制数据不等于达成共识',
-    traditional: '不同节点可能先看到不同的冲突交易。',
+    traditionalLabel: '仅有数字签名',
+    traditionalTitle: '两笔冲突交易都可能验签成功',
+    traditional: '各节点收到交易的先后次序也可能不同。',
     acvmLabel: 'BITCOIN',
-    acvmTitle: '验证规则加唯一历史',
-    acvm: '节点独立验签，共识决定哪笔交易进入规范链。',
+    acvmTitle: '有效性检查与规范历史分开处理',
+    acvm: '节点独立验签，共识协议处理交易顺序和分叉。',
   }}
   figureLabel="BITCOIN FOUNDATION / DOUBLE-SPEND → ONE VALID HISTORY"
   visual={<BitcoinLedgerArchitecture />}
 >
 
-### 先分清三个问题
+### 签名、验证与排序
 
-Alice 的数字签名只回答“这笔花费是否由 Alice 授权”。如果她同时把同一个输入签给 Bob 和 Carol，两笔交易都可能拥有合法签名。一个去中心化货币还必须解决：**交易是否合法、交易按什么顺序发生、所有节点最终接受哪一份历史**。
+Alice 可以用同一私钥签出两笔交易：一笔把 UTXO 支付给 Bob，另一笔支付给 Carol。两份签名都可能正确，但账本只能接受其中一笔。交易有效性和交易顺序因此是两个不同问题。
 
-比特币的关键不是把账本复制很多份，而是让每个节点按同一套规则独立验证，再让工作量证明为候选历史赋予可比较的现实成本。共识选择的是“累计工作量最多的有效链”，而不是盲信最长、最快或节点最多的链。
+节点收到交易后检查签名、脚本、UTXO 是否存在以及金额是否守恒。矿工把通过检查的交易写入候选区块。节点对区块重新验证，并按累计工作量选择规范链。任何角色都不能绕过验证规则。
 
-> 本章心智模型：密码学负责授权，共识负责排序，经济成本负责让历史难以改写。
+```text file="three-checks.txt"
+authorization: signature unlocks the referenced output
+validity:      every input exists, is unspent, and preserves value
+ordering:      the accepted chain places one conflicting spend first
+```
 
-<MotionPlayer scene="ledger-evolution" caption="从所有权账本，到可编程状态，再到可验证智能执行" />
+<MotionPlayer scene="ledger-evolution" caption="所有权账本、可编程状态与可验证外部执行" />
 
 </LessonChapter>
 
@@ -55,24 +53,24 @@ Alice 的数字签名只回答“这笔花费是否由 Alice 授权”。如果�
   id="btc-transaction"
   className="foundation-screen btc-transaction-screen"
   eyebrow="PART I · BITCOIN / 02"
-  title="一笔比特币交易"
-  accent="私钥授权，UTXO 被消费并重建"
-  body="钱包不是修改账户余额，而是选择旧的未花费输出作为输入，用私钥签名，再创建收款、找零等新输出。输入与输出的差额就是手续费。"
+  title="UTXO 交易"
+  accent="消费旧输出，创建新输出"
+  body="钱包选择未花费输出作为输入，生成收款和找零输出，并对交易摘要签名。输入总额与输出总额的差额构成手续费。"
   comparison={{
-    traditionalLabel: '账户直觉',
-    traditionalTitle: '把余额想成一个可修改数字',
-    traditional: '这会掩盖每一份价值的来源和花费条件。',
+    traditionalLabel: '账户模型',
+    traditionalTitle: '余额存放在账户记录中',
+    traditional: '交易直接修改发送方和接收方余额。',
     acvmLabel: 'UTXO 模型',
-    acvmTitle: '消费旧输出，创建新输出',
-    acvm: '所有权、来源与价值守恒都能被独立检查。',
+    acvmTitle: '价值存在于带花费条件的输出中',
+    acvm: '每个输入都能追溯到一笔旧交易的具体输出。',
   }}
   figureLabel="BITCOIN TRANSACTION / INPUTS = OUTPUTS + FEE"
   visual={<UtxoTransactionArchitecture />}
 >
 
-### 钱包实际构造了什么
+### 节点怎样检查一笔交易
 
-UTXO 是一笔旧交易中尚未花费的输出。交易输入引用旧输出的 `txid` 与索引，并提供满足锁定脚本的见证；输出则写入新的金额与花费条件。节点验证时不需要查询某个“账户余额”，只需确认引用存在、尚未花费、见证有效且价值守恒。
+输入通过 `txid:vout` 引用旧输出，并提供满足锁定条件的 witness。输出记录金额和新的锁定条件。节点查询本地 UTXO 集，确认引用存在且尚未花费，再执行脚本和金额检查。
 
 ```ts file="verify-transaction.ts"
 type Output = { value: bigint; owner: string }
@@ -80,17 +78,17 @@ type Input = { prevout: string; signature: Uint8Array }
 
 function verifyTransaction(inputs: Input[], outputs: Output[], fee: bigint) {
   const prevouts = inputs.map(loadUnspentOutput)
-  const authorizationOk = inputs.every((input, index) =>
+  const authorized = inputs.every((input, index) =>
     verifySignature(input, prevouts[index].owner),
   )
   const valueIn = prevouts.reduce((sum, output) => sum + output.value, 0n)
   const valueOut = outputs.reduce((sum, output) => sum + output.value, 0n)
 
-  return authorizationOk && valueIn === valueOut + fee
+  return authorized && valueIn === valueOut + fee
 }
 ```
 
-这里故意省略了脚本、锁定时间、序列号等细节，但保留了全节点最核心的三项检查：**来源未花费、授权成立、输入等于输出加手续费**。
+实际验证还包括脚本规则、锁定时间、序列号、交易重量和标准性策略。示例保留了 UTXO 查找、授权检查与价值守恒三项基础条件。
 
 </LessonChapter>
 
@@ -98,33 +96,38 @@ function verifyTransaction(inputs: Input[], outputs: Output[], fee: bigint) {
   id="btc-pow"
   className="foundation-screen btc-pow-screen"
   eyebrow="PART I · BITCOIN / 03"
-  title="区块与工作量证明"
-  accent="把交易顺序变成昂贵历史"
-  body="矿工把已验证交易组织进区块，用 Merkle Root 承诺交易集合，并反复计算区块头哈希。有效 PoW 赋予新区块提议权，但不能绕过任何共识规则。"
+  title="PoW 出块权"
+  accent="哈希目标构成一次公开抽签"
+  body="矿工反复修改 nonce 和 coinbase extraNonce，直到区块头的双 SHA-256 哈希小于目标值。成功者获得候选区块提议权。"
   comparison={{
-    traditionalLabel: '仅有哈希链',
-    traditionalTitle: '篡改会被发现，却未必昂贵',
-    traditional: '攻击者仍可快速重算一条替代历史。',
+    traditionalLabel: '固定记账人',
+    traditionalTitle: '机构名单决定谁能写入账本',
+    traditional: '成员准入与故障处理依赖中心管理。',
     acvmLabel: 'PROOF OF WORK',
-    acvmTitle: '每个区块附加现实成本',
-    acvm: '重写历史必须追赶全网持续累积的工作量。',
+    acvmTitle: '每次哈希都是独立试验',
+    acvm: '单位时间的胜出概率与投入算力近似成正比。',
   }}
-  figureLabel="BITCOIN BLOCK / MERKLE COMMITMENT · HASH TARGET · CHAIN WORK"
+  figureLabel="BITCOIN MINING / HASH LOTTERY · TARGET · CHAINWORK"
   visual={<ProofOfWorkArchitecture />}
 >
 
-### 区块头为什么足够重要
+### 挖矿概率
 
-区块头把前一区块哈希、交易集合的 Merkle Root、时间、难度目标和 nonce 绑定在一起。修改任何一笔交易都会改变 Merkle Root，继而改变区块哈希以及之后整条链的引用。
+区块头被视为 256 位整数。目标值为 `T` 时，单次哈希成功概率近似为：
 
-```text file="block-header.txt"
-version | previousBlockHash | merkleRoot | time | target | nonce
+```text file="pow-probability.txt"
+p = Pr[SHA256d(header) ≤ T] = (T + 1) / 2²⁵⁶
 
-valid(block) := validateAllTransactions(block)
-             && hash(block.header) < target
+Pr[at least one success after k hashes] = 1 - (1 - p)ᵏ
+
+expected block share of miner i ≈ hᵢ / Σh
 ```
 
-PoW 证明矿工为这个候选区块搜索过稀缺的哈希结果；它**不证明区块里的交易正确**。每个全节点仍会完整验证区块，非法区块即使拥有巨大算力也会被拒绝。
+`hᵢ` 是矿工算力，全网算力为 `Σh`。哈希结果无法提前预测，增加算力只会增加单位时间内的试验次数。协议约每 2016 个区块调整目标，使长期平均出块间隔接近十分钟。
+
+有效 PoW 只证明区块头满足目标。区块仍须通过交易、脚本、区块大小和 coinbase 奖励等全部规则；全节点会直接丢弃非法区块。
+
+资料：[Bitcoin white paper](https://bitcoin.org/bitcoin.pdf) · [Bitcoin Developer Guide: Mining](https://developer.bitcoin.org/devguide/mining.html)
 
 </LessonChapter>
 
@@ -132,328 +135,169 @@ PoW 证明矿工为这个候选区块搜索过稀缺的哈希结果；它**不�
   id="btc-consensus"
   className="foundation-screen btc-consensus-screen"
   eyebrow="PART I · BITCOIN / 04"
-  title="分叉、重组与确认"
+  title="分叉与确认"
   accent="累计工作量选择规范链"
-  body="两个有效区块可能同时出现，节点会暂时分叉，并最终跟随累计工作量最大的有效链。确认数增加的是重写成本，因此比特币提供概率最终性。"
+  body="两个有效区块可能同时传播，节点会暂时接受不同链尖。后续区块让某一分支累计更多工作量，落败分支随即被重组。"
   comparison={{
-    traditionalLabel: '本地视角',
-    traditionalTitle: '先看到不等于最终成立',
-    traditional: '网络延迟会让节点暂时持有不同链尖。',
+    traditionalLabel: '单个节点视角',
+    traditionalTitle: '最先收到的区块只是当前链尖',
+    traditional: '网络延迟会让节点短暂看到不同顺序。',
     acvmLabel: 'NAKAMOTO CONSENSUS',
-    acvmTitle: '按有效链的累计工作收敛',
-    acvm: '落败区块被重组，后续确认逐步提高安全性。',
+    acvmTitle: '比较有效分支的累计工作量',
+    acvm: '确认数增加的是攻击者重写历史所需追赶的工作。',
   }}
   figureLabel="BITCOIN CONSENSUS / VALIDITY → MOST WORK → CONFIRMATIONS"
   visual={<BitcoinConsensusArchitecture />}
 >
 
-### 最终性不是一个瞬间
+### 链选择与概率最终性
 
-网络传播存在延迟，两个矿工可能基于同一父块同时找到新区块。节点先接受自己看到的有效链尖；当某一分支累积更多工作量时，节点会回滚落败分支的状态并重放胜出分支，这就是重组。
+节点只在有效区块之间比较 chainwork。区块数量不是准确标准：难度较高的短链可能包含更多累计工作。节点切换到高 chainwork 分支时，会撤销旧分支造成的 UTXO 变化，再按新分支顺序重放交易。
 
-确认数不是中央机构发出的“批准”，而是目标交易之后又叠加了多少区块工作量。交易越深，攻击者从它之前分叉并追上诚实链所需的预期成本越高。
+交易之后每增加一个区块，攻击者都要重算目标区块及其后续工作，并追上诚实矿工继续增长的链。回滚概率随确认数下降，但不会在某个固定高度变成严格的零。
 
-<MotionPlayer scene="transaction-finality" caption="授权、独立验证、排序与确认共同构成交易最终性" />
-
-</LessonChapter>
-
-<LessonChapter
-  id="eth-state"
-  className="foundation-screen eth-state-screen"
-  eyebrow="PART II · ETHEREUM / 01"
-  title="从 UTXO 到账户"
-  accent="以太坊的全局状态机"
-  body="比特币主要维护可花费输出集合；以太坊维护账户、代码和合约存储组成的世界状态。每笔交易都通过确定性状态转换函数产生新的 stateRoot。"
-  comparison={{
-    traditionalLabel: 'BITCOIN',
-    traditionalTitle: '状态围绕价值输出组织',
-    traditional: '脚本有意保持克制，重点是验证所有权和花费。',
-    acvmLabel: 'ETHEREUM',
-    acvmTitle: '状态围绕账户与程序组织',
-    acvm: '合约代码可以读取并持续更新自己的存储。',
-  }}
-  figureLabel="STATE MODEL EVOLUTION / UTXO SET → WORLD STATE"
-  visual={<EthereumStateArchitecture />}
->
-
-### 从验证花费到执行状态转换
-
-以太坊把协议抽象成状态转换函数 `S′ = Υ(S, T)`：给定同一个前态 `S` 和同一笔交易 `T`，所有节点必须得到相同后态 `S′`。外部账户保存 nonce 与余额；合约账户还保存代码哈希和存储根。
-
-这一步演化的意义是：状态不再只回答“哪些价值可以被花费”，还可以记录订单、投票、借贷仓位和其他长期程序变量。但代价也随之出现——每个验证节点都必须重放程序并保存可验证状态。
-
-```text file="state-transition.txt"
-Bitcoin:  UTXO_set' = spend(UTXO_set, transaction)
-Ethereum: worldState' = EVM(worldState, transaction, blockContext)
-```
+<MotionPlayer scene="transaction-finality" caption="签名、验证、排序与累计工作共同形成确认" />
 
 </LessonChapter>
 
 <LessonChapter
-  id="eth-evm"
-  className="foundation-screen eth-evm-screen"
-  eyebrow="PART II · ETHEREUM / 02"
-  title="EVM 与智能合约"
-  accent="所有节点重放同一段确定性代码"
-  body="智能合约被编译为 EVM 字节码。区块确定交易顺序后，每个验证节点用相同前态和输入执行字节码，只有得到相同后态才接受区块。"
+  id="consensus-anatomy"
+  className="foundation-screen consensus-anatomy-screen"
+  eyebrow="PART II · CONSENSUS / 01"
+  title="共识的五个环节"
+  accent="区块提议不等于区块确认"
+  body="共识协议分别规定成员资格、提议者选择、有效性检查、冲突处理和最终性。通常所说的“记账权”只对应第二项。"
   comparison={{
-    traditionalLabel: 'BITCOIN SCRIPT',
-    traditionalTitle: '验证预设的花费条件',
-    traditional: '擅长表达价值如何被解锁。',
-    acvmLabel: 'EVM',
-    acvmTitle: '执行通用状态转换',
-    acvm: '合约可组合调用、持久存储并产生事件日志。',
+    traditionalLabel: '模糊说法',
+    traditionalTitle: '赢得记账权就能写入账本',
+    traditional: '这种说法省略了全节点验证和最终确认。',
+    acvmLabel: '协议分层',
+    acvmTitle: '提议者只提交候选区块',
+    acvm: '其他节点验证，投票或分叉选择规则决定是否接受。',
   }}
-  figureLabel="EVM / SIGNED CALL → OPCODES → STATE + RECEIPT"
-  visual={<EvmArchitecture />}
+  figureLabel="CONSENSUS ANATOMY / MEMBERSHIP · PROPOSAL · VALIDATION · ORDER · FINALITY"
+  visual={<ConsensusAnatomyArchitecture />}
 >
 
-### 合约不是后台服务
+### Safety、Liveness 与抗女巫
 
-Solidity 代码部署后成为链上的 EVM 字节码。交易携带目标地址、调用数据和 Gas 上限；EVM 使用栈、内存和持久存储执行指令。执行产生的新状态、日志与 Gas 消耗进入交易回执。
+**Safety** 要求诚实节点不会确认两个冲突状态；**Liveness** 要求网络恢复正常后，新交易仍能继续进入账本。协议必须说明网络时延假设、可容忍的故障类型以及故障上限。
 
-```solidity file="Counter.sol"
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+公开网络还要限制一个实体伪造大量身份。PoW 以算力和能源计权，PoS 以可罚没质押计权，PoA 依赖治理认可的身份，DPoS 由持币人选出有限代表。抗女巫机制决定投票权来源，不会自动给出区块排序和最终性。
 
-contract Counter {
-    uint256 public value;
-    event Incremented(address indexed caller, uint256 nextValue);
-
-    function increment() external {
-        value += 1;
-        emit Incremented(msg.sender, value);
-    }
+```ts file="accept-candidate-block.ts"
+function acceptCandidate(block: Block, localState: State) {
+  if (!membershipRule.accepts(block.proposer)) return false
+  if (!proposalRule.accepts(block.header)) return false
+  if (!validateEveryTransaction(block, localState)) return false
+  return forkChoiceAndFinality.observe(block)
 }
 ```
 
-所有验证者都会重放 `increment()`；任何依赖本机时间、随机文件或 HTTP 响应的行为都可能让节点得到不同结果，因此这些能力不属于 EVM 的共识执行环境。
+共识机制的比较单位应当是完整协议，而不是单独比较“谁出块”。
 
 </LessonChapter>
 
 <LessonChapter
-  id="eth-transaction"
-  className="foundation-screen eth-transaction-screen"
-  eyebrow="PART II · ETHEREUM / 03"
-  title="Gas 与交易生命周期"
-  accent="资源有价格，失败也有成本"
-  body="交易从钱包签名、mempool 和区块排序进入 EVM。Gas 为每项计算和存储定价，使任意程序仍能在有限区块资源内被全网安全重放。"
+  id="consensus-pos"
+  className="foundation-screen consensus-pos-screen"
+  eyebrow="PART II · CONSENSUS / 02"
+  title="PoS 与 Gasper"
+  accent="随机提议、委员会投票、检查点终局"
+  body="以太坊验证者质押 ETH 后进入候选集合。每个 slot 随机选择一名区块提议者，并选择委员会提交 attestations。"
   comparison={{
-    traditionalLabel: '无限程序',
-    traditionalTitle: '一个循环可能阻塞所有节点',
-    traditional: '共识执行不能依赖操作系统强制终止。',
-    acvmLabel: 'GAS METERING',
-    acvmTitle: '执行预算写入交易',
-    acvm: 'Gas 耗尽会回滚业务状态，但已用资源仍付费。',
+    traditionalLabel: 'PoW',
+    traditionalTitle: '算力决定哈希抽签次数',
+    traditional: '分叉通过累计工作量和后续确认收敛。',
+    acvmLabel: 'ETHEREUM POS',
+    acvmTitle: '质押决定抽样权重与投票权重',
+    acvm: 'LMD-GHOST 选链，Casper FFG 为检查点提供终局。',
   }}
-  figureLabel="ETHEREUM TRANSACTION / SIGN → ORDER → EXECUTE → RECEIPT → FINALITY"
-  visual={<EthereumTransactionArchitecture />}
+  figureLabel="ETHEREUM GASPER / RANDAO · PROPOSER · ATTESTATION · FINALITY"
+  visual={<ProofOfStakeArchitecture />}
 >
 
-### 一笔调用经过五层检查
+### 提议者和投票者承担不同职责
 
-钱包先用账户 nonce 防重放，并对交易签名。节点检查签名、nonce、费用字段和余额后才把它放入交易池。区块提议者决定排序；EVM 执行时逐条扣除 Gas；最后回执记录成功状态、累计 Gas 和事件日志。
+以太坊把时间分成 12 秒的 slot，32 个 slot 组成一个 epoch。RANDAO 提供协议随机数；每个 slot 选出一名 proposer 构造 beacon block，同时把验证者分配到委员会，对链头和检查点提交 attestation。空 slot 不会停止链，后续 slot 仍可继续出块。
 
-```ts file="transaction-envelope.ts"
-const transaction = {
-  chainId: 1n,
-  nonce: 42n,
-  to: counterAddress,
-  data: encodeFunctionData({ functionName: 'increment' }),
-  gasLimit: 80_000n,
-  maxFeePerGas: parseGwei('30'),
-  maxPriorityFeePerGas: parseGwei('2'),
-}
+Gasper 组合两套规则：
+
+- **LMD-GHOST** 使用每个验证者最新的有效投票计算当前链头。
+- **Casper FFG** 对 epoch 边界的 checkpoint 投票。占总质押量至少 2/3 的 supermajority link 可使检查点 justified；后续检查点满足链接条件后，前一检查点 finalized。
+
+双重提议、双重投票和 surround vote 会触发 slashing。攻击两个冲突终局至少要求约 1/3 质押违反可罚没条件，因此 PoS 的安全成本来自可识别、可销毁的质押。
+
+资料：[Ethereum Proof-of-Stake](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/) · [Gasper](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/gasper/) · [Block proposal](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/block-proposal/)
+
+</LessonChapter>
+
+<LessonChapter
+  id="consensus-bft"
+  className="foundation-screen consensus-bft-screen"
+  eyebrow="PART II · CONSENSUS / 03"
+  title="BFT 与 HotStuff"
+  accent="Leader 提议，法定人数确认"
+  body="BFT 协议在已知验证者集合中按轮次运行。Leader 负责提议，副本检查后投票，达到 2f+1 票才形成 Quorum Certificate。"
+  comparison={{
+    traditionalLabel: '崩溃容错',
+    traditionalTitle: 'Raft 假设故障节点只会宕机',
+    traditional: '恶意节点伪造消息或双重投票不在故障模型内。',
+    acvmLabel: 'BYZANTINE BFT',
+    acvmTitle: '容忍节点发送冲突或伪造消息',
+    acvm: '3f+1 个节点可容忍不超过 f 个拜占庭故障。',
+  }}
+  figureLabel="HOTSTUFF-STYLE BFT / VIEW · LEADER · VOTE · QC · COMMIT"
+  visual={<BftConsensusArchitecture />}
+>
+
+### Quorum 为什么是 2f+1
+
+验证者总数为 `n = 3f + 1` 时，quorum 大小取 `q = 2f + 1`。任意两个 quorum 的交集至少为 `f + 1`，其中至少有一个诚实节点。诚实节点遵守锁定规则，不会为两个冲突分支同时形成有效证书。
+
+```text file="quorum-intersection.txt"
+|Q₁ ∩ Q₂| ≥ |Q₁| + |Q₂| - n
+          ≥ (2f + 1) + (2f + 1) - (3f + 1)
+          = f + 1
 ```
 
-业务调用 `revert` 时，合约写入会回滚，但节点已经付出了验证和执行成本，所以已消耗的 Gas 不会退回。Gas 同时是资源计量、抗拒绝服务边界和区块容量市场。
+HotStuff 按 view 运行。Leader 携带父区块的 QC 提议新区块；副本只为符合安全锁的提议投票；聚合 2f+1 票后生成新 QC。连续的认证链满足提交规则后产生确定性最终性。Leader 失联时，超时证据推动 view change。
+
+HotStuff 的部分同步假设允许网络暂时任意延迟；网络恢复到延迟上界后，正确 Leader 可以继续推动协议。
+
+资料：[HotStuff paper](https://arxiv.org/abs/1803.05069) · [PBFT paper](https://www.usenix.org/conference/osdi-99/practical-byzantine-fault-tolerance)
 
 </LessonChapter>
 
 <LessonChapter
-  id="eth-boundary"
-  className="foundation-screen eth-boundary-screen"
-  eyebrow="PART II · ETHEREUM / 04"
-  title="智能合约的边界"
-  accent="链上不能直接相信外部世界"
-  body="EVM 能验证签名、哈希和已有状态，却不能直接发起 HTTP 请求或确认现实事件。外部数据必须由预言机提交，并附带可检查的来源与信任假设。"
+  id="consensus-governance"
+  className="foundation-screen consensus-governance-screen"
+  eyebrow="PART II · CONSENSUS / 04"
+  title="PoA、DPoS 与 PoI"
+  accent="成员产生方式不能替代最终性协议"
+  body="PoA 通过授权身份控制签名者集合，DPoS 通过持币投票选代表，PoI 通过已验收任务计算贡献。三者仍需区块排序和最终确认规则。"
   comparison={{
-    traditionalLabel: '共识域',
-    traditionalTitle: '确定性输入可以被全网重放',
-    traditional: '相同前态与交易必须产生相同结果。',
-    acvmLabel: '外部计算',
-    acvmTitle: '只能先声明，再验证后接受',
-    acvm: '数据来源、执行环境与验收规则成为新问题。',
+    traditionalLabel: '机制名称',
+    traditionalTitle: '把权重来源直接称为共识',
+    traditional: '名称没有说明冲突区块怎样处理。',
+    acvmLabel: '完整规格',
+    acvmTitle: '成员、Leader、投票和终局分别定义',
+    acvm: '故障模型与治理撤换流程也必须公开。',
   }}
-  figureLabel="CONSENSUS BOUNDARY / DETERMINISTIC CORE ↔ EXTERNAL WORLD"
-  visual={<DeterminismBoundaryArchitecture />}
+  figureLabel="GOVERNED CONSENSUS / POA · DPOS · RAFT · POI"
+  visual={<GovernanceConsensusArchitecture />}
 >
 
-### 预言机问题本质上是验证问题
+### 四种常被混在一起的机制
 
-如果每个节点在执行交易时各自请求天气 API，它们可能因为时间、网络或服务端差异得到不同答案，共识会立即分裂。因此外部观察必须先变成一笔链上输入，然后由合约按确定性规则处理。
+**PoA** 维护授权签名者名单。Clique 采用 in-turn 签名者和随机延迟的 out-of-turn 备用签名者，并限制签名者在最近窗口重复出块。身份治理代替了公开网络的算力或质押准入。
 
-```solidity file="PriceConsumer.sol"
-function fulfillPrice(uint256 requestId, uint256 price, bytes calldata proof)
-    external
-{
-    require(requestId == pendingRequest, "unexpected request");
-    require(oracleRegistry.verify(msg.sender, price, proof), "bad evidence");
-    latestPrice = price;
-}
-```
+**DPoS** 让持币人投票选出少量 witness 或 producer。入选代表按排班出块，区块何时不可逆则由系统采用的 BFT 投票或确认规则决定。投票集中度和代表串谋属于主要治理风险。
 
-这里的 `verify` 只能检查协议定义的证据。它不能魔法般保证数据源诚实；来源、时效、聚合方式、失败回退和争议路径都属于系统的显式信任模型。
+**Raft** 用多数票选 Leader 并复制日志，只处理 crash fault。节点可能恶意签署冲突消息时，Raft 不提供拜占庭安全性。
 
-</LessonChapter>
+**PoI** 在 ACVM 设想中把真实需求、执行证据和验收结果折算为贡献。贡献可影响信誉、调度或候选权重，但不能单独决定交易顺序；链仍需 BFT、PoS 或其他最终性协议。
 
-<LessonChapter
-  id="ai-gap"
-  className="foundation-screen ai-gap-screen"
-  eyebrow="PART III · AI × BLOCKCHAIN / 01"
-  title="AI 为什么不能直接上链"
-  accent="非确定、昂贵、私密、长耗时"
-  body="让每个验证节点加载大模型并重复推理，会放大计算成本和数据暴露，还可能因采样、硬件或模型版本差异产生不同输出。共识需要换一个验证对象。"
-  comparison={{
-    traditionalLabel: '直接复制执行',
-    traditionalTitle: '把 AI 当成普通 EVM 指令',
-    traditional: '成本、确定性、隐私和区块时限都会失控。',
-    acvmLabel: '设计转向',
-    acvmTitle: '执行链下化，验证链上化',
-    acvm: '共识验证承诺、回执、证明和结算条件。',
-  }}
-  figureLabel="AI CONSENSUS GAP / REPLICATION IS NOT THE ANSWER"
-  visual={<AiConsensusGapArchitecture />}
->
-
-### 共识不应该复制昂贵智能
-
-大模型推理可能需要 GPU、数十秒到数小时、私有输入和外部工具。即使固定随机种子，不同算子、量化版本或硬件也可能产生细微差异。让所有节点重做一次，会把单次 AI 成本乘以验证者数量。
-
-正确的问题不是“怎样把模型塞进 EVM”，而是“链上最少需要验证哪些事实，才能安全地接受链下结果”。答案通常包括任务授权、输入输出承诺、代码或模型版本、执行证据、验收裁决和防重放字段。
-
-> 区块链保存的是可达成共识的承诺与状态，不必保存每次计算的全部过程和明文。
-
-</LessonChapter>
-
-<LessonChapter
-  id="ai-execution"
-  className="foundation-screen ai-execution-screen"
-  eyebrow="PART III · AI × BLOCKCHAIN / 02"
-  title="可验证链下执行"
-  accent="链下做工作，链上管承诺与结算"
-  body="用户先签名任务目标、输入、模型版本、预算和验收规则；Worker 执行，Validator 复核，最终由链上验证证据并按回执推进状态。"
-  comparison={{
-    traditionalLabel: '可信 API',
-    traditionalTitle: '调用成功不代表结果正确',
-    traditional: '日志、输入版本和责任主体散落在服务内部。',
-    acvmLabel: 'PROOF-CARRYING',
-    acvmTitle: '结果与执行上下文一起交付',
-    acvm: '任务、输入、输出、代码和防重放字段被绑定。',
-  }}
-  figureLabel="VERIFIABLE OFF-CHAIN COMPUTE / REQUEST → WORK → VERIFY → SETTLE"
-  visual={<VerifiableExecutionArchitecture />}
->
-
-### 把一次 API 调用拆成协议
-
-请求阶段冻结目标和验收条件；Worker 只负责产生结果与执行回执；Validator 按独立规则检查；链上逻辑只接受满足签名、根承诺、证明和状态前置条件的回执。各方不能用一个裸字符串“成功”替代证据。
-
-```ts file="task-receipt.ts"
-type TaskReceipt = {
-  taskId: string
-  intentHash: `0x${string}`
-  inputRoot: `0x${string}`
-  outputRoot: `0x${string}`
-  codeHash: `0x${string}`
-  nonce: bigint
-  workerSignature: `0x${string}`
-  validatorVerdict?: 'accepted' | 'rejected'
-}
-
-function canSettle(receipt: TaskReceipt, state: TaskState) {
-  return state.taskId === receipt.taskId
-    && state.inputRoot === receipt.inputRoot
-    && !state.spentNonces.has(receipt.nonce)
-    && receipt.validatorVerdict === 'accepted'
-}
-```
-
-<MotionPlayer scene="verifiable-execution" caption="Intent → Worker → Validator → Settlement 的证据闭环" />
-
-</LessonChapter>
-
-<LessonChapter
-  id="ai-verification"
-  className="foundation-screen ai-verification-screen"
-  eyebrow="PART III · AI × BLOCKCHAIN / 03"
-  title="如何验证 AI 结果"
-  accent="信任假设必须与任务匹配"
-  body="重复执行、挑战机制、TEE、zkML 和结果验收证明的是不同事实。技术方案必须明确验证对象、剩余信任、失败处理与成本，而不是笼统宣称“可验证 AI”。"
-  comparison={{
-    traditionalLabel: '单一答案',
-    traditionalTitle: '一种证明覆盖所有任务',
-    traditional: '执行正确、数据真实和结果有用是三个不同命题。',
-    acvmLabel: '验证组合',
-    acvmTitle: '按任务选择证据与争议机制',
-    acvm: '客观计算、隐私推理与主观验收采用不同路径。',
-  }}
-  figureLabel="VERIFICATION SPECTRUM / WHAT IS PROVEN · WHAT IS STILL TRUSTED"
-  visual={<VerificationSpectrumArchitecture />}
->
-
-### 先写命题，再选证明
-
-- **重复执行**适合便宜、确定的任务，证明多个独立执行者得到相同结果。
-- **乐观挑战**先暂定接受，适合可以在争议时重放或提交反证的任务。
-- **TEE 远程证明**说明指定代码在被认可的隔离硬件中运行过，但仍信任硬件供应链。
-- **zkML**证明固定电路对承诺输入产生了该输出，但证明成本、支持算子和数据真实性仍是边界。
-- **结果验收**判断输出是否达到业务目标，适合主观或开放式任务，但必须治理 Validator 串谋。
-
-好的设计会把“执行正确”“数据来自哪里”“结果是否有用”分别建模，然后按风险组合证据、保证金、挑战期和人工复核，而不是把它们混成一句“AI 已验证”。
-
-</LessonChapter>
-
-<LessonChapter
-  id="agentic-bridge"
-  className="foundation-screen agentic-bridge-screen"
-  eyebrow="PART III · AI × BLOCKCHAIN / 04"
-  title="从智能合约到智能体合约"
-  accent="单笔调用升级为可追踪任务"
-  body="Agent 工作可能跨区块、调用外部工具、委托子任务并等待人工审批。智能体合约因此需要显式状态机、能力授权、预算、超时、回执和验收。"
-  comparison={{
-    traditionalLabel: 'SMART CONTRACT',
-    traditionalTitle: '交易内原子执行',
-    traditional: '适合确定、同步、可在 Gas 内完成的逻辑。',
-    acvmLabel: 'AGENTIC CONTRACT',
-    acvmTitle: '跨区块异步推进',
-    acvm: '只有验证后的回执才能触发下一次状态转换。',
-  }}
-  figureLabel="CONCEPTUAL BRIDGE / ETHEREUM SMART CONTRACT → ACVM AGENTIC CONTRACT"
-  visual={<AgenticContractBridgeArchitecture />}
->
-
-### 原子交易不够表达 Agent 工作
-
-智能合约的典型调用在一笔交易里成功或回滚；Agent 任务却可能等待外部数据、调用多个工具、跨越审批、暂停重试并委托其他 Agent。把这些过程隐藏在一个中心化服务里，链上只看到最终返回值，就失去了责任与状态连续性。
-
-```ts file="agentic-state-machine.ts"
-type TaskState =
-  | 'requested'
-  | 'assigned'
-  | 'running'
-  | 'submitted'
-  | 'accepted'
-  | 'settled'
-
-function applyReceipt(state: TaskState, receipt: VerifiedReceipt): TaskState {
-  if (state === 'running' && receipt.kind === 'worker') return 'submitted'
-  if (state === 'submitted' && receipt.kind === 'validator') return 'accepted'
-  if (state === 'accepted' && receipt.kind === 'settlement') return 'settled'
-  throw new Error('receipt is invalid for the current state')
-}
-```
-
-这就是进入 ACVM 的桥：**链下执行可以异步和复杂，链上状态转换必须简单、确定、可验证**。下一部分开始定义任务目录、状态机、回执和争议协议。
+资料：[Clique PoA specification](https://eips.ethereum.org/EIPS/eip-225) · [BitShares DPoS](https://docs.bitshares.org/en/latest/technology/dpos.html) · [Raft paper](https://raft.github.io/raft.pdf)
 
 </LessonChapter>

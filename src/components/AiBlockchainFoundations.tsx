@@ -25,7 +25,7 @@ export function AiConsensusGapArchitecture() {
       </div>
       <footer className="mismatch-conclusion">
         <Icon name="shield" />
-        <span><small>设计结论</small><strong>不是让所有验证者重复运行模型，而是让一次执行携带可验证证据。</strong></span>
+        <span><small>CONSENSUS COST</small><strong>模型执行一次；验证者检查回执、证明或验收结果。</strong></span>
       </footer>
     </LearningPanel>
   );
@@ -142,7 +142,7 @@ export function VerificationSpectrumArchitecture() {
           <div><dt>主要代价</dt><dd>{active.cost}</dd></div>
         </dl>
       </div>
-      <footer className="verification-rule"><Icon name="shield" /><span><strong>没有万能证明</strong><small>证明“程序执行正确”不等于证明“模型聪明、数据真实或结果有业务价值”。</small></span></footer>
+      <footer className="verification-rule"><Icon name="shield" /><span><strong>各方法验证的命题不同</strong><small>程序执行、数据来源和业务质量需要分别验证。</small></span></footer>
     </LearningPanel>
   );
 }

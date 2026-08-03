@@ -11,9 +11,9 @@ import { ChainArchitectureSimple } from '../components/SimplifiedArchitecture'
 <LessonChapter
   id="ans"
   className="ans-screen"
-  eyebrow="PART VII · NETWORK / ANS & A2A"
+  eyebrow="PART VIII · NETWORK / ANS & A2A"
   title="ANS 智能体解析"
-  accent="把名称解析为可验证服务声明"
+  accent="名称对应可验证服务声明"
   body="ANS 把名称解析为 DID、A2A 端点、能力、报价、信誉和 Validator 集。"
   comparison={{
     traditionalTitle: '地址不包含服务可信度',
@@ -26,7 +26,7 @@ import { ChainArchitectureSimple } from '../components/SimplifiedArchitecture'
   visual={<AgentResolutionArchitecture />}
 >
 
-### 发现不是信任，解析记录也必须可验证
+### 解析记录的验证
 
 Agent Name Service 可以把人类可读名称映射到 DID、A2A 端点、能力声明、计价、有效期和推荐 Validator 集。调用方仍要验证记录签名、凭证撤销、端点绑定和新鲜度，再根据任务类型选择合适服务。
 
@@ -51,9 +51,9 @@ type AgentRecord = {
 <LessonChapter
   id="composition"
   className="composition-screen"
-  eyebrow="PART VII · NETWORK / CONTRACT DAG"
+  eyebrow="PART VIII · NETWORK / CONTRACT DAG"
   title="多 Agent 协作"
-  accent="让子任务保持预算、能力与证据边界"
+  accent="子任务继承预算与能力边界"
   body="父合约通过 ANS 委托子合约；每个子合约独立执行和验收，最后聚合回执。"
   comparison={{
     traditionalTitle: 'Agent 调用链没有统一责任边界',
@@ -89,9 +89,9 @@ function aggregate(parent: ParentTask, children: ChildReceipt[]) {
 <LessonChapter
   id="simulation"
   className="simulation-screen"
-  eyebrow="PART VII · NETWORK / PRIVACY-SEALED SIMULATION"
+  eyebrow="PART VIII · NETWORK / PRIVACY-SEALED SIMULATION"
   title="社会模拟即服务"
-  accent="让加密政策接受可复核的群体预演"
+  accent="加密输入、隔离执行、统计输出"
   body="政策密文在隔离环境中解封；机构、企业和个人 Agent 私密评判，结果经安全聚合与独立复核。"
   comparison={{
     traditionalTitle: '中心化沙盘无法独立复现',
@@ -104,7 +104,7 @@ function aggregate(parent: ParentTask, children: ChildReceipt[]) {
   visual={<SocialSimulationArchitecture />}
 >
 
-### 一个综合案例，不是确定性预言
+### 模拟结果的验证范围
 
 社会模拟把前面所有组件放到同一流程：加密政策与私有画像留在隔离域；VRF 固定抽样和随机种子；多类 Agent 产生轨迹；MPC 或安全聚合只公开群体统计；独立 Validator 检查版本、样本与置信区间；最终回执根进入链上。
 
@@ -126,7 +126,7 @@ validatorSignatures
 <LessonChapter
   id="chains"
   className="chains-screen"
-  eyebrow="PART VII · NETWORK / CHAIN ADAPTER"
+  eyebrow="PART VIII · NETWORK / CHAIN ADAPTER"
   title="多链部署"
   accent="保持任务语义，隔离底层链差异"
   body="适配器把身份、事件、状态、证明和最终性映射到目标链。"
@@ -140,7 +140,7 @@ validatorSignatures
   visual={<ChainArchitectureSimple />}
 >
 
-### 适配的是承载方式，不是安全语义
+### 链适配器的安全边界
 
 不同链拥有不同账户模型、Gas、事件、最终性和证明验证能力。适配器可以统一 `submitIntent`、`commitReceipt`、`challenge` 和 `settle` 等操作，但每个实现必须声明底层最终性条件和可用证明类型。
 
@@ -161,7 +161,7 @@ interface ChainAdapter {
 <LessonChapter
   id="stories"
   className="stories-screen"
-  eyebrow="PART VII · NETWORK / APPLICATION GRAPH"
+  eyebrow="PART VIII · NETWORK / APPLICATION GRAPH"
   title="应用网络"
   accent="从按调用付费转向按已验收结果结算"
   body="拖动网络或点击节点，查看 GEO、量化交易、节能和采购等合约的执行与结算。"
@@ -174,7 +174,7 @@ interface ChainAdapter {
   visual={<ScenarioGraph />}
 >
 
-### 用同一套问题审查任何应用
+### 应用审查清单
 
 无论是地理分析、量化交易、节能优化还是采购 Agent，都可以沿同一张检查表设计：
 
@@ -185,8 +185,6 @@ interface ChainAdapter {
 5. 失败、超时、挑战和退款怎样进入确定性状态机？
 6. 链上最终保存哪些最小证据，谁能独立复查？
 
-到这里，技术演进完整闭环：比特币让陌生节点对**所有权历史**达成共识；以太坊把共识扩展到**确定性程序状态**；ACVM 概念模型进一步尝试让链对**经过证据与验收的链下智能工作**进行状态推进和结算。
-
-> 课程终点不是“把 AI 放上链”，而是为每一项链下工作清楚定义授权、证据、验收、争议和最终性。
+三类系统处理不同对象：比特币确定**所有权历史**，以太坊确定**程序状态**，ACVM 概念模型根据证据和验收结果推进**链下任务状态**。ACVM 应用必须逐项定义授权、证据、验收、争议和最终性。
 
 </LessonChapter>

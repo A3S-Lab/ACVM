@@ -720,7 +720,7 @@ export function IntelligenceChainArchitecture() {
         <Equation
           number="ACVM.4"
           title="有效智能证明条件"
-          explanation="PoI 不是单一模型分数，而是四个可以独立核验、且必须同时成立的有效工作条件。"
+          explanation="PoI 要求四项可独立核验的有效工作条件同时成立；它不评价模型的通用智能水平。"
         >
           <FormulaToken hint="poi">PoI</FormulaToken>{' '}
           <FormulaOperator hint="definition">≡</FormulaOperator>{' '}
@@ -744,7 +744,7 @@ export function IntelligenceChainArchitecture() {
         <div className="poi-chain-flow">
           <section><small>VALID POI POOL</small><strong><FormulaToken hint="poi">有效工作池</FormulaToken></strong><span>机构 · 企业 · 个人</span></section>
           <i>→</i>
-          <section><small><FormulaToken hint="bftVrf">BFT + VRF</FormulaToken></small><strong>提议与确认</strong><span>只从有效 PoI 中计分</span></section>
+          <section><small><FormulaToken hint="bftVrf">BFT + VRF</FormulaToken></small><strong>提议与确认</strong><span>PoI 提供候选权重，BFT 完成确认</span></section>
           <i>→</i>
           <section className="is-block"><small>BLOCK N+1</small><strong>智能证明区块</strong><span><FormulaToken hint="stateRoot">stateRoot</FormulaToken> · <FormulaToken hint="poiRoot">poiRoot</FormulaToken></span></section>
         </div>
