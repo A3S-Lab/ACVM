@@ -1,0 +1,300 @@
+import { Code } from '../components/Code'
+import { LessonChapter } from '../components/LessonChapter'
+import { FogInferenceArchitecture } from '../components/FogInferenceArchitecture'
+import { IntelligenceChainArchitecture } from '../components/FormalSpecArchitecture'
+import {
+  IdentityArchitectureSimple,
+  IntelligenceProofArchitecture,
+  LongTaskArchitectureSimple,
+  OffchainArchitectureSimple,
+  PrivacyArchitecture,
+  SentryArchitectureSimple,
+} from '../components/SimplifiedArchitecture'
+
+<LessonChapter
+  id="identity"
+  className="identity-screen"
+  eyebrow="PART VI · TRUST / IDENTITY & CAPABILITY"
+  title="身份与权限"
+  accent="签名者、角色和能力必须分别验证"
+  body="调用方、Agent、Worker 和 Validator 分别绑定身份、角色、能力凭证与有效期。"
+  comparison={{
+    traditionalTitle: '地址不包含职责',
+    traditional: '签名无法说明资质和本次授权范围。',
+    acvmTitle: '身份、角色、能力分开验证',
+    acvm: '回执绑定责任主体、凭证状态和实际权限。',
+  }}
+  terms={['DID / VC', 'UCAN / ZCAP']}
+  visual={<IdentityArchitectureSimple />}
+>
+
+### 身份回答“谁”，能力回答“能做什么”
+
+链上地址能验证签名，却不天然说明签名者是受许可的医疗模型、采购审批员或本任务 Validator。ACVM 概念模型因此把稳定身份、角色资格和本次最小权限拆开：DID 标识主体，VC 声明资质，UCAN/ZCAP 一类能力凭证限制资源、动作、期限与委托深度。
+
+```ts file="authorize-capability.ts"
+function authorize(request: ToolRequest, capability: Capability, task: Task) {
+  assert(capability.subject === request.agentDid)
+  assert(capability.resource === request.resource)
+  assert(capability.actions.includes(request.action))
+  assert(capability.expiresAt >= task.deadline)
+  assert(capability.parentScope.contains(capability.scope))
+  assert(!revocations.has(capability.id))
+}
+```
+
+子 Agent 获得的能力必须只能收窄，不能扩大；凭证还需要短有效期、任务绑定与撤销检查，避免泄漏后成为永久权限。
+
+</LessonChapter>
+
+<LessonChapter
+  id="offchain"
+  className="offchain-screen"
+  eyebrow="PART VI · TRUST / OFF-CHAIN DATA"
+  title="链下核验"
+  accent="数据留域，承诺与证据跨域"
+  body="原始数据留在业务系统，链上只保存承诺、回执和证明。"
+  comparison={{
+    traditionalTitle: '上链泄露数据，预言机增加信任',
+    traditional: '隐私、成本和单点风险无法同时解决。',
+    acvmTitle: '数据留域，摘要上链',
+    acvm: '状态根、回执和证明用于核验结果。',
+  }}
+  terms={['zkTLS / TLSNotary', 'Receipt Root']}
+  visual={<OffchainArchitectureSimple />}
+>
+
+### 不移动原始数据，移动可验证陈述
+
+业务数据库、HTTPS API 和对象存储中的明文通常不应复制到链上。执行者可以对规范化输入与输出做承诺，并附带来源证明、时间窗口和随机挑战。链上只保存固定大小的根与验证结果。
+
+```text file="external-data-claim.txt"
+claim = {
+  source: "api.example.com",
+  path: "/orders/42/status",
+  disclosedValue: "delivered",
+  observedAt: 1760000000,
+  requestNonce: "0x...",
+  responseCommitment: H(canonicalResponse || salt)
+}
+```
+
+zkTLS/TLSNotary 一类技术可以证明“该 HTTPS 端点返回过指定字段”，却不能证明端点记录与现实一致。来源治理、数据新鲜度和撤销仍是协议的一部分。
+
+</LessonChapter>
+
+<LessonChapter
+  id="privacy"
+  className="privacy-screen"
+  eyebrow="PART VI · TRUST / ISOLATED EXECUTION"
+  title="隐私执行"
+  accent="让明文停留在受控执行域"
+  body="a3s-box 管理隔离工作负载，a3s-power 在隔离环境中加载模型并完成推理。"
+  comparison={{
+    traditionalTitle: '复制执行扩大数据暴露面',
+    traditional: '输入和中间结果会出现在多个节点。',
+    acvmTitle: '隔离执行，公开验证',
+    acvm: '链上核对承诺和远程证明，不读取明文。',
+  }}
+  terms={['TEE', 'Remote Attestation']}
+  visual={<PrivacyArchitecture />}
+>
+
+### 远程证明验证的是环境，不是业务质量
+
+TEE 可以生成 quote，把代码度量、模型哈希、平台安全版本、输入输出承诺和本次 nonce 绑定到硬件证明密钥。验证方检查厂商证书链、固件撤销状态与白名单后，确认预期工作负载在隔离环境中运行过。
+
+```ts file="attestation-policy.ts"
+function verifyAttestation(quote: Quote, task: Task) {
+  assert(verifyVendorCertificateChain(quote))
+  assert(ALLOWED_TCB_LEVELS.has(quote.tcbLevel))
+  assert(quote.measurement === task.expectedImageMeasurement)
+  assert(quote.inputRoot === task.inputRoot)
+  assert(quote.nonce === task.attestationNonce)
+  assert(!isRevoked(quote.platformId))
+}
+```
+
+TEE 不会判断模型答案是否正确，也无法消除硬件供应链和侧信道风险。高价值任务可叠加独立 Validator、多厂商冗余或零知识证明。
+
+</LessonChapter>
+
+<LessonChapter
+  id="fog"
+  className="fog-screen"
+  eyebrow="PART VI · TRUST / FOG INFERENCE"
+  title="雾计算推理网络"
+  accent="让数据就近处理，证据全局可核验"
+  body="任务分配到附近的 Worker，独立 Validator 验收，链上记录结果。"
+  comparison={{
+    traditionalTitle: '集中推理增加传输与单点风险',
+    traditional: '数据远传，中心故障会影响全部任务。',
+    acvmTitle: '就近推理，独立验收',
+    acvm: '明文留在雾节点，证明和结果进入链上。',
+  }}
+  terms={['TEE', 'Remote Attestation', 'Receipt Root']}
+  figureLabel="BLOCKCHAIN FOG INFERENCE / PRIVACY-PRESERVING NETWORK"
+  visual={<FogInferenceArchitecture />}
+>
+
+### 调度必须同时考虑距离与可信度
+
+就近执行降低原始数据传输和响应时间，但不能只选延迟最低的节点。调度器还应检查模型版本、硬件能力、证明支持、司法区域、历史可用性与独立 Validator 覆盖。
+
+```ts file="worker-score.ts"
+function score(worker: Worker, task: Task) {
+  if (!worker.capabilities.includes(task.model)) return -Infinity
+  if (!task.allowedRegions.includes(worker.region)) return -Infinity
+
+  return 0.35 * normalizeLatency(worker.rttMs)
+    + 0.25 * worker.availabilityScore
+    + 0.25 * worker.attestationFreshness
+    + 0.15 * worker.domainReputation
+}
+```
+
+这段权重只是教程示例。生产调度必须公开单位、归一化方式、抗刷分规则和失败回退，并避免由同一运营方同时控制 Worker 与 Validator。
+
+</LessonChapter>
+
+<LessonChapter
+  id="sentry"
+  className="sentry-screen"
+  eyebrow="PART VI · TRUST / RUNTIME POLICY"
+  title="执行前风控"
+  accent="把进程、网络和工具限制写入策略"
+  body="AnySentry 检查镜像、权限和网络策略，并记录运行期异常。"
+  comparison={{
+    traditionalTitle: '账本看不到运行期行为',
+    traditional: '越权工具和异常网络请求留在链外。',
+    acvmTitle: '运行策略生成安全回执',
+    acvm: '放行、审批和阻断均可追溯。',
+  }}
+  visual={<SentryArchitectureSimple />}
+>
+
+### 安全策略要在执行前生效
+
+Agent 的危险不只来自错误输出，还来自执行过程中的越权网络、敏感文件读取、工具滥用和供应链镜像。运行时应在启动前冻结镜像度量、文件挂载、出站域名、工具能力与资源上限，并为每次决策生成可追踪事件。
+
+```text file="runtime-policy.acl"
+runtime {
+  image_measurement = "sha256:..."
+  filesystem = "read-only"
+  network_allow = ["api.example.com:443"]
+  tools_allow = ["quote.read", "result.write"]
+  cpu_limit = 4
+  memory_mb = 8192
+  require_approval = ["payment.submit"]
+}
+```
+
+ACL 片段表达的是产品配置方向；真实文件必须由 A3S ACL SDK 按当前 schema 解析和生成，不能把它当成通用 HCL 文本直接处理。
+
+</LessonChapter>
+
+<LessonChapter
+  id="proof"
+  className="proof-screen"
+  eyebrow="PART VI · TRUST / LONG-RUNNING TASK"
+  title="长任务证明"
+  accent="按里程碑继承状态承诺"
+  body="每个里程碑引用前序承诺，任务结束时折叠为一份最终证明。"
+  comparison={{
+    traditionalTitle: '多次交易缺少连续性证明',
+    traditional: '暂停、重试和审批各自留档。',
+    acvmTitle: '承诺逐步继承',
+    acvm: '最终验证一份聚合证明。',
+  }}
+  terms={['IVC', 'Folding']}
+  visual={<LongTaskArchitectureSimple />}
+>
+
+### 证明每一步都接在正确的前一步之后
+
+长任务可将第 `i` 步状态承诺记为 `zᵢ`，并证明关系 `R(zᵢ, inputᵢ, receiptᵢ, zᵢ₊₁) = 1`。IVC 或 folding 让新一步把旧证明状态一起累积，最终链上只验证固定大小的终结证明。
+
+```text file="incremental-proof.txt"
+z0 --R0, π0--> z1 --R1, π1--> z2 --R2, π2--> ... --Rn, πn--> zn
+
+public inputs: taskId, contractRoot, z0, zn, ruleHash, stepCount
+final check:   Verify(vk, publicInputs, foldedProof) = true
+```
+
+这条路线只适合能被精确定义为电路关系的部分。人工审批、开放式写作和不确定工具调用仍要先变成签名回执或其他可验证输入。
+
+</LessonChapter>
+
+<LessonChapter
+  id="intelligence"
+  className="intelligence-screen"
+  eyebrow="PART VI · TRUST / PROOF OF INTELLIGENCE"
+  title="有效计算"
+  accent="把真实需求、工作与验收绑定"
+  body="PoI 把需求签名、执行证明、验收结果和防重放字段绑定到同一任务。"
+  comparison={{
+    traditionalTitle: 'PoW / PoS 不验证业务结果',
+    traditional: '共识完成不代表任务完成。',
+    acvmTitle: 'PoI 只记录有效工作',
+    acvm: '需求、执行和验收全部通过后才计入贡献。',
+  }}
+  terms={['Proof of Intelligence', 'zkML']}
+  visual={<IntelligenceProofArchitecture />}
+>
+
+### PoI 是协议提案，不是“智能分数”
+
+课程里的 Proof of Intelligence 指一种贡献凭证：任务必须由真实需求方签名，输出必须绑定冻结输入和执行上下文，Validator 必须按预先声明的条件验收，nonce 必须未使用。它不声称能客观测量通用智能。
+
+```ts file="poi-eligibility.ts"
+function eligibleForContribution(task: Task, proof: ExecutionProof, verdict: Verdict) {
+  return verifyIntentSignature(task.intent)
+    && proof.taskId === task.id
+    && proof.inputRoot === task.inputRoot
+    && verdict.outputRoot === proof.outputRoot
+    && verdict.accepted
+    && independent(task.requester, proof.worker, verdict.validators)
+    && !replayRegistry.has(task.nonce)
+}
+```
+
+最大的机制风险是自交易、低价值刷单、Validator 串谋和任务难度不可比。生产协议必须定义独立性、价值权重、声誉衰减和审计抽样。
+
+</LessonChapter>
+
+<LessonChapter
+  id="spec-poi"
+  className="formal-screen poi-spec-screen"
+  eyebrow="PART VI · TRUST / INTELLIGENCE-PROOF CHAIN"
+  title="PoI 共识"
+  accent="已验收贡献如何影响调度或提议权"
+  body="有效 PoI 可用于信誉、任务调度和区块提议者选择。"
+  comparison={{
+    traditionalTitle: '资源投入不代表有效产出',
+    traditional: '能耗和质押额不包含业务验收。',
+    acvmTitle: '贡献来自已验收任务',
+    acvm: '需求、结果、执行证明和防重放缺一不可。',
+  }}
+  terms={['Proof of Intelligence', 'VRF']}
+  figureLabel="INTELLIGENCE-PROOF CHAIN / RESEARCH DIRECTION"
+  visual={<IntelligenceChainArchitecture />}
+>
+
+### 把贡献用于共识前，要先保护安全底座
+
+PoI 可以作为信誉或任务调度信号；若进一步参与区块提议者选择，则必须定义权重上限、时间衰减、女巫成本与随机抽样。VRF 可以从合格候选集中产生可验证随机选择，但无法修复候选集合本身被操纵的问题。
+
+```text file="weighted-selection.txt"
+eligible_i = stakeFloor_i
+          && freshContribution_i
+          && noActiveSlashing_i
+
+weight_i = min(MAX_WEIGHT,
+               decay(age_i) * difficultyAdjusted(contribution_i))
+
+selected_i ⇔ VRF(sk_i, epochSeed) / weight_i < threshold
+```
+
+在完整安全证明、攻击模拟和可运行实现之前，这应被视为研究方向。成熟部署可以先把 PoI 用作非安全关键的排名信号，而把共识安全留给经过验证的 BFT 或 PoS 机制。
+
+</LessonChapter>

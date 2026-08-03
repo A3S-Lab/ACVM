@@ -1,0 +1,217 @@
+import { Code } from '../components/Code'
+import { LessonChapter } from '../components/LessonChapter'
+import { ContractCodeWalkthrough } from '../components/ContractCodeWalkthrough'
+import { ContractModelArchitecture } from '../components/FormalSpecArchitecture'
+import { LifecycleArchitecture } from '../components/LifecycleArchitecture'
+import {
+  OnchainExecutionArchitecture,
+  RuntimeArchitecture,
+} from '../components/SimplifiedArchitecture'
+import { MotionPlayer } from '../remotion/MotionPlayer'
+
+<LessonChapter
+  id="spec-contract"
+  className="formal-screen contract-spec-screen"
+  eyebrow="PART IV · ACVM / FORMAL SPEC 01"
+  title="Agentic Contract"
+  accent="先冻结任务规则，再允许链下执行"
+  body="一个合约目录包含 Schema、Worker、Validator 和结算代码；目录根就是部署版本。"
+  comparison={{
+    traditionalTitle: '版本只覆盖链上代码',
+    traditional: '链下执行器和验收规则另行部署。',
+    acvmTitle: 'Contract Root 覆盖完整目录',
+    acvm: '任一业务文件改变都会生成新根。',
+  }}
+  terms={['Content-addressed Tree', 'Task File ABI']}
+  figureLabel="ACVM FORMAL MODEL / CONCEPT DRAFT"
+  visual={<ContractModelArchitecture />}
+>
+
+### 先读懂仓库的性质
+
+当前 ACVM 仓库是一套**交互式协议教程与概念规格**：它通过状态图、公式和 TypeScript 示例描述 Agentic Contract VM 应有的边界，并不是已经可以部署任务的完整虚拟机实现。因此本部分会分别标注协议不变量、示例接口与未来可选技术，不把设计图误写成生产能力。
+
+ACVM 的第一项设计决定是把业务契约从“一个链上函数”扩展为内容寻址目录。Schema 冻结输入输出结构，Worker 描述执行，Validator 描述验收，Settlement 描述满足什么条件才可结算；规范排序和哈希后得到 `contractRoot`。
+
+```text file="agentic-contract.tree"
+contract/
+├── contract.ts          # manifest, roles, limits
+├── schema/
+│   ├── input.json
+│   └── output.json
+├── worker/index.ts      # off-chain work
+├── validator/index.ts   # independent acceptance
+└── settle.ts            # deterministic settlement rule
+
+contractRoot = MerkleRoot(canonicalPath || hash(fileBytes))
+```
+
+这只证明“运行的是哪一版目录”。目录内的规则是否合理、依赖是否安全、Validator 是否足够独立，仍要靠审核、治理与争议机制处理。
+
+</LessonChapter>
+
+<LessonChapter
+  id="code-walkthrough"
+  className="code-screen"
+  eyebrow="PART IV · ACVM / TYPESCRIPT WALKTHROUGH"
+  title="TypeScript SDK"
+  accent="沿任务文件理解角色边界"
+  body="沿文件列表滚动，查看 Worker 写结果、Validator 写裁决、settle.ts 完成结算。"
+  comparison={{
+    traditionalTitle: '接口传值缺少统一证据',
+    traditional: '输入、产物和裁决散在服务、数据库和日志中。',
+    acvmTitle: '固定文件连接每个阶段',
+    acvm: '每步只读前序文件并写入自己的结果。',
+  }}
+  terms={['Task File ABI', 'Content-addressed Tree']}
+  figureLabel="A3S-CODE TYPESCRIPT SDK / CONCEPTUAL CONTRACT WALKTHROUGH"
+  visual={<ContractCodeWalkthrough />}
+>
+
+### 最小合约清单
+
+下面是课程使用的**说明性接口**，用于解释职责分离，不代表仓库已经发布了同名 SDK。重点观察：业务目录声明入口和约束，而运行时注入文件、预言机、链适配器与回执能力。
+
+```ts file="contract.ts"
+import { defineContract } from '@a3s-lab/acvm'
+
+export default defineContract({
+  schema: {
+    input: './schema/input.json',
+    output: './schema/output.json',
+  },
+  stages: {
+    worker: './worker/index.ts',
+    validator: './validator/index.ts',
+    settlement: './settle.ts',
+  },
+  limits: {
+    budget: 50_000n,
+    deadlineBlocks: 240,
+  },
+})
+```
+
+```ts file="worker/index.ts"
+export async function run(ctx: AgenticContractContext) {
+  const order = await ctx.files.readJson('/task/input/order.json')
+  const quote = await ctx.oracle.fetchJson(order.quoteUrl)
+  const result = await produceRecommendation(order, quote.value)
+
+  await ctx.files.writeJson('/task/worker/result.json', result)
+  await ctx.files.writeJson('/task/worker/source-proof.json', quote.proof)
+  return ctx.receipt.commit('worker')
+}
+```
+
+Validator 不复用 Worker 的进程内对象，而是从固定路径读取输入、结果和证据。这样任务树根可以覆盖角色之间的真实交接物，重试和争议也能回到同一份版本化上下文。
+
+</LessonChapter>
+
+<LessonChapter
+  id="lifecycle"
+  className="lifecycle-screen"
+  eyebrow="PART IV · ACVM / FULL LIFECYCLE"
+  title="合约生命周期"
+  accent="一条 taskId 串起异步工作"
+  body="动画依次展示部署、调用、执行、验收、证明、共识和结算。点击节点可查看链上记录。"
+  comparison={{
+    traditionalTitle: '任务轨迹被拆散',
+    traditional: '多个系统各记一段，无法按任务连续查询。',
+    acvmTitle: 'taskId 串起完整轨迹',
+    acvm: '每一步记录状态根、责任方和回执。',
+  }}
+  terms={['Proof of Intelligence', 'BFT / HotStuff', 'Receipt Root']}
+  figureLabel="ACVM FULL CONTRACT LIFECYCLE / CONCEPT FLOW"
+  visual={<LifecycleArchitecture />}
+>
+
+### 七个阶段，三类可信事实
+
+部署阶段确定 `contractRoot`；调用阶段把签名 Intent、输入根、预算和期限绑定为 `taskId`；执行与验收阶段分别产出 Worker 和 Validator 回执；共识阶段只验证确定性证据；结算阶段转移资产并封闭 nonce。
+
+这条流程里有三类事实不能混淆：
+
+1. **授权事实**：谁允许做什么，预算和期限是什么。
+2. **执行事实**：哪版代码处理了哪份输入，产出了哪份结果。
+3. **验收事实**：谁按哪版规则判断结果合格，以及裁决是否已终局。
+
+<MotionPlayer scene="verifiable-execution" caption="taskId 将调用、执行、验收和结算绑定成一条证据链" />
+
+</LessonChapter>
+
+<LessonChapter
+  id="runtime"
+  className="runtime-screen"
+  eyebrow="PART IV · ACVM / RUNTIME TOPOLOGY"
+  title="ACVM 执行拓扑"
+  accent="核心只推进可验证状态"
+  body="合约定义调用方、Worker、Validator、权限和完成条件，ACVM 按回执推进状态。"
+  comparison={{
+    traditionalTitle: '状态分散在多个服务',
+    traditional: '失败后难以确认任务停在哪一步。',
+    acvmTitle: '统一状态机',
+    acvm: '权限、阶段和回执都由 ACVM Core 处理。',
+  }}
+  terms={['Intent-centric', 'Proof-carrying Execution']}
+  visual={<RuntimeArchitecture />}
+>
+
+### 控制面与数据面分离
+
+ACVM Core 可以被理解为控制面：登记合约根、检查 Intent、分配角色、验证回执、执行超时与结算。Worker 运行时属于数据面：它读取任务文件、调用模型或工具，并写回结果和证据。
+
+```ts file="runtime-boundary.ts"
+function transition(state: TaskState, receipt: Receipt): TaskState {
+  assert(receipt.taskId === state.taskId)
+  assert(receipt.contractRoot === state.contractRoot)
+  assert(receipt.previousStateRoot === hash(state))
+  assert(verifyRole(receipt.signer, receipt.kind, state.capabilities))
+  assert(verifyEvidence(receipt))
+  return deterministicApply(state, receipt)
+}
+```
+
+运行时不能仅凭 Worker 的返回值改状态。它必须把回执绑定到当前任务、冻结目录、前序状态和角色权限，才不会被旧结果重放、跨任务替换或越权签名。
+
+</LessonChapter>
+
+<LessonChapter
+  id="onchain"
+  className="onchain-screen"
+  eyebrow="PART IV · ACVM / CONSENSUS BOUNDARY"
+  title="链上执行边界"
+  accent="昂贵工作执行一次，便宜证据重复验证"
+  body="共识节点只执行权限、Gas、证明验证和状态更新；模型、API 与长任务在链下运行。"
+  comparison={{
+    traditionalTitle: '全节点重跑外部计算',
+    traditional: '模型和 API 成本高，也无法保证环境一致。',
+    acvmTitle: '执行一次，多节点验证',
+    acvm: 'Worker 提交结果和证明，节点只做确定性验证。',
+  }}
+  terms={['BFT / HotStuff', 'Receipt Root']}
+  visual={<OnchainExecutionArchitecture />}
+>
+
+### 共识层应当验证什么
+
+链上适合执行签名验证、哈希比较、nonce 检查、状态机守卫、证明验证器和确定性资产结算。模型推理、网页访问、长时间规划与私有数据处理则留在链下。
+
+```text file="consensus-boundary.txt"
+ON CHAIN
+  authenticate(intent)
+  verify(receipt, proof, stateRoot)
+  enforce(deadline, budget, nonce)
+  apply(nextState)
+  settle(escrow)
+
+OFF CHAIN
+  load(model)
+  call(external tools)
+  process(private data)
+  produce(output, evidence)
+```
+
+目标不是让链相信 Worker，而是让链只接受一个**验证成本可控、输入明确、失败可判定**的状态转换。证明系统或 Validator 网络只是实现这个验证接口的不同后端。
+
+</LessonChapter>

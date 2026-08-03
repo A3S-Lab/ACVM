@@ -1,0 +1,192 @@
+import { Code } from '../components/Code'
+import { LessonChapter } from '../components/LessonChapter'
+import { AgentResolutionArchitecture } from '../components/AgentResolutionArchitecture'
+import {
+  AgentTaskGraphArchitecture,
+  SocialSimulationArchitecture,
+} from '../components/ProtocolExpansionArchitecture'
+import { ScenarioGraph } from '../components/ScenarioGraph'
+import { ChainArchitectureSimple } from '../components/SimplifiedArchitecture'
+
+<LessonChapter
+  id="ans"
+  className="ans-screen"
+  eyebrow="PART VII · NETWORK / ANS & A2A"
+  title="ANS 智能体解析"
+  accent="把名称解析为可验证服务声明"
+  body="ANS 把名称解析为 DID、A2A 端点、能力、报价、信誉和 Validator 集。"
+  comparison={{
+    traditionalTitle: '地址不包含服务可信度',
+    traditional: '能力、价格和信誉依赖平台数据库。',
+    acvmTitle: '解析结果可验证',
+    acvm: 'A2A 协商任务，链上按验收结果结算。',
+  }}
+  terms={['A2A Protocol', 'Mechanism Design', 'Information Design']}
+  figureLabel="ANS / ON-CHAIN AGENT DISCOVERY & SOCIAL COMPUTING"
+  visual={<AgentResolutionArchitecture />}
+>
+
+### 发现不是信任，解析记录也必须可验证
+
+Agent Name Service 可以把人类可读名称映射到 DID、A2A 端点、能力声明、计价、有效期和推荐 Validator 集。调用方仍要验证记录签名、凭证撤销、端点绑定和新鲜度，再根据任务类型选择合适服务。
+
+```ts file="agent-record.ts"
+type AgentRecord = {
+  name: string
+  did: string
+  a2aEndpoint: `https://${string}`
+  capabilityRoot: `0x${string}`
+  pricingRoot: `0x${string}`
+  validatorSet: string[]
+  validUntil: bigint
+  sequence: bigint
+  signature: `0x${string}`
+}
+```
+
+信誉不能只用一个全局分数。它至少应按任务类型、难度、时间窗口和争议结果分域，并让调用方看到样本量与置信范围，避免过期成绩和选择性展示。
+
+</LessonChapter>
+
+<LessonChapter
+  id="composition"
+  className="composition-screen"
+  eyebrow="PART VII · NETWORK / CONTRACT DAG"
+  title="多 Agent 协作"
+  accent="让子任务保持预算、能力与证据边界"
+  body="父合约通过 ANS 委托子合约；每个子合约独立执行和验收，最后聚合回执。"
+  comparison={{
+    traditionalTitle: 'Agent 调用链没有统一责任边界',
+    traditional: '预算、权限和子任务结果散在多个服务中。',
+    acvmTitle: '父任务聚合可验证子任务',
+    acvm: '预算守恒、能力不扩张，必需回执齐全后才结算。',
+  }}
+  terms={['A2A Protocol', 'UCAN / ZCAP', 'Receipt Root']}
+  figureLabel="AGENTIC CONTRACT COMPOSITION / TASK DAG & RECEIPT AGGREGATION"
+  visual={<AgentTaskGraphArchitecture />}
+>
+
+### 组合协议的三个不变量
+
+父任务可以拆成 DAG，但必须保持：子任务预算总和不超过父任务可用预算；子能力只能是父能力的子集；父任务进入验收前，所有必需子任务都必须有终局回执。可选分支和失败回退也要在部署规则中冻结。
+
+```ts file="aggregate-child-receipts.ts"
+function aggregate(parent: ParentTask, children: ChildReceipt[]) {
+  const required = parent.graph.nodes.filter((node) => node.required)
+  assert(required.every((node) => children.some((r) => r.taskId === node.taskId)))
+  assert(children.every((receipt) => receipt.status === 'finalized'))
+  assert(sum(children.map((receipt) => receipt.cost)) <= parent.remainingBudget)
+  assert(children.every((receipt) => parent.capability.contains(receipt.capability)))
+
+  return merkleRoot(children.map(canonicalReceipt))
+}
+```
+
+聚合根压缩了证据，但父 Validator 仍要按需检查关键子回执与包含证明，不能把“根存在”误当成“所有子结果正确”。
+
+</LessonChapter>
+
+<LessonChapter
+  id="simulation"
+  className="simulation-screen"
+  eyebrow="PART VII · NETWORK / PRIVACY-SEALED SIMULATION"
+  title="社会模拟即服务"
+  accent="让加密政策接受可复核的群体预演"
+  body="政策密文在隔离环境中解封；机构、企业和个人 Agent 私密评判，结果经安全聚合与独立复核。"
+  comparison={{
+    traditionalTitle: '中心化沙盘无法独立复现',
+    traditional: '模型、数据、随机种子和个体意见都由单一平台掌握。',
+    acvmTitle: '假设、轨迹和统计过程可核验',
+    acvm: '政策与个体数据不公开，只输出通过复核的群体指标和置信区间。',
+  }}
+  terms={['TEE', 'MPC', 'VRF', 'Receipt Root']}
+  figureLabel="DECENTRALIZED SOCIAL SIMULATION / ENCRYPTED POLICY & VERIFIED FORECAST"
+  visual={<SocialSimulationArchitecture />}
+>
+
+### 一个综合案例，不是确定性预言
+
+社会模拟把前面所有组件放到同一流程：加密政策与私有画像留在隔离域；VRF 固定抽样和随机种子；多类 Agent 产生轨迹；MPC 或安全聚合只公开群体统计；独立 Validator 检查版本、样本与置信区间；最终回执根进入链上。
+
+```text file="simulation-evidence.txt"
+policyCommitment
+modelManifestRoot
+populationSnapshotRoot
+vrfSeed + vrfProof
+trajectoryRoot
+aggregationTranscriptRoot
+metrics + confidenceIntervals
+validatorSignatures
+```
+
+可复核不等于预测必然正确。协议能固定输入版本、随机过程和统计管线，却不能消除模型偏差、分布漂移或错误因果假设。输出应被表达为带不确定性的决策证据，而不是“链上真相”。
+
+</LessonChapter>
+
+<LessonChapter
+  id="chains"
+  className="chains-screen"
+  eyebrow="PART VII · NETWORK / CHAIN ADAPTER"
+  title="多链部署"
+  accent="保持任务语义，隔离底层链差异"
+  body="适配器把身份、事件、状态、证明和最终性映射到目标链。"
+  comparison={{
+    traditionalTitle: '业务逻辑绑定底层链接口',
+    traditional: '账户、事件和最终性变化会影响业务流程。',
+    acvmTitle: '适配器隔离链差异',
+    acvm: '调用、验收和回执语义保持不变。',
+  }}
+  terms={['Light Client', 'Receipt Root']}
+  visual={<ChainArchitectureSimple />}
+>
+
+### 适配的是承载方式，不是安全语义
+
+不同链拥有不同账户模型、Gas、事件、最终性和证明验证能力。适配器可以统一 `submitIntent`、`commitReceipt`、`challenge` 和 `settle` 等操作，但每个实现必须声明底层最终性条件和可用证明类型。
+
+```ts file="chain-adapter.ts"
+interface ChainAdapter {
+  submitIntent(intent: SignedIntent): Promise<TransactionRef>
+  commitReceipt(receipt: Receipt): Promise<TransactionRef>
+  waitForFinality(ref: TransactionRef): Promise<FinalizedBlockRef>
+  verifyRemoteState(proof: StateProof): Promise<boolean>
+  settle(taskId: string): Promise<TransactionRef>
+}
+```
+
+跨链场景不能用一个适配器接口掩盖安全差异。远端回执要通过轻客户端或明确的桥接信任模型验证；任务超时必须按目标链重组窗口与最终性规则配置。
+
+</LessonChapter>
+
+<LessonChapter
+  id="stories"
+  className="stories-screen"
+  eyebrow="PART VII · NETWORK / APPLICATION GRAPH"
+  title="应用网络"
+  accent="从按调用付费转向按已验收结果结算"
+  body="拖动网络或点击节点，查看 GEO、量化交易、节能和采购等合约的执行与结算。"
+  comparison={{
+    traditionalTitle: '按调用或过程付费',
+    traditional: '付款记录不能证明业务结果。',
+    acvmTitle: '按已验收结果结算',
+    acvm: 'Worker 执行，Validator 验收，链上记账。',
+  }}
+  visual={<ScenarioGraph />}
+>
+
+### 用同一套问题审查任何应用
+
+无论是地理分析、量化交易、节能优化还是采购 Agent，都可以沿同一张检查表设计：
+
+1. 谁签名需求，任务目标是否可冻结？
+2. 哪些输入留在链下，如何承诺来源与版本？
+3. Worker 被授权调用哪些模型、数据和工具？
+4. Validator 验收的是执行正确、来源真实，还是业务结果有用？
+5. 失败、超时、挑战和退款怎样进入确定性状态机？
+6. 链上最终保存哪些最小证据，谁能独立复查？
+
+到这里，技术演进完整闭环：比特币让陌生节点对**所有权历史**达成共识；以太坊把共识扩展到**确定性程序状态**；ACVM 概念模型进一步尝试让链对**经过证据与验收的链下智能工作**进行状态推进和结算。
+
+> 课程终点不是“把 AI 放上链”，而是为每一项链下工作清楚定义授权、证据、验收、争议和最终性。
+
+</LessonChapter>
