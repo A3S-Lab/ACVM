@@ -1,0 +1,27 @@
+import { AcvmExecutionBoundaryArchitecture } from '../components/AcvmExecutionBoundary'
+import { LessonChapter } from '../components/LessonChapter'
+import { UsefulWorkOpportunityArchitecture } from '../components/ProductMechanismArchitecture'
+
+<LessonChapter
+  id="useful-work"
+  className="useful-work-screen"
+  eyebrow="02 · WHY / CONSENSUS WORK"
+  title="共识需要稀缺成本"
+  accent="不要求成本毫无用途"
+  body="PoW 用哈希竞争提供抗女巫与提议权；ACVM 保留安全功能，把工作来源换成已验收的模型推理服务。"
+  figureLabel="FIRST PRINCIPLE / SECURITY FUNCTION ≠ HASH FUNCTION"
+  visual={<UsefulWorkOpportunityArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="execution-boundary"
+  className="acvm-execution-boundary-screen"
+  eyebrow="02 · WHY / APPLICATION VM"
+  title="EVM 依赖全网重放"
+  accent="智能体任务不具备这个前提"
+  body="模型推理依赖 GPU、私有数据和外部工具，还会产生不可重复副作用；ACVM 改为执行一次、验证回执。"
+  figureLabel="FIRST PRINCIPLE / REPLAY COST → RECEIPT VERIFICATION"
+  visual={<AcvmExecutionBoundaryArchitecture />}
+>
+</LessonChapter>

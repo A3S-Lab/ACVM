@@ -91,7 +91,7 @@
 .concept-card header svg { width: 18px; height: 18px; }
 
 /* Course map */
-.course-journey {
+.product-thesis {
   width: 100%;
   max-width: 790px;
   height: min(480px, 67vh);
@@ -438,7 +438,7 @@
 @media (max-width: 960px) {
   .foundation-screen { --diagram-height: auto; }
   .learning-panel { height: auto; min-height: 560px; }
-  .course-journey { height: auto; min-height: 440px; }
+  .product-thesis { height: auto; min-height: 440px; }
   .ledger-problem, .pow-layout, .evm-flow, .contract-evolution { min-height: 390px; }
   .consensus-layout { min-height: 420px; }
   .boundary-worlds { min-height: 390px; }
@@ -500,7 +500,7 @@
 
 @media (max-width: 520px) {
   .learning-panel { min-height: 0; }
-  .course-journey { min-height: 390px; }
+  .product-thesis { min-height: 390px; }
   .journey-question { align-items: flex-start; flex-direction: column; padding: 13px; }
   .journey-question strong { font-size: 11px; }
   .journey-track { justify-content: flex-start; padding: 10px; overflow-x: auto; scrollbar-width: thin; }

@@ -1,0 +1,83 @@
+import {
+  AgenticContractBridgeArchitecture,
+} from '../components/AiBlockchainFoundations'
+import { ContractModelArchitecture } from '../components/FormalSpecArchitecture'
+import { LessonChapter } from '../components/LessonChapter'
+import { ProductLifecycleArchitecture } from '../components/ProductNarrativeArchitecture'
+import {
+  AcvmSystemArchitecture,
+  PoiConsensusArchitecture,
+} from '../components/ProductMechanismArchitecture'
+import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitecture'
+
+<LessonChapter
+  id="system-architecture"
+  className="system-architecture-screen"
+  eyebrow="03 · MECHANISM / DUAL ENGINE"
+  title="一份模型推理"
+  accent="进入两条价值支路"
+  body="Agentic Contract 推进任务与结算；PoI 引擎把同一份已验收工作转成有界共识贡献。"
+  figureLabel="SYSTEM / SERVICE SETTLEMENT + CONSENSUS CONTRIBUTION"
+  visual={<AcvmSystemArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="poi-proof"
+  className="intelligence-screen"
+  eyebrow="03 · MECHANISM / PROOF OF INTELLIGENCE"
+  title="耗费算力还不够"
+  accent="四项同时成立才是有效 PoI"
+  body="真实需求签名、结果通过验收、执行可核验、任务未被重复计分；缺一项就不能进入贡献池。"
+  figureLabel="POI / SIGNED DEMAND · ACCEPTED RESULT · EXECUTION · FRESHNESS"
+  visual={<IntelligenceProofArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="poi-consensus"
+  className="poi-consensus-screen"
+  eyebrow="03 · MECHANISM / BOOKKEEPING RIGHT"
+  title="PoI 产生候选权重"
+  accent="VRF 选择，BFT 终局"
+  body="有效 PoI 按任务类型归一、封顶并衰减；权重影响提议概率，但不能绕过区块验证与多数确认。"
+  figureLabel="CONSENSUS / POI WEIGHT → VRF PROPOSER → BFT FINALITY"
+  visual={<PoiConsensusArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="agentic-evolution"
+  className="agentic-bridge-screen"
+  eyebrow="03 · MECHANISM / CONTRACT EVOLUTION"
+  title="智能合约处理交易"
+  accent="智能体合约管理任务"
+  body="ACVM 把跨区块、跨工具的 Agent 工作写成带身份、预算、回执、验收和结算的状态机。"
+  figureLabel="CONTRACT / EVM SMART CONTRACT → ACVM AGENTIC CONTRACT"
+  visual={<AgenticContractBridgeArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="agentic-contract"
+  className="formal-screen contract-spec-screen"
+  eyebrow="03 · MECHANISM / CONTRACT OBJECT"
+  title="一份智能体合约"
+  accent="同时固定执行与验收接口"
+  body="Schema、Worker、Validator 与 Settlement 共同生成 contractRoot；任何任务或验收规则变化都会成为新版本。"
+  figureLabel="CONTRACT OBJECT / VERSIONED AGENT TASK"
+  visual={<ContractModelArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="task-lifecycle"
+  className="product-lifecycle-screen"
+  eyebrow="03 · MECHANISM / END-TO-END"
+  title="一次真实推理"
+  accent="从需求走到 PoI 与终局"
+  body="同一个 taskId 串起真实需求、智能体合约、模型执行、结果验收、PoI 和最终结算。"
+  figureLabel="PRODUCT FLOW / SIGNED DEMAND → FINALIZED POI"
+  visual={<ProductLifecycleArchitecture />}
+>
+</LessonChapter>

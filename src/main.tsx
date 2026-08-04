@@ -12,6 +12,7 @@ import './presentation.css';
 import './social-use-case.css';
 import './core-use-cases.css';
 import './speaker-guide.css';
+import './product-deck.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

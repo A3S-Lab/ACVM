@@ -1,0 +1,42 @@
+import {
+  GeoVerificationArchitecture,
+  SocialSimulationArchitecture,
+} from '../components/CoreUseCaseAnimations'
+import { LessonChapter } from '../components/LessonChapter'
+import { AcvmProductSnapshotArchitecture } from '../components/ProductMechanismArchitecture'
+
+<LessonChapter
+  id="product-snapshot"
+  className="product-snapshot-screen"
+  eyebrow="01 · PRODUCT / TWO REPLACEMENTS"
+  title="ACVM 做两件事"
+  accent="让 AI 服务进入共识与结算"
+  body="PoI 用真实模型推理替换哈希工作来源；Agentic Contract 用回执状态机替换不适合 AI 的智能合约。"
+  figureLabel="PRODUCT THESIS / POW → POI · EVM → ACVM"
+  visual={<AcvmProductSnapshotArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="geo-verification"
+  className="core-use-case-screen geo-verification-screen"
+  eyebrow="01 · PRODUCT / GEO VERIFICATION"
+  title="GEO 结果验证即服务"
+  accent="优化结果既可付款，也可形成 PoI"
+  body="品牌方签名真实需求，优化方执行模型与工具，独立节点复测增量；验收通过后生成有效计算证明。"
+  figureLabel="CORE CASE / DEMAND → INFERENCE → OBSERVATION → POI"
+  visual={<GeoVerificationArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="simulation"
+  className="core-use-case-screen simulation-screen"
+  eyebrow="01 · PRODUCT / SOCIAL SIMULATION"
+  title="社会模拟即服务"
+  accent="私有推理也能产生可验证贡献"
+  body="个体轨迹留在隔离域，安全聚合只输出群体统计；独立复核确认模型、输入承诺与统计管线。"
+  figureLabel="CORE CASE / SEALED INPUT → VERIFIED SIMULATION → POI"
+  visual={<SocialSimulationArchitecture />}
+>
+</LessonChapter>

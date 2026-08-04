@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "check": "tsc -b --pretty false && node scripts/check-course.mjs",
+    "check": "tsc -b --pretty false && node scripts/check-product-deck.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

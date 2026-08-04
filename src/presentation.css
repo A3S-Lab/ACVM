@@ -417,14 +417,12 @@ body {
   font: 700 7px var(--mono);
 }
 
-.thumbnail-slide[data-chapter='usecase'] { --thumb-accent: #79d8b3; }
-.thumbnail-slide[data-chapter='blockchain'] { --thumb-accent: #f2c879; }
-.thumbnail-slide[data-chapter='gap'] { --thumb-accent: #79d8b3; }
-.thumbnail-slide[data-chapter='protocol'] { --thumb-accent: #c5a7ff; }
-.thumbnail-slide[data-chapter='evidence'] { --thumb-accent: #f0b7d4; }
+.thumbnail-slide[data-chapter='value'] { --thumb-accent: #79d8b3; }
+.thumbnail-slide[data-chapter='principles'] { --thumb-accent: #f2c879; }
+.thumbnail-slide[data-chapter='mechanism'] { --thumb-accent: #c5a7ff; }
+.thumbnail-slide[data-chapter='feasibility'] { --thumb-accent: #f0b7d4; }
 .thumbnail-slide[data-chapter='economy'] { --thumb-accent: #ff9e8a; }
-.thumbnail-slide[data-chapter='network'] { --thumb-accent: #78aef7; }
-.thumbnail-slide[data-chapter='closing'] { --thumb-accent: #ff9e8a; }
+.thumbnail-slide[data-chapter='delivery'] { --thumb-accent: #f2c879; }
 
 .page-scroller {
   position: relative;
@@ -472,14 +470,12 @@ body {
   margin-bottom: 0;
 }
 
-.screen[data-chapter='usecase'] { --accent: #79d8b3; --slide-accent-rgb: 121, 216, 179; }
-.screen[data-chapter='blockchain'] { --accent: #f2c879; --slide-accent-rgb: 242, 200, 121; }
-.screen[data-chapter='gap'] { --accent: #79d8b3; --slide-accent-rgb: 121, 216, 179; }
-.screen[data-chapter='protocol'] { --accent: #c5a7ff; --slide-accent-rgb: 197, 167, 255; }
-.screen[data-chapter='evidence'] { --accent: #f0b7d4; --slide-accent-rgb: 240, 183, 212; }
+.screen[data-chapter='value'] { --accent: #79d8b3; --slide-accent-rgb: 121, 216, 179; }
+.screen[data-chapter='principles'] { --accent: #f2c879; --slide-accent-rgb: 242, 200, 121; }
+.screen[data-chapter='mechanism'] { --accent: #c5a7ff; --slide-accent-rgb: 197, 167, 255; }
+.screen[data-chapter='feasibility'] { --accent: #f0b7d4; --slide-accent-rgb: 240, 183, 212; }
 .screen[data-chapter='economy'] { --accent: #ff9e8a; --slide-accent-rgb: 255, 158, 138; }
-.screen[data-chapter='network'] { --accent: #78aef7; --slide-accent-rgb: 120, 174, 247; }
-.screen[data-chapter='closing'] { --accent: #ff9e8a; --slide-accent-rgb: 255, 158, 138; }
+.screen[data-chapter='delivery'] { --accent: #f2c879; --slide-accent-rgb: 242, 200, 121; }
 
 .screen::before {
   position: absolute;
@@ -758,7 +754,7 @@ body {
   color: #0d1b2e;
 }
 
-.course-journey {
+.product-thesis {
   max-width: 760px;
   height: min(470px, 62vh);
   border-color: rgba(230, 237, 247, 0.14);
@@ -806,7 +802,7 @@ body {
 }
 
 .screen.is-current .technical-visual,
-.screen.is-current .course-journey {
+.screen.is-current .product-thesis {
   animation: deck-visual-enter 520ms 70ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
 }
 
@@ -1311,7 +1307,7 @@ body {
     inset: 26px 20px auto;
   }
 
-  .course-journey {
+  .product-thesis {
     height: auto;
   }
 
@@ -1383,7 +1379,7 @@ body {
   .screen.is-current .section-heading,
   .screen.is-current .hero-copy,
   .screen.is-current .technical-visual,
-  .screen.is-current .course-journey {
+  .screen.is-current .product-thesis {
     animation: none;
     transition: none;
   }

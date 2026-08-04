@@ -1,0 +1,29 @@
+import { LessonChapter } from '../components/LessonChapter'
+import {
+  ProductClosingArchitecture,
+  ProductReadinessArchitecture,
+} from '../components/ProductNarrativeArchitecture'
+
+<LessonChapter
+  id="product-roadmap"
+  className="product-readiness-screen"
+  eyebrow="06 · DELIVERY / READINESS"
+  title="先证明一个闭环"
+  accent="再扩展一张网络"
+  body="当前是概念规范与产品演示；下一步交付合约 SDK、任务运行器和 PoI 验证器，再进入两个真实试点。"
+  figureLabel="DELIVERY / SPEC → RUNTIME → PILOT → POI NETWORK"
+  visual={<ProductReadinessArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="pilot-cta"
+  className="product-closing-screen"
+  eyebrow="06 · DELIVERY / PILOT"
+  title="用一项真实任务"
+  accent="验证六个关键输入"
+  body="真实需求、模型推理、结果验收、执行证明、共识权重和资金结算全部可定义时，试点才具备闭环。"
+  figureLabel="PILOT / SIGNED DEMAND → FINALIZED POI"
+  visual={<ProductClosingArchitecture />}
+>
+</LessonChapter>

@@ -1,4 +1,4 @@
-import { chapterForScreen, screens, type ScreenId } from '../course';
+import { chapterForScreen, screens, type ScreenId } from '../deck';
 import { speakerGuides } from '../speakerGuide';
 import { Icon } from './Icons';
 
@@ -39,7 +39,7 @@ export function SpeakerGuide({
 
         {isChapterOpening ? (
           <section className="speaker-guide__chapter-question">
-            <small>章节问题</small>
+            <small>这一部分要回答</small>
             <p>{chapter.question}</p>
           </section>
         ) : null}

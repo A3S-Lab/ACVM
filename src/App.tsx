@@ -6,18 +6,16 @@ import {
   type CSSProperties,
   type TouchEvent,
 } from 'react';
-import { CourseJourney } from './components/CourseJourney';
 import { Icon, LogoMark } from './components/Icons';
+import { ProductThesis } from './components/ProductThesis';
 import { SpeakerGuide } from './components/SpeakerGuide';
-import AcvmUseCasesCourse from './content/00-acvm-use-cases.mdx';
-import FoundationsCourse from './content/01-foundations.mdx';
-import ExecutionCourse from './content/01b-execution.mdx';
-import AcvmContractCourse from './content/02-acvm-contract.mdx';
-import AcvmStateCourse from './content/03-acvm-state.mdx';
-import AcvmTrustCourse from './content/04-acvm-trust.mdx';
-import AcvmEconomicsCourse from './content/04b-acvm-economics.mdx';
-import AcvmNetworkCourse from './content/05-acvm-network.mdx';
-import { chapterForScreen, navigation, screens } from './course';
+import ProductValueDeck from './content/01-product-value.mdx';
+import ProductCoreDeck from './content/02-product-core.mdx';
+import ProductTrustDeck from './content/03-product-trust.mdx';
+import ProductFeasibilityDeck from './content/04-product-feasibility.mdx';
+import ProductEconomicsDeck from './content/05-product-economics.mdx';
+import ProductDeliveryDeck from './content/06-product-delivery.mdx';
+import { chapterForScreen, navigation, screens } from './deck';
 
 const githubUrl = 'https://github.com/A3S-Lab/ACVM';
 const speakerGuideStorageKey = 'acvm-speaker-guide';
@@ -30,6 +28,12 @@ function initialSpeakerGuideState() {
   } catch {
     return true;
   }
+}
+
+function initialScreenIndex() {
+  const requestedId = window.location.hash.slice(1);
+  const requestedIndex = screens.findIndex(([id]) => id === requestedId);
+  return requestedIndex >= 0 ? requestedIndex : 0;
 }
 
 function BlockchainBackdrop() {
@@ -207,7 +211,7 @@ export function App() {
   const wheelLockedRef = useRef(false);
   const unlockTimerRef = useRef<number | undefined>(undefined);
   const touchStartRef = useRef<{ x: number; y: number; target: EventTarget | null } | null>(null);
-  const [activeScreen, setActiveScreen] = useState(0);
+  const [activeScreen, setActiveScreen] = useState(initialScreenIndex);
   const [menuOpen, setMenuOpen] = useState(false);
   const [guideOpen, setGuideOpen] = useState(initialSpeakerGuideState);
   const [outlineOpen, setOutlineOpen] = useState(() => (
@@ -216,7 +220,7 @@ export function App() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const activeId = screens[activeScreen]?.[0] ?? 'top';
-  const activeTitle = screens[activeScreen]?.[1] ?? '课程地图';
+  const activeTitle = screens[activeScreen]?.[1] ?? 'ACVM 产品定位';
   const activeChapter = chapterForScreen(activeId);
 
   useEffect(() => {
@@ -435,12 +439,12 @@ export function App() {
             aria-pressed={outlineOpen}
             onClick={toggleOutline}
           ><span aria-hidden="true"><i /><i /><i /></span></button>
-          <a className="brand" href="#top" aria-label="ACVM 课程封面" onClick={(event) => { event.preventDefault(); goToScreen(0); }}>
+          <a className="brand" href="#top" aria-label="ACVM 产品演示封面" onClick={(event) => { event.preventDefault(); goToScreen(0); }}>
             <LogoMark />
-            <span><strong>ACVM</strong><small>OUTCOME SETTLEMENT</small></span>
+            <span><strong>ACVM</strong><small>AGENTIC CONTRACT VM</small></span>
           </a>
         </div>
-        <nav className={menuOpen ? 'is-open' : ''} aria-label="课程章节">
+        <nav className={menuOpen ? 'is-open' : ''} aria-label="产品演示分组">
           {navigation.map((item) => {
             const active = item.screens.some((screen) => screen === activeId);
             return (
@@ -469,7 +473,7 @@ export function App() {
           <button
             className={`menu-toggle ${menuOpen ? 'is-open' : ''}`}
             type="button"
-            aria-label={menuOpen ? '关闭章节菜单' : '打开章节菜单'}
+              aria-label={menuOpen ? '关闭分组菜单' : '打开分组菜单'}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((value) => !value)}
           ><span /><span /></button>
@@ -488,33 +492,31 @@ export function App() {
           <BlockchainBackdrop />
           <div className="screen-inner hero-layout">
             <div className="hero-copy">
-              <span className="hero-eyebrow"><i /> AI + BLOCKCHAIN / OUTCOME SETTLEMENT</span>
-              <h1>从按调用量付费<br /><em className="hero-full-name">到按已验证结果付费</em></h1>
-              <p>多数 AI 服务能计量请求、Token 和算力，却不能证明业务结果已经达标。ACVM 把目标、证据、验收、争议和付款绑定到同一任务，让验证通过的结果成为结算依据。</p>
-              <ul className="hero-benefits" aria-label="课程三段论">
-                <li><Icon name="key" />Intent：先冻结付费条件</li>
-                <li><Icon name="shield" />Validator：独立验收结果</li>
-                <li><Icon name="receipt" />Finality：通过后才付款</li>
+              <span className="hero-eyebrow"><i /> AI + BLOCKCHAIN / USEFUL COMPUTE</span>
+              <h1>让模型推理<br /><em className="hero-full-name">成为区块链的有效工作</em></h1>
+              <p>ACVM 用真实需求触发的模型推理生成 PoI，以 Agentic Contract 管理异步智能体任务，再把有效计算转成记账权重与结果结算。</p>
+              <ul className="hero-benefits" aria-label="ACVM 产品闭环">
+                <li><Icon name="spark" />PoI：证明真实模型推理服务</li>
+                <li><Icon name="brain" />Agentic Contract：管理异步任务</li>
+                <li><Icon name="shield" />VRF + BFT：选择提议者并终局</li>
               </ul>
               <div className="hero-actions">
-                <a href="#acvm-use-cases" className="button button--primary" onClick={(event) => { event.preventDefault(); goToScreen(1); }}>先看付费差异 <Icon name="arrow" /></a>
-                <a href="#lifecycle" className="button button--secondary" onClick={(event) => { event.preventDefault(); goToScreen(screens.findIndex(([id]) => id === 'lifecycle')); }}>查看结算流程</a>
+                <a href="#product-snapshot" className="button button--primary" onClick={(event) => { event.preventDefault(); goToScreen(1); }}>一页看懂 ACVM <Icon name="arrow" /></a>
+                <a href="#poi-consensus" className="button button--secondary" onClick={(event) => { event.preventDefault(); goToScreen(screens.findIndex(([id]) => id === 'poi-consensus')); }}>查看 PoI 如何记账</a>
               </div>
             </div>
-            <CourseJourney />
+            <ProductThesis />
           </div>
-          <span className="hero-footnote"><i /> CALL → INTENT → WORK → EVIDENCE → VERDICT → FINALITY → PAY</span>
+          <span className="hero-footnote"><i /> SIGNED DEMAND → INFERENCE → ACCEPTED RESULT → PoI → VRF → FINALITY</span>
           <span className="screen-number" aria-hidden="true">00</span>
         </section>
 
-        <AcvmUseCasesCourse />
-        <FoundationsCourse />
-        <ExecutionCourse />
-        <AcvmContractCourse />
-        <AcvmStateCourse />
-        <AcvmTrustCourse />
-        <AcvmEconomicsCourse />
-        <AcvmNetworkCourse />
+        <ProductValueDeck />
+        <ProductCoreDeck />
+        <ProductTrustDeck />
+        <ProductFeasibilityDeck />
+        <ProductEconomicsDeck />
+        <ProductDeliveryDeck />
       </main>
 
       {guideOpen ? <SpeakerGuide activeScreen={activeScreen} onClose={() => setGuideOpen(false)} /> : null}

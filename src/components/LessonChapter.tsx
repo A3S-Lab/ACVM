@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { chapterForScreen, screens, screenIndex, type ScreenId } from '../course';
+import { chapterForScreen, screens, screenIndex, type ScreenId } from '../deck';
 import {
   TechnicalBackdrop,
   type TechnicalBackdropVariant,
@@ -7,39 +7,25 @@ import {
 import { TechTerm, type TechKey } from './TechTerm';
 
 const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = {
-  'acvm-use-cases': 'flow',
+  'product-snapshot': 'flow',
   'geo-verification': 'proof',
-  'btc-ledger': 'network',
-  'btc-pow': 'proof',
-  'btc-consensus': 'network',
-  'consensus-anatomy': 'network',
-  'consensus-pos': 'proof',
-  'consensus-bft': 'network',
-  'consensus-governance': 'identity',
-  'eth-state': 'state',
-  'eth-evm': 'flow',
-  'eth-boundary': 'identity',
-  'ai-gap': 'fog',
-  'acvm-execution-boundary': 'flow',
-  'ai-verification': 'proof',
-  'agentic-bridge': 'state',
-  lifecycle: 'flow',
-  'spec-contract': 'state',
-  'code-walkthrough': 'state',
-  'spec-state': 'state',
-  dispute: 'proof',
-  identity: 'identity',
-  ans: 'network',
-  composition: 'network',
   simulation: 'network',
-  offchain: 'identity',
-  privacy: 'fog',
-  proof: 'proof',
-  intelligence: 'proof',
+  'useful-work': 'proof',
+  'execution-boundary': 'flow',
+  'system-architecture': 'flow',
+  'poi-proof': 'proof',
+  'poi-consensus': 'network',
+  'agentic-evolution': 'state',
+  'agentic-contract': 'state',
+  'task-lifecycle': 'flow',
+  'verification-engine': 'proof',
+  'private-evidence': 'fog',
+  'deployment-modes': 'chains',
+  'security-boundaries': 'proof',
   'economy-roles': 'network',
-  'economy-waterfall': 'state',
-  'economy-incentives': 'proof',
-  chains: 'chains',
+  'useful-compute-economy': 'state',
+  'product-roadmap': 'state',
+  'pilot-cta': 'proof',
 };
 
 export type MechanismComparison = {
@@ -112,8 +98,8 @@ function SectionHeading({
     <header className="section-heading">
       <div className="section-meta">
         <span className="section-eyebrow"><i /> {eyebrow}</span>
-        <span className="chapter-progress" aria-label={`第 ${index} 课，共 ${screens.length - 1} 课`}>
-          LESSON {String(index).padStart(2, '0')} / {String(screens.length - 1).padStart(2, '0')}
+        <span className="chapter-progress" aria-label={`第 ${index} 页，共 ${screens.length - 1} 页`}>
+          SLIDE {String(index).padStart(2, '0')} / {String(screens.length - 1).padStart(2, '0')}
         </span>
       </div>
       {isChapterOpening ? (
@@ -164,7 +150,7 @@ export function LessonChapter({
           comparison={comparison}
           terms={terms}
           bridge={chapter.bridge}
-          bridgeLabel={chapter.key === 'usecase' ? '从客户问题开始' : '承接上一章'}
+          bridgeLabel={chapter.key === 'value' ? '先看产品与场景' : '承接上一部分'}
           isChapterOpening={chapter.id === id}
         />
         <div className="technical-visual lesson-stage">

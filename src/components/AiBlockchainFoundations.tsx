@@ -173,7 +173,6 @@ export function AgenticContractBridgeArchitecture() {
         <StepBadge index="01">预算守恒</StepBadge>
         <StepBadge index="02">权限只能收窄</StepBadge>
         <StepBadge index="03">回执连续且防重放</StepBadge>
-        <a href="#spec-contract">进入 ACVM 合约模型 <Icon name="arrow" /></a>
       </footer>
     </LearningPanel>
   );
