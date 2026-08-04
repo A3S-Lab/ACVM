@@ -15,7 +15,7 @@ production SDK.
 
 ## Learning path
 
-The 47 lessons are grouped into seven chapters and an epilogue. They follow one
+The 35 lessons are grouped into seven chapters and an epilogue. They follow one
 commercial and technical transition: from billing because an AI call happened
 to settling because its result satisfied a rule fixed in advance.
 
@@ -23,34 +23,33 @@ to settling because its result satisfied a rule fixed in advance.
    simulation separate metered activity from the outcome the buyer actually
    purchases. Two five-step animations freeze the acceptance rules, run work
    off-chain, collect independent evidence, reach finality, and release payment.
-2. **Trusted shared state (12 lessons).** Signatures, double-spending,
-   UTXO state transitions, Merkle commitments, PoW block proposal, fork choice,
+2. **Trusted shared state (10 lessons).** Signatures, double-spending,
+   UTXO ownership, Merkle commitments, PoW block proposal, fork choice,
    and probabilistic finality establish a shared ownership history. The same
    chapter separates membership, proposal, validation, conflict handling, and
    finality across PoW, Gasper-style PoS, BFT/HotStuff, PoA, DPoS, Raft, and
-   PoI. It then adds account state, deterministic EVM replay, Gas, receipts, and
-   the oracle boundary.
-3. **The verification break (7 lessons).** Model inference cannot be replayed
+   PoI. It then adds account state, deterministic EVM replay, Gas, and the
+   oracle boundary.
+3. **The verification break (5 lessons).** Model inference cannot be replayed
    by every validator without multiplying cost, leaking private inputs, and
    reproducing external side effects. The chapter draws the EVM/ACVM boundary,
    introduces Worker and Validator roles, compares verification strategies, and
    separates transaction correctness from task correctness.
-4. **ACVM outcome protocol (9 lessons).** Content-addressed contract trees, the
-   Task File ABI, lifecycle and runtime roles, minimal on-chain checks,
-   deterministic task transitions, receipt verification, disputes, and system
-   limits turn an off-chain job into a state machine that can settle.
-5. **Off-chain evidence engineering (8 lessons).** Identities, capabilities,
-   external-data evidence, private and fog execution, runtime policy,
-   incremental proofs, and Proof of Intelligence explain how claims become
+4. **ACVM outcome protocol (5 lessons).** Content-addressed contract trees, the
+   Task File ABI, lifecycle, deterministic task transitions, receipt checks,
+   and disputes turn an off-chain job into a state machine that can settle.
+5. **Off-chain evidence engineering (5 lessons).** Identities, capabilities,
+   external-data evidence, private execution, incremental proofs, and Proof of
+   Intelligence explain how claims become
    auditable without claiming that every business truth can be proven on-chain.
 6. **Participant economics (3 lessons).** A six-role map separates each
    participant's contribution, reward, and risk. An interactive payment
    waterfall follows one escrow budget through accepted, honestly rejected,
    and fraud-proven outcomes. A second interactive model connects detection
    probability, slash exposure, challenge rewards, and incentive compatibility.
-7. **Multi-Agent coordination and settlement (4 lessons).** Agent discovery,
-   delegated task DAGs, chain adapters, and application review patterns show
-   how authority, budget, evidence, and responsibility move across a network.
+7. **Multi-Agent coordination and settlement (3 lessons).** Agent discovery,
+   delegated task DAGs, and chain adapters show how authority, budget,
+   evidence, and responsibility move across a network.
 
 The epilogue states the boundary in one sentence: usage metering controls cost;
 verified outcomes trigger settlement. ACVM does not replicate external
@@ -62,9 +61,10 @@ disputes, finality, and one-time payment to the same task.
 - Chapter diagrams and their source references live in `src/content/*.mdx`.
 - The desktop shell uses a centered 16:9 stage, slide thumbnails, keyboard and
   touch navigation, a progress counter, and fullscreen presentation mode.
-- Every slide states how its concept changes the conditions under which an AI
-  result may become shared state and release payment.
-- Each of the seven chapters carries one visible story question. The sequence
+- Each slide keeps one claim, one short explanation, and one diagram. Supporting
+  assumptions, formulas, edge cases, and implementation detail live in the
+  speaker guide instead of competing with the visual.
+- Each chapter opens with one bridge from the previous chapter. The sequence
   moves from the gap between usage and outcome, through trusted state and the
   AI verification break, to outcome protocol, evidence engineering,
   participant economics, and multi-Agent settlement.
@@ -83,10 +83,10 @@ disputes, finality, and one-time payment to the same task.
 - `scripts/check-course.mjs` ensures MDX lesson IDs exactly match that order and
   verifies speaker-guide coverage while guarding narrator-style filler.
 
-The AI-agent scalability chapter adapts the five-layer analysis from
+The verification speaker guide retains the five-layer analysis from
 *A Survey of Blockchain Transaction Processing and Scalability: Toward a Trust
 Infrastructure for AI Agents*. The mapping to ACVM protocol objects is an
-engineering interpretation, not a claim made directly by the paper.
+oral engineering interpretation, not a claim made directly by the paper.
 
 ## Development
 

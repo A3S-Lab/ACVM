@@ -3,21 +3,15 @@ import { LessonChapter } from '../components/LessonChapter'
 import {
   DeterminismBoundaryArchitecture,
   EthereumStateArchitecture,
-  EthereumTransactionArchitecture,
   EvmArchitecture,
 } from '../components/EthereumFoundations'
 import {
   AgenticContractBridgeArchitecture,
   AiConsensusGapArchitecture,
-  VerifiableExecutionArchitecture,
   VerificationSpectrumArchitecture,
 } from '../components/AiBlockchainFoundations'
 import { AcvmExecutionBoundaryArchitecture } from '../components/AcvmExecutionBoundary'
-import {
-  SemanticCorrectnessArchitecture,
-  TrustInfrastructureArchitecture,
-} from '../components/AgentTrustInfrastructure'
-import { MotionPlayer } from '../remotion/MotionPlayer'
+import { SemanticCorrectnessArchitecture } from '../components/AgentTrustInfrastructure'
 
 <LessonChapter
   id="eth-state"
@@ -98,48 +92,9 @@ contract Counter {
 </LessonChapter>
 
 <LessonChapter
-  id="eth-transaction"
-  className="foundation-screen eth-transaction-screen"
-  eyebrow="CHAPTER 02 · TRUSTED STATE / DETERMINISTIC VM 03"
-  title="Gas 与交易生命周期"
-  accent="提议者排序，验证者重放"
-  body="钱包签名后，交易进入节点交易池。区块提议者选择顺序，其他验证者检查区块并重放 EVM。Gas 限制每笔交易占用的共识资源。"
-  comparison={{
-    traditionalLabel: '无资源上限',
-    traditionalTitle: '死循环可占满执行节点',
-    traditional: '共识执行不能依赖操作系统强制终止。',
-    acvmLabel: 'GAS METERING',
-    acvmTitle: '每个操作码都有资源价格',
-    acvm: 'Gas 耗尽会回滚状态，已消耗资源仍需付费。',
-  }}
-  figureLabel="EVM TRANSACTION / SIGN → PROPOSE → EXECUTE → RECEIPT → FINALITY"
-  visual={<EthereumTransactionArchitecture />}
->
-
-### 一笔调用经过哪些检查
-
-账户 nonce 防止旧交易重复执行；签名证明发送者授权；费用字段决定交易能否进入区块以及提议者可得的小费。交易进入区块后，EVM 逐条扣除 Gas，并把执行结果写入回执。
-
-```ts file="transaction-envelope.ts"
-const transaction = {
-  chainId: 1n,
-  nonce: 42n,
-  to: counterAddress,
-  data: encodeFunctionData({ functionName: 'increment' }),
-  gasLimit: 80_000n,
-  maxFeePerGas: parseGwei('30'),
-  maxPriorityFeePerGas: parseGwei('2'),
-}
-```
-
-提议者能决定候选区块中的交易排序，却不能随意指定执行结果。其他节点会检查签名、nonce、余额、Gas、操作码和最终状态根。无效区块无法通过共识验证。
-
-</LessonChapter>
-
-<LessonChapter
   id="eth-boundary"
   className="foundation-screen eth-boundary-screen"
-  eyebrow="CHAPTER 02 · TRUSTED STATE / DETERMINISTIC VM 04"
+  eyebrow="CHAPTER 02 · TRUSTED STATE / DETERMINISTIC VM 03"
   title="共识执行的边界"
   accent="外部事实必须先成为可验证输入"
   body="EVM 能检查签名、哈希和链上状态，却不能主动查询天气、价格或物流。预言机把外部观察提交上链，合约再按确定性规则处理。"
@@ -252,58 +207,9 @@ zkML 在链下完成推理和证明生成，链上验证证明；TEE 在受信�
 </LessonChapter>
 
 <LessonChapter
-  id="ai-execution"
-  className="foundation-screen ai-execution-screen"
-  eyebrow="CHAPTER 03 · WHEN AI WORK CANNOT BE REPLAYED / 03"
-  title="可验证链下执行"
-  accent="任务参数冻结后再分派执行"
-  body="用户签名目标、输入根、执行版本、预算和验收规则。Worker 产生结果与回执，Validator 独立检查，结算合约只处理有效证据。"
-  comparison={{
-    traditionalLabel: '普通 API',
-    traditionalTitle: '服务返回一个结果',
-    traditional: '输入版本、执行环境和责任记录通常留在服务内部。',
-    acvmLabel: 'PROOF-CARRYING',
-    acvmTitle: '结果绑定执行上下文',
-    acvm: '任务、输入、输出、版本和防重放字段一起提交。',
-  }}
-  figureLabel="VERIFIABLE OFF-CHAIN COMPUTE / REQUEST → WORK → VERIFY → SETTLE"
-  visual={<VerifiableExecutionArchitecture />}
->
-
-### 回执需要绑定哪些数据
-
-请求阶段生成不可变的任务标识和输入承诺。Worker 只能对该任务提交输出；Validator 从固定输入、输出和验收规则作出裁决；链上结算检查状态连续性与防重放字段。
-
-```ts file="task-receipt.ts"
-type TaskReceipt = {
-  taskId: string
-  intentHash: `0x${string}`
-  inputRoot: `0x${string}`
-  outputRoot: `0x${string}`
-  codeHash: `0x${string}`
-  previousStateRoot: `0x${string}`
-  nonce: bigint
-  workerSignature: `0x${string}`
-  validatorVerdict?: 'accepted' | 'rejected'
-}
-
-function canSettle(receipt: TaskReceipt, state: TaskState) {
-  return state.taskId === receipt.taskId
-    && state.inputRoot === receipt.inputRoot
-    && state.root === receipt.previousStateRoot
-    && !state.spentNonces.has(receipt.nonce)
-    && receipt.validatorVerdict === 'accepted'
-}
-```
-
-<MotionPlayer scene="verifiable-execution" caption="Intent、Worker 回执、Validator 裁决与结算状态保持同一 taskId" />
-
-</LessonChapter>
-
-<LessonChapter
   id="ai-verification"
   className="foundation-screen ai-verification-screen"
-  eyebrow="CHAPTER 03 · WHEN AI WORK CANNOT BE REPLAYED / 04"
+  eyebrow="CHAPTER 03 · WHEN AI WORK CANNOT BE REPLAYED / 03"
   title="AI 结果怎样验证"
   accent="先定义命题，再选择证据"
   body="重复执行、乐观挑战、TEE、zkML 和结果验收各自证明不同事实。协议需要写明验证对象、剩余信任、成本和失败处理。"
@@ -334,7 +240,7 @@ function canSettle(receipt: TaskReceipt, state: TaskState) {
 <LessonChapter
   id="agentic-bridge"
   className="foundation-screen agentic-bridge-screen"
-  eyebrow="CHAPTER 03 · WHEN AI WORK CANNOT BE REPLAYED / 05"
+  eyebrow="CHAPTER 03 · WHEN AI WORK CANNOT BE REPLAYED / 04"
   title="从智能合约到智能体合约"
   accent="原子调用扩展为跨区块任务"
   body="Agent 任务会等待外部数据、调用工具、委托子任务并经过人工审批。合约需要显式记录阶段、权限、预算、回执、超时和验收。"
@@ -376,56 +282,9 @@ ACVM 合约模型由此需要四组定义：任务目录、状态转换、角色
 </LessonChapter>
 
 <LessonChapter
-  id="trust-infrastructure"
-  className="foundation-screen trust-infrastructure-screen"
-  eyebrow="CHAPTER 03 · WHEN AI WORK CANNOT BE REPLAYED / 06"
-  title="Agent 扩容必须守住五层信任"
-  accent="TPS 只是容量，不是安全性"
-  body="Agent 会持续提交任务、跨域调用并自动结算。系统即使提高 TPS，也必须同时守住数据追溯、消息因果、及时终局、执行可验证和经济稳定。"
-  comparison={{
-    traditionalLabel: '普通扩容指标',
-    traditionalTitle: '每秒能处理多少交易',
-    traditional: 'TPS 和延迟能描述容量，却不能说明失败后能否审计和归责。',
-    acvmLabel: 'AGENT TRUST',
-    acvmTitle: '负载上升后仍保留协议保证',
-    acvm: '每层都写明证据、时限、终局假设和失败边界。',
-  }}
-  figureLabel="PAPER MAPPING / DATA · NETWORK · CONSENSUS · EXECUTION · APPLICATION"
-  visual={<TrustInfrastructureArchitecture />}
->
-
-### 五层不是五个独立模块
-
-数据层保留身份、输入、输出和行动历史；网络层维持跨链步骤的因果关系；共识层提供能赶上任务时限的排序与终局；执行层保证并发工作仍可验证；应用层约束费用、激励和市场操纵。上层保证依赖下层，任何一层失效都可能让任务“完成了”却无法安全结算。
-
-ACVM 可以把这组约束落到同一个任务对象上：
-
-```ts file="agent-trust-object.ts"
-type AgentTrustObject = {
-  taskId: string
-  intentHash: `0x${string}`
-  contractRoot: `0x${string}`
-  inputRoot: `0x${string}`
-  outputRoot?: `0x${string}`
-  receiptRoot?: `0x${string}`
-  finalityProfile: { chainId: bigint; confirmations: number }
-  deadline: bigint
-  budget: bigint
-}
-```
-
-这是一项工程映射：论文提出五层分析框架，ACVM 的 Intent、根承诺、回执、Validator 和链适配器为这些约束提供了可实现的协议位置；论文并未直接规定 ACVM 接口。
-
-评估指标也要扩展到审计记录取回成本、deadline 前终局比例、确定性重放率、跨域失败归责率和费用波动，而不只报告 TPS。
-
-资料：[A Survey of Blockchain Transaction Processing and Scalability: Toward a Trust Infrastructure for AI Agents](https://www.elspub.com/doi/10.55092/blockchain20260005)
-
-</LessonChapter>
-
-<LessonChapter
   id="semantic-correctness"
   className="foundation-screen semantic-correctness-screen"
-  eyebrow="CHAPTER 03 · WHEN AI WORK CANNOT BE REPLAYED / 07"
+  eyebrow="CHAPTER 03 · WHEN AI WORK CANNOT BE REPLAYED / 05"
   title="交易正确，不等于任务正确"
   accent="语义验收必须成为协议对象"
   body="链可以证明签名、顺序和状态转换有效，却不能仅凭一份格式正确的回执判断报告是否准确、采购是否合规或 Agent 是否真正完成用户目标。"

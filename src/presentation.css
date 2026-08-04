@@ -561,32 +561,26 @@ body {
   font-weight: 900;
 }
 
-.story-question {
+.chapter-bridge {
   min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: grid;
+  gap: 4px;
   margin-top: 10px;
-  padding: 6px 8px;
-  border: 1px solid rgba(var(--slide-accent-rgb), 0.2);
-  border-radius: 7px;
-  background: rgba(var(--slide-accent-rgb), 0.055);
+  padding: 8px 10px 9px;
+  border-left: 3px solid var(--accent);
+  background: rgba(var(--slide-accent-rgb), 0.06);
 }
 
-.story-question small {
-  flex: 0 0 auto;
+.chapter-bridge small {
   color: var(--accent);
   font: 750 7px var(--font-mono);
   letter-spacing: 0.1em;
 }
 
-.story-question span {
-  overflow: hidden;
+.chapter-bridge span {
   color: #c7d1de;
-  font-size: 8px;
-  line-height: 1.35;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 10px;
+  line-height: 1.5;
 }
 
 .section-heading h2 {
@@ -609,36 +603,10 @@ body {
 }
 
 .section-heading > p {
-  max-width: 40ch;
+  max-width: 36ch;
   color: #b6c1d2;
   font-size: clamp(14px, 1.06vw, 17px);
   line-height: 1.62;
-}
-
-.acvm-connection {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: start;
-  gap: 9px;
-  margin-top: 11px;
-  padding: 9px 10px;
-  border-left: 3px solid var(--accent);
-  border-radius: 0 7px 7px 0;
-  background: rgba(var(--slide-accent-rgb), 0.07);
-}
-
-.acvm-connection small {
-  padding-top: 2px;
-  color: var(--accent);
-  font: 750 7px var(--font-mono);
-  letter-spacing: 0.11em;
-  white-space: nowrap;
-}
-
-.acvm-connection span {
-  color: #c6d0de;
-  font-size: 9px;
-  line-height: 1.45;
 }
 
 .chapter-progress {
@@ -647,6 +615,8 @@ body {
 }
 
 .mechanism-compare {
+  grid-template-columns: minmax(0, 1fr) 22px minmax(0, 1fr);
+  align-items: stretch;
   padding-top: 14px;
 }
 
@@ -657,12 +627,17 @@ body {
 }
 
 .mechanism-compare h3 {
-  font-size: 13px;
+  margin-bottom: 0;
+  font-size: 12px;
 }
 
-.mechanism-compare p {
-  font-size: 10px;
-  line-height: 1.45;
+.mechanism-compare > i {
+  width: 22px;
+  height: auto;
+}
+
+.mechanism-compare > i::before {
+  content: '→';
 }
 
 .section-terms {
@@ -1311,6 +1286,19 @@ body {
 
   .section-heading > p {
     font-size: 16px;
+  }
+
+  .mechanism-compare {
+    grid-template-columns: 1fr;
+  }
+
+  .mechanism-compare > i {
+    width: 100%;
+    height: 22px;
+  }
+
+  .mechanism-compare > i::before {
+    content: '↓';
   }
 
   .screen-number {

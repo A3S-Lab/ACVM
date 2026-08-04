@@ -1,11 +1,7 @@
 import { Code } from '../components/Code'
 import { LessonChapter } from '../components/LessonChapter'
-import {
-  ReceiptModelArchitecture,
-  StateModelArchitecture,
-} from '../components/FormalSpecArchitecture'
+import { StateModelArchitecture } from '../components/FormalSpecArchitecture'
 import { DisputeArchitecture } from '../components/ProtocolExpansionArchitecture'
-import { SystemPropertiesArchitecture } from '../components/SystemPropertiesArchitecture'
 
 <LessonChapter
   id="spec-state"
@@ -51,45 +47,6 @@ function apply(state: TaskState, receipt: VerifiedReceipt): TaskState {
 </LessonChapter>
 
 <LessonChapter
-  id="spec-receipt"
-  className="formal-screen receipt-spec-screen"
-  eyebrow="CHAPTER 04 · ACVM TASK PROTOCOL / RECEIPT"
-  title="回执验证"
-  accent="验证上下文，而不只是返回值"
-  body="回执绑定任务、目录、输入、输出和签名；全部通过后才更新状态。"
-  comparison={{
-    traditionalTitle: '返回值缺少上下文',
-    traditional: '无法确认对应的输入、产物和验收版本。',
-    acvmTitle: '回执绑定任务文件树',
-    acvm: '文件被替换时，根变化并拒绝状态转换。',
-  }}
-  terms={['Task File ABI', 'Receipt Root']}
-  figureLabel="ACVM FORMAL MODEL / CONCEPT DRAFT"
-  visual={<ReceiptModelArchitecture />}
->
-
-### 回执的必填绑定
-
-回执不是普通日志。它至少需要引用任务身份、合约版本、前后任务文件根、角色、时效与 nonce，并由对应责任主体签名。若执行使用 TEE、zkML 或外部数据证明，相应证据摘要也应进入签名消息。
-
-```ts file="verify-receipt.ts"
-function verifyReceipt(receipt: Receipt, state: TaskState) {
-  return receipt.taskId === state.taskId
-    && receipt.contractRoot === state.contractRoot
-    && receipt.previousTreeRoot === state.taskTreeRoot
-    && receipt.expiresAt >= currentBlock()
-    && !state.spentNonces.has(receipt.nonce)
-    && verifySignerForRole(receipt)
-    && verifyMerkleCommitment(receipt.nextTreeRoot, receipt.inclusions)
-    && verifyAttachedEvidence(receipt.evidence)
-}
-```
-
-Merkle Root 证明文件集合没有被替换，不会自动证明文件里的陈述真实。真实性来自签名、证明、数据源核验与 Validator 裁决的组合。
-
-</LessonChapter>
-
-<LessonChapter
   id="dispute"
   className="dispute-screen"
   eyebrow="CHAPTER 04 · ACVM TASK PROTOCOL / DISPUTE"
@@ -119,35 +76,5 @@ submitted → provisional → finalized → settled
                 └→ challenged → upheld  → rejected + slash(worker)
                               └→ denied  → finalized + slash(challenger)
 ```
-
-</LessonChapter>
-
-<LessonChapter
-  id="properties"
-  className="properties-screen"
-  eyebrow="CHAPTER 04 · ACVM TASK PROTOCOL / LIMITS"
-  title="系统边界"
-  accent="用公式暴露可用性、稳定性与成本"
-  body="调整故障率、负载和成本，公式会重算结果与失效条件。"
-  comparison={{
-    traditionalTitle: '缺少统一计算口径',
-    traditional: '只给性能结论，无法复核故障与成本假设。',
-    acvmTitle: '参数、公式和边界同时给出',
-    acvm: '可用性、队列稳定和计算成本按输入重算。',
-  }}
-  terms={['BFT / HotStuff', 'Proof-carrying Execution']}
-  figureLabel="FIRST-PRINCIPLES MODEL / AVAILABILITY · STABILITY · EFFICIENCY"
-  visual={<SystemPropertiesArchitecture />}
->
-
-### 可用性、稳定性与成本
-
-**可用性**取决于角色冗余和门限。若 `n = 3f + 1` 的 BFT Validator 集需要 `2f + 1` 票，系统只能容忍至多 `f` 个拜占庭故障；Worker 的重试策略不能改变这个安全阈值。
-
-**稳定性**要求任务到达率 `λ` 小于有效服务率 `μ`。模型推理、Validator 复核和挑战处理是不同队列，任何一个长期满足 `λ ≥ μ` 都会形成积压。
-
-**效率**要比较链下执行成本、证据生成成本和全网验证成本。理想情况是 `C_execute + C_prove + n·C_verify` 显著低于 `n·C_execute`，否则“执行一次、多方验证”没有带来系统收益。
-
-这些公式用于检查设计边界，不代表仓库当前的性能。真实参数必须来自实现与基准测试。
 
 </LessonChapter>

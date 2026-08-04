@@ -1,14 +1,11 @@
 import { Code } from '../components/Code'
 import { LessonChapter } from '../components/LessonChapter'
-import { FogInferenceArchitecture } from '../components/FogInferenceArchitecture'
-import { IntelligenceChainArchitecture } from '../components/FormalSpecArchitecture'
 import {
   IdentityArchitectureSimple,
   IntelligenceProofArchitecture,
   LongTaskArchitectureSimple,
   OffchainArchitectureSimple,
   PrivacyArchitecture,
-  SentryArchitectureSimple,
 } from '../components/SimplifiedArchitecture'
 
 <LessonChapter
@@ -120,80 +117,6 @@ TEE 不会判断模型答案是否正确，也无法消除硬件供应链和侧�
 </LessonChapter>
 
 <LessonChapter
-  id="fog"
-  className="fog-screen"
-  eyebrow="CHAPTER 05 · EVIDENCE ENGINEERING / LOCATION"
-  title="雾计算推理网络"
-  accent="就近处理数据，公开验证证据"
-  body="任务分配到附近的 Worker，独立 Validator 验收，链上记录结果。"
-  comparison={{
-    traditionalTitle: '集中推理增加传输与单点风险',
-    traditional: '数据远传，中心故障会影响全部任务。',
-    acvmTitle: '就近推理，独立验收',
-    acvm: '明文留在雾节点，证明和结果进入链上。',
-  }}
-  terms={['TEE', 'Remote Attestation', 'Receipt Root']}
-  figureLabel="BLOCKCHAIN FOG INFERENCE / PRIVACY-PRESERVING NETWORK"
-  visual={<FogInferenceArchitecture />}
->
-
-### Worker 调度条件
-
-就近执行降低原始数据传输和响应时间，但不能只选延迟最低的节点。调度器还应检查模型版本、硬件能力、证明支持、司法区域、历史可用性与独立 Validator 覆盖。
-
-```ts file="worker-score.ts"
-function score(worker: Worker, task: Task) {
-  if (!worker.capabilities.includes(task.model)) return -Infinity
-  if (!task.allowedRegions.includes(worker.region)) return -Infinity
-
-  return 0.35 * normalizeLatency(worker.rttMs)
-    + 0.25 * worker.availabilityScore
-    + 0.25 * worker.attestationFreshness
-    + 0.15 * worker.domainReputation
-}
-```
-
-该权重仅用于说明字段。生产调度必须公开单位、归一化方式、抗刷分规则和失败回退，并避免由同一运营方同时控制 Worker 与 Validator。
-
-</LessonChapter>
-
-<LessonChapter
-  id="sentry"
-  className="sentry-screen"
-  eyebrow="CHAPTER 05 · EVIDENCE ENGINEERING / POLICY"
-  title="执行前风控"
-  accent="进程、网络和工具受策略约束"
-  body="AnySentry 检查镜像、权限和网络策略，并记录运行期异常。"
-  comparison={{
-    traditionalTitle: '账本看不到运行期行为',
-    traditional: '越权工具和异常网络请求留在链外。',
-    acvmTitle: '运行策略生成安全回执',
-    acvm: '放行、审批和阻断均可追溯。',
-  }}
-  visual={<SentryArchitectureSimple />}
->
-
-### 执行策略
-
-Agent 的危险不只来自错误输出，还来自执行过程中的越权网络、敏感文件读取、工具滥用和供应链镜像。运行时应在启动前冻结镜像度量、文件挂载、出站域名、工具能力与资源上限，并为每次决策生成可追踪事件。
-
-```text file="runtime-policy.acl"
-runtime {
-  image_measurement = "sha256:..."
-  filesystem = "read-only"
-  network_allow = ["api.example.com:443"]
-  tools_allow = ["quote.read", "result.write"]
-  cpu_limit = 4
-  memory_mb = 8192
-  require_approval = ["payment.submit"]
-}
-```
-
-ACL 片段表达的是产品配置方向；真实文件必须由 A3S ACL SDK 按当前 schema 解析和生成，不能把它当成通用 HCL 文本直接处理。
-
-</LessonChapter>
-
-<LessonChapter
   id="proof"
   className="proof-screen"
   eyebrow="CHAPTER 05 · EVIDENCE ENGINEERING / CONTINUITY"
@@ -259,42 +182,5 @@ function eligibleForContribution(task: Task, proof: ExecutionProof, verdict: Ver
 ```
 
 主要机制风险包括自交易、低价值刷单、Validator 串谋和任务难度不可比。生产协议必须定义独立性、价值权重、声誉衰减和审计抽样。
-
-</LessonChapter>
-
-<LessonChapter
-  id="spec-poi"
-  className="formal-screen poi-spec-screen"
-  eyebrow="CHAPTER 05 · EVIDENCE ENGINEERING / WEIGHT"
-  title="PoI 与提议者选择"
-  accent="贡献只提供权重信号"
-  body="有效 PoI 可用于信誉、任务调度或候选权重；区块确认仍由 BFT、PoS 等共识协议完成。"
-  comparison={{
-    traditionalTitle: '资源投入不代表有效产出',
-    traditional: '能耗和质押额不包含业务验收。',
-    acvmTitle: '贡献来自已验收任务',
-    acvm: '需求、结果、执行证明和防重放缺一不可。',
-  }}
-  terms={['Proof of Intelligence', 'VRF']}
-  figureLabel="INTELLIGENCE-PROOF CHAIN / RESEARCH DIRECTION"
-  visual={<IntelligenceChainArchitecture />}
->
-
-### PoI 只提供候选权重
-
-PoI 可以作为信誉或任务调度信号；若进一步参与区块提议者选择，则必须定义权重上限、时间衰减、女巫成本与随机抽样。VRF 可以从合格候选集中产生可验证随机选择，但无法修复候选集合本身被操纵的问题。
-
-```text file="weighted-selection.txt"
-eligible_i = stakeFloor_i
-          && freshContribution_i
-          && noActiveSlashing_i
-
-weight_i = min(MAX_WEIGHT,
-               decay(age_i) * difficultyAdjusted(contribution_i))
-
-selected_i ⇔ VRF(sk_i, epochSeed) / weight_i < threshold
-```
-
-在完成安全证明、攻击模拟和可运行实现前，PoI 只适合作为非安全关键的排名信号。共识安全仍由已有 BFT 或 PoS 协议承担。
 
 </LessonChapter>

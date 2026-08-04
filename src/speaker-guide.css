@@ -130,6 +130,7 @@
 }
 
 .speaker-guide__focus p,
+.speaker-guide__chapter-question p,
 .speaker-guide__connection p,
 .speaker-guide__beats p,
 .speaker-guide__transition p {
@@ -141,6 +142,18 @@
   font-size: 13px;
   font-weight: 650;
   line-height: 1.55;
+}
+
+.speaker-guide__chapter-question {
+  padding: 10px 12px;
+  border: 1px solid #d9dee3;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.speaker-guide__chapter-question p {
+  color: #223149;
+  font: 750 12px/1.55 var(--font-display);
 }
 
 .speaker-guide__connection {
@@ -302,16 +315,6 @@
     line-height: 1.5;
   }
 
-  .site-shell.is-speaker-guide-open .acvm-connection {
-    gap: 7px;
-    margin-top: 8px;
-    padding: 7px 8px;
-  }
-
-  .site-shell.is-speaker-guide-open .acvm-connection span {
-    font-size: 8px;
-  }
-
   .site-shell.is-speaker-guide-open .mechanism-compare {
     padding-top: 9px;
   }
@@ -322,11 +325,6 @@
 
   .site-shell.is-speaker-guide-open .mechanism-compare h3 {
     font-size: 11px;
-  }
-
-  .site-shell.is-speaker-guide-open .mechanism-compare p {
-    font-size: 9px;
-    line-height: 1.35;
   }
 }
 

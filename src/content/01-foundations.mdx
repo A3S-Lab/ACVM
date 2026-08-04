@@ -4,7 +4,6 @@ import {
   BitcoinConsensusArchitecture,
   BitcoinLedgerArchitecture,
   ProofOfWorkArchitecture,
-  UtxoTransactionArchitecture,
 } from '../components/BitcoinFoundations'
 import {
   BftConsensusArchitecture,
@@ -50,52 +49,9 @@ ordering:      the accepted chain places one conflicting spend first
 </LessonChapter>
 
 <LessonChapter
-  id="btc-transaction"
-  className="foundation-screen btc-transaction-screen"
-  eyebrow="CHAPTER 02 · TRUSTED STATE / OWNERSHIP 02"
-  title="UTXO 交易"
-  accent="消费旧输出，创建新输出"
-  body="钱包选择未花费输出作为输入，生成收款和找零输出，并对交易摘要签名。输入总额与输出总额的差额构成手续费。"
-  comparison={{
-    traditionalLabel: '账户模型',
-    traditionalTitle: '余额存放在账户记录中',
-    traditional: '交易直接修改发送方和接收方余额。',
-    acvmLabel: 'UTXO 模型',
-    acvmTitle: '价值存在于带花费条件的输出中',
-    acvm: '每个输入都能追溯到一笔旧交易的具体输出。',
-  }}
-  figureLabel="UTXO TRANSACTION / INPUTS = OUTPUTS + FEE"
-  visual={<UtxoTransactionArchitecture />}
->
-
-### 节点怎样检查一笔交易
-
-输入通过 `txid:vout` 引用旧输出，并提供满足锁定条件的 witness。输出记录金额和新的锁定条件。节点查询本地 UTXO 集，确认引用存在且尚未花费，再执行脚本和金额检查。
-
-```ts file="verify-transaction.ts"
-type Output = { value: bigint; owner: string }
-type Input = { prevout: string; signature: Uint8Array }
-
-function verifyTransaction(inputs: Input[], outputs: Output[], fee: bigint) {
-  const prevouts = inputs.map(loadUnspentOutput)
-  const authorized = inputs.every((input, index) =>
-    verifySignature(input, prevouts[index].owner),
-  )
-  const valueIn = prevouts.reduce((sum, output) => sum + output.value, 0n)
-  const valueOut = outputs.reduce((sum, output) => sum + output.value, 0n)
-
-  return authorized && valueIn === valueOut + fee
-}
-```
-
-实际验证还包括脚本规则、锁定时间、序列号、交易重量和标准性策略。示例保留了 UTXO 查找、授权检查与价值守恒三项基础条件。
-
-</LessonChapter>
-
-<LessonChapter
   id="btc-pow"
   className="foundation-screen btc-pow-screen"
-  eyebrow="CHAPTER 02 · TRUSTED STATE / OWNERSHIP 03"
+  eyebrow="CHAPTER 02 · TRUSTED STATE / OWNERSHIP 02"
   title="PoW 出块权"
   accent="哈希目标构成一次公开抽签"
   body="矿工反复修改 nonce 和 coinbase extraNonce，直到区块头的双 SHA-256 哈希小于目标值。成功者获得候选区块提议权。"
@@ -134,7 +90,7 @@ expected block share of miner i ≈ hᵢ / Σh
 <LessonChapter
   id="btc-consensus"
   className="foundation-screen btc-consensus-screen"
-  eyebrow="CHAPTER 02 · TRUSTED STATE / OWNERSHIP 04"
+  eyebrow="CHAPTER 02 · TRUSTED STATE / OWNERSHIP 03"
   title="分叉与确认"
   accent="累计工作量选择规范链"
   body="两个有效区块可能同时传播，节点会暂时接受不同链尖。后续区块让某一分支累计更多工作量，落败分支随即被重组。"

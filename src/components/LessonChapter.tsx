@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import { chapterForScreen, screens, screenIndex, type ScreenId } from '../course';
-import { speakerGuides } from '../speakerGuide';
 import {
   TechnicalBackdrop,
   type TechnicalBackdropVariant,
@@ -11,7 +10,6 @@ const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = 
   'acvm-use-cases': 'flow',
   'geo-verification': 'proof',
   'btc-ledger': 'network',
-  'btc-transaction': 'state',
   'btc-pow': 'proof',
   'btc-consensus': 'network',
   'consensus-anatomy': 'network',
@@ -20,38 +18,28 @@ const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = 
   'consensus-governance': 'identity',
   'eth-state': 'state',
   'eth-evm': 'flow',
-  'eth-transaction': 'flow',
   'eth-boundary': 'identity',
   'ai-gap': 'fog',
   'acvm-execution-boundary': 'flow',
-  'ai-execution': 'flow',
   'ai-verification': 'proof',
   'agentic-bridge': 'state',
   lifecycle: 'flow',
-  runtime: 'flow',
-  onchain: 'flow',
   'spec-contract': 'state',
   'code-walkthrough': 'state',
   'spec-state': 'state',
-  'spec-receipt': 'state',
   dispute: 'proof',
-  properties: 'proof',
   identity: 'identity',
   ans: 'network',
   composition: 'network',
   simulation: 'network',
   offchain: 'identity',
   privacy: 'fog',
-  fog: 'fog',
-  sentry: 'fog',
   proof: 'proof',
   intelligence: 'proof',
-  'spec-poi': 'proof',
   'economy-roles': 'network',
   'economy-waterfall': 'state',
   'economy-incentives': 'proof',
   chains: 'chains',
-  stories: 'network',
 };
 
 export type MechanismComparison = {
@@ -86,17 +74,18 @@ function MechanismCompare({
   acvmLabel = 'ACVM',
 }: MechanismComparison) {
   return (
-    <div className="mechanism-compare" aria-label={`${traditionalLabel}与${acvmLabel}对比`}>
+    <div
+      className="mechanism-compare"
+      aria-label={`${traditionalLabel}：${traditionalTitle}，${traditional}。${acvmLabel}：${acvmTitle}，${acvm}。`}
+    >
       <section className="is-traditional">
         <header><b aria-hidden="true">×</b><small>{traditionalLabel}</small></header>
         <h3>{traditionalTitle}</h3>
-        <p>{traditional}</p>
       </section>
       <i aria-hidden="true" />
       <section className="is-acvm">
         <header><b aria-hidden="true">✓</b><small>{acvmLabel}</small></header>
         <h3>{acvmTitle}</h3>
-        <p>{acvm}</p>
       </section>
     </div>
   );
@@ -110,30 +99,28 @@ function SectionHeading({
   body,
   comparison,
   terms = [],
-  connection,
-  storyAct,
-  storyQuestion,
+  bridge,
+  bridgeLabel,
+  isChapterOpening,
 }: Omit<LessonChapterProps, 'id' | 'className' | 'figureLabel' | 'visual' | 'children'> & {
   index: number;
-  connection: string;
-  storyAct: string;
-  storyQuestion: string;
+  bridge: string;
+  bridgeLabel: string;
+  isChapterOpening: boolean;
 }) {
   return (
     <header className="section-heading">
       <div className="section-meta">
         <span className="section-eyebrow"><i /> {eyebrow}</span>
-        <span className="chapter-progress" aria-label={`第 ${index} 章，共 ${screens.length - 1} 章`}>
-          CH {String(index).padStart(2, '0')} / {String(screens.length - 1).padStart(2, '0')}
+        <span className="chapter-progress" aria-label={`第 ${index} 课，共 ${screens.length - 1} 课`}>
+          LESSON {String(index).padStart(2, '0')} / {String(screens.length - 1).padStart(2, '0')}
         </span>
       </div>
-      <div className="story-question"><small>{storyAct}</small><span>{storyQuestion}</span></div>
+      {isChapterOpening ? (
+        <div className="chapter-bridge"><small>{bridgeLabel}</small><span>{bridge}</span></div>
+      ) : null}
       <h2>{title}<br /><em>{accent}</em></h2>
       <p>{body}</p>
-      <div className="acvm-connection">
-        <small>落到 ACVM</small>
-        <span>{connection}</span>
-      </div>
       {comparison ? <MechanismCompare {...comparison} /> : null}
       {terms.length > 0 ? (
         <div className="section-terms">
@@ -158,7 +145,6 @@ export function LessonChapter({
 }: LessonChapterProps) {
   const index = screenIndex(id);
   const chapter = chapterForScreen(id);
-  const guide = speakerGuides[id];
 
   return (
     <section
@@ -177,9 +163,9 @@ export function LessonChapter({
           body={body}
           comparison={comparison}
           terms={terms}
-          connection={guide.connection}
-          storyAct={chapter.act}
-          storyQuestion={chapter.question}
+          bridge={chapter.bridge}
+          bridgeLabel={chapter.key === 'usecase' ? '从客户问题开始' : '承接上一章'}
+          isChapterOpening={chapter.id === id}
         />
         <div className="technical-visual lesson-stage">
           <div className="lesson-diagram">{visual}</div>

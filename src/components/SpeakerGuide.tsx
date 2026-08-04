@@ -12,6 +12,7 @@ export function SpeakerGuide({
   const [screenId, title] = screens[activeScreen];
   const guide = speakerGuides[screenId as ScreenId];
   const chapter = chapterForScreen(screenId);
+  const isChapterOpening = chapter.id === screenId;
 
   return (
     <aside className="speaker-guide" id="speaker-guide" aria-labelledby="speaker-guide-title">
@@ -36,8 +37,15 @@ export function SpeakerGuide({
           <p>{guide.focus}</p>
         </section>
 
+        {isChapterOpening ? (
+          <section className="speaker-guide__chapter-question">
+            <small>章节问题</small>
+            <p>{chapter.question}</p>
+          </section>
+        ) : null}
+
         <section className="speaker-guide__connection">
-          <small>和 ACVM 的关系</small>
+          <small>放回主线</small>
           <p>{guide.connection}</p>
         </section>
 
@@ -47,7 +55,7 @@ export function SpeakerGuide({
         </section>
 
         <section className="speaker-guide__beats">
-          <small>讲解顺序</small>
+          <small>口述展开</small>
           <ol>
             {guide.beats.map((beat, index) => (
               <li key={beat}><span>{index + 1}</span><p>{beat}</p></li>
@@ -58,7 +66,7 @@ export function SpeakerGuide({
 
       <footer className="speaker-guide__transition">
         <span><Icon name="arrow" /></span>
-        <p><small>转场</small>{guide.transition}</p>
+        <p><small>自然转场</small>{guide.transition}</p>
       </footer>
     </aside>
   );
