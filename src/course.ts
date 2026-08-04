@@ -1,6 +1,6 @@
 export const screens = [
   ['top', '课程地图'],
-  ['acvm-use-cases', '两个案件'],
+  ['acvm-use-cases', '付费条件变化'],
   ['geo-verification', 'GEO 结果验证'],
   ['simulation', '社会模拟服务'],
   ['btc-ledger', '双花与共享历史'],
@@ -39,24 +39,27 @@ export const screens = [
   ['proof', '长任务证明'],
   ['intelligence', '有效计算'],
   ['spec-poi', '智能证明链'],
+  ['economy-roles', '参与方与收益'],
+  ['economy-waterfall', '预算与分账'],
+  ['economy-incentives', '保证金与激励'],
   ['ans', '智能体解析'],
   ['composition', '多 Agent 协作'],
   ['chains', '链适配'],
-  ['stories', '业务场景'],
-  ['conclusion', '核心结论'],
+  ['stories', '结果付费网络'],
+  ['conclusion', '结果结算边界'],
 ] as const;
 
 export type ScreenId = (typeof screens)[number][0];
 
 export const navigation = [
   {
-    key: 'usecase', id: 'acvm-use-cases', label: '第一章·场景', shortLabel: 'CHAPTER 01 / CASES', act: '第一章',
-    question: 'Agent 说“做完了”，凭什么付款？',
+    key: 'usecase', id: 'acvm-use-cases', label: '第一章·付费问题', shortLabel: 'CHAPTER 01 / PAYMENT', act: '第一章',
+    question: '客户买的是一次调用，还是一个达到标准的结果？',
     screens: ['acvm-use-cases', 'geo-verification', 'simulation'],
   },
   {
-    key: 'blockchain', id: 'btc-ledger', label: '第二章·区块底座', shortLabel: 'CHAPTER 02 / BLOCKCHAIN', act: '第二章',
-    question: '记录怎样变成可验证、可重放、可终局的共享状态？',
+    key: 'blockchain', id: 'btc-ledger', label: '第二章·可信状态', shortLabel: 'CHAPTER 02 / TRUSTED STATE', act: '第二章',
+    question: '付款条件怎样变成各方不能单独改写的共同事实？',
     screens: [
       'btc-ledger', 'btc-transaction', 'btc-pow', 'btc-consensus',
       'consensus-anatomy', 'consensus-pos', 'consensus-bft', 'consensus-governance',
@@ -64,31 +67,36 @@ export const navigation = [
     ],
   },
   {
-    key: 'gap', id: 'ai-gap', label: '第三章·AI 转折', shortLabel: 'CHAPTER 03 / AI GAP', act: '第三章',
-    question: 'AI 工作无法全网重放，结果还能怎样进入共识？',
+    key: 'gap', id: 'ai-gap', label: '第三章·验证转折', shortLabel: 'CHAPTER 03 / VERIFICATION', act: '第三章',
+    question: 'AI 工作不能全网重放，结果凭什么被判定为完成？',
     screens: ['ai-gap', 'acvm-execution-boundary', 'ai-execution', 'ai-verification', 'agentic-bridge', 'trust-infrastructure', 'semantic-correctness'],
   },
   {
-    key: 'protocol', id: 'spec-contract', label: '第四章·任务协议', shortLabel: 'CHAPTER 04 / PROTOCOL', act: '第四章',
-    question: '怎样冻结任务规则，并让有效证据推动状态和结算？',
+    key: 'protocol', id: 'spec-contract', label: '第四章·结果协议', shortLabel: 'CHAPTER 04 / PROTOCOL', act: '第四章',
+    question: '怎样把付费结果、验收规则、争议和结算写成协议？',
     screens: [
       'spec-contract', 'code-walkthrough', 'lifecycle', 'runtime', 'onchain',
       'spec-state', 'spec-receipt', 'dispute', 'properties',
     ],
   },
   {
-    key: 'evidence', id: 'identity', label: '第五章·证据工程', shortLabel: 'CHAPTER 05 / EVIDENCE', act: '第五章',
-    question: '链下身份、数据和执行如何变成可核验证据？',
+    key: 'evidence', id: 'identity', label: '第五章·证据系统', shortLabel: 'CHAPTER 05 / EVIDENCE', act: '第五章',
+    question: '哪些链下证据足以证明结果满足了付费条件？',
     screens: ['identity', 'offchain', 'privacy', 'fog', 'sentry', 'proof', 'intelligence', 'spec-poi'],
   },
   {
-    key: 'network', id: 'ans', label: '第六章·协作结算', shortLabel: 'CHAPTER 06 / NETWORK', act: '第六章',
-    question: '多个 Agent 如何传递权限、预算和责任？',
+    key: 'economy', id: 'economy-roles', label: '第六章·经济模型', shortLabel: 'CHAPTER 06 / ECONOMICS', act: '第六章',
+    question: '每个参与方提供什么、获得什么，作弊又会失去什么？',
+    screens: ['economy-roles', 'economy-waterfall', 'economy-incentives'],
+  },
+  {
+    key: 'network', id: 'ans', label: '第七章·协作结算', shortLabel: 'CHAPTER 07 / NETWORK', act: '第七章',
+    question: '多个 Agent 协作时，结果、预算和付款责任怎样传递？',
     screens: ['ans', 'composition', 'chains', 'stories'],
   },
   {
-    key: 'closing', id: 'conclusion', label: '结语', shortLabel: 'EPILOGUE / BOUNDARY', act: '结语',
-    question: 'ACVM 最终证明了什么，又没有证明什么？',
+    key: 'closing', id: 'conclusion', label: '结语', shortLabel: 'EPILOGUE / OUTCOME', act: '结语',
+    question: '满足哪些条件后，一个 AI 结果才有资格触发付款？',
     screens: ['conclusion'],
   },
 ] as const;
@@ -99,7 +107,7 @@ export const coverChapter = {
   label: '课程封面',
   shortLabel: 'ACVM DECK',
   act: '主线',
-  question: 'AI 完成链外工作后，凭什么改变共享状态并获得付款？',
+  question: '怎样把 AI 服务从按调用量付费，推进到按已验证结果付费？',
   screens: ['top'],
 } as const;
 

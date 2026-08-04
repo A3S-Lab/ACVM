@@ -1,12 +1,12 @@
 # ACVM Interactive Curriculum
 
 This repository is a presentation-first, interactive Chinese-language course
-that derives the Agentic Contract VM concept from one practical question: when
-an Agent completes work off-chain, what makes the result eligible for payment?
-GEO result verification and privacy-sealed social simulation open the story.
-UTXO ownership, consensus finality, and deterministic virtual-machine replay
-then establish the trust primitives whose execution boundary leads to ACVM's
-evidence-driven task state machine.
+about ACVM as outcome-settlement infrastructure for AI and blockchains. Its
+central claim is simple: requests, tokens, and compute measure resource usage;
+only an accepted and finalized result should trigger business settlement. GEO
+result verification and privacy-sealed social simulation show the payment gap
+before ledger, consensus, deterministic replay, evidence, dispute, and finality
+are introduced as the capabilities required to close it.
 
 The repository currently provides a concept specification and teaching
 experience. Its TypeScript interfaces, protocol transitions, and proof paths are
@@ -15,28 +15,27 @@ production SDK.
 
 ## Learning path
 
-The 44 lessons are grouped into six chapters and an epilogue. They follow one
-question from concrete cases to protocol design: what evidence may change
-shared state, when may settlement occur, and who remains accountable when
-external work fails?
+The 47 lessons are grouped into seven chapters and an epilogue. They follow one
+commercial and technical transition: from billing because an AI call happened
+to settling because its result satisfied a rule fixed in advance.
 
-1. **Case opening (3 lessons).** GEO result verification and social simulation
-   show what the buyer actually purchases. Two five-step animations freeze the
-   acceptance rules, run work off-chain, collect independent evidence, reach
-   finality, and release payment.
-2. **Blockchain trust primitives (12 lessons).** Signatures, double-spending,
+1. **The payment problem (3 lessons).** GEO result verification and social
+   simulation separate metered activity from the outcome the buyer actually
+   purchases. Two five-step animations freeze the acceptance rules, run work
+   off-chain, collect independent evidence, reach finality, and release payment.
+2. **Trusted shared state (12 lessons).** Signatures, double-spending,
    UTXO state transitions, Merkle commitments, PoW block proposal, fork choice,
    and probabilistic finality establish a shared ownership history. The same
    chapter separates membership, proposal, validation, conflict handling, and
    finality across PoW, Gasper-style PoS, BFT/HotStuff, PoA, DPoS, Raft, and
    PoI. It then adds account state, deterministic EVM replay, Gas, receipts, and
    the oracle boundary.
-3. **The AI execution break (7 lessons).** Model inference cannot be replayed
+3. **The verification break (7 lessons).** Model inference cannot be replayed
    by every validator without multiplying cost, leaking private inputs, and
    reproducing external side effects. The chapter draws the EVM/ACVM boundary,
    introduces Worker and Validator roles, compares verification strategies, and
    separates transaction correctness from task correctness.
-4. **ACVM task protocol (9 lessons).** Content-addressed contract trees, the
+4. **ACVM outcome protocol (9 lessons).** Content-addressed contract trees, the
    Task File ABI, lifecycle and runtime roles, minimal on-chain checks,
    deterministic task transitions, receipt verification, disputes, and system
    limits turn an off-chain job into a state machine that can settle.
@@ -44,24 +43,31 @@ external work fails?
    external-data evidence, private and fog execution, runtime policy,
    incremental proofs, and Proof of Intelligence explain how claims become
    auditable without claiming that every business truth can be proven on-chain.
-6. **Multi-Agent coordination and settlement (4 lessons).** Agent discovery,
+6. **Participant economics (3 lessons).** A six-role map separates each
+   participant's contribution, reward, and risk. An interactive payment
+   waterfall follows one escrow budget through accepted, honestly rejected,
+   and fraud-proven outcomes. A second interactive model connects detection
+   probability, slash exposure, challenge rewards, and incentive compatibility.
+7. **Multi-Agent coordination and settlement (4 lessons).** Agent discovery,
    delegated task DAGs, chain adapters, and application review patterns show
    how authority, budget, evidence, and responsibility move across a network.
 
-The epilogue states the boundary in one sentence: ACVM does not replicate
-external computation; it verifies task receipts and settles responsibility.
+The epilogue states the boundary in one sentence: usage metering controls cost;
+verified outcomes trigger settlement. ACVM does not replicate external
+computation. It binds outcome definitions, receipts, independent verdicts,
+disputes, finality, and one-time payment to the same task.
 
 ## Teaching stack
 
 - Chapter diagrams and their source references live in `src/content/*.mdx`.
 - The desktop shell uses a centered 16:9 stage, slide thumbnails, keyboard and
   touch navigation, a progress counter, and fullscreen presentation mode.
-- Every slide states how its concept changes an ACVM design decision, keeping
-  the ledger, consensus, and deterministic-VM foundations attached to the main
-  argument.
-- Each of the six chapters carries one visible story question. The sequence
-  moves from a payment dispute, through trusted state and the AI replay break,
-  to task protocol, evidence engineering, and multi-Agent settlement.
+- Every slide states how its concept changes the conditions under which an AI
+  result may become shared state and release payment.
+- Each of the seven chapters carries one visible story question. The sequence
+  moves from the gap between usage and outcome, through trusted state and the
+  AI verification break, to outcome protocol, evidence engineering,
+  participant economics, and multi-Agent settlement.
 - The GEO and social-simulation scenes auto-advance through five states, pause
   when off-screen, honor reduced-motion preferences, and support direct step
   selection plus play/pause control.

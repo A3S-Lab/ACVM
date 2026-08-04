@@ -125,12 +125,12 @@
 .journey-era > small { margin-top: auto; color: var(--faint); font-size: 11px; }
 .journey-era > strong { margin: 5px 0 14px; font-size: clamp(17px, 1.5vw, 23px); }
 .journey-era > div { display: flex; flex-wrap: wrap; gap: 5px; }
-.journey-era.is-case { border-color: rgba(98, 223, 181, 0.3); background: linear-gradient(160deg, rgba(98, 223, 181, 0.075), #030205 62%); }
-.journey-era.is-case header svg { color: var(--green); }
-.journey-era.is-ledger { border-color: rgba(241, 201, 121, 0.25); }
-.journey-era.is-ledger header svg { color: var(--amber); }
-.journey-era.is-vm { border-color: rgba(var(--blue-rgb), 0.28); }
-.journey-era.is-vm header svg { color: var(--blue); }
+.journey-era.is-call { border-color: rgba(241, 201, 121, 0.3); background: linear-gradient(160deg, rgba(241, 201, 121, 0.075), #030205 62%); }
+.journey-era.is-call header svg { color: var(--amber); }
+.journey-era.is-gap { border-color: rgba(255, 112, 129, 0.3); background: linear-gradient(160deg, rgba(255, 112, 129, 0.075), #030205 62%); }
+.journey-era.is-gap header svg { color: var(--red); }
+.journey-era.is-trust { border-color: rgba(var(--blue-rgb), 0.28); }
+.journey-era.is-trust header svg { color: var(--blue); }
 .journey-era.is-ai { border-color: rgba(98, 223, 181, 0.32); background: linear-gradient(160deg, rgba(98, 223, 181, 0.08), #030205 62%); }
 .journey-era.is-ai header svg { color: var(--green); }
 .journey-era.is-acvm { border-color: rgba(var(--purple-rgb), 0.48); background: linear-gradient(160deg, rgba(var(--purple-rgb), 0.13), #030205 60%); box-shadow: inset 0 1px rgba(255, 255, 255, 0.05); }

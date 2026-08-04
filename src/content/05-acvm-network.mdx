@@ -9,7 +9,7 @@ import { AcvmConclusionArchitecture } from '../components/AgentTrustInfrastructu
 <LessonChapter
   id="ans"
   className="ans-screen"
-  eyebrow="CHAPTER 06 · AGENT NETWORK / DISCOVERY"
+  eyebrow="CHAPTER 07 · AGENT NETWORK / DISCOVERY"
   title="ANS 智能体解析"
   accent="名称对应可验证服务声明"
   body="ANS 把名称解析为 DID、A2A 端点、能力、报价、信誉和 Validator 集。"
@@ -49,7 +49,7 @@ type AgentRecord = {
 <LessonChapter
   id="composition"
   className="composition-screen"
-  eyebrow="CHAPTER 06 · AGENT NETWORK / DELEGATION"
+  eyebrow="CHAPTER 07 · AGENT NETWORK / DELEGATION"
   title="多 Agent 协作"
   accent="子任务继承预算与能力边界"
   body="父合约通过 ANS 委托子合约；每个子合约独立执行和验收，最后聚合回执。"
@@ -87,7 +87,7 @@ function aggregate(parent: ParentTask, children: ChildReceipt[]) {
 <LessonChapter
   id="chains"
   className="chains-screen"
-  eyebrow="CHAPTER 06 · AGENT NETWORK / CHAINS"
+  eyebrow="CHAPTER 07 · AGENT NETWORK / CHAINS"
   title="多链部署"
   accent="保持任务语义，隔离底层链差异"
   body="适配器把身份、事件、状态、证明和最终性映射到目标链。"
@@ -122,15 +122,15 @@ interface ChainAdapter {
 <LessonChapter
   id="stories"
   className="stories-screen"
-  eyebrow="CHAPTER 06 · AGENT NETWORK / APPLICATIONS"
-  title="应用网络"
-  accent="从按调用付费转向按已验收结果结算"
-  body="拖动网络或点击节点，查看 GEO、量化交易、节能和采购等合约的执行与结算。"
+  eyebrow="CHAPTER 07 · AGENT NETWORK / APPLICATIONS"
+  title="结果付费网络"
+  accent="同一协议，不同验收谓词"
+  body="拖动网络或点击节点，查看 GEO、量化交易、节能和采购怎样分别定义结果、证据、验收与付款条件。"
   comparison={{
-    traditionalTitle: '按调用或过程付费',
-    traditional: '付款记录不能证明业务结果。',
-    acvmTitle: '按已验收结果结算',
-    acvm: 'Worker 执行，Validator 验收，链上记账。',
+    traditionalTitle: '按请求、Token 或过程付费',
+    traditional: '账单证明资源被使用，不能证明业务结果达标。',
+    acvmTitle: '按已验证结果结算',
+    acvm: 'Worker 执行，Validator 验收，结果终局后链上付款。',
   }}
   visual={<ScenarioGraph />}
 >
@@ -154,22 +154,22 @@ interface ChainAdapter {
   id="conclusion"
   className="foundation-screen conclusion-screen"
   eyebrow="FINAL · TAKEAWAY"
-  title="ACVM 不复制外部计算"
-  accent="它验证回执，再结算责任"
-  body="UTXO 与 PoW 解决所有权和排序，EVM 解决确定性程序执行。ACVM 延续同一条原则：共识只接受满足授权、证据、验收、争议和终局条件的任务回执。"
+  title="从调用量计费"
+  accent="到验证结果结算"
+  body="ACVM 是面向 AI 服务的结果结算基础设施：模型和工具继续在链下执行，协议把付费目标、任务回执、独立验收、争议处理和资金终局绑定到同一个 taskId。"
   comparison={{
-    traditionalLabel: '错误理解',
-    traditionalTitle: '把大模型搬进另一台链上虚拟机',
-    traditional: '全网复算仍会放大成本、隐私泄露、非确定性和外部副作用。',
-    acvmLabel: 'ACVM 边界',
-    acvmTitle: '链下完成工作，链上验证责任',
-    acvm: 'Intent 冻结目标，回执绑定过程，Validator 验收结果，状态机完成结算。',
+    traditionalLabel: '使用量计费',
+    traditionalTitle: '调用完成即可出账',
+    traditional: '请求数、Token、GPU 时间和工具日志适合计量成本。',
+    acvmLabel: '结果付费',
+    acvmTitle: '验收终局才可结算',
+    acvm: 'Intent 冻结付费条件，Validator 验收证据，状态机只支付一次。',
   }}
-  figureLabel="FINAL THESIS / VERIFY EVIDENCE → COMMIT STATE → SETTLE RESPONSIBILITY"
+  figureLabel="FINAL THESIS / METER USAGE → VERIFY OUTCOME → RELEASE PAYMENT"
   visual={<AcvmConclusionArchitecture />}
 >
 
-### 一套 ACVM 设计至少要回答五个问题
+### 一个结果要触发付款，至少回答五个问题
 
 1. **谁授权**：身份、能力和预算由谁签名，权限能否在委托中收窄？
 2. **做了什么**：输入、代码、模型、工具和输出怎样绑定到同一个 `taskId`？
@@ -178,13 +178,17 @@ interface ChainAdapter {
 5. **何时可以结算**：底层链达到什么终局条件后，资产与责任才能不可逆地转移？
 
 ```text file="acvm-thesis.txt"
-UTXO ledger : valid ownership history
-EVM         : valid deterministic state transition
-ACVM        : valid evidence-driven task transition
+usageCost = meter(requests, tokens, compute)
 
-Intent → Execute off-chain → Verify claims → Finalize state → Settle
+payout = escrow × 1[
+  accepted(intent, evidence, verdict)
+  && challengeClosed
+  && finalityReached
+]
+
+Usage measures cost. Verified outcomes trigger settlement.
 ```
 
-如果一项设计只能展示 Agent 输出，却说不清授权、证据、验收、失败和终局，它仍是带钱包的链下服务，不是完整的 Agentic Contract 协议。
+如果一项设计只能展示 Agent 输出，却说不清付费结果、证据、验收、失败和终局，它仍是带钱包的链下服务，不是结果付费基础设施。
 
 </LessonChapter>

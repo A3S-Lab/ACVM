@@ -47,6 +47,9 @@ const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = 
   proof: 'proof',
   intelligence: 'proof',
   'spec-poi': 'proof',
+  'economy-roles': 'network',
+  'economy-waterfall': 'state',
+  'economy-incentives': 'proof',
   chains: 'chains',
   stories: 'network',
 };

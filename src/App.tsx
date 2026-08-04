@@ -15,6 +15,7 @@ import ExecutionCourse from './content/01b-execution.mdx';
 import AcvmContractCourse from './content/02-acvm-contract.mdx';
 import AcvmStateCourse from './content/03-acvm-state.mdx';
 import AcvmTrustCourse from './content/04-acvm-trust.mdx';
+import AcvmEconomicsCourse from './content/04b-acvm-economics.mdx';
 import AcvmNetworkCourse from './content/05-acvm-network.mdx';
 import { chapterForScreen, navigation, screens } from './course';
 
@@ -436,7 +437,7 @@ export function App() {
           ><span aria-hidden="true"><i /><i /><i /></span></button>
           <a className="brand" href="#top" aria-label="ACVM 课程封面" onClick={(event) => { event.preventDefault(); goToScreen(0); }}>
             <LogoMark />
-            <span><strong>ACVM</strong><small>TECHNICAL DECK</small></span>
+            <span><strong>ACVM</strong><small>OUTCOME SETTLEMENT</small></span>
           </a>
         </div>
         <nav className={menuOpen ? 'is-open' : ''} aria-label="课程章节">
@@ -487,22 +488,22 @@ export function App() {
           <BlockchainBackdrop />
           <div className="screen-inner hero-layout">
             <div className="hero-copy">
-              <span className="hero-eyebrow"><i /> ACVM / TRUST INFRASTRUCTURE</span>
-              <h1>从区块链原理<br /><em className="hero-full-name">到 ACVM</em></h1>
-              <p>Agent 的工作发生在链下，付款却会改变共享状态。整套内容沿一笔任务追问：谁授权、谁验证、何时终局、失败由谁负责。</p>
+              <span className="hero-eyebrow"><i /> AI + BLOCKCHAIN / OUTCOME SETTLEMENT</span>
+              <h1>从按调用量付费<br /><em className="hero-full-name">到按已验证结果付费</em></h1>
+              <p>多数 AI 服务能计量请求、Token 和算力，却不能证明业务结果已经达标。ACVM 把目标、证据、验收、争议和付款绑定到同一任务，让验证通过的结果成为结算依据。</p>
               <ul className="hero-benefits" aria-label="课程三段论">
-                <li><Icon name="key" />UTXO：表达所有权</li>
-                <li><Icon name="terminal" />EVM：重放程序</li>
-                <li><Icon name="brain" />ACVM：验证任务回执</li>
+                <li><Icon name="key" />Intent：先冻结付费条件</li>
+                <li><Icon name="shield" />Validator：独立验收结果</li>
+                <li><Icon name="receipt" />Finality：通过后才付款</li>
               </ul>
               <div className="hero-actions">
-                <a href="#acvm-use-cases" className="button button--primary" onClick={(event) => { event.preventDefault(); goToScreen(1); }}>先看应用 <Icon name="arrow" /></a>
-                <a href="#trust-infrastructure" className="button button--secondary" onClick={(event) => { event.preventDefault(); goToScreen(screens.findIndex(([id]) => id === 'trust-infrastructure')); }}>查看五层框架</a>
+                <a href="#acvm-use-cases" className="button button--primary" onClick={(event) => { event.preventDefault(); goToScreen(1); }}>先看付费差异 <Icon name="arrow" /></a>
+                <a href="#lifecycle" className="button button--secondary" onClick={(event) => { event.preventDefault(); goToScreen(screens.findIndex(([id]) => id === 'lifecycle')); }}>查看结算流程</a>
               </div>
             </div>
             <CourseJourney />
           </div>
-          <span className="hero-footnote"><i /> CASE → AUTHORITY → REPLAY → EVIDENCE → FINALITY → PAY</span>
+          <span className="hero-footnote"><i /> CALL → INTENT → WORK → EVIDENCE → VERDICT → FINALITY → PAY</span>
           <span className="screen-number" aria-hidden="true">00</span>
         </section>
 
@@ -512,6 +513,7 @@ export function App() {
         <AcvmContractCourse />
         <AcvmStateCourse />
         <AcvmTrustCourse />
+        <AcvmEconomicsCourse />
         <AcvmNetworkCourse />
       </main>
 

@@ -102,8 +102,8 @@ if (JSON.stringify(expectedLessonIds.slice(0, coreCaseIds.length)) !== JSON.stri
   throw new Error(`The two core cases must open the story before blockchain foundations: ${JSON.stringify(expectedLessonIds.slice(0, 3))}`);
 }
 const storyQuestionCount = courseSource.match(/\bquestion: '/g)?.length ?? 0;
-if (storyQuestionCount !== 8) {
-  throw new Error(`Expected one story question for the cover, six chapters, and epilogue; found ${storyQuestionCount}`);
+if (storyQuestionCount !== 9) {
+  throw new Error(`Expected one story question for the cover, seven chapters, and epilogue; found ${storyQuestionCount}`);
 }
 if (closingTags !== actualLessonIds.length) {
   throw new Error(`LessonChapter tags are unbalanced: ${actualLessonIds.length} open, ${closingTags} closed`);

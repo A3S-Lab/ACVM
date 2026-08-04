@@ -150,31 +150,31 @@ export function AcvmConclusionArchitecture() {
   const stages = [
     {
       index: '01',
-      name: 'UTXO + PoW',
-      object: '所有权历史',
-      rule: '签名 + UTXO + PoW 排序',
-      result: '谁能花哪一笔钱',
+      name: 'AI RUNTIME',
+      object: '调用与执行',
+      rule: '请求 + Token + 算力 + 工具日志',
+      result: '证明资源被使用',
     },
     {
       index: '02',
-      name: 'EVM',
-      object: '程序状态',
-      rule: '交易 + EVM 重放 + stateRoot',
-      result: '哪次状态转换有效',
+      name: 'ACVM',
+      object: '结果验收',
+      rule: 'Intent + Evidence + Validator + Dispute',
+      result: '证明付费条件成立',
     },
     {
       index: '03',
-      name: 'ACVM',
-      object: '链下任务状态',
-      rule: 'Intent + 回执 + Validator + 争议',
-      result: '哪个外部结果可以结算',
+      name: 'SETTLEMENT',
+      object: '资金与责任',
+      rule: 'Escrow + Finality + Spent(taskId)',
+      result: '通过才付，失败可追责',
     },
   ] as const;
 
   return (
     <LearningPanel
-      code="UTXO → EVM → ACVM"
-      status="ONE CONSISTENT ARGUMENT"
+      code="CALL METER → VERIFY OUTCOME → PAY"
+      status="PAYMENT CONDITION CHANGED"
       className="acvm-conclusion-panel"
     >
       <div className="conclusion-stages">
@@ -193,14 +193,14 @@ export function AcvmConclusionArchitecture() {
       </div>
       <blockquote className="conclusion-thesis">
         <Icon name="shield" />
-        <p><strong>共识不必运行所有计算。</strong><span>它必须确定：什么证据有资格改变共享状态，失败后由谁负责。</span></p>
+        <p><strong>调用量用来计算成本；已验证结果才触发付款。</strong><span>ACVM 不取消资源计量，它把业务结算推迟到验收、挑战和终局之后。</span></p>
       </blockquote>
       <footer className="conclusion-checks">
-        <DataChip tone="violet">授权可验证</DataChip>
-        <DataChip tone="violet">执行可归责</DataChip>
-        <DataChip tone="violet">结果可验收</DataChip>
-        <DataChip tone="violet">争议可终局</DataChip>
-        <DataChip tone="violet">结算可重放</DataChip>
+        <DataChip tone="violet">目标先冻结</DataChip>
+        <DataChip tone="violet">工作留在链下</DataChip>
+        <DataChip tone="violet">证据独立验收</DataChip>
+        <DataChip tone="violet">争议有窗口</DataChip>
+        <DataChip tone="violet">终局后付款</DataChip>
       </footer>
     </LearningPanel>
   );

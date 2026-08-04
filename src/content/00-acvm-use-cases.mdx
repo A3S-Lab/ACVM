@@ -9,27 +9,29 @@ import { LessonChapter } from '../components/LessonChapter'
 <LessonChapter
   id="acvm-use-cases"
   className="foundation-screen acvm-use-cases-screen"
-  eyebrow="CHAPTER 01 · TWO JOBS, ONE QUESTION"
-  title="Agent 说做完了"
-  accent="凭什么付款"
-  body="GEO 要证明引用份额真的增加；社会模拟要在不泄露个体数据的前提下交付可信统计。两项工作都发生在链下，付款却需要一份可独立复核的完成证据。"
+  eyebrow="CHAPTER 01 · CHANGE THE PAYMENT CONDITION"
+  title="调用完成了"
+  accent="结果达标了吗"
+  body="多数 AI 服务按请求、Token 或算力计费，这些指标能说明资源被消耗，却不能说明业务结果已经达到约定标准。ACVM 增加一层结果协议：验收通过并达到终局后，托管资金才释放。"
   comparison={{
-    traditionalLabel: '普通 AI 服务',
-    traditionalTitle: '过程由服务商自己记录',
-    traditional: 'API 返回成功、报表或截图不能说明业务结果已经达到约定标准。',
-    acvmLabel: 'ACVM',
-    acvmTitle: '验收条件在执行前冻结',
-    acvm: '任务、产物、裁决与最终状态沿同一 taskId 形成可审计证据链。',
+    traditionalLabel: '调用计费',
+    traditionalTitle: '请求完成就产生账单',
+    traditional: 'API 返回成功、Token 用量和运行时长只能证明调用发生。',
+    acvmLabel: '结果结算',
+    acvmTitle: '验收终局后才释放付款',
+    acvm: 'Intent、产物、证据、裁决和资金状态沿同一 taskId 推进。',
   }}
   figureLabel="CASE FILE / GEO + SOCIAL SIMULATION → ONE VERIFIABLE WORKFLOW"
   visual={<AcvmUseCasesArchitecture />}
 >
 
-### 两个案件，一条主线
+### 调用量是成本计量，不是付款证明
 
 GEO 购买的不是文章数量，而是独立观测到的引用增量。社会模拟购买的不是一批貌似精确的数字，而是在冻结假设、私有输入和随机过程下得到的可复核群体统计。
 
-这两项服务共享四步：调用方先签名目标和验收口径；Agent 在链下执行；独立 Validator 检查证据；结果进入终局后，合约才改变状态并付款。后面的共享账本、共识和确定性虚拟机，只为解释这四步为什么可信、边界又在哪里。
+这两项服务共享四步：调用方先签名付费结果和验收口径；Agent 在链下执行并留下回执；独立 Validator 检查证据，挑战者可以提交反证；裁决进入终局后，合约才改变状态并付款。调用量仍可用于预算上限和成本核算，但不能单独触发业务结算。
+
+后面的共享账本、共识和确定性虚拟机，只为回答这四步为什么不能被单方改写，以及一笔结果付款什么时候真正不可逆。
 
 </LessonChapter>
 

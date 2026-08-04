@@ -1,43 +1,42 @@
 import type { ReactNode } from 'react';
-import { screens } from '../course';
 import { Icon, LogoMark } from './Icons';
 import { DataChip, FlowArrow, LearningPanel } from './LearningPanel';
 
 const storyMoves = [
   {
-    className: 'is-case',
+    className: 'is-call',
     index: '00',
-    name: '两个案件',
-    summary: '先问：凭什么付款',
+    name: '按调用付费',
+    summary: '请求成功 → 产生账单',
     icon: <Icon name="receipt" />,
-    chips: ['GEO', '社会模拟'],
-    tone: 'green',
-  },
-  {
-    className: 'is-ledger',
-    index: '01',
-    name: '共享账本',
-    summary: '合法记录 → 共同历史',
-    icon: <Icon name="key" />,
-    chips: ['授权', '排序', '终局'],
+    chips: ['请求', 'Token', '算力'],
     tone: 'amber',
   },
   {
-    className: 'is-vm',
+    className: 'is-gap',
+    index: '01',
+    name: '结果缺口',
+    summary: '调用完成 ≠ 结果达标',
+    icon: <Icon name="eye" />,
+    chips: ['自报', '争议', '责任'],
+    tone: 'red',
+  },
+  {
+    className: 'is-trust',
     index: '02',
-    name: '合约虚拟机',
-    summary: '程序 → 可验证状态',
-    icon: <Icon name="terminal" />,
-    chips: ['重放', 'Gas', '边界'],
+    name: '可验证条件',
+    summary: '规则 + 证据 → 共同判定',
+    icon: <Icon name="shield" />,
+    chips: ['授权', '验收', '终局'],
     tone: 'blue',
   },
   {
     className: 'is-acvm',
     index: '03',
     name: 'ACVM',
-    summary: '链下任务 → 最终回执',
+    summary: '已验证结果 → 释放付款',
     icon: <LogoMark />,
-    chips: ['验收', '争议', '结算'],
+    chips: ['Intent', '挑战', '结算'],
     tone: 'violet',
   },
 ] as const satisfies readonly {
@@ -47,17 +46,17 @@ const storyMoves = [
   summary: string;
   icon: ReactNode;
   chips: readonly string[];
-  tone?: 'amber' | 'blue' | 'green' | 'violet';
+  tone?: 'amber' | 'blue' | 'green' | 'red' | 'violet';
 }[];
 
-const transitions = ['需要共同事实', '从记录扩展到程序', 'AI 无法重放'] as const;
+const transitions = ['买方要的是结果', '需要共同判定', '把判定写成协议'] as const;
 
 export function CourseJourney() {
   return (
-    <LearningPanel code="STORY / FROM A PAYMENT QUESTION TO ACVM" status={`${screens.length - 1} SLIDES`} className="course-journey">
+    <LearningPanel code="CALL-BASED → OUTCOME-BASED" status="VERIFY BEFORE PAY" className="course-journey">
       <div className="journey-question">
-        <small>全场只追问这一件事</small>
-        <strong>Agent 完成链外工作后，凭什么改变共享状态并获得付款？</strong>
+        <small>结算单位发生变化</small>
+        <strong>客户真正购买的是一次调用，还是一个达到标准的结果？</strong>
       </div>
       <div className="journey-track" tabIndex={0} aria-label="从业务案件到 ACVM 解法的四幕故事；窄屏可横向滚动">
         {storyMoves.map((move, index) => (
@@ -74,8 +73,8 @@ export function CourseJourney() {
       </div>
       <footer className="journey-invariant">
         <Icon name="shield" />
-        <span><small>最后得到的答案</small><strong>不重放 AI 的全部工作；冻结验收规则，验证证据，再结算责任</strong></span>
-        <code>RULE → WORK → EVIDENCE → FINALITY → PAY</code>
+        <span><small>ACVM 的位置</small><strong>把链下结果变成可验证、可争议、可终局的付款条件</strong></span>
+        <code>USAGE = COST METER · VERIFIED OUTCOME = PAYMENT TRIGGER</code>
       </footer>
     </LearningPanel>
   );
