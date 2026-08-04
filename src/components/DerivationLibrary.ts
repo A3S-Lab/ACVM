@@ -293,12 +293,4 @@ export const derivations = {
     '预算不超发、能力不扩大、依赖图无环且全部必需子任务回执有效时，父任务才可结算。',
     'ANS 记录新鲜；父任务明确必需与可选子任务；子合约不能修改 a3s-box 的系统运行边界。',
   ),
-  socialSimulation: derive(
-    'xₜ₊₁=Fθ(xₜ,aₜ,ξₜ);  μ̂=(1/K)Σₖ g(τₖ);  CI95=μ̂±1.96·s/√K;  simRoot=Merkle(runIdₖ∥seedₖ∥traceRootₖ)',
-    [['Fθ', '由 modelRoot 与 ruleRoot 固定的社会状态转换模型。'], ['ξₜ/seedₖ', '由已承诺随机种子生成的随机事件。'], ['K/τₖ', '独立重复实验数量与第 k 条完整仿真轨迹。']],
-    [['Commit assumptions', '先冻结群体参数、行为规则、数据版本、干预方案和随机种子生成方式。'], ['Run independent replicas', '不同机构、企业和个人节点运行 K 次实验，每次提交轨迹根和结果摘要。'], ['Validate statistics', 'Validator 抽样复算轨迹、检查种子唯一性，再从通过的实验计算均值、方差和置信区间。']],
-    '∀k: VerifyRun(modelRoot,ruleRoot,dataRoot,seedₖ,traceRootₖ)=1 ∧ seeds unique ∧ K≥Kmin',
-    '验证通过只证明在已声明模型与数据假设下正确执行并统计，不证明模拟结论必然等于现实。',
-    '重复实验近似独立；统计量有有限方差；外部现实有效性需要回测、校准和领域专家另行评估。',
-  ),
 } as const;

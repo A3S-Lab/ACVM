@@ -18,8 +18,8 @@ const scenes: Record<MotionScene, SceneDefinition> = {
   'ledger-evolution': {
     label: '状态机的三次演化',
     nodes: [
-      { title: 'Bitcoin', note: '谁拥有价值', tone: '#f7931a' },
-      { title: 'Ethereum', note: '程序怎样改状态', tone: '#8793ff' },
+      { title: 'UTXO Ledger', note: '谁拥有价值', tone: '#f7bf68' },
+      { title: 'Contract VM', note: '程序怎样改状态', tone: '#8793ff' },
       { title: 'ACVM', note: '链下工作怎样被验收', tone: '#74f7c5' },
     ],
   },

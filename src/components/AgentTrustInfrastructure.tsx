@@ -150,14 +150,14 @@ export function AcvmConclusionArchitecture() {
   const stages = [
     {
       index: '01',
-      name: 'Bitcoin',
+      name: 'UTXO + PoW',
       object: '所有权历史',
       rule: '签名 + UTXO + PoW 排序',
       result: '谁能花哪一笔钱',
     },
     {
       index: '02',
-      name: 'Ethereum',
+      name: 'EVM',
       object: '程序状态',
       rule: '交易 + EVM 重放 + stateRoot',
       result: '哪次状态转换有效',
@@ -173,7 +173,7 @@ export function AcvmConclusionArchitecture() {
 
   return (
     <LearningPanel
-      code="BITCOIN → ETHEREUM → ACVM"
+      code="UTXO → EVM → ACVM"
       status="ONE CONSISTENT ARGUMENT"
       className="acvm-conclusion-panel"
     >

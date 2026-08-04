@@ -9,6 +9,7 @@ if (!screensBlock) throw new Error('Could not find the screens declaration in sr
 
 const screenIds = [...screensBlock.matchAll(/\['([^']+)'/g)].map((match) => match[1]);
 const expectedLessonIds = screenIds.slice(1);
+const coreCaseIds = ['acvm-use-cases', 'geo-verification', 'simulation'];
 const speakerGuideIds = [...speakerGuideSource.matchAll(/^  (?:'([^']+)'|([a-z][a-z-]*)): \{$/gm)]
   .map((match) => match[1] ?? match[2]);
 const contentDirectory = 'src/content';
@@ -96,6 +97,13 @@ if (duplicates.length || missing.length || unexpected.length || !orderMatches) {
 }
 if (JSON.stringify(speakerGuideIds) !== JSON.stringify(screenIds)) {
   throw new Error(`Speaker guide order does not match screens:\n${JSON.stringify({ screenIds, speakerGuideIds }, null, 2)}`);
+}
+if (JSON.stringify(expectedLessonIds.slice(0, coreCaseIds.length)) !== JSON.stringify(coreCaseIds)) {
+  throw new Error(`The two core cases must open the story before blockchain foundations: ${JSON.stringify(expectedLessonIds.slice(0, 3))}`);
+}
+const storyQuestionCount = courseSource.match(/\bquestion: '/g)?.length ?? 0;
+if (storyQuestionCount !== 8) {
+  throw new Error(`Expected one story question for the cover, six chapters, and epilogue; found ${storyQuestionCount}`);
 }
 if (closingTags !== actualLessonIds.length) {
   throw new Error(`LessonChapter tags are unbalanced: ${actualLessonIds.length} open, ${closingTags} closed`);

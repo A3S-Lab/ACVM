@@ -99,7 +99,7 @@ export function ProofOfStakeArchitecture() {
   ] as const;
 
   return (
-    <LearningPanel code="ETHEREUM POS / SLOT → ATTESTATION → FINALITY" status="GASPER" className="pos-consensus-panel">
+    <LearningPanel code="GASPER POS / SLOT → ATTESTATION → FINALITY" status="GASPER" className="pos-consensus-panel">
       <div className="pos-selection">
         <section>
           <header><Icon name="key" /><span><small>VALIDATOR SET</small><strong>质押进入候选集合</strong></span></header>

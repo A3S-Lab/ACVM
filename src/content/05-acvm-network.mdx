@@ -1,10 +1,7 @@
 import { Code } from '../components/Code'
 import { LessonChapter } from '../components/LessonChapter'
 import { AgentResolutionArchitecture } from '../components/AgentResolutionArchitecture'
-import {
-  AgentTaskGraphArchitecture,
-  SocialSimulationArchitecture,
-} from '../components/ProtocolExpansionArchitecture'
+import { AgentTaskGraphArchitecture } from '../components/ProtocolExpansionArchitecture'
 import { ScenarioGraph } from '../components/ScenarioGraph'
 import { ChainArchitectureSimple } from '../components/SimplifiedArchitecture'
 import { AcvmConclusionArchitecture } from '../components/AgentTrustInfrastructure'
@@ -12,7 +9,7 @@ import { AcvmConclusionArchitecture } from '../components/AgentTrustInfrastructu
 <LessonChapter
   id="ans"
   className="ans-screen"
-  eyebrow="PART VIII · NETWORK / ANS & A2A"
+  eyebrow="CHAPTER 06 · AGENT NETWORK / DISCOVERY"
   title="ANS 智能体解析"
   accent="名称对应可验证服务声明"
   body="ANS 把名称解析为 DID、A2A 端点、能力、报价、信誉和 Validator 集。"
@@ -52,7 +49,7 @@ type AgentRecord = {
 <LessonChapter
   id="composition"
   className="composition-screen"
-  eyebrow="PART VIII · NETWORK / CONTRACT DAG"
+  eyebrow="CHAPTER 06 · AGENT NETWORK / DELEGATION"
   title="多 Agent 协作"
   accent="子任务继承预算与能力边界"
   body="父合约通过 ANS 委托子合约；每个子合约独立执行和验收，最后聚合回执。"
@@ -88,46 +85,9 @@ function aggregate(parent: ParentTask, children: ChildReceipt[]) {
 </LessonChapter>
 
 <LessonChapter
-  id="simulation"
-  className="simulation-screen"
-  eyebrow="PART VIII · NETWORK / PRIVACY-SEALED SIMULATION"
-  title="社会模拟即服务"
-  accent="加密输入、隔离执行、统计输出"
-  body="政策密文在隔离环境中解封；机构、企业和个人 Agent 私密评判，结果经安全聚合与独立复核。"
-  comparison={{
-    traditionalTitle: '中心化沙盘无法独立复现',
-    traditional: '模型、数据、随机种子和个体意见都由单一平台掌握。',
-    acvmTitle: '假设、轨迹和统计过程可核验',
-    acvm: '政策与个体数据不公开，只输出通过复核的群体指标和置信区间。',
-  }}
-  terms={['TEE', 'MPC', 'VRF', 'Receipt Root']}
-  figureLabel="DECENTRALIZED SOCIAL SIMULATION / ENCRYPTED POLICY & VERIFIED FORECAST"
-  visual={<SocialSimulationArchitecture />}
->
-
-### 模拟结果的验证范围
-
-社会模拟把前面所有组件放到同一流程：加密政策与私有画像留在隔离域；VRF 固定抽样和随机种子；多类 Agent 产生轨迹；MPC 或安全聚合只公开群体统计；独立 Validator 检查版本、样本与置信区间；最终回执根进入链上。
-
-```text file="simulation-evidence.txt"
-policyCommitment
-modelManifestRoot
-populationSnapshotRoot
-vrfSeed + vrfProof
-trajectoryRoot
-aggregationTranscriptRoot
-metrics + confidenceIntervals
-validatorSignatures
-```
-
-可复核不等于预测必然正确。协议能固定输入版本、随机过程和统计管线，却不能消除模型偏差、分布漂移或错误因果假设。输出应被表达为带不确定性的决策证据，而不是“链上真相”。
-
-</LessonChapter>
-
-<LessonChapter
   id="chains"
   className="chains-screen"
-  eyebrow="PART VIII · NETWORK / CHAIN ADAPTER"
+  eyebrow="CHAPTER 06 · AGENT NETWORK / CHAINS"
   title="多链部署"
   accent="保持任务语义，隔离底层链差异"
   body="适配器把身份、事件、状态、证明和最终性映射到目标链。"
@@ -162,7 +122,7 @@ interface ChainAdapter {
 <LessonChapter
   id="stories"
   className="stories-screen"
-  eyebrow="PART VIII · NETWORK / APPLICATION GRAPH"
+  eyebrow="CHAPTER 06 · AGENT NETWORK / APPLICATIONS"
   title="应用网络"
   accent="从按调用付费转向按已验收结果结算"
   body="拖动网络或点击节点，查看 GEO、量化交易、节能和采购等合约的执行与结算。"
@@ -186,7 +146,7 @@ interface ChainAdapter {
 5. 失败、超时、挑战和退款怎样进入确定性状态机？
 6. 链上最终保存哪些最小证据，谁能独立复查？
 
-三类系统处理不同对象：比特币确定**所有权历史**，以太坊确定**程序状态**，ACVM 概念模型根据证据和验收结果推进**链下任务状态**。ACVM 应用必须逐项定义授权、证据、验收、争议和最终性。
+三类状态机处理不同对象：UTXO 与 PoW 确定**所有权历史**，EVM 确定**程序状态**，ACVM 概念模型根据证据和验收结果推进**链下任务状态**。ACVM 应用必须逐项定义授权、证据、验收、争议和最终性。
 
 </LessonChapter>
 
@@ -196,7 +156,7 @@ interface ChainAdapter {
   eyebrow="FINAL · TAKEAWAY"
   title="ACVM 不复制外部计算"
   accent="它验证回执，再结算责任"
-  body="比特币解决所有权与排序，以太坊解决确定性程序执行。ACVM 延续同一条原则：共识只接受满足授权、证据、验收、争议和终局条件的任务回执。"
+  body="UTXO 与 PoW 解决所有权和排序，EVM 解决确定性程序执行。ACVM 延续同一条原则：共识只接受满足授权、证据、验收、争议和终局条件的任务回执。"
   comparison={{
     traditionalLabel: '错误理解',
     traditionalTitle: '把大模型搬进另一台链上虚拟机',
@@ -218,9 +178,9 @@ interface ChainAdapter {
 5. **何时可以结算**：底层链达到什么终局条件后，资产与责任才能不可逆地转移？
 
 ```text file="acvm-thesis.txt"
-Bitcoin  : valid ownership history
-Ethereum : valid deterministic state transition
-ACVM     : valid evidence-driven task transition
+UTXO ledger : valid ownership history
+EVM         : valid deterministic state transition
+ACVM        : valid evidence-driven task transition
 
 Intent → Execute off-chain → Verify claims → Finalize state → Settle
 ```

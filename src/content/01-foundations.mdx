@@ -17,19 +17,19 @@ import { MotionPlayer } from '../remotion/MotionPlayer'
 <LessonChapter
   id="btc-ledger"
   className="foundation-screen btc-ledger-screen"
-  eyebrow="PART I · BITCOIN / 01"
+  eyebrow="CHAPTER 02 · TRUSTED STATE / OWNERSHIP 01"
   title="双花问题"
   accent="合法签名不能确定交易顺序"
-  body="数字签名证明私钥持有者授权了交易，却无法阻止同一个 UTXO 被签给两个收款人。比特币还需要一套公开的排序与收敛规则。"
+  body="数字签名证明私钥持有者授权了交易，却无法阻止同一个 UTXO 被签给两个收款人。共享账本还需要一套公开的排序与收敛规则。"
   comparison={{
     traditionalLabel: '仅有数字签名',
     traditionalTitle: '两笔冲突交易都可能验签成功',
     traditional: '各节点收到交易的先后次序也可能不同。',
-    acvmLabel: 'BITCOIN',
+    acvmLabel: 'POW LEDGER',
     acvmTitle: '有效性检查与规范历史分开处理',
     acvm: '节点独立验签，共识协议处理交易顺序和分叉。',
   }}
-  figureLabel="BITCOIN FOUNDATION / DOUBLE-SPEND → ONE VALID HISTORY"
+  figureLabel="UTXO LEDGER / DOUBLE-SPEND → ONE VALID HISTORY"
   visual={<BitcoinLedgerArchitecture />}
 >
 
@@ -52,7 +52,7 @@ ordering:      the accepted chain places one conflicting spend first
 <LessonChapter
   id="btc-transaction"
   className="foundation-screen btc-transaction-screen"
-  eyebrow="PART I · BITCOIN / 02"
+  eyebrow="CHAPTER 02 · TRUSTED STATE / OWNERSHIP 02"
   title="UTXO 交易"
   accent="消费旧输出，创建新输出"
   body="钱包选择未花费输出作为输入，生成收款和找零输出，并对交易摘要签名。输入总额与输出总额的差额构成手续费。"
@@ -64,7 +64,7 @@ ordering:      the accepted chain places one conflicting spend first
     acvmTitle: '价值存在于带花费条件的输出中',
     acvm: '每个输入都能追溯到一笔旧交易的具体输出。',
   }}
-  figureLabel="BITCOIN TRANSACTION / INPUTS = OUTPUTS + FEE"
+  figureLabel="UTXO TRANSACTION / INPUTS = OUTPUTS + FEE"
   visual={<UtxoTransactionArchitecture />}
 >
 
@@ -95,7 +95,7 @@ function verifyTransaction(inputs: Input[], outputs: Output[], fee: bigint) {
 <LessonChapter
   id="btc-pow"
   className="foundation-screen btc-pow-screen"
-  eyebrow="PART I · BITCOIN / 03"
+  eyebrow="CHAPTER 02 · TRUSTED STATE / OWNERSHIP 03"
   title="PoW 出块权"
   accent="哈希目标构成一次公开抽签"
   body="矿工反复修改 nonce 和 coinbase extraNonce，直到区块头的双 SHA-256 哈希小于目标值。成功者获得候选区块提议权。"
@@ -107,7 +107,7 @@ function verifyTransaction(inputs: Input[], outputs: Output[], fee: bigint) {
     acvmTitle: '每次哈希都是独立试验',
     acvm: '单位时间的胜出概率与投入算力近似成正比。',
   }}
-  figureLabel="BITCOIN MINING / HASH LOTTERY · TARGET · CHAINWORK"
+  figureLabel="POW BLOCK PROPOSAL / HASH LOTTERY · TARGET · CHAINWORK"
   visual={<ProofOfWorkArchitecture />}
 >
 
@@ -127,14 +127,14 @@ expected block share of miner i ≈ hᵢ / Σh
 
 有效 PoW 只证明区块头满足目标。区块仍须通过交易、脚本、区块大小和 coinbase 奖励等全部规则；全节点会直接丢弃非法区块。
 
-资料：[Bitcoin white paper](https://bitcoin.org/bitcoin.pdf) · [Bitcoin Developer Guide: Mining](https://developer.bitcoin.org/devguide/mining.html)
+资料：[Nakamoto consensus paper](https://bitcoin.org/bitcoin.pdf) · [PoW mining guide](https://developer.bitcoin.org/devguide/mining.html)
 
 </LessonChapter>
 
 <LessonChapter
   id="btc-consensus"
   className="foundation-screen btc-consensus-screen"
-  eyebrow="PART I · BITCOIN / 04"
+  eyebrow="CHAPTER 02 · TRUSTED STATE / OWNERSHIP 04"
   title="分叉与确认"
   accent="累计工作量选择规范链"
   body="两个有效区块可能同时传播，节点会暂时接受不同链尖。后续区块让某一分支累计更多工作量，落败分支随即被重组。"
@@ -146,7 +146,7 @@ expected block share of miner i ≈ hᵢ / Σh
     acvmTitle: '比较有效分支的累计工作量',
     acvm: '确认数增加的是攻击者重写历史所需追赶的工作。',
   }}
-  figureLabel="BITCOIN CONSENSUS / VALIDITY → MOST WORK → CONFIRMATIONS"
+  figureLabel="POW CONSENSUS / VALIDITY → MOST WORK → CONFIRMATIONS"
   visual={<BitcoinConsensusArchitecture />}
 >
 
@@ -163,7 +163,7 @@ expected block share of miner i ≈ hᵢ / Σh
 <LessonChapter
   id="consensus-anatomy"
   className="foundation-screen consensus-anatomy-screen"
-  eyebrow="PART II · CONSENSUS / 01"
+  eyebrow="CHAPTER 02 · TRUSTED STATE / CONSENSUS 01"
   title="共识的五个环节"
   accent="区块提议不等于区块确认"
   body="共识协议分别规定成员资格、提议者选择、有效性检查、冲突处理和最终性。通常所说的“记账权”只对应第二项。"
@@ -201,25 +201,25 @@ function acceptCandidate(block: Block, localState: State) {
 <LessonChapter
   id="consensus-pos"
   className="foundation-screen consensus-pos-screen"
-  eyebrow="PART II · CONSENSUS / 02"
+  eyebrow="CHAPTER 02 · TRUSTED STATE / CONSENSUS 02"
   title="PoS 与 Gasper"
   accent="随机提议、委员会投票、检查点终局"
-  body="以太坊验证者质押 ETH 后进入候选集合。每个 slot 随机选择一名区块提议者，并选择委员会提交 attestations。"
+  body="Gasper 型 PoS 中，验证者质押原生资产后进入候选集合。每个 slot 随机选择一名区块提议者，并选择委员会提交 attestations。"
   comparison={{
     traditionalLabel: 'PoW',
     traditionalTitle: '算力决定哈希抽签次数',
     traditional: '分叉通过累计工作量和后续确认收敛。',
-    acvmLabel: 'ETHEREUM POS',
+    acvmLabel: 'GASPER POS',
     acvmTitle: '质押决定抽样权重与投票权重',
     acvm: 'LMD-GHOST 选链，Casper FFG 为检查点提供终局。',
   }}
-  figureLabel="ETHEREUM GASPER / RANDAO · PROPOSER · ATTESTATION · FINALITY"
+  figureLabel="GASPER POS / RANDAO · PROPOSER · ATTESTATION · FINALITY"
   visual={<ProofOfStakeArchitecture />}
 >
 
 ### 提议者和投票者承担不同职责
 
-以太坊把时间分成 12 秒的 slot，32 个 slot 组成一个 epoch。RANDAO 提供协议随机数；每个 slot 选出一名 proposer 构造 beacon block，同时把验证者分配到委员会，对链头和检查点提交 attestation。空 slot 不会停止链，后续 slot 仍可继续出块。
+Gasper 型 PoS 把时间分成 12 秒的 slot，32 个 slot 组成一个 epoch。RANDAO 提供协议随机数；每个 slot 选出一名 proposer 构造 beacon block，同时把验证者分配到委员会，对链头和检查点提交 attestation。空 slot 不会停止链，后续 slot 仍可继续出块。
 
 Gasper 组合两套规则：
 
@@ -228,14 +228,14 @@ Gasper 组合两套规则：
 
 双重提议、双重投票和 surround vote 会触发 slashing。攻击两个冲突终局至少要求约 1/3 质押违反可罚没条件，因此 PoS 的安全成本来自可识别、可销毁的质押。
 
-资料：[Ethereum Proof-of-Stake](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/) · [Gasper](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/gasper/) · [Block proposal](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/block-proposal/)
+资料：[Proof-of-Stake specification](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/) · [Gasper](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/gasper/) · [Block proposal](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/block-proposal/)
 
 </LessonChapter>
 
 <LessonChapter
   id="consensus-bft"
   className="foundation-screen consensus-bft-screen"
-  eyebrow="PART II · CONSENSUS / 03"
+  eyebrow="CHAPTER 02 · TRUSTED STATE / CONSENSUS 03"
   title="BFT 与 HotStuff"
   accent="Leader 提议，法定人数确认"
   body="BFT 协议在已知验证者集合中按轮次运行。Leader 负责提议，副本检查后投票，达到 2f+1 票才形成 Quorum Certificate。"
@@ -272,7 +272,7 @@ HotStuff 的部分同步假设允许网络暂时任意延迟；网络恢复到�
 <LessonChapter
   id="consensus-governance"
   className="foundation-screen consensus-governance-screen"
-  eyebrow="PART II · CONSENSUS / 04"
+  eyebrow="CHAPTER 02 · TRUSTED STATE / CONSENSUS 04"
   title="PoA、DPoS 与 PoI"
   accent="成员产生方式不能替代最终性协议"
   body="PoA 通过授权身份控制签名者集合，DPoS 通过持币投票选代表，PoI 通过已验收任务计算贡献。三者仍需区块排序和最终确认规则。"

@@ -9,6 +9,7 @@ import { TechTerm, type TechKey } from './TechTerm';
 
 const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = {
   'acvm-use-cases': 'flow',
+  'geo-verification': 'proof',
   'btc-ledger': 'network',
   'btc-transaction': 'state',
   'btc-pow': 'proof',
@@ -107,7 +108,14 @@ function SectionHeading({
   comparison,
   terms = [],
   connection,
-}: Omit<LessonChapterProps, 'id' | 'className' | 'figureLabel' | 'visual' | 'children'> & { index: number; connection: string }) {
+  storyAct,
+  storyQuestion,
+}: Omit<LessonChapterProps, 'id' | 'className' | 'figureLabel' | 'visual' | 'children'> & {
+  index: number;
+  connection: string;
+  storyAct: string;
+  storyQuestion: string;
+}) {
   return (
     <header className="section-heading">
       <div className="section-meta">
@@ -116,6 +124,7 @@ function SectionHeading({
           CH {String(index).padStart(2, '0')} / {String(screens.length - 1).padStart(2, '0')}
         </span>
       </div>
+      <div className="story-question"><small>{storyAct}</small><span>{storyQuestion}</span></div>
       <h2>{title}<br /><em>{accent}</em></h2>
       <p>{body}</p>
       <div className="acvm-connection">
@@ -166,6 +175,8 @@ export function LessonChapter({
           comparison={comparison}
           terms={terms}
           connection={guide.connection}
+          storyAct={chapter.act}
+          storyQuestion={chapter.question}
         />
         <div className="technical-visual lesson-stage">
           <div className="lesson-diagram">{visual}</div>

@@ -1,10 +1,12 @@
 # ACVM Interactive Curriculum
 
 This repository is a presentation-first, interactive Chinese-language course
-that derives the Agentic Contract VM concept from first principles. It starts with Bitcoin's
-ownership ledger, separates proposer selection from validation and finality,
-extends the model into Ethereum's programmable state machine, then introduces
-verifiable off-chain AI work before defining the ACVM protocol model.
+that derives the Agentic Contract VM concept from one practical question: when
+an Agent completes work off-chain, what makes the result eligible for payment?
+GEO result verification and privacy-sealed social simulation open the story.
+UTXO ownership, consensus finality, and deterministic virtual-machine replay
+then establish the trust primitives whose execution boundary leads to ACVM's
+evidence-driven task state machine.
 
 The repository currently provides a concept specification and teaching
 experience. Its TypeScript interfaces, protocol transitions, and proof paths are
@@ -13,42 +15,41 @@ production SDK.
 
 ## Learning path
 
-The 43 chapters follow one continuous question: what evidence is allowed to
-change shared state, and who remains accountable when external work fails?
+The 44 lessons are grouped into six chapters and an epilogue. They follow one
+question from concrete cases to protocol design: what evidence may change
+shared state, when may settlement occur, and who remains accountable when
+external work fails?
 
-1. **ACVM in use (1 chapter).** An autonomous procurement task anchors the
-   course: a caller signs the goal and budget, Agents delegate work, Workers
-   call external tools, Validators check the result, and settlement happens
-   only after acceptance and finality. Private research and long-running Agent
-   collaboration show how the same protocol shape applies elsewhere.
-2. **Bitcoin — one valid ownership history (4 chapters).** Double-spending,
-   signatures and UTXOs, Merkle commitments and proof of work, forks and
-   probabilistic finality.
-3. **Consensus mechanisms (4 chapters).** Membership and Sybil resistance,
-   proposer selection, independent validation, fork choice, and finality across
-   PoW, Ethereum PoS/Gasper, BFT/HotStuff, PoA, DPoS, and Raft, plus the
-   boundary between PoI-based proposer weighting and finality.
-4. **Ethereum — a programmable state machine (4 chapters).** World state,
-   deterministic EVM execution, Gas and transaction receipts, and the oracle
-   boundary.
-5. **AI and blockchains — verifiable external work (7 chapters).** Why model
-   inference should not be replicated by every validator, the exact EVM/ACVM
-   execution boundary, the Worker/Validator pipeline, verification tradeoffs,
-   asynchronous Agentic Contracts, the five-layer trust-infrastructure model,
-   and the gap between transaction correctness and task correctness.
-6. **ACVM contract and runtime (5 chapters).** Content-addressed contract trees,
-   the Task File ABI, the full lifecycle, runtime roles, and the consensus
-   boundary.
-7. **ACVM state and finality (4 chapters).** Deterministic task transitions,
-   receipt verification, disputes, and system limits.
-8. **Trust and proof systems (8 chapters).** Identities and capabilities,
-   external-data evidence, isolated and fog execution, runtime policy,
-   incremental proofs, Proof of Intelligence, and its research boundary.
-9. **Agent networks and applications (5 chapters).** Agent discovery, task DAGs,
-   private social simulation, chain adapters, and application review patterns.
-10. **Conclusion (1 chapter).** Bitcoin validates ownership history, Ethereum
-   validates deterministic program state, and ACVM validates evidence-driven
-   task transitions without replicating external computation.
+1. **Case opening (3 lessons).** GEO result verification and social simulation
+   show what the buyer actually purchases. Two five-step animations freeze the
+   acceptance rules, run work off-chain, collect independent evidence, reach
+   finality, and release payment.
+2. **Blockchain trust primitives (12 lessons).** Signatures, double-spending,
+   UTXO state transitions, Merkle commitments, PoW block proposal, fork choice,
+   and probabilistic finality establish a shared ownership history. The same
+   chapter separates membership, proposal, validation, conflict handling, and
+   finality across PoW, Gasper-style PoS, BFT/HotStuff, PoA, DPoS, Raft, and
+   PoI. It then adds account state, deterministic EVM replay, Gas, receipts, and
+   the oracle boundary.
+3. **The AI execution break (7 lessons).** Model inference cannot be replayed
+   by every validator without multiplying cost, leaking private inputs, and
+   reproducing external side effects. The chapter draws the EVM/ACVM boundary,
+   introduces Worker and Validator roles, compares verification strategies, and
+   separates transaction correctness from task correctness.
+4. **ACVM task protocol (9 lessons).** Content-addressed contract trees, the
+   Task File ABI, lifecycle and runtime roles, minimal on-chain checks,
+   deterministic task transitions, receipt verification, disputes, and system
+   limits turn an off-chain job into a state machine that can settle.
+5. **Off-chain evidence engineering (8 lessons).** Identities, capabilities,
+   external-data evidence, private and fog execution, runtime policy,
+   incremental proofs, and Proof of Intelligence explain how claims become
+   auditable without claiming that every business truth can be proven on-chain.
+6. **Multi-Agent coordination and settlement (4 lessons).** Agent discovery,
+   delegated task DAGs, chain adapters, and application review patterns show
+   how authority, budget, evidence, and responsibility move across a network.
+
+The epilogue states the boundary in one sentence: ACVM does not replicate
+external computation; it verifies task receipts and settles responsibility.
 
 ## Teaching stack
 
@@ -56,20 +57,27 @@ change shared state, and who remains accountable when external work fails?
 - The desktop shell uses a centered 16:9 stage, slide thumbnails, keyboard and
   touch navigation, a progress counter, and fullscreen presentation mode.
 - Every slide states how its concept changes an ACVM design decision, keeping
-  the Bitcoin and Ethereum foundations attached to the main argument.
-- `LessonChapter` now presents one diagram-first view without the former
-  diagram/deep-reading switcher. Detailed reference material remains in source.
+  the ledger, consensus, and deterministic-VM foundations attached to the main
+  argument.
+- Each of the six chapters carries one visible story question. The sequence
+  moves from a payment dispute, through trusted state and the AI replay break,
+  to task protocol, evidence engineering, and multi-Agent settlement.
+- The GEO and social-simulation scenes auto-advance through five states, pause
+  when off-screen, honor reduced-motion preferences, and support direct step
+  selection plus play/pause control.
+- `LessonChapter` presents one diagram-first view. Detailed reference material
+  remains in source instead of being hidden behind view-switching buttons.
 - The closable speaker guide follows the active slide and supplies one takeaway,
   an opening line, three speaking beats, an ACVM connection, a transition, and
   suggested timing. It docks beside the stage on desktop, defaults closed on
   mobile, remembers the user's choice, and can be toggled with `G`.
 - Code Hike examples and Remotion scenes remain build-checked reference assets;
   the dedicated TypeScript walkthrough slide provides the visible code tour.
-- `src/course.ts` is the source of truth for chapter order and navigation.
-- `scripts/check-course.mjs` ensures MDX chapter IDs exactly match that order and
+- `src/course.ts` is the source of truth for lesson order and chapter grouping.
+- `scripts/check-course.mjs` ensures MDX lesson IDs exactly match that order and
   verifies speaker-guide coverage while guarding narrator-style filler.
 
-The AI-agent scalability section adapts the five-layer analysis from
+The AI-agent scalability chapter adapts the five-layer analysis from
 *A Survey of Blockchain Transaction Processing and Scalability: Toward a Trust
 Infrastructure for AI Agents*. The mapping to ACVM protocol objects is an
 engineering interpretation, not a claim made directly by the paper.

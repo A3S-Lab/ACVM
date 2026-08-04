@@ -418,13 +418,10 @@ body {
 }
 
 .thumbnail-slide[data-chapter='usecase'] { --thumb-accent: #79d8b3; }
-.thumbnail-slide[data-chapter='bitcoin'] { --thumb-accent: #f2c879; }
-.thumbnail-slide[data-chapter='consensus'] { --thumb-accent: #ff9e8a; }
-.thumbnail-slide[data-chapter='ethereum'] { --thumb-accent: #8fa3bf; }
-.thumbnail-slide[data-chapter='agent'] { --thumb-accent: #79d8b3; }
-.thumbnail-slide[data-chapter='contract'] { --thumb-accent: #c5a7ff; }
-.thumbnail-slide[data-chapter='state'] { --thumb-accent: #7bd7ce; }
-.thumbnail-slide[data-chapter='proof'] { --thumb-accent: #f0b7d4; }
+.thumbnail-slide[data-chapter='blockchain'] { --thumb-accent: #f2c879; }
+.thumbnail-slide[data-chapter='gap'] { --thumb-accent: #79d8b3; }
+.thumbnail-slide[data-chapter='protocol'] { --thumb-accent: #c5a7ff; }
+.thumbnail-slide[data-chapter='evidence'] { --thumb-accent: #f0b7d4; }
 .thumbnail-slide[data-chapter='network'] { --thumb-accent: #78aef7; }
 .thumbnail-slide[data-chapter='closing'] { --thumb-accent: #ff9e8a; }
 
@@ -475,13 +472,10 @@ body {
 }
 
 .screen[data-chapter='usecase'] { --accent: #79d8b3; --slide-accent-rgb: 121, 216, 179; }
-.screen[data-chapter='bitcoin'] { --accent: #f2c879; --slide-accent-rgb: 242, 200, 121; }
-.screen[data-chapter='consensus'] { --accent: #ff9e8a; --slide-accent-rgb: 255, 158, 138; }
-.screen[data-chapter='ethereum'] { --accent: #8fa3bf; --slide-accent-rgb: 143, 163, 191; }
-.screen[data-chapter='agent'] { --accent: #79d8b3; --slide-accent-rgb: 121, 216, 179; }
-.screen[data-chapter='contract'] { --accent: #c5a7ff; --slide-accent-rgb: 197, 167, 255; }
-.screen[data-chapter='state'] { --accent: #7bd7ce; --slide-accent-rgb: 123, 215, 206; }
-.screen[data-chapter='proof'] { --accent: #f0b7d4; --slide-accent-rgb: 240, 183, 212; }
+.screen[data-chapter='blockchain'] { --accent: #f2c879; --slide-accent-rgb: 242, 200, 121; }
+.screen[data-chapter='gap'] { --accent: #79d8b3; --slide-accent-rgb: 121, 216, 179; }
+.screen[data-chapter='protocol'] { --accent: #c5a7ff; --slide-accent-rgb: 197, 167, 255; }
+.screen[data-chapter='evidence'] { --accent: #f0b7d4; --slide-accent-rgb: 240, 183, 212; }
 .screen[data-chapter='network'] { --accent: #78aef7; --slide-accent-rgb: 120, 174, 247; }
 .screen[data-chapter='closing'] { --accent: #ff9e8a; --slide-accent-rgb: 255, 158, 138; }
 
@@ -565,8 +559,36 @@ body {
   font-weight: 900;
 }
 
+.story-question {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 6px 8px;
+  border: 1px solid rgba(var(--slide-accent-rgb), 0.2);
+  border-radius: 7px;
+  background: rgba(var(--slide-accent-rgb), 0.055);
+}
+
+.story-question small {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font: 750 7px var(--font-mono);
+  letter-spacing: 0.1em;
+}
+
+.story-question span {
+  overflow: hidden;
+  color: #c7d1de;
+  font-size: 8px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .section-heading h2 {
-  margin: 16px 0 12px;
+  margin: 12px 0 12px;
   font-size: clamp(34px, 3vw, 48px);
   line-height: 1.08;
   letter-spacing: -0.045em;

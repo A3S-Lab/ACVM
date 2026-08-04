@@ -488,11 +488,11 @@ export function App() {
           <div className="screen-inner hero-layout">
             <div className="hero-copy">
               <span className="hero-eyebrow"><i /> ACVM / TRUST INFRASTRUCTURE</span>
-              <h1>从比特币<br /><em className="hero-full-name">到 ACVM</em></h1>
-              <p>共识不必运行所有计算。它要解决的是：什么证据有资格改变共享状态，失败后由谁负责。</p>
+              <h1>从区块链原理<br /><em className="hero-full-name">到 ACVM</em></h1>
+              <p>Agent 的工作发生在链下，付款却会改变共享状态。整套内容沿一笔任务追问：谁授权、谁验证、何时终局、失败由谁负责。</p>
               <ul className="hero-benefits" aria-label="课程三段论">
-                <li><Icon name="key" />Bitcoin：确定所有权</li>
-                <li><Icon name="terminal" />Ethereum：重放程序</li>
+                <li><Icon name="key" />UTXO：表达所有权</li>
+                <li><Icon name="terminal" />EVM：重放程序</li>
                 <li><Icon name="brain" />ACVM：验证任务回执</li>
               </ul>
               <div className="hero-actions">
@@ -502,7 +502,7 @@ export function App() {
             </div>
             <CourseJourney />
           </div>
-          <span className="hero-footnote"><i /> DATA → NETWORK → CONSENSUS → EXECUTION → APPLICATION</span>
+          <span className="hero-footnote"><i /> CASE → AUTHORITY → REPLAY → EVIDENCE → FINALITY → PAY</span>
           <span className="screen-number" aria-hidden="true">00</span>
         </section>
 

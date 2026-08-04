@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { DetailHint, type ProofDerivation } from './DetailHint';
 import { derivations } from './DerivationLibrary';
 import { Icon, type IconName } from './Icons';
@@ -39,7 +39,6 @@ function useStageCycle(length: number, interval: number) {
 
   return { panelRef, activeStage, playing, setPlaying, selectStage };
 }
-
 function ProtocolChrome({ label, playing, onToggle }: { label: string; playing: boolean; onToggle: () => void }) {
   return (
     <header className="panel-chrome">
@@ -246,118 +245,6 @@ export function AgentTaskGraphArchitecture() {
         <DetailHint className="composition-formula" category="预算守恒" label={<code>Bparent = ΣBi + Bres = {allocated} + {reserve}</code>} title="父任务预算守恒" summary="父任务不能向子合约超额委托，也不能把同一预算重复结算。" derivation={derivations.taskDag} />
         <DetailHint className="composition-formula" category="回执聚合" label={<code>Rparent = Merkle(taskIdi, Ri)</code>} title="子任务回执聚合" summary="每个必需子任务回执按 taskId 排序后进入父任务根。" derivation={derivations.taskDag} />
       </footer>
-    </div>
-  );
-}
-
-type SimulationPreset = {
-  id: string;
-  title: string;
-  policy: string;
-  outcome: string;
-  baseline: number;
-  effect: number;
-  deviation: number;
-  unit: string;
-  secondary: string;
-};
-
-const simulationPresets: SimulationPreset[] = [
-  { id: 'policy', title: '预发布政策', policy: '加密政策 P-2048', outcome: '公共服务可达率', baseline: 41.2, effect: 6.8, deviation: 12.4, unit: '%', secondary: '群体分歧 0.18' },
-  { id: 'market', title: '市场规则', policy: '绿色补贴方案 M-17', outcome: '中小企业采用率', baseline: 34.6, effect: 8.1, deviation: 16.0, unit: '%', secondary: '财政敏感度 0.24' },
-  { id: 'coordination', title: '协作机制', policy: '应急协作规则 C-09', outcome: '跨机构响应率', baseline: 58.2, effect: 12.4, deviation: 19.0, unit: '%', secondary: '资源冲突率 7.1%' },
-];
-
-const simulationRegions: Array<{ label: string; actor: string; icon: IconName; tone: string }> = [
-  { label: '机构 Agent', actor: '公共服务机构 · 研究机构', icon: 'chain', tone: 'institution' },
-  { label: '企业 Agent', actor: '平台企业 · 服务企业', icon: 'terminal', tone: 'enterprise' },
-  { label: '个人 Agent', actor: '授权个人 · 社区代表', icon: 'fingerprint', tone: 'individual' },
-  { label: '复现实验', actor: '独立研究节点', icon: 'shield', tone: 'replica' },
-];
-
-function SimulationDots({ offset }: { offset: number }) {
-  return (
-    <div className="simulation-dots" aria-hidden="true">
-      {Array.from({ length: 18 }, (_, index) => <i style={{ '--dot-delay': `${((index + offset) % 9) * -0.18}s` } as CSSProperties} key={index} />)}
-    </div>
-  );
-}
-
-export function SocialSimulationArchitecture() {
-  const [presetId, setPresetId] = useState(simulationPresets[0].id);
-  const [population, setPopulation] = useState(2400);
-  const [runs, setRuns] = useState(100);
-  const preset = simulationPresets.find((item) => item.id === presetId) ?? simulationPresets[0];
-
-  const stats = useMemo(() => {
-    const mean = preset.baseline + preset.effect;
-    const error = 1.96 * preset.deviation / Math.sqrt(runs);
-    return { mean, error, totalSteps: population * runs };
-  }, [population, preset, runs]);
-
-  return (
-    <div className="diagram-panel simulation-panel">
-      <header className="panel-chrome">
-        <span><i /><i /><i /></span>
-        <code>DECENTRALIZED SOCIAL SIMULATION AS A SERVICE</code>
-        <strong><i /> PRIVACY SEALED</strong>
-      </header>
-
-      <nav className="simulation-tabs" aria-label="选择社会模拟场景">
-        {simulationPresets.map((item) => <button type="button" className={presetId === item.id ? 'is-active' : ''} onClick={() => setPresetId(item.id)} aria-pressed={presetId === item.id} key={item.id}>{item.title}</button>)}
-      </nav>
-
-      <div className="simulation-body">
-        <section className="simulation-input">
-          <header><Icon name="lock" /><span><small>USER UPLOAD · ENCRYPTED INPUT</small><strong>{preset.policy}</strong></span></header>
-          <p>政策正文只在获授权的隔离环境中解封。链上保存密文地址与内容承诺。</p>
-          <code>policyRoot 0x84…2d</code>
-          <code>accessQC 3 / 5</code>
-          <label><span><b>P</b>每轮参与 Agent<strong>{population.toLocaleString()}</strong></span><input type="range" min="400" max="5000" step="200" value={population} onChange={(event) => setPopulation(Number(event.currentTarget.value))} /></label>
-          <label><span><b>K</b>独立重复实验<strong>{runs}</strong></span><input type="range" min="20" max="240" step="20" value={runs} onChange={(event) => setRuns(Number(event.currentTarget.value))} /></label>
-          <footer><Icon name="key" /><span><small>EPHEMERAL ACCESS</small><strong>临时密钥 · 到期撤销</strong></span></footer>
-        </section>
-
-        <section className="simulation-mesh" aria-label="机构、企业和个人 Agent 的分布式模拟网络">
-          <svg viewBox="0 0 520 360" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M45 65C180 65 170 180 260 180S350 65 475 65M45 295C180 295 170 180 260 180S350 295 475 295M45 65C110 180 110 250 45 295M475 65C410 180 410 250 475 295" />
-            <circle className="simulation-packet" r="5"><animateMotion dur="2.8s" path="M45 65C180 65 170 180 260 180S350 295 475 295" repeatCount="indefinite" /></circle>
-          </svg>
-          {simulationRegions.map((region, index) => (
-            <article className={`simulation-region region-${region.tone}`} key={region.label}>
-              <header><Icon name={region.icon} /><span><strong>{region.label}</strong><small>{region.actor}</small></span></header>
-              <SimulationDots offset={index * 2} />
-              <footer><code>Enc(judgement)</code><span>run {String(index + 1).padStart(2, '0')}</span></footer>
-            </article>
-          ))}
-          <div className="simulation-aggregate"><Icon name="brain" /><small>SECURE AGGREGATION</small><strong>只汇总群体指标</strong><code>Σ Enc(yᵢ) → Aggregate</code></div>
-        </section>
-
-        <aside className="simulation-result">
-          <header><small>VERIFIED FORECAST</small><Icon name="check" /></header>
-          <span>{preset.outcome}</span>
-          <strong>{stats.mean.toFixed(1)}{preset.unit}</strong>
-          <b>± {stats.error.toFixed(1)} pp · 95% CI</b>
-          <dl>
-            <div><dt>基线</dt><dd>{preset.baseline.toFixed(1)}{preset.unit}</dd></div>
-            <div><dt>预测变化</dt><dd>{preset.effect > 0 ? '+' : ''}{preset.effect.toFixed(1)} pp</dd></div>
-            <div><dt>群体指标</dt><dd>{preset.secondary}</dd></div>
-            <div><dt>Agent 步数</dt><dd>{stats.totalSteps.toLocaleString()}</dd></div>
-            <div><dt>复核证书</dt><dd>4 / 7 · QC</dd></div>
-          </dl>
-          <DetailHint
-            className="simulation-formula"
-            category="统计结果与可复现性"
-            label={<code>μ̂ = Σg(τₖ)/K · CI95 = μ̂ ± 1.96s/√K</code>}
-            title="分布式重复实验"
-            summary="每次实验都绑定模型、规则、数据版本和随机种子，Validator 只汇总通过复核的轨迹。"
-            details={[{ label: '结论边界', value: '置信区间描述模型内的不确定性，不代表现实世界预测误差。' }]}
-            derivation={derivations.socialSimulation}
-          />
-        </aside>
-      </div>
-
-      <footer className="simulation-boundary"><Icon name="shield" /><span><strong>可证明：按公开假设正确完成仿真</strong><small>不可证明：模型结论必然等于现实；上线前仍需回测、试点和公共程序。</small></span></footer>
     </div>
   );
 }

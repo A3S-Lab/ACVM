@@ -10,7 +10,7 @@ import { SystemPropertiesArchitecture } from '../components/SystemPropertiesArch
 <LessonChapter
   id="spec-state"
   className="formal-screen state-spec-screen"
-  eyebrow="PART VI · ACVM STATE / FORMAL SPEC 02"
+  eyebrow="CHAPTER 04 · ACVM TASK PROTOCOL / STATE"
   title="状态模型"
   accent="只有有效回执才能推进"
   body="当前状态、任务文件根和已验证回执共同计算下一状态。"
@@ -53,7 +53,7 @@ function apply(state: TaskState, receipt: VerifiedReceipt): TaskState {
 <LessonChapter
   id="spec-receipt"
   className="formal-screen receipt-spec-screen"
-  eyebrow="PART VI · ACVM STATE / FORMAL SPEC 03"
+  eyebrow="CHAPTER 04 · ACVM TASK PROTOCOL / RECEIPT"
   title="回执验证"
   accent="验证上下文，而不只是返回值"
   body="回执绑定任务、目录、输入、输出和签名；全部通过后才更新状态。"
@@ -92,7 +92,7 @@ Merkle Root 证明文件集合没有被替换，不会自动证明文件里的�
 <LessonChapter
   id="dispute"
   className="dispute-screen"
-  eyebrow="PART VI · ACVM STATE / CHALLENGE & FINALITY"
+  eyebrow="CHAPTER 04 · ACVM TASK PROTOCOL / DISPUTE"
   title="争议协议"
   accent="暂定状态与挑战窗口"
   body="结果先进入挑战期；反证、独立复核和保证金共同决定终局。"
@@ -125,7 +125,7 @@ submitted → provisional → finalized → settled
 <LessonChapter
   id="properties"
   className="properties-screen"
-  eyebrow="PART VI · ACVM STATE / SYSTEM BOUNDARIES"
+  eyebrow="CHAPTER 04 · ACVM TASK PROTOCOL / LIMITS"
   title="系统边界"
   accent="用公式暴露可用性、稳定性与成本"
   body="调整故障率、负载和成本，公式会重算结果与失效条件。"

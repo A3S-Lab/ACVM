@@ -1,29 +1,101 @@
 import { AcvmUseCasesArchitecture } from '../components/AcvmUseCases'
+import { Code } from '../components/Code'
+import {
+  GeoVerificationArchitecture,
+  SocialSimulationArchitecture,
+} from '../components/CoreUseCaseAnimations'
 import { LessonChapter } from '../components/LessonChapter'
 
 <LessonChapter
   id="acvm-use-cases"
   className="foundation-screen acvm-use-cases-screen"
-  eyebrow="OPENING · ACVM IN USE"
-  title="ACVM 怎么用"
-  accent="为已验收结果结算"
-  body="当 Agent 需要花钱、调用工具或跨时协作，ACVM 固定目标与验收规则，记录执行回执，只为进入终局的结果付款。"
+  eyebrow="CHAPTER 01 · TWO JOBS, ONE QUESTION"
+  title="Agent 说做完了"
+  accent="凭什么付款"
+  body="GEO 要证明引用份额真的增加；社会模拟要在不泄露个体数据的前提下交付可信统计。两项工作都发生在链下，付款却需要一份可独立复核的完成证据。"
   comparison={{
     traditionalLabel: '普通 AI 服务',
-    traditionalTitle: '调用成功就开始计费',
-    traditional: '日志留在平台内部，用户很难复核任务版本和失败责任。',
+    traditionalTitle: '过程由服务商自己记录',
+    traditional: 'API 返回成功、报表或截图不能说明业务结果已经达到约定标准。',
     acvmLabel: 'ACVM',
-    acvmTitle: '验收成功才进入结算',
-    acvm: 'Intent、产物、裁决与最终状态沿同一 taskId 留下证据。',
+    acvmTitle: '验收条件在执行前冻结',
+    acvm: '任务、产物、裁决与最终状态沿同一 taskId 形成可审计证据链。',
   }}
-  figureLabel="ACVM IN USE / INTENT → EXECUTION → VERDICT → SETTLEMENT"
+  figureLabel="CASE FILE / GEO + SOCIAL SIMULATION → ONE VERIFIABLE WORKFLOW"
   visual={<AcvmUseCasesArchitecture />}
 >
 
-### 先看任务，再看虚拟机
+### 两个案件，一条主线
 
-自动采购是贯穿全套内容的锚点案例。调用方签名采购目标、预算和验收规则；采购 Agent 把任务拆成询价、合规检查和下单；Worker 调用真实供应商或工具；Validator 核对报价、合同与交付条件；结算合约只为通过验收并进入终局的结果付款。
+GEO 购买的不是文章数量，而是独立观测到的引用增量。社会模拟购买的不是一批貌似精确的数字，而是在冻结假设、私有输入和随机过程下得到的可复核群体统计。
 
-私密研究与长任务协作采用同一协议骨架。变化的是执行器、验收方法和争议证据，不变的是任务版本、角色权限、回执链和结算条件。
+这两项服务共享四步：调用方先签名目标和验收口径；Agent 在链下执行；独立 Validator 检查证据；结果进入终局后，合约才改变状态并付款。后面的共享账本、共识和确定性虚拟机，只为解释这四步为什么可信、边界又在哪里。
+
+</LessonChapter>
+
+<LessonChapter
+  id="geo-verification"
+  className="core-use-case-screen geo-verification-screen"
+  eyebrow="CHAPTER 01 · CORE CASE / GEO VERIFICATION"
+  title="GEO 结果验证"
+  accent="即服务：按增量结算"
+  body="这项服务先固定问题集、观测引擎、站点版本、基线、观察期和门槛。GEO Agent 负责优化，独立节点负责复测，ACVM 只按通过裁决的有效增量结算。"
+  comparison={{
+    traditionalTitle: '执行者提交自己的成绩单',
+    traditional: '截图、精选查询和平台内报表无法排除样本漂移、付费流量或口径变化。',
+    acvmTitle: '观察与执行分离',
+    acvm: '前后样本绑定冻结规则，Validator 只判断增量是否满足验收谓词。',
+  }}
+  terms={['zkTLS / TLSNotary', 'Proof-carrying Execution', 'Receipt Root']}
+  figureLabel="GEO VERIFICATION AS A SERVICE / BASELINE → OBSERVATION → VERDICT → PAYOUT"
+  visual={<GeoVerificationArchitecture />}
+>
+
+### GEO 服务验证的不是写作过程
+
+`GEO Worker` 可以自行选择内容策略和工具，但不能自行决定成绩。验收任务要绑定签名问题集、观测源、采样频率、排除项、基线快照和观察窗口。独立观察节点提交可追溯样本，Validator 计算增量并检查数据口径。
+
+```text file="geo-verification-evidence.txt"
+intentRoot + baselineRoot
+artifactRoot + publishReceipt
+querySetRoot + observationRoot
+delta + validatorQuorumCertificate
+finalReceiptRoot + settlement
+```
+
+链上记录的是规则、证据承诺、裁决和资金状态，不是搜索引擎本身。若样本来源或增量计算遭到挑战，任务停在暂定状态，不能提前付款。
+
+</LessonChapter>
+
+<LessonChapter
+  id="simulation"
+  className="core-use-case-screen simulation-screen"
+  eyebrow="CHAPTER 01 · CORE CASE / SOCIAL SIMULATION"
+  title="社会模拟即服务"
+  accent="私有输入只换成可核验统计"
+  body="政策与个体画像留在隔离域，各类 Agent 产生私密轨迹；安全聚合只公开群体指标，独立 Validator 复核模型、样本、随机种子和统计管线。"
+  comparison={{
+    traditionalTitle: '中心平台同时掌握数据和结论',
+    traditional: '外部人员很难确认模型版本、抽样方式和统计结果有没有被临时改动。',
+    acvmTitle: '隐私与可复核性分开处理',
+    acvm: '原始数据不公开，假设承诺、聚合记录、置信区间和复核证书可以审计。',
+  }}
+  terms={['TEE', 'MPC', 'VRF', 'Receipt Root']}
+  figureLabel="SOCIAL SIMULATION AS A SERVICE / SEALED INPUT → AGGREGATE → VERIFIED FORECAST"
+  visual={<SocialSimulationArchitecture />}
+>
+
+### 可复核不等于预测必然正确
+
+协议能证明实验是否按声明的模型、样本、随机种子和统计管线运行，也能证明公开结果来自通过复核的聚合轨迹。它不能消除模型偏差、分布漂移或错误因果假设，因此输出必须保留置信区间与适用边界。
+
+```text file="simulation-evidence.txt"
+policyCommitment + modelManifestRoot
+populationSnapshotRoot + vrfProof
+trajectoryRoot + aggregationTranscriptRoot
+metrics + confidenceIntervals + validatorSignatures
+```
+
+ACVM 在这里承担任务状态和结算协议：谁获准运行、什么证据可以验收、哪条反证能触发挑战、什么时候发布结果并支付服务费。
 
 </LessonChapter>

@@ -3,11 +3,11 @@ import { DataChip, FlowArrow, LearningPanel, StepBadge } from './LearningPanel';
 
 export function BitcoinLedgerArchitecture() {
   return (
-    <LearningPanel code="BITCOIN / DOUBLE-SPEND PROBLEM" status="ONE VALID HISTORY" className="bitcoin-ledger-panel">
+    <LearningPanel code="UTXO LEDGER / DOUBLE-SPEND PROBLEM" status="ONE VALID HISTORY" className="bitcoin-ledger-panel">
       <div className="ledger-problem">
         <article className="concept-card ledger-source">
           <header><Icon name="key" /><small>ALICE CONTROLS</small></header>
-          <strong>UTXO · 1.00 BTC</strong>
+          <strong>UTXO · 1.00 TOKEN</strong>
           <code>outpoint 7f2a…:0</code>
         </article>
         <div className="ledger-fork">
@@ -39,7 +39,7 @@ export function BitcoinLedgerArchitecture() {
 
 export function UtxoTransactionArchitecture() {
   return (
-    <LearningPanel code="BITCOIN / TRANSACTION 7F2A…" status="BALANCED" className="utxo-panel">
+    <LearningPanel code="UTXO / TRANSACTION 7F2A…" status="BALANCED" className="utxo-panel">
       <div className="utxo-signature">
         <Icon name="fingerprint" />
         <span><small>私钥签名</small><strong>授权消费旧输出，不移动“账户余额”</strong></span>
@@ -47,16 +47,16 @@ export function UtxoTransactionArchitecture() {
       </div>
       <div className="utxo-equation">
         <section className="utxo-column">
-          <header><span>INPUTS</span><strong>0.55 BTC</strong></header>
-          <article><small>UTXO A · 91bc…:1</small><strong>0.30 BTC</strong><code>锁定给 Alice</code></article>
-          <article><small>UTXO B · c410…:0</small><strong>0.25 BTC</strong><code>锁定给 Alice</code></article>
+          <header><span>INPUTS</span><strong>0.55 TOKEN</strong></header>
+          <article><small>UTXO A · 91bc…:1</small><strong>0.30 TOKEN</strong><code>锁定给 Alice</code></article>
+          <article><small>UTXO B · c410…:0</small><strong>0.25 TOKEN</strong><code>锁定给 Alice</code></article>
         </section>
         <div className="utxo-operator"><span>=</span><small>价值守恒</small></div>
         <section className="utxo-column is-output">
-          <header><span>OUTPUTS + FEE</span><strong>0.55 BTC</strong></header>
-          <article><small>支付 Bob</small><strong>0.400 BTC</strong><code>新 UTXO</code></article>
-          <article><small>找零 Alice</small><strong>0.149 BTC</strong><code>新 UTXO</code></article>
-          <article className="is-fee"><small>矿工手续费</small><strong>0.001 BTC</strong><code>输入 − 输出</code></article>
+          <header><span>OUTPUTS + FEE</span><strong>0.55 TOKEN</strong></header>
+          <article><small>支付 Bob</small><strong>0.400 TOKEN</strong><code>新 UTXO</code></article>
+          <article><small>找零 Alice</small><strong>0.149 TOKEN</strong><code>新 UTXO</code></article>
+          <article className="is-fee"><small>区块提议费</small><strong>0.001 TOKEN</strong><code>输入 − 输出</code></article>
         </section>
       </div>
       <footer className="utxo-state-change">
@@ -76,7 +76,7 @@ export function ProofOfWorkArchitecture() {
   ] as const;
 
   return (
-    <LearningPanel code="BITCOIN / CANDIDATE BLOCK #842,904" status="TARGET MET" className="pow-panel">
+    <LearningPanel code="POW / CANDIDATE BLOCK #842,904" status="TARGET MET" className="pow-panel">
       <div className="pow-layout">
         <section className="block-blueprint">
           <header><span>BLOCK HEADER</span><DataChip tone="amber">80 BYTES</DataChip></header>
@@ -113,7 +113,7 @@ export function ProofOfWorkArchitecture() {
 
 export function BitcoinConsensusArchitecture() {
   return (
-    <LearningPanel code="BITCOIN / FORK CHOICE" status="MOST WORK WINS" className="consensus-panel">
+    <LearningPanel code="POW LEDGER / FORK CHOICE" status="MOST WORK WINS" className="consensus-panel">
       <div className="consensus-layout">
         <section className="fork-tree">
           <header><span>临时分叉</span><small>两个矿工几乎同时出块</small></header>
@@ -132,7 +132,7 @@ export function BitcoinConsensusArchitecture() {
         <section className="confirmation-meter">
           <header><Icon name="shield" /><span><small>交易 TX A</small><strong>3 次确认</strong></span></header>
           <div>{[1, 2, 3, 4, 5, 6].map((value) => <i className={value <= 3 ? 'is-filled' : ''} key={value}>{value}</i>)}</div>
-          <p>比特币提供概率最终性：后续区块越多，重组这笔交易通常越昂贵。</p>
+          <p>PoW 账本提供概率最终性：后续区块越多，重组这笔交易通常越昂贵。</p>
           <ul>
             <li><DataChip tone="green">VALID</DataChip> 先验证区块规则</li>
             <li><DataChip tone="blue">WORK</DataChip> 再比较累计工作</li>
@@ -140,7 +140,7 @@ export function BitcoinConsensusArchitecture() {
           </ul>
         </section>
       </div>
-      <footer className="consensus-takeaway"><strong>比特币的成果</strong><span>陌生节点无需中心协调，也能收敛到同一套所有权与交易历史。</span></footer>
+      <footer className="consensus-takeaway"><strong>PoW 共识的成果</strong><span>陌生节点无需中心协调，也能收敛到同一套所有权与交易历史。</span></footer>
     </LearningPanel>
   );
 }

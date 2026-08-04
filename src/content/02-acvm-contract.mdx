@@ -12,7 +12,7 @@ import { MotionPlayer } from '../remotion/MotionPlayer'
 <LessonChapter
   id="spec-contract"
   className="formal-screen contract-spec-screen"
-  eyebrow="PART V · ACVM / FORMAL SPEC 01"
+  eyebrow="CHAPTER 04 · ACVM TASK PROTOCOL / CONTRACT"
   title="Agentic Contract"
   accent="任务规则由目录根固定"
   body="一个合约目录包含 Schema、Worker、Validator 和结算代码；目录根就是部署版本。"
@@ -53,7 +53,7 @@ contractRoot = MerkleRoot(canonicalPath || hash(fileBytes))
 <LessonChapter
   id="code-walkthrough"
   className="code-screen"
-  eyebrow="PART V · ACVM / TYPESCRIPT WALKTHROUGH"
+  eyebrow="CHAPTER 04 · ACVM TASK PROTOCOL / CODE"
   title="TypeScript SDK"
   accent="任务文件规定角色交接"
   body="沿文件列表滚动，查看 Worker 写结果、Validator 写裁决、settle.ts 完成结算。"
@@ -111,7 +111,7 @@ Validator 不复用 Worker 的进程内对象，而是从固定路径读取输�
 <LessonChapter
   id="lifecycle"
   className="lifecycle-screen"
-  eyebrow="PART V · ACVM / FULL LIFECYCLE"
+  eyebrow="CHAPTER 04 · ACVM TASK PROTOCOL / LIFECYCLE"
   title="合约生命周期"
   accent="一条 taskId 串起异步工作"
   body="动画依次展示部署、调用、执行、验收、证明、共识和结算。点击节点可查看链上记录。"
@@ -143,7 +143,7 @@ Validator 不复用 Worker 的进程内对象，而是从固定路径读取输�
 <LessonChapter
   id="runtime"
   className="runtime-screen"
-  eyebrow="PART V · ACVM / RUNTIME TOPOLOGY"
+  eyebrow="CHAPTER 04 · ACVM TASK PROTOCOL / RUNTIME"
   title="ACVM 执行拓扑"
   accent="回执驱动状态转换"
   body="合约定义调用方、Worker、Validator、权限和完成条件，ACVM 按回执推进状态。"
@@ -179,7 +179,7 @@ function transition(state: TaskState, receipt: Receipt): TaskState {
 <LessonChapter
   id="onchain"
   className="onchain-screen"
-  eyebrow="PART V · ACVM / CONSENSUS BOUNDARY"
+  eyebrow="CHAPTER 04 · ACVM TASK PROTOCOL / BOUNDARY"
   title="链上执行边界"
   accent="链上检查低成本证据"
   body="共识节点只执行权限、Gas、证明验证和状态更新；模型、API 与长任务在链下运行。"

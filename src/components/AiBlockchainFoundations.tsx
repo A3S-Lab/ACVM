@@ -154,7 +154,7 @@ export function AgenticContractBridgeArchitecture() {
     <LearningPanel code="EVOLUTION / SMART CONTRACT → AGENTIC CONTRACT" status="READY FOR ACVM" className="agentic-bridge-panel">
       <div className="contract-evolution">
         <section className="contract-kind is-smart">
-          <header><Icon name="terminal" /><span><small>ETHEREUM</small><strong>Smart Contract</strong></span></header>
+          <header><Icon name="terminal" /><span><small>EVM</small><strong>Smart Contract</strong></span></header>
           <p>一笔交易内执行确定性代码，成功后原子地更新状态。</p>
           <div><DataChip tone="blue">同步调用</DataChip><DataChip tone="blue">有限 Gas</DataChip><DataChip tone="blue">链上数据</DataChip></div>
         </section>

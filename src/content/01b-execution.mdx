@@ -22,29 +22,29 @@ import { MotionPlayer } from '../remotion/MotionPlayer'
 <LessonChapter
   id="eth-state"
   className="foundation-screen eth-state-screen"
-  eyebrow="PART III · ETHEREUM / 01"
+  eyebrow="CHAPTER 02 · TRUSTED STATE / DETERMINISTIC VM 01"
   title="从 UTXO 到全局状态"
   accent="交易变成确定性的状态转换"
-  body="比特币维护未花费输出集合；以太坊维护账户、合约代码和持久存储。区块中的交易按顺序执行，共同产生新的 stateRoot。"
+  body="UTXO 模型维护未花费输出集合；账户模型维护账户、合约代码和持久存储。区块中的交易按顺序执行，共同产生新的 stateRoot。"
   comparison={{
-    traditionalLabel: 'BITCOIN',
+    traditionalLabel: 'UTXO MODEL',
     traditionalTitle: '状态围绕可花费输出组织',
     traditional: '每笔交易消费旧输出并创建新输出。',
-    acvmLabel: 'ETHEREUM',
+    acvmLabel: 'ACCOUNT MODEL',
     acvmTitle: '状态围绕账户和程序组织',
     acvm: '合约可以读取并修改长期存储。',
   }}
-  figureLabel="STATE MODEL / UTXO SET → ETHEREUM WORLD STATE"
+  figureLabel="STATE MODEL / UTXO SET → ACCOUNT WORLD STATE"
   visual={<EthereumStateArchitecture />}
 >
 
 ### 世界状态怎样变化
 
-以太坊把协议写成状态转换函数。给定相同前态、交易和区块上下文，所有节点必须算出相同后态：
+账户型合约链把协议写成状态转换函数。给定相同前态、交易和区块上下文，所有节点必须算出相同后态：
 
 ```text file="state-transition.txt"
-Bitcoin:  UTXO_set' = spend(UTXO_set, transaction)
-Ethereum: S' = EVM(S, transaction, blockContext)
+UTXO: UTXO_set' = spend(UTXO_set, transaction)
+EVM:  S' = EVM(S, transaction, blockContext)
 ```
 
 外部账户保存 nonce 和余额；合约账户还关联字节码与存储。区块头中的 `stateRoot` 承诺执行完该区块全部交易后的世界状态。节点不接受提议者直接给出的结果，而是按相同顺序执行交易并核对根承诺。
@@ -56,12 +56,12 @@ Ethereum: S' = EVM(S, transaction, blockContext)
 <LessonChapter
   id="eth-evm"
   className="foundation-screen eth-evm-screen"
-  eyebrow="PART III · ETHEREUM / 02"
+  eyebrow="CHAPTER 02 · TRUSTED STATE / DETERMINISTIC VM 02"
   title="EVM 怎样执行合约"
   accent="同一输入必须得到同一后态"
   body="Solidity 编译为 EVM 字节码。交易确定调用目标和 calldata，EVM 在栈、内存与持久存储上执行操作码。每个验证节点都运行同一过程。"
   comparison={{
-    traditionalLabel: 'BITCOIN SCRIPT',
+    traditionalLabel: 'UTXO SCRIPT',
     traditionalTitle: '检查输出能否被花费',
     traditional: '脚本主要描述价值的解锁条件。',
     acvmLabel: 'EVM',
@@ -93,14 +93,14 @@ contract Counter {
 
 验证者会重放 `increment()`。EVM 不能在执行中读取本机文件、调用 HTTP 服务或使用节点自己的时钟，因为这些输入无法保证在所有节点上相同。
 
-资料：[Ethereum Virtual Machine](https://ethereum.org/en/developers/docs/evm/)
+资料：[EVM specification](https://ethereum.org/en/developers/docs/evm/)
 
 </LessonChapter>
 
 <LessonChapter
   id="eth-transaction"
   className="foundation-screen eth-transaction-screen"
-  eyebrow="PART III · ETHEREUM / 03"
+  eyebrow="CHAPTER 02 · TRUSTED STATE / DETERMINISTIC VM 03"
   title="Gas 与交易生命周期"
   accent="提议者排序，验证者重放"
   body="钱包签名后，交易进入节点交易池。区块提议者选择顺序，其他验证者检查区块并重放 EVM。Gas 限制每笔交易占用的共识资源。"
@@ -112,7 +112,7 @@ contract Counter {
     acvmTitle: '每个操作码都有资源价格',
     acvm: 'Gas 耗尽会回滚状态，已消耗资源仍需付费。',
   }}
-  figureLabel="ETHEREUM TRANSACTION / SIGN → PROPOSE → EXECUTE → RECEIPT → FINALITY"
+  figureLabel="EVM TRANSACTION / SIGN → PROPOSE → EXECUTE → RECEIPT → FINALITY"
   visual={<EthereumTransactionArchitecture />}
 >
 
@@ -139,7 +139,7 @@ const transaction = {
 <LessonChapter
   id="eth-boundary"
   className="foundation-screen eth-boundary-screen"
-  eyebrow="PART III · ETHEREUM / 04"
+  eyebrow="CHAPTER 02 · TRUSTED STATE / DETERMINISTIC VM 04"
   title="共识执行的边界"
   accent="外部事实必须先成为可验证输入"
   body="EVM 能检查签名、哈希和链上状态，却不能主动查询天气、价格或物流。预言机把外部观察提交上链，合约再按确定性规则处理。"
@@ -176,7 +176,7 @@ function fulfillPrice(uint256 requestId, uint256 price, bytes calldata proof)
 <LessonChapter
   id="ai-gap"
   className="foundation-screen ai-gap-screen"
-  eyebrow="PART IV · AI × BLOCKCHAIN / 01"
+  eyebrow="CHAPTER 03 · WHEN AI WORK CANNOT BE REPLAYED / 01"
   title="AI 负载为什么不适合全网重放"
   accent="输出、成本、隐私和时限都不匹配"
   body="模型推理可能依赖概率采样、GPU 算子、私有数据和外部工具。让每个验证者完整复算，会扩大成本和数据暴露，并增加共识分歧。"
@@ -205,7 +205,7 @@ Agent 还会产生不可重复的副作用，例如发送邮件、创建订单�
 <LessonChapter
   id="acvm-execution-boundary"
   className="foundation-screen acvm-execution-boundary-screen"
-  eyebrow="PART IV · AI × BLOCKCHAIN / 02"
+  eyebrow="CHAPTER 03 · WHEN AI WORK CANNOT BE REPLAYED / 02"
   title="EVM 与 ACVM 执行边界"
   accent="EVM 重放，ACVM 验回执"
   body="ACVM 的共识核心仍在链上运行：检查授权、状态前置条件、回执和结算。模型推理与工具调用不由每个验证者重复执行。"
@@ -254,7 +254,7 @@ zkML 在链下完成推理和证明生成，链上验证证明；TEE 在受信�
 <LessonChapter
   id="ai-execution"
   className="foundation-screen ai-execution-screen"
-  eyebrow="PART IV · AI × BLOCKCHAIN / 03"
+  eyebrow="CHAPTER 03 · WHEN AI WORK CANNOT BE REPLAYED / 03"
   title="可验证链下执行"
   accent="任务参数冻结后再分派执行"
   body="用户签名目标、输入根、执行版本、预算和验收规则。Worker 产生结果与回执，Validator 独立检查，结算合约只处理有效证据。"
@@ -303,7 +303,7 @@ function canSettle(receipt: TaskReceipt, state: TaskState) {
 <LessonChapter
   id="ai-verification"
   className="foundation-screen ai-verification-screen"
-  eyebrow="PART IV · AI × BLOCKCHAIN / 04"
+  eyebrow="CHAPTER 03 · WHEN AI WORK CANNOT BE REPLAYED / 04"
   title="AI 结果怎样验证"
   accent="先定义命题，再选择证据"
   body="重复执行、乐观挑战、TEE、zkML 和结果验收各自证明不同事实。协议需要写明验证对象、剩余信任、成本和失败处理。"
@@ -334,7 +334,7 @@ function canSettle(receipt: TaskReceipt, state: TaskState) {
 <LessonChapter
   id="agentic-bridge"
   className="foundation-screen agentic-bridge-screen"
-  eyebrow="PART IV · AI × BLOCKCHAIN / 05"
+  eyebrow="CHAPTER 03 · WHEN AI WORK CANNOT BE REPLAYED / 05"
   title="从智能合约到智能体合约"
   accent="原子调用扩展为跨区块任务"
   body="Agent 任务会等待外部数据、调用工具、委托子任务并经过人工审批。合约需要显式记录阶段、权限、预算、回执、超时和验收。"
@@ -378,7 +378,7 @@ ACVM 合约模型由此需要四组定义：任务目录、状态转换、角色
 <LessonChapter
   id="trust-infrastructure"
   className="foundation-screen trust-infrastructure-screen"
-  eyebrow="PART IV · AI × BLOCKCHAIN / 06"
+  eyebrow="CHAPTER 03 · WHEN AI WORK CANNOT BE REPLAYED / 06"
   title="Agent 扩容必须守住五层信任"
   accent="TPS 只是容量，不是安全性"
   body="Agent 会持续提交任务、跨域调用并自动结算。系统即使提高 TPS，也必须同时守住数据追溯、消息因果、及时终局、执行可验证和经济稳定。"
@@ -425,7 +425,7 @@ type AgentTrustObject = {
 <LessonChapter
   id="semantic-correctness"
   className="foundation-screen semantic-correctness-screen"
-  eyebrow="PART IV · AI × BLOCKCHAIN / 07"
+  eyebrow="CHAPTER 03 · WHEN AI WORK CANNOT BE REPLAYED / 07"
   title="交易正确，不等于任务正确"
   accent="语义验收必须成为协议对象"
   body="链可以证明签名、顺序和状态转换有效，却不能仅凭一份格式正确的回执判断报告是否准确、采购是否合规或 Agent 是否真正完成用户目标。"

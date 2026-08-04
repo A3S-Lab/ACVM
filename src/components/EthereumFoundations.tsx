@@ -3,18 +3,18 @@ import { DataChip, FlowArrow, LearningPanel, StepBadge } from './LearningPanel';
 
 export function EthereumStateArchitecture() {
   return (
-    <LearningPanel code="ETHEREUM / WORLD STATE" status="STATE ROOT UPDATED" className="eth-state-panel">
+    <LearningPanel code="ACCOUNT MODEL / WORLD STATE" status="STATE ROOT UPDATED" className="eth-state-panel">
       <div className="model-transition">
-        <section className="model-card is-bitcoin">
-          <header><span>BITCOIN</span><DataChip tone="amber">UTXO SET</DataChip></header>
+        <section className="model-card is-utxo">
+          <header><span>UTXO MODEL</span><DataChip tone="amber">UTXO SET</DataChip></header>
           <strong>验证“哪些输出还没花”</strong>
-          <div><code>91bc…:1</code><b>0.30 BTC</b></div>
-          <div><code>c410…:0</code><b>0.25 BTC</b></div>
+          <div><code>91bc…:1</code><b>0.30 TOKEN</b></div>
+          <div><code>c410…:0</code><b>0.25 TOKEN</b></div>
           <small>状态适合表达价值所有权</small>
         </section>
         <FlowArrow label="抽象升级" />
-        <section className="model-card is-ethereum">
-          <header><span>ETHEREUM</span><DataChip tone="blue">WORLD STATE</DataChip></header>
+        <section className="model-card is-account">
+          <header><span>ACCOUNT MODEL</span><DataChip tone="blue">WORLD STATE</DataChip></header>
           <strong>验证“每个账户现在是什么状态”</strong>
           <div><code>Alice</code><b>balance · nonce</b></div>
           <div><code>Contract</code><b>code · storage</b></div>
@@ -24,7 +24,7 @@ export function EthereumStateArchitecture() {
       <div className="state-diff">
         <header><span>TRANSACTION STATE DIFF</span><code>S′ = Υ(S, T)</code></header>
         <div><small>Alice.nonce</small><del>7</del><i>→</i><ins>8</ins></div>
-        <div><small>Alice.balance</small><del>10.00 ETH</del><i>→</i><ins>9.98 ETH</ins></div>
+        <div><small>Alice.balance</small><del>10.00 TOKEN</del><i>→</i><ins>9.98 TOKEN</ins></div>
         <div><small>Counter.storage[0]</small><del>41</del><i>→</i><ins>42</ins></div>
         <strong><Icon name="chain" />全部变化汇总为新的 stateRoot</strong>
       </div>
@@ -34,7 +34,7 @@ export function EthereumStateArchitecture() {
 
 export function EvmArchitecture() {
   return (
-    <LearningPanel code="ETHEREUM / DETERMINISTIC EXECUTION" status="RECEIPT CREATED" className="evm-panel">
+    <LearningPanel code="EVM / DETERMINISTIC EXECUTION" status="RECEIPT CREATED" className="evm-panel">
       <div className="evm-flow">
         <article className="concept-card evm-call">
           <header><Icon name="fingerprint" /><small>SIGNED TX</small></header>
@@ -79,7 +79,7 @@ export function EthereumTransactionArchitecture() {
   ] as const;
 
   return (
-    <LearningPanel code="ETHEREUM / TRANSACTION LIFECYCLE" status="21,000+ GAS" className="eth-transaction-panel">
+    <LearningPanel code="ACCOUNT TX / EXECUTION LIFECYCLE" status="21,000+ GAS" className="eth-transaction-panel">
       <div className="transaction-timeline">
         {stages.map(([index, title, detail], position) => (
           <article className={position === 3 ? 'is-active' : ''} key={index}>
@@ -95,7 +95,7 @@ export function EthereumTransactionArchitecture() {
         <div className="gas-formula">
           <code>transaction fee</code>
           <strong>gasUsed × effectiveGasPrice</strong>
-          <span><b>48,231</b><i>×</i><b>18 gwei</b><i>=</i><b>0.000868158 ETH</b></span>
+          <span><b>48,231</b><i>×</i><b>18 gas-price units</b><i>=</i><b>0.000868158 TOKEN</b></span>
         </div>
         <section className="gas-failure">
           <header><Icon name="shield" /><span><small>执行失败</small><strong>REVERT</strong></span></header>
@@ -111,7 +111,7 @@ export function DeterminismBoundaryArchitecture() {
   const offchain = ['HTTP / 数据库', 'LLM 推理', '私有业务数据', '长耗时工具调用'];
 
   return (
-    <LearningPanel code="ETHEREUM / CONSENSUS BOUNDARY" status="NO NATIVE HTTP" className="boundary-panel">
+    <LearningPanel code="EVM / CONSENSUS BOUNDARY" status="NO NATIVE HTTP" className="boundary-panel">
       <div className="boundary-worlds">
         <section className="boundary-zone is-onchain">
           <header><Icon name="chain" /><span><small>共识域</small><strong>确定性、有限、可重放</strong></span></header>
@@ -130,7 +130,7 @@ export function DeterminismBoundaryArchitecture() {
         </section>
       </div>
       <footer className="boundary-question">
-        <span>Ethereum 留下的新问题</span>
+        <span>确定性虚拟机留下的问题</span>
         <strong>如果结果来自 AI，链上究竟验证什么？</strong>
         <a href="#ai-gap">进入 AI × 区块链 <Icon name="arrow" /></a>
       </footer>

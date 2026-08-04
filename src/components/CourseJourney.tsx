@@ -3,41 +3,41 @@ import { screens } from '../course';
 import { Icon, LogoMark } from './Icons';
 import { DataChip, FlowArrow, LearningPanel } from './LearningPanel';
 
-const eras = [
+const storyMoves = [
   {
-    className: 'is-bitcoin',
-    index: '01',
-    name: 'Bitcoin',
-    summary: '所有权历史',
-    icon: <Icon name="key" />,
-    chips: ['UTXO', 'PoW', '确认'],
-    tone: 'amber',
-  },
-  {
-    className: 'is-ethereum',
-    index: '02',
-    name: 'Ethereum',
-    summary: '程序状态',
-    icon: <Icon name="terminal" />,
-    chips: ['账户', 'EVM', 'Gas'],
-    tone: 'blue',
-  },
-  {
-    className: 'is-ai',
-    index: '03',
-    name: 'AI × Chain',
-    summary: '链下工作证据',
-    icon: <Icon name="brain" />,
-    chips: ['Intent', 'Worker', '证据'],
+    className: 'is-case',
+    index: '00',
+    name: '两个案件',
+    summary: '先问：凭什么付款',
+    icon: <Icon name="receipt" />,
+    chips: ['GEO', '社会模拟'],
     tone: 'green',
   },
   {
+    className: 'is-ledger',
+    index: '01',
+    name: '共享账本',
+    summary: '合法记录 → 共同历史',
+    icon: <Icon name="key" />,
+    chips: ['授权', '排序', '终局'],
+    tone: 'amber',
+  },
+  {
+    className: 'is-vm',
+    index: '02',
+    name: '合约虚拟机',
+    summary: '程序 → 可验证状态',
+    icon: <Icon name="terminal" />,
+    chips: ['重放', 'Gas', '边界'],
+    tone: 'blue',
+  },
+  {
     className: 'is-acvm',
-    index: '04',
+    index: '03',
     name: 'ACVM',
-    summary: '任务状态与结算',
+    summary: '链下任务 → 最终回执',
     icon: <LogoMark />,
-    chips: ['Agent', '回执', '证明'],
+    chips: ['验收', '争议', '结算'],
     tone: 'violet',
   },
 ] as const satisfies readonly {
@@ -50,32 +50,32 @@ const eras = [
   tone?: 'amber' | 'blue' | 'green' | 'violet';
 }[];
 
-const transitions = ['交易排序', '外部计算', '任务协议'] as const;
+const transitions = ['需要共同事实', '从记录扩展到程序', 'AI 无法重放'] as const;
 
 export function CourseJourney() {
   return (
-    <LearningPanel code="COURSE / EVOLUTION OF VERIFIABLE COMPUTATION" status={`${screens.length - 1} SLIDES`} className="course-journey">
+    <LearningPanel code="STORY / FROM A PAYMENT QUESTION TO ACVM" status={`${screens.length - 1} SLIDES`} className="course-journey">
       <div className="journey-question">
-        <small>共识检查</small>
-        <strong>一条结果满足哪些条件，才能写入共享状态？</strong>
+        <small>全场只追问这一件事</small>
+        <strong>Agent 完成链外工作后，凭什么改变共享状态并获得付款？</strong>
       </div>
-      <div className="journey-track" tabIndex={0} aria-label="四阶段课程地图；窄屏可横向滚动">
-        {eras.map((era, index) => (
-          <div className="journey-segment" key={era.name}>
-            <article className={`journey-era ${era.className}`}>
-              <header><span>{era.index}</span>{era.icon}</header>
-              <small>{era.summary}</small>
-              <strong>{era.name}</strong>
-              <div>{era.chips.map((chip) => <DataChip tone={era.tone} key={chip}>{chip}</DataChip>)}</div>
+      <div className="journey-track" tabIndex={0} aria-label="从业务案件到 ACVM 解法的四幕故事；窄屏可横向滚动">
+        {storyMoves.map((move, index) => (
+          <div className="journey-segment" key={move.name}>
+            <article className={`journey-era ${move.className}`}>
+              <header><span>{move.index}</span>{move.icon}</header>
+              <small>{move.summary}</small>
+              <strong>{move.name}</strong>
+              <div>{move.chips.map((chip) => <DataChip tone={move.tone} key={chip}>{chip}</DataChip>)}</div>
             </article>
-            {index < eras.length - 1 ? <FlowArrow label={transitions[index]} /> : null}
+            {index < storyMoves.length - 1 ? <FlowArrow label={transitions[index]} /> : null}
           </div>
         ))}
       </div>
       <footer className="journey-invariant">
         <Icon name="shield" />
-        <span><small>中心主旨</small><strong>区块链扩展的是可验证状态，不是把所有计算塞进共识</strong></span>
-        <code>EVIDENCE → STATE → SETTLEMENT</code>
+        <span><small>最后得到的答案</small><strong>不重放 AI 的全部工作；冻结验收规则，验证证据，再结算责任</strong></span>
+        <code>RULE → WORK → EVIDENCE → FINALITY → PAY</code>
       </footer>
     </LearningPanel>
   );
