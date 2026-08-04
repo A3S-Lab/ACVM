@@ -8,6 +8,8 @@ import {
 } from 'react';
 import { CourseJourney } from './components/CourseJourney';
 import { Icon, LogoMark } from './components/Icons';
+import { SpeakerGuide } from './components/SpeakerGuide';
+import AcvmUseCasesCourse from './content/00-acvm-use-cases.mdx';
 import FoundationsCourse from './content/01-foundations.mdx';
 import ExecutionCourse from './content/01b-execution.mdx';
 import AcvmContractCourse from './content/02-acvm-contract.mdx';
@@ -17,6 +19,17 @@ import AcvmNetworkCourse from './content/05-acvm-network.mdx';
 import { chapterForScreen, navigation, screens } from './course';
 
 const githubUrl = 'https://github.com/A3S-Lab/ACVM';
+const speakerGuideStorageKey = 'acvm-speaker-guide';
+
+function initialSpeakerGuideState() {
+  try {
+    const stored = window.localStorage.getItem(speakerGuideStorageKey);
+    if (stored) return stored === 'open';
+    return window.matchMedia('(min-width: 961px)').matches;
+  } catch {
+    return true;
+  }
+}
 
 function BlockchainBackdrop() {
   const blocks = [
@@ -96,17 +109,21 @@ function ChapterRail({
 function DeckControls({
   activeScreen,
   outlineOpen,
+  guideOpen,
   isFullscreen,
   onNavigate,
   onToggleOutline,
+  onToggleGuide,
   onToggleFullscreen,
   onOpenHelp,
 }: {
   activeScreen: number;
   outlineOpen: boolean;
+  guideOpen: boolean;
   isFullscreen: boolean;
   onNavigate: (index: number) => void;
   onToggleOutline: () => void;
+  onToggleGuide: () => void;
   onToggleFullscreen: () => void;
   onOpenHelp: () => void;
 }) {
@@ -143,6 +160,17 @@ function DeckControls({
         aria-label="下一页"
       ><Icon name="arrow" /></button>
       <i className="deck-control-divider" aria-hidden="true" />
+      <button
+        className="deck-guide-control"
+        type="button"
+        aria-controls="speaker-guide"
+        aria-pressed={guideOpen}
+        onClick={onToggleGuide}
+        title="显示或隐藏演讲导览（G）"
+      >
+        <Icon name="receipt" />
+        <span>讲稿</span>
+      </button>
       <button className="deck-help-control" type="button" onClick={onOpenHelp} aria-label="查看快捷键">?</button>
       <button className="deck-present-control" type="button" onClick={onToggleFullscreen}>
         <Icon name={isFullscreen ? 'pause' : 'play'} />
@@ -162,6 +190,7 @@ function DeckHelp({ onClose }: { onClose: () => void }) {
           <div><dt><kbd>←</kbd><kbd>↑</kbd><kbd>Shift</kbd> + <kbd>Space</kbd></dt><dd>上一页</dd></div>
           <div><dt><kbd>Home</kbd><kbd>End</kbd></dt><dd>封面 / 结论</dd></div>
           <div><dt><kbd>O</kbd></dt><dd>显示或隐藏缩略页</dd></div>
+          <div><dt><kbd>G</kbd></dt><dd>显示或隐藏演讲导览</dd></div>
           <div><dt><kbd>F</kbd></dt><dd>进入或退出全屏放映</dd></div>
           <div><dt><kbd>Esc</kbd></dt><dd>关闭面板或退出全屏</dd></div>
         </dl>
@@ -179,12 +208,23 @@ export function App() {
   const touchStartRef = useRef<{ x: number; y: number; target: EventTarget | null } | null>(null);
   const [activeScreen, setActiveScreen] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [outlineOpen, setOutlineOpen] = useState(() => window.matchMedia('(min-width: 1241px)').matches);
+  const [guideOpen, setGuideOpen] = useState(initialSpeakerGuideState);
+  const [outlineOpen, setOutlineOpen] = useState(() => (
+    window.matchMedia('(min-width: 1241px)').matches && !initialSpeakerGuideState()
+  ));
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const activeId = screens[activeScreen]?.[0] ?? 'top';
   const activeTitle = screens[activeScreen]?.[1] ?? '课程地图';
   const activeChapter = chapterForScreen(activeId);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(speakerGuideStorageKey, guideOpen ? 'open' : 'closed');
+    } catch {
+      // Storage can be unavailable in hardened or private browser contexts.
+    }
+  }, [guideOpen]);
 
   useEffect(() => {
     activeScreenRef.current = activeScreen;
@@ -226,6 +266,18 @@ export function App() {
     }
     if (shellRef.current?.requestFullscreen) void shellRef.current.requestFullscreen();
   }, []);
+
+  const toggleOutline = useCallback(() => {
+    const nextOpen = !outlineOpen;
+    setOutlineOpen(nextOpen);
+    if (nextOpen && window.matchMedia('(min-width: 1241px)').matches) setGuideOpen(false);
+  }, [outlineOpen]);
+
+  const toggleGuide = useCallback(() => {
+    const nextOpen = !guideOpen;
+    setGuideOpen(nextOpen);
+    if (nextOpen && window.matchMedia('(min-width: 1241px)').matches) setOutlineOpen(false);
+  }, [guideOpen]);
 
   useEffect(() => {
     const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-screen]'));
@@ -281,10 +333,10 @@ export function App() {
     const onWheel = (event: WheelEvent) => {
       if (!window.matchMedia('(min-width: 961px)').matches || event.ctrlKey || Math.abs(event.deltaY) < 12 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
 
-      const lesson = (event.target as HTMLElement | null)?.closest<HTMLElement>('.lesson-reading');
-      if (lesson) {
-        const canScrollDown = lesson.scrollTop + lesson.clientHeight < lesson.scrollHeight - 1;
-        const canScrollUp = lesson.scrollTop > 1;
+      const localScroller = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-local-scroll]');
+      if (localScroller) {
+        const canScrollDown = localScroller.scrollTop + localScroller.clientHeight < localScroller.scrollHeight - 1;
+        const canScrollUp = localScroller.scrollTop > 1;
         if ((event.deltaY > 0 && canScrollDown) || (event.deltaY < 0 && canScrollUp)) return;
       }
 
@@ -301,11 +353,16 @@ export function App() {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target instanceof HTMLElement ? event.target : null;
       const isInteractive = target?.matches('input, textarea, select, button, a, [contenteditable="true"]')
-        || Boolean(target?.closest('.lesson-reading'));
+        || Boolean(target?.closest('[data-local-scroll]'));
 
       if (event.key === 'Escape' && helpOpen) {
         event.preventDefault();
         setHelpOpen(false);
+        return;
+      }
+      if (event.key === 'Escape' && guideOpen && !document.fullscreenElement) {
+        event.preventDefault();
+        setGuideOpen(false);
         return;
       }
       if (isInteractive || event.ctrlKey || event.metaKey || event.altKey) return;
@@ -324,7 +381,10 @@ export function App() {
         goToScreen(screens.length - 1);
       } else if (event.key.toLowerCase() === 'o') {
         event.preventDefault();
-        setOutlineOpen((value) => !value);
+        toggleOutline();
+      } else if (event.key.toLowerCase() === 'g') {
+        event.preventDefault();
+        toggleGuide();
       } else if (event.key.toLowerCase() === 'f') {
         event.preventDefault();
         toggleFullscreen();
@@ -336,7 +396,7 @@ export function App() {
 
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [goToScreen, helpOpen, toggleFullscreen]);
+  }, [goToScreen, guideOpen, helpOpen, toggleFullscreen, toggleGuide, toggleOutline]);
 
   useEffect(() => {
     const onFullscreenChange = () => setIsFullscreen(Boolean(document.fullscreenElement));
@@ -355,7 +415,7 @@ export function App() {
     const start = touchStartRef.current;
     const touch = event.changedTouches[0];
     touchStartRef.current = null;
-    if (!start || !touch || (start.target as HTMLElement | null)?.closest('.lesson-reading')) return;
+    if (!start || !touch || (start.target as HTMLElement | null)?.closest('[data-local-scroll]')) return;
     const deltaX = touch.clientX - start.x;
     const deltaY = touch.clientY - start.y;
     if (Math.abs(deltaX) < 64 || Math.abs(deltaX) < Math.abs(deltaY) * 1.15) return;
@@ -363,7 +423,7 @@ export function App() {
   };
 
   return (
-    <div className={`site-shell ${outlineOpen ? 'is-outline-open' : ''}`} ref={shellRef}>
+    <div className={`site-shell ${outlineOpen ? 'is-outline-open' : ''} ${guideOpen ? 'is-speaker-guide-open' : ''}`} ref={shellRef}>
       <a className="skip-link" href="#top">跳到主要内容</a>
       <header className="site-header">
         <div className="deck-brand-group">
@@ -372,7 +432,7 @@ export function App() {
             type="button"
             aria-label={outlineOpen ? '隐藏幻灯片缩略图' : '显示幻灯片缩略图'}
             aria-pressed={outlineOpen}
-            onClick={() => setOutlineOpen((value) => !value)}
+            onClick={toggleOutline}
           ><span aria-hidden="true"><i /><i /><i /></span></button>
           <a className="brand" href="#top" aria-label="ACVM 课程封面" onClick={(event) => { event.preventDefault(); goToScreen(0); }}>
             <LogoMark />
@@ -436,7 +496,7 @@ export function App() {
                 <li><Icon name="brain" />ACVM：验证任务回执</li>
               </ul>
               <div className="hero-actions">
-                <a href="#btc-ledger" className="button button--primary" onClick={(event) => { event.preventDefault(); goToScreen(1); }}>开始放映 <Icon name="arrow" /></a>
+                <a href="#acvm-use-cases" className="button button--primary" onClick={(event) => { event.preventDefault(); goToScreen(1); }}>先看应用 <Icon name="arrow" /></a>
                 <a href="#trust-infrastructure" className="button button--secondary" onClick={(event) => { event.preventDefault(); goToScreen(screens.findIndex(([id]) => id === 'trust-infrastructure')); }}>查看五层框架</a>
               </div>
             </div>
@@ -446,6 +506,7 @@ export function App() {
           <span className="screen-number" aria-hidden="true">00</span>
         </section>
 
+        <AcvmUseCasesCourse />
         <FoundationsCourse />
         <ExecutionCourse />
         <AcvmContractCourse />
@@ -454,12 +515,16 @@ export function App() {
         <AcvmNetworkCourse />
       </main>
 
+      {guideOpen ? <SpeakerGuide activeScreen={activeScreen} onClose={() => setGuideOpen(false)} /> : null}
+
       <DeckControls
         activeScreen={activeScreen}
         outlineOpen={outlineOpen}
+        guideOpen={guideOpen}
         isFullscreen={isFullscreen}
         onNavigate={goToScreen}
-        onToggleOutline={() => setOutlineOpen((value) => !value)}
+        onToggleOutline={toggleOutline}
+        onToggleGuide={toggleGuide}
         onToggleFullscreen={toggleFullscreen}
         onOpenHelp={() => setHelpOpen(true)}
       />

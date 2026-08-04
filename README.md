@@ -13,52 +13,61 @@ production SDK.
 
 ## Learning path
 
-The 42 chapters follow one continuous question: what evidence is allowed to
+The 43 chapters follow one continuous question: what evidence is allowed to
 change shared state, and who remains accountable when external work fails?
 
-1. **Bitcoin — one valid ownership history (4 chapters).** Double-spending,
+1. **ACVM in use (1 chapter).** An autonomous procurement task anchors the
+   course: a caller signs the goal and budget, Agents delegate work, Workers
+   call external tools, Validators check the result, and settlement happens
+   only after acceptance and finality. Private research and long-running Agent
+   collaboration show how the same protocol shape applies elsewhere.
+2. **Bitcoin — one valid ownership history (4 chapters).** Double-spending,
    signatures and UTXOs, Merkle commitments and proof of work, forks and
    probabilistic finality.
-2. **Consensus mechanisms (4 chapters).** Membership and Sybil resistance,
+3. **Consensus mechanisms (4 chapters).** Membership and Sybil resistance,
    proposer selection, independent validation, fork choice, and finality across
    PoW, Ethereum PoS/Gasper, BFT/HotStuff, PoA, DPoS, and Raft, plus the
    boundary between PoI-based proposer weighting and finality.
-3. **Ethereum — a programmable state machine (4 chapters).** World state,
+4. **Ethereum — a programmable state machine (4 chapters).** World state,
    deterministic EVM execution, Gas and transaction receipts, and the oracle
    boundary.
-4. **AI and blockchains — verifiable external work (7 chapters).** Why model
+5. **AI and blockchains — verifiable external work (7 chapters).** Why model
    inference should not be replicated by every validator, the exact EVM/ACVM
    execution boundary, the Worker/Validator pipeline, verification tradeoffs,
    asynchronous Agentic Contracts, the five-layer trust-infrastructure model,
    and the gap between transaction correctness and task correctness.
-5. **ACVM contract and runtime (5 chapters).** Content-addressed contract trees,
+6. **ACVM contract and runtime (5 chapters).** Content-addressed contract trees,
    the Task File ABI, the full lifecycle, runtime roles, and the consensus
    boundary.
-6. **ACVM state and finality (4 chapters).** Deterministic task transitions,
+7. **ACVM state and finality (4 chapters).** Deterministic task transitions,
    receipt verification, disputes, and system limits.
-7. **Trust and proof systems (8 chapters).** Identities and capabilities,
+8. **Trust and proof systems (8 chapters).** Identities and capabilities,
    external-data evidence, isolated and fog execution, runtime policy,
    incremental proofs, Proof of Intelligence, and its research boundary.
-8. **Agent networks and applications (5 chapters).** Agent discovery, task DAGs,
+9. **Agent networks and applications (5 chapters).** Agent discovery, task DAGs,
    private social simulation, chain adapters, and application review patterns.
-9. **Conclusion (1 chapter).** Bitcoin validates ownership history, Ethereum
+10. **Conclusion (1 chapter).** Bitcoin validates ownership history, Ethereum
    validates deterministic program state, and ACVM validates evidence-driven
    task transitions without replicating external computation.
 
 ## Teaching stack
 
-- Chapter summaries and deep-reading material live in `src/content/*.mdx`.
+- Chapter diagrams and their source references live in `src/content/*.mdx`.
 - The desktop shell uses a centered 16:9 stage, slide thumbnails, keyboard and
   touch navigation, a progress counter, and fullscreen presentation mode.
-- `LessonChapter` keeps every chapter's architecture diagram and MDX explanation
-  in an accessible two-tab view.
-- Code Hike compiles fenced examples at build time and provides highlighted,
-  titled, line-numbered, copyable walkthroughs.
-- Remotion Player embeds frame-driven explainers for ledger evolution,
-  transaction finality, and verifiable execution.
+- Every slide states how its concept changes an ACVM design decision, keeping
+  the Bitcoin and Ethereum foundations attached to the main argument.
+- `LessonChapter` now presents one diagram-first view without the former
+  diagram/deep-reading switcher. Detailed reference material remains in source.
+- The closable speaker guide follows the active slide and supplies one takeaway,
+  an opening line, three speaking beats, an ACVM connection, a transition, and
+  suggested timing. It docks beside the stage on desktop, defaults closed on
+  mobile, remembers the user's choice, and can be toggled with `G`.
+- Code Hike examples and Remotion scenes remain build-checked reference assets;
+  the dedicated TypeScript walkthrough slide provides the visible code tour.
 - `src/course.ts` is the source of truth for chapter order and navigation.
 - `scripts/check-course.mjs` ensures MDX chapter IDs exactly match that order and
-  guards minimum code and motion coverage as well as narrator-style filler.
+  verifies speaker-guide coverage while guarding narrator-style filler.
 
 The AI-agent scalability section adapts the five-layer analysis from
 *A Survey of Blockchain Transaction Processing and Scalability: Toward a Trust

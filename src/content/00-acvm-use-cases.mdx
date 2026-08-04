@@ -1,0 +1,29 @@
+import { AcvmUseCasesArchitecture } from '../components/AcvmUseCases'
+import { LessonChapter } from '../components/LessonChapter'
+
+<LessonChapter
+  id="acvm-use-cases"
+  className="foundation-screen acvm-use-cases-screen"
+  eyebrow="OPENING · ACVM IN USE"
+  title="ACVM 怎么用"
+  accent="为已验收结果结算"
+  body="当 Agent 需要花钱、调用工具或跨时协作，ACVM 固定目标与验收规则，记录执行回执，只为进入终局的结果付款。"
+  comparison={{
+    traditionalLabel: '普通 AI 服务',
+    traditionalTitle: '调用成功就开始计费',
+    traditional: '日志留在平台内部，用户很难复核任务版本和失败责任。',
+    acvmLabel: 'ACVM',
+    acvmTitle: '验收成功才进入结算',
+    acvm: 'Intent、产物、裁决与最终状态沿同一 taskId 留下证据。',
+  }}
+  figureLabel="ACVM IN USE / INTENT → EXECUTION → VERDICT → SETTLEMENT"
+  visual={<AcvmUseCasesArchitecture />}
+>
+
+### 先看任务，再看虚拟机
+
+自动采购是贯穿全套内容的锚点案例。调用方签名采购目标、预算和验收规则；采购 Agent 把任务拆成询价、合规检查和下单；Worker 调用真实供应商或工具；Validator 核对报价、合同与交付条件；结算合约只为通过验收并进入终局的结果付款。
+
+私密研究与长任务协作采用同一协议骨架。变化的是执行器、验收方法和争议证据，不变的是任务版本、角色权限、回执链和结算条件。
+
+</LessonChapter>

@@ -1,5 +1,6 @@
 export const screens = [
   ['top', '课程地图'],
+  ['acvm-use-cases', 'ACVM 使用场景'],
   ['btc-ledger', '比特币账本'],
   ['btc-transaction', 'UTXO 交易'],
   ['btc-pow', '区块与 PoW'],
@@ -44,11 +45,14 @@ export const screens = [
   ['conclusion', '核心结论'],
 ] as const;
 
+export type ScreenId = (typeof screens)[number][0];
+
 export const navigation = [
-  { key: 'bitcoin', id: 'btc-ledger', label: '比特币', shortLabel: 'BITCOIN', screens: ['btc-ledger', 'btc-transaction', 'btc-pow', 'btc-consensus'] },
-  { key: 'consensus', id: 'consensus-anatomy', label: '共识机制', shortLabel: 'CONSENSUS', screens: ['consensus-anatomy', 'consensus-pos', 'consensus-bft', 'consensus-governance'] },
-  { key: 'ethereum', id: 'eth-state', label: '以太坊', shortLabel: 'ETHEREUM', screens: ['eth-state', 'eth-evm', 'eth-transaction', 'eth-boundary'] },
-  { key: 'agent', id: 'ai-gap', label: 'AI × 区块链', shortLabel: 'AI × CHAIN', screens: ['ai-gap', 'acvm-execution-boundary', 'ai-execution', 'ai-verification', 'agentic-bridge', 'trust-infrastructure', 'semantic-correctness'] },
+  { key: 'usecase', id: 'acvm-use-cases', label: 'ACVM 场景', shortLabel: 'ACVM IN USE', screens: ['acvm-use-cases'] },
+  { key: 'bitcoin', id: 'btc-ledger', label: '所有权与排序', shortLabel: 'BITCOIN ROOT', screens: ['btc-ledger', 'btc-transaction', 'btc-pow', 'btc-consensus'] },
+  { key: 'consensus', id: 'consensus-anatomy', label: '提议与终局', shortLabel: 'CONSENSUS ROOT', screens: ['consensus-anatomy', 'consensus-pos', 'consensus-bft', 'consensus-governance'] },
+  { key: 'ethereum', id: 'eth-state', label: '可重放执行', shortLabel: 'EVM ROOT', screens: ['eth-state', 'eth-evm', 'eth-transaction', 'eth-boundary'] },
+  { key: 'agent', id: 'ai-gap', label: 'AI 执行边界', shortLabel: 'ACVM WHY', screens: ['ai-gap', 'acvm-execution-boundary', 'ai-execution', 'ai-verification', 'agentic-bridge', 'trust-infrastructure', 'semantic-correctness'] },
   { key: 'contract', id: 'spec-contract', label: 'ACVM 合约', shortLabel: 'CONTRACT', screens: ['spec-contract', 'code-walkthrough', 'lifecycle', 'runtime', 'onchain'] },
   { key: 'state', id: 'spec-state', label: '状态验证', shortLabel: 'STATE', screens: ['spec-state', 'spec-receipt', 'dispute', 'properties'] },
   { key: 'proof', id: 'identity', label: '身份与证明', shortLabel: 'TRUST', screens: ['identity', 'offchain', 'privacy', 'fog', 'sentry', 'proof', 'intelligence', 'spec-poi'] },

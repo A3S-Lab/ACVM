@@ -6,7 +6,9 @@ import './foundations.css';
 import './consensus.css';
 import './lesson.css';
 import './agent-trust.css';
+import './use-cases.css';
 import './presentation.css';
+import './speaker-guide.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

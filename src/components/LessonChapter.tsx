@@ -1,12 +1,14 @@
-import { useId, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { chapterForScreen, screens, screenIndex } from '../course';
+import type { ReactNode } from 'react';
+import { chapterForScreen, screens, screenIndex, type ScreenId } from '../course';
+import { speakerGuides } from '../speakerGuide';
 import {
   TechnicalBackdrop,
   type TechnicalBackdropVariant,
 } from './TechnicalBackdrop';
 import { TechTerm, type TechKey } from './TechTerm';
 
-const technicalBackdrops: Record<string, TechnicalBackdropVariant> = {
+const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = {
+  'acvm-use-cases': 'flow',
   'btc-ledger': 'network',
   'btc-transaction': 'state',
   'btc-pow': 'proof',
@@ -58,7 +60,7 @@ export type MechanismComparison = {
 };
 
 export type LessonChapterProps = {
-  id: string;
+  id: ScreenId;
   className: string;
   eyebrow: string;
   title: string;
@@ -104,7 +106,8 @@ function SectionHeading({
   body,
   comparison,
   terms = [],
-}: Omit<LessonChapterProps, 'id' | 'className' | 'figureLabel' | 'visual' | 'children'> & { index: number }) {
+  connection,
+}: Omit<LessonChapterProps, 'id' | 'className' | 'figureLabel' | 'visual' | 'children'> & { index: number; connection: string }) {
   return (
     <header className="section-heading">
       <div className="section-meta">
@@ -115,6 +118,10 @@ function SectionHeading({
       </div>
       <h2>{title}<br /><em>{accent}</em></h2>
       <p>{body}</p>
+      <div className="acvm-connection">
+        <small>落到 ACVM</small>
+        <span>{connection}</span>
+      </div>
       {comparison ? <MechanismCompare {...comparison} /> : null}
       {terms.length > 0 ? (
         <div className="section-terms">
@@ -136,21 +143,10 @@ export function LessonChapter({
   terms,
   figureLabel = 'ACVM TECHNICAL ARCHITECTURE / REV. 01',
   visual,
-  children,
 }: LessonChapterProps) {
   const index = screenIndex(id);
   const chapter = chapterForScreen(id);
-  const [view, setView] = useState<'diagram' | 'lesson'>('diagram');
-  const tabsId = useId();
-  const hasLesson = Boolean(children);
-  const handleTabKey = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
-    event.preventDefault();
-    const nextView = event.key === 'ArrowRight' ? 'lesson' : 'diagram';
-    setView(nextView);
-    const tabs = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]');
-    tabs?.[nextView === 'diagram' ? 0 : 1]?.focus();
-  };
+  const guide = speakerGuides[id];
 
   return (
     <section
@@ -169,51 +165,10 @@ export function LessonChapter({
           body={body}
           comparison={comparison}
           terms={terms}
+          connection={guide.connection}
         />
-        <div className={`technical-visual lesson-stage is-${view}`}>
-          {hasLesson ? (
-            <div className="lesson-view-switcher" role="tablist" aria-label={`${title}内容视图`}>
-              <button
-                id={`${tabsId}-diagram-tab`}
-                type="button"
-                role="tab"
-                aria-selected={view === 'diagram'}
-                aria-controls={`${tabsId}-diagram`}
-                onClick={() => setView('diagram')}
-                onKeyDown={handleTabKey}
-              >图解</button>
-              <button
-                id={`${tabsId}-lesson-tab`}
-                type="button"
-                role="tab"
-                aria-selected={view === 'lesson'}
-                aria-controls={`${tabsId}-lesson`}
-                onClick={() => setView('lesson')}
-                onKeyDown={handleTabKey}
-              >深读 · 代码</button>
-            </div>
-          ) : null}
-          <div
-            id={`${tabsId}-diagram`}
-            className="lesson-diagram"
-            role={hasLesson ? 'tabpanel' : undefined}
-            aria-labelledby={hasLesson ? `${tabsId}-diagram-tab` : undefined}
-            hidden={view !== 'diagram'}
-          >
-            {view === 'diagram' ? visual : null}
-          </div>
-          {hasLesson ? (
-            <article
-              id={`${tabsId}-lesson`}
-              className="lesson-reading"
-              role="tabpanel"
-              aria-labelledby={`${tabsId}-lesson-tab`}
-              hidden={view !== 'lesson'}
-              tabIndex={view === 'lesson' ? 0 : -1}
-            >
-              <div className="lesson-reading__inner">{view === 'lesson' ? children : null}</div>
-            </article>
-          ) : null}
+        <div className="technical-visual lesson-stage">
+          <div className="lesson-diagram">{visual}</div>
           <div className="figure-caption" aria-hidden="true">
             <span>FIG. {String(index).padStart(2, '0')}</span><i /><span>{figureLabel}</span>
           </div>

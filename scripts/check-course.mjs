@@ -2,12 +2,15 @@ import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 const courseSource = await readFile('src/course.ts', 'utf8');
+const speakerGuideSource = await readFile('src/speakerGuide.ts', 'utf8');
 const screensBlock = courseSource.match(/export const screens = \[([\s\S]*?)\] as const;/)?.[1];
 
 if (!screensBlock) throw new Error('Could not find the screens declaration in src/course.ts');
 
 const screenIds = [...screensBlock.matchAll(/\['([^']+)'/g)].map((match) => match[1]);
 const expectedLessonIds = screenIds.slice(1);
+const speakerGuideIds = [...speakerGuideSource.matchAll(/^  (?:'([^']+)'|([a-z][a-z-]*)): \{$/gm)]
+  .map((match) => match[1] ?? match[2]);
 const contentDirectory = 'src/content';
 const contentFiles = (await readdir(contentDirectory))
   .filter((file) => file.endsWith('.mdx'))
@@ -78,7 +81,11 @@ const narratorPhrases = [
   '革命性',
   '至关重要',
 ];
-const narratorMatches = [...contentSources, ...componentSources].flatMap(({ file, source }) =>
+const narratorMatches = [
+  ...contentSources,
+  ...componentSources,
+  { file: 'src/speakerGuide.ts', source: speakerGuideSource },
+].flatMap(({ file, source }) =>
   narratorPhrases
     .filter((phrase) => source.includes(phrase))
     .map((phrase) => ({ file, phrase })),
@@ -86,6 +93,9 @@ const narratorMatches = [...contentSources, ...componentSources].flatMap(({ file
 
 if (duplicates.length || missing.length || unexpected.length || !orderMatches) {
   throw new Error(JSON.stringify({ duplicates, missing, unexpected, orderMatches }, null, 2));
+}
+if (JSON.stringify(speakerGuideIds) !== JSON.stringify(screenIds)) {
+  throw new Error(`Speaker guide order does not match screens:\n${JSON.stringify({ screenIds, speakerGuideIds }, null, 2)}`);
 }
 if (closingTags !== actualLessonIds.length) {
   throw new Error(`LessonChapter tags are unbalanced: ${actualLessonIds.length} open, ${closingTags} closed`);
