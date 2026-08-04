@@ -1,32 +1,17 @@
 import { VerificationSpectrumArchitecture } from '../components/AiBlockchainFoundations'
 import { LessonChapter } from '../components/LessonChapter'
 import { PoiSecurityArchitecture } from '../components/ProductMechanismArchitecture'
-import {
-  ChainArchitectureSimple,
-  PrivacyArchitecture,
-} from '../components/SimplifiedArchitecture'
+import { ChainArchitectureSimple } from '../components/SimplifiedArchitecture'
 
 <LessonChapter
   id="verification-engine"
   className="verification-spectrum-screen"
   eyebrow="04 · FEASIBILITY / RESULT VERIFICATION"
-  title="模型不能全网重跑"
-  accent="但结果可以分层验证"
-  body="独立复算、挑战、TEE、零知识证明和业务验收覆盖不同命题；合约按任务风险选择组合。"
+  title="开放式 AI 结果怎么验？"
+  accent="先写验收条件，再组合合适证据"
+  body="ACVM 按任务选择复算、挑战、TEE、零知识证明或业务验收。技术证明运行过程，业务规则判断结果是否达标。"
   figureLabel="FEASIBILITY / COST · PRIVACY · ASSURANCE"
   visual={<VerificationSpectrumArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="private-evidence"
-  className="privacy-screen"
-  eyebrow="04 · FEASIBILITY / PRIVATE EVIDENCE"
-  title="原始数据不公开"
-  accent="执行仍可被证明"
-  body="敏感输入留在隔离环境，协议只接收输入承诺、模型版本、执行度量、结果根和可验证证明。"
-  figureLabel="FEASIBILITY / PRIVATE INPUT · PUBLIC PROOF"
-  visual={<PrivacyArchitecture />}
 >
 </LessonChapter>
 
@@ -34,9 +19,9 @@ import {
   id="deployment-modes"
   className="chains-screen"
   eyebrow="04 · FEASIBILITY / DEPLOYMENT"
-  title="不必先造一条新链"
-  accent="三种模式逐步部署"
-  body="ACVM 可以先作为链外协处理器，再成为原生执行器，最后按规模需要演进为 PoI 应用链。"
+  title="必须先建一条新链吗？"
+  accent="不必，先接现有链跑通一笔任务"
+  body="ACVM 可以先做协处理器，借用现有链的托管和终局；需求稳定后再升级原生执行器或 PoI 应用链。"
   figureLabel="FEASIBILITY / COPROCESSOR → NATIVE VM → APPLICATION CHAIN"
   visual={<ChainArchitectureSimple />}
 >
@@ -46,9 +31,9 @@ import {
   id="security-boundaries"
   className="security-boundaries-screen"
   eyebrow="04 · FEASIBILITY / ATTACK SURFACE"
-  title="可行性的关键"
-  accent="是把作弊路径写进协议"
-  body="自造需求、重复计分、伪造结果、验证者串谋和任务难度不可比，都要有独立控制与审计指标。"
+  title="刷单和串谋怎么办？"
+  accent="权重封顶、随机验收、保证金和挑战一起用"
+  body="ACVM 给自造需求、重复计分、伪造结果、验证者串谋和难度失真分别设置检查项，不靠单一信誉分兜底。"
   figureLabel="SECURITY / THREAT → CONTROL → RESIDUAL RISK"
   visual={<PoiSecurityArchitecture />}
 >

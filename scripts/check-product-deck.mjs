@@ -51,8 +51,8 @@ const missing = expectedSlideIds.filter((id) => !actualSlideIds.includes(id));
 const unexpected = actualSlideIds.filter((id) => !expectedSlideIds.includes(id));
 const orderMatches = JSON.stringify(expectedSlideIds) === JSON.stringify(actualSlideIds);
 
-if (screenIds.length !== 20) {
-  throw new Error(`Expected a 20-slide product deck including the cover; found ${screenIds.length}`);
+if (screenIds.length !== 17) {
+  throw new Error(`Expected a 17-slide product deck including the cover; found ${screenIds.length}`);
 }
 if (contentFiles.length !== 6) {
   throw new Error(`Expected six product-deck MDX groups; found ${contentFiles.length}`);
@@ -64,7 +64,7 @@ if (JSON.stringify(speakerGuideIds) !== JSON.stringify(screenIds)) {
   throw new Error(`Speaker guide order does not match screens:\n${JSON.stringify({ screenIds, speakerGuideIds }, null, 2)}`);
 }
 if (JSON.stringify(expectedSlideIds.slice(0, openingIds.length)) !== JSON.stringify(openingIds)) {
-  throw new Error(`The payment gap and two core use cases must open the product story: ${JSON.stringify(expectedSlideIds.slice(0, 3))}`);
+  throw new Error(`The payment condition and two core use cases must open the product story: ${JSON.stringify(expectedSlideIds.slice(0, 3))}`);
 }
 const storyQuestionCount = deckSource.match(/\bquestion: '/g)?.length ?? 0;
 if (storyQuestionCount !== 7) {

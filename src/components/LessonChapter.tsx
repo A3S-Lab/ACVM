@@ -13,19 +13,16 @@ const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = 
   'useful-work': 'proof',
   'execution-boundary': 'flow',
   'system-architecture': 'flow',
+  ans: 'network',
+  'agentic-contract': 'state',
+  'fog-inference': 'fog',
   'poi-proof': 'proof',
   'poi-consensus': 'network',
-  'agentic-evolution': 'state',
-  'agentic-contract': 'state',
-  'task-lifecycle': 'flow',
   'verification-engine': 'proof',
-  'private-evidence': 'fog',
   'deployment-modes': 'chains',
   'security-boundaries': 'proof',
   'economy-roles': 'network',
-  'useful-compute-economy': 'state',
   'product-roadmap': 'state',
-  'pilot-cta': 'proof',
 };
 
 export type MechanismComparison = {
@@ -150,7 +147,7 @@ export function LessonChapter({
           comparison={comparison}
           terms={terms}
           bridge={chapter.bridge}
-          bridgeLabel={chapter.key === 'value' ? '先看产品与场景' : '承接上一部分'}
+          bridgeLabel="这一部分要回答"
           isChapterOpening={chapter.id === id}
         />
         <div className="technical-visual lesson-stage">

@@ -2,24 +2,24 @@ import { Icon, type IconName } from './Icons';
 import { DataChip, LearningPanel } from './LearningPanel';
 
 const productModules = [
-  { code: '01', name: 'Contract', detail: '冻结结果、证据与验收规则', icon: 'key' },
-  { code: '02', name: 'Evidence', detail: '绑定产物、观测与执行回执', icon: 'eye' },
-  { code: '03', name: 'Verdict', detail: '独立验收，保留挑战入口', icon: 'shield' },
-  { code: '04', name: 'Settlement', detail: '裁决终局后释放托管资金', icon: 'receipt' },
+  { code: '01', name: '任务规则', detail: '目标、预算、权限和验收办法', icon: 'key' },
+  { code: '02', name: '执行证据', detail: '产物、观测和运行回执', icon: 'eye' },
+  { code: '03', name: '独立裁决', detail: '通过、拒绝或进入挑战', icon: 'shield' },
+  { code: '04', name: '结算', detail: '终局后只支付一次', icon: 'receipt' },
 ] as const satisfies readonly { code: string; name: string; detail: string; icon: IconName }[];
 
 export function ProductDefinitionArchitecture() {
   return (
-    <LearningPanel code="ACVM / PRODUCT DEFINITION" status="OUTCOME SETTLEMENT" className="product-definition-panel">
+    <LearningPanel code="ACVM / WHAT TRIGGERS PAYMENT" status="VERIFIED RESULT" className="product-definition-panel">
       <div className="product-definition-flow">
         <section className="product-endpoint is-input">
-          <small>BUYER COMMITS</small>
-          <strong>OutcomeSpec</strong>
+          <small>客户先写清</small>
+          <strong>什么算达标</strong>
           <span>目标 · 门槛 · 预算</span>
         </section>
         <i aria-hidden="true">→</i>
         <section className="product-core">
-          <header><Icon name="chain" /><span><small>THE MISSING TRANSACTION LAYER</small><strong>ACVM</strong></span></header>
+          <header><Icon name="chain" /><span><small>任务、证据、裁决、付款</small><strong>ACVM</strong></span></header>
           <div>
             {productModules.map((module) => (
               <article key={module.code}>
@@ -32,22 +32,22 @@ export function ProductDefinitionArchitecture() {
         </section>
         <i aria-hidden="true">→</i>
         <section className="product-endpoint is-output">
-          <small>CHAIN FINALIZES</small>
-          <strong>FinalReceipt</strong>
+          <small>协议最后确认</small>
+          <strong>结果是否付款</strong>
           <span>裁决 · 终局 · 付款</span>
         </section>
       </div>
 
       <div className="product-responsibility-strip">
-        <span><Icon name="brain" /><b>AI Runtime</b><small>模型、工具与业务执行</small></span>
-        <span className="is-acvm"><Icon name="shield" /><b>ACVM</b><small>结果协议与可信验收</small></span>
-        <span><Icon name="chain" /><b>Base Chain</b><small>托管、争议与最终性</small></span>
+        <span><Icon name="brain" /><b>AI Runtime</b><small>运行模型与工具</small></span>
+        <span className="is-acvm"><Icon name="shield" /><b>ACVM</b><small>记录约定与验收</small></span>
+        <span><Icon name="chain" /><b>底层链</b><small>托管资金并给出终局</small></span>
       </div>
 
       <footer>
-        <DataChip tone="red">不是 Agent 框架</DataChip>
-        <DataChip tone="red">不是新底层链</DataChip>
-        <strong>是 AI 结果进入结算前缺失的协议层</strong>
+        <DataChip tone="red">不替代模型运行时</DataChip>
+        <DataChip tone="red">不要求先造新链</DataChip>
+        <strong>ACVM 决定结果何时可以付款</strong>
       </footer>
     </LearningPanel>
   );
@@ -94,29 +94,29 @@ export function ProductLifecycleArchitecture() {
 const readinessStages = [
   {
     stage: 'TODAY',
-    title: '协议与产品叙事',
-    detail: 'PoI、智能体合约与经济闭环已形成概念规范',
+    title: '概念规范与演示',
+    detail: 'PoI、智能体合约、ANS 和雾计算已有可讨论设计',
     status: '当前',
     tone: 'current',
   },
   {
     stage: 'NEXT',
-    title: '最小可运行内核',
-    detail: 'Contract SDK、任务运行器与 PoI 验证器',
+    title: '跑通一笔任务',
+    detail: 'Contract SDK、任务运行器和 PoI 验证器',
     status: '下一步',
     tone: 'next',
   },
   {
     stage: 'PILOT',
-    title: '两个真实试点',
-    detail: '接入 GEO 观测源与社会模拟数据所有方',
+    title: '真实业务试点',
+    detail: '接入 GEO 观测源或社会模拟数据方',
     status: '需共建',
     tone: 'future',
   },
   {
     stage: 'SCALE',
-    title: 'PoI 共识网络',
-    detail: '有界权重、VRF、BFT 与多链适配器',
+    title: '开放 PoI 网络',
+    detail: '有界权重、VRF、BFT 和多链适配器',
     status: '规模化',
     tone: 'future',
   },
@@ -124,9 +124,9 @@ const readinessStages = [
 
 export function ProductReadinessArchitecture() {
   return (
-    <LearningPanel code="DELIVERY / PRODUCT READINESS" status="NO OVERCLAIM" className="product-readiness-panel">
+    <LearningPanel code="DELIVERY / FROM DEMO TO PILOT" status="NEXT MILESTONE" className="product-readiness-panel">
       <header className="product-readiness-status">
-        <span><Icon name="terminal" /><small>当前形态</small><strong>概念规范 + 产品演示</strong></span>
+        <span><Icon name="terminal" /><small>现在</small><strong>概念规范 + 产品演示</strong></span>
         <DataChip tone="amber">CONCEPT</DataChip>
       </header>
       <div className="product-readiness-track">
@@ -141,7 +141,7 @@ export function ProductReadinessArchitecture() {
           </span>
         ))}
       </div>
-      <footer><Icon name="check" /><strong>下一项可验证里程碑</strong><span>让一个真实推理任务从 SignedDemand 走到 Finalized PoI</span></footer>
+      <footer><Icon name="check" /><strong>下一项交付</strong><span>让一笔真实任务从签约、执行、验收走到付款和 Finalized PoI</span></footer>
     </LearningPanel>
   );
 }

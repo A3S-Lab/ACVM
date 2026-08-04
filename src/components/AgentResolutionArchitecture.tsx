@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { DetailHint } from './DetailHint';
-import { derivations } from './DerivationLibrary';
 import { Icon, type IconName } from './Icons';
 
 type AnsAgent = {
@@ -26,21 +24,21 @@ const agents: AnsAgent[] = [
     icon: 'brain',
   },
   {
-    name: 'quant.alpha.ans',
-    role: '量化策略执行',
-    capability: 'quant.execute/v2',
-    endpoint: 'a2a+https://quant.bank/a2a',
-    price: '20% / 已验证净收益',
+    name: 'social.simulate.ans',
+    role: '社会模拟服务',
+    capability: 'social.simulate/v1',
+    endpoint: 'a2a+https://simulation.lab/a2a',
+    price: '¥60,000 / 已验收实验',
     reputation: '0.91 · 76 verified tasks',
-    validator: 'risk-validator-set · 4 / 7',
-    icon: 'terminal',
+    validator: 'simulation-validator-set · 4 / 7',
+    icon: 'brain',
   },
   {
     name: 'fog.infer.ans',
     role: '隐私边缘推理',
     capability: 'private.infer/v1',
     endpoint: 'a2a+https://fog.mesh/a2a',
-    price: '0.08 CNYC / verified call',
+    price: '¥0.08 / 已验收推理',
     reputation: '0.97 · 24 regions online',
     validator: 'attestation-set · 2 / 3',
     icon: 'shield',
@@ -48,12 +46,12 @@ const agents: AnsAgent[] = [
 ];
 
 const stages = [
-  ['01', '名称查询', '调用方用可读名称描述要找的智能体，而不是手工保存地址。'],
-  ['02', '解析能力', 'ANS 返回 DID、A2A 端点、能力版本、价格、有效期和 Validator 集。'],
-  ['03', '核验证明', '调用方检查名称所有权、能力声明、历史回执和任务类型信誉。'],
-  ['04', 'A2A 协商', '双方交换 Intent、预算、SLA、披露范围和验收谓词，形成签名任务。'],
-  ['05', '执行验收', '服务 Agent 执行任务，独立 Validator 验收结果并提交回执。'],
-  ['06', '奖励与更新', '链上按结果结算服务费和验证费，再更新对应能力域的信誉。'],
+  ['01', '输入名称', '调用方按服务名称发起查询，不再手工保存地址。'],
+  ['02', '返回服务卡', 'ANS 返回身份、端点、能力、价格、有效期和 Validator 集。'],
+  ['03', '核验记录', '调用方检查签名、凭证状态和同类任务的历史回执。'],
+  ['04', '签下订单', '双方通过 A2A 确认预算、SLA、披露范围和验收条件。'],
+  ['05', '执行与验收', '服务 Agent 交付结果，独立 Validator 检查证据。'],
+  ['06', '结算并更新', '结果终局后支付服务费和验证费，再更新该能力的信誉。'],
 ] as const;
 
 const candidateY = [78, 158, 238];
@@ -162,31 +160,8 @@ export function AgentResolutionArchitecture() {
       </nav>
 
       <div className="ans-design">
-        <DetailHint
-          className="ans-design-card"
-          category="社会计算 · 奖励设计"
-          label={<><Icon name="receipt" /><span><small>REWARD DESIGN</small><strong>服务激励</strong></span></>}
-          title="奖励设计"
-          summary="把服务费、Validator 费用、保证金和信誉增量绑定到通过验收的结果，而不是绑定到调用次数。"
-          details={[
-            { label: '正向奖励', value: '按结果付费、长期服务加权、稀缺能力溢价和可靠 Validator 奖励。' },
-            { label: '失败成本', value: '超时、伪造回执、串谋和重复申报会扣减保证金与对应能力域信誉。' },
-          ]}
-          derivation={derivations.mechanismDesign}
-        />
-        <i aria-hidden="true" />
-        <DetailHint
-          className="ans-design-card"
-          category="社会计算 · 信息设计"
-          label={<><Icon name="eye" /><span><small>INFORMATION DESIGN</small><strong>可信信号</strong></span></>}
-          title="信息设计"
-          summary="ANS 只公开做决策需要的信号：签名能力、有效期、任务类型信誉、价格、Validator 和可验证历史。"
-          details={[
-            { label: '减少噪声', value: '信誉按能力、任务难度和时间衰减分桶，不能用大量低价值任务刷高所有能力评分。' },
-            { label: '保护隐私', value: '敏感履历用选择性披露或证明表达，解析记录不公开原始业务数据。' },
-          ]}
-          derivation={derivations.informationDesign}
-        />
+        <section className="ans-note"><Icon name="eye" /><span><small>能查到</small><strong>身份 · 能力 · 价格 · 有效期</strong></span></section>
+        <section className="ans-note"><Icon name="shield" /><span><small>仍要核验</small><strong>记录签名 · 凭证状态 · 历史回执</strong></span></section>
         <section className="ans-answer">
           <small>RESOLVED A2A RECORD</small>
           <strong>{selected.endpoint}</strong>

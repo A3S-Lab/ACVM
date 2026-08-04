@@ -20,26 +20,23 @@ protocol by itself.
 
 ## Product story
 
-The 20-slide presentation, including the cover, is organized into six sections:
+The 17-slide presentation, including the cover, is organized into six sections:
 
-1. **Product and use cases.** A one-page product definition is followed by GEO
-   result verification as a service and privacy-sealed social simulation as a
-   service.
+1. **Product and use cases.** The payment condition is defined first, followed
+   by GEO result verification and privacy-sealed social simulation.
 2. **First principles.** The deck separates the security function of proof of
    work from hash computation, then separates deterministic VM replay from the
    execution needs of long-running AI agents.
-3. **Core mechanism.** The dual-engine architecture connects signed demand,
-   inference, validation, outcome settlement, PoI eligibility, bounded weight,
-   VRF proposer selection, BFT finality, and the Agentic Contract object.
-4. **Technical feasibility.** Hybrid result verification, private evidence,
-   three deployment modes, and five explicit attack paths define what can be
-   implemented and what still needs pilot calibration.
-5. **Economics.** Participant contributions, rewards, and risks are separated
-   from two value flows: customer payment for accepted outcomes and network
-   rewards for completed consensus duties.
-6. **Delivery.** The roadmap distinguishes the current concept specification
-   and product demonstration from the runtime, PoI verifier, use-case pilots,
-   and an eventual PoI-weighted network.
+3. **Order workflow.** An animated ASCII map connects signed demand, ANS agent
+   discovery, Agentic Contracts, fog inference, validation, settlement, PoI,
+   VRF proposer selection, and BFT finality.
+4. **Technical feasibility.** Hybrid result verification, three deployment
+   modes, and five explicit attack paths define what can be implemented and
+   what still needs pilot calibration.
+5. **Economics.** One concrete escrow example shows how accepted, rejected, and
+   fraudulent outcomes pay each participant and assign risk.
+6. **Delivery.** One roadmap slide separates the current concept demonstration
+   from the runtime, first real pilot, and an eventual PoI-weighted network.
 
 Each visible slide carries one claim and one diagram. Assumptions, formulas,
 edge cases, technical context, and transitions live in the closable speaker
@@ -60,8 +57,8 @@ The next verifiable milestone is one real inference task running from
 - `O` toggles slide thumbnails.
 - `G` toggles the speaker guide.
 - `F` toggles fullscreen presentation mode.
-- The GEO and social-simulation scenes can auto-play, pause, and jump to a
-  specific stage.
+- The GEO, social-simulation, ASCII workflow, ANS, and fog-computing scenes can
+  auto-play, pause, and jump to a specific stage.
 
 ## Development
 

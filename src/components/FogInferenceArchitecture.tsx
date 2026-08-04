@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { AsciiGlobe } from './AsciiGlobe';
-import { DetailHint } from './DetailHint';
-import { derivations } from './DerivationLibrary';
 import { Icon, type IconName } from './Icons';
-import { TechTerm } from './TechTerm';
 
 type FogStage = {
   code: string;
@@ -19,7 +16,7 @@ const stages: FogStage[] = [
     code: '01',
     title: '提交推理任务',
     actor: '数据拥有者 → 调度合约',
-    detail: '用户签名模型版本、预算、截止时间和披露范围。原始输入不上传。',
+    detail: '用户签名模型版本、预算、截止时间和披露范围；原始输入不上传。',
     record: 'Intent Hash · Model Hash · Privacy Policy · Nonce',
     icon: 'fingerprint',
   },
@@ -27,7 +24,7 @@ const stages: FogStage[] = [
     code: '02',
     title: '分配雾节点',
     actor: '调度合约 → 雾节点',
-    detail: '调度合约按延迟、地域、硬件证明、价格和可用资源选择节点。',
+    detail: 'ACVM 按延迟、地域、硬件证明、价格和可用资源选择节点。',
     record: 'Lease ID · Node DID · Capability Proof · SLA',
     icon: 'chain',
   },
@@ -35,7 +32,7 @@ const stages: FogStage[] = [
     code: '03',
     title: 'Worker 运行模型',
     actor: '雾节点 Worker',
-    detail: 'a3s-box 解封输入，a3s-power 加载指定模型。完成后删除明文上下文。',
+    detail: 'a3s-box 解封输入，a3s-power 加载指定模型；完成后清理明文。',
     record: 'Input Commitment · Output Commitment · Runtime Measurement',
     icon: 'brain',
   },
@@ -43,7 +40,7 @@ const stages: FogStage[] = [
     code: '04',
     title: 'Validator 验收',
     actor: '独立 Validator 节点',
-    detail: 'Validator 检查模型哈希、远程证明、输出约束和 SLA。不通过则返回拒绝回执。',
+    detail: 'Validator 检查模型哈希、远程证明、输出约束和 SLA。',
     record: 'Validator Receipts · Attestation · Threshold Signature',
     icon: 'shield',
   },
@@ -51,7 +48,7 @@ const stages: FogStage[] = [
     code: '05',
     title: '提交链上记录',
     actor: 'Validator → 区块链共识节点',
-    detail: '共识节点验证回执、证明和状态根，不重新执行模型。',
+    detail: '共识节点验证回执、证明和状态根，不重新运行模型。',
     record: 'Receipt Root · Proof · State Root · Finality',
     icon: 'receipt',
   },
@@ -59,7 +56,7 @@ const stages: FogStage[] = [
     code: '06',
     title: '返回推理结果',
     actor: 'ACVM 合约 → 授权接收方',
-    detail: '结果只发给授权接收方。随后关闭租约、撤销临时密钥并清理节点缓存。',
+    detail: '结果只发给授权接收方；随后关闭租约并撤销临时密钥。',
     record: 'Disclosure Receipt · Settlement · Key Revocation',
     icon: 'lock',
   },
@@ -73,15 +70,6 @@ const routePaths = [
   'M844 338 C928 266 928 158 844 92',
   'M832 76 C706 158 560 166 430 88',
 ];
-
-const stageDerivations = [
-  derivations.signedIntent,
-  derivations.identityAuthorization,
-  derivations.workerExecution,
-  derivations.validatorDecision,
-  derivations.receiptVerification,
-  derivations.bftFinality,
-] as const;
 
 export function FogInferenceArchitecture() {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -127,18 +115,7 @@ export function FogInferenceArchitecture() {
       <section className="fog-current" aria-live="polite">
         <span><small>STEP</small>{current.code}</span>
         <div><small>{current.actor}</small><strong><Icon name={current.icon} />{current.title}</strong><p>{current.detail}</p></div>
-        <DetailHint
-          className="fog-record-hint"
-          category="本步链上字段"
-          label={<code>{current.record}</code>}
-          title={`${current.code} · ${current.title}`}
-          summary="链上用这些字段把本步骤接到同一个 taskId。必要字段缺失时，状态不会推进。"
-          details={[
-            { label: '查记录', value: '用 taskId、合约版本和前序状态根可以按顺序查到每一份回执。' },
-            { label: '不写链', value: '原始输入、模型文件和完整推理上下文不会写入区块。' },
-          ]}
-          derivation={stageDerivations[activeStage]}
-        />
+        <code className="fog-record">链上记录：{current.record}</code>
       </section>
 
       <div className="fog-network" aria-label="区块链协调的雾计算隐私推理网络动画">
@@ -186,8 +163,8 @@ export function FogInferenceArchitecture() {
       </nav>
 
       <footer className="fog-terms">
-        <span>链上不保存原始输入；雾节点不持久化明文</span>
-        <div><TechTerm term="TEE" /><TechTerm term="Remote Attestation" /><TechTerm term="Receipt Root" /></div>
+        <span>原始数据留在本地；所有节点都能核验回执</span>
+        <div><code>TEE</code><code>REMOTE ATTESTATION</code><code>RECEIPT ROOT</code></div>
       </footer>
     </div>
   );

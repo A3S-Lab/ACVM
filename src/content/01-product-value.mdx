@@ -3,17 +3,17 @@ import {
   SocialSimulationArchitecture,
 } from '../components/CoreUseCaseAnimations'
 import { LessonChapter } from '../components/LessonChapter'
-import { AcvmProductSnapshotArchitecture } from '../components/ProductMechanismArchitecture'
+import { ProductDefinitionArchitecture } from '../components/ProductNarrativeArchitecture'
 
 <LessonChapter
   id="product-snapshot"
   className="product-snapshot-screen"
-  eyebrow="01 · PRODUCT / TWO REPLACEMENTS"
-  title="ACVM 做两件事"
-  accent="让 AI 服务进入共识与结算"
-  body="PoI 用真实模型推理替换哈希工作来源；Agentic Contract 用回执状态机替换不适合 AI 的智能合约。"
-  figureLabel="PRODUCT THESIS / POW → POI · EVM → ACVM"
-  visual={<AcvmProductSnapshotArchitecture />}
+  eyebrow="01 · PRODUCT / PAYMENT CONDITION"
+  title="为什么不按调用量结算？"
+  accent="调用计成本，验收结果才付款"
+  body="ACVM 记录任务、证据、裁决和付款条件。模型仍在链下运行，结果通过验收并达到终局后，托管资金才释放。"
+  figureLabel="PRODUCT / OUTCOME SPEC → EVIDENCE → VERDICT → PAY"
+  visual={<ProductDefinitionArchitecture />}
 >
 </LessonChapter>
 
@@ -21,9 +21,9 @@ import { AcvmProductSnapshotArchitecture } from '../components/ProductMechanismA
   id="geo-verification"
   className="core-use-case-screen geo-verification-screen"
   eyebrow="01 · PRODUCT / GEO VERIFICATION"
-  title="GEO 结果验证即服务"
-  accent="优化结果既可付款，也可形成 PoI"
-  body="品牌方签名真实需求，优化方执行模型与工具，独立节点复测增量；验收通过后生成有效计算证明。"
+  title="品牌方怎么确认 GEO 真有效？"
+  accent="冻结口径，独立复测，按增量付款"
+  body="ACVM 先锁定问题集、基线和观察窗口。优化方不能给自己打分；独立节点复测，达到门槛才付款并生成 PoI。"
   figureLabel="CORE CASE / DEMAND → INFERENCE → OBSERVATION → POI"
   visual={<GeoVerificationArchitecture />}
 >
@@ -33,9 +33,9 @@ import { AcvmProductSnapshotArchitecture } from '../components/ProductMechanismA
   id="simulation"
   className="core-use-case-screen simulation-screen"
   eyebrow="01 · PRODUCT / SOCIAL SIMULATION"
-  title="社会模拟即服务"
-  accent="私有推理也能产生可验证贡献"
-  body="个体轨迹留在隔离域，安全聚合只输出群体统计；独立复核确认模型、输入承诺与统计管线。"
+  title="数据不能公开，结论怎么让人信？"
+  accent="个体数据留在本地，只公开统计和证明"
+  body="ACVM 固定模型、样本承诺和随机过程。雾节点在隔离域运行模拟，Validator 复核聚合结果，不读取个人轨迹。"
   figureLabel="CORE CASE / SEALED INPUT → VERIFIED SIMULATION → POI"
   visual={<SocialSimulationArchitecture />}
 >

@@ -1,35 +1,67 @@
-import {
-  AgenticContractBridgeArchitecture,
-} from '../components/AiBlockchainFoundations'
+import { AcvmServiceWorkflowArchitecture } from '../components/AcvmServiceWorkflow'
+import { AgentResolutionArchitecture } from '../components/AgentResolutionArchitecture'
 import { ContractModelArchitecture } from '../components/FormalSpecArchitecture'
+import { FogInferenceArchitecture } from '../components/FogInferenceArchitecture'
 import { LessonChapter } from '../components/LessonChapter'
-import { ProductLifecycleArchitecture } from '../components/ProductNarrativeArchitecture'
-import {
-  AcvmSystemArchitecture,
-  PoiConsensusArchitecture,
-} from '../components/ProductMechanismArchitecture'
+import { PoiConsensusArchitecture } from '../components/ProductMechanismArchitecture'
 import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitecture'
 
 <LessonChapter
   id="system-architecture"
   className="system-architecture-screen"
-  eyebrow="03 · MECHANISM / DUAL ENGINE"
-  title="一份模型推理"
-  accent="进入两条价值支路"
-  body="Agentic Contract 推进任务与结算；PoI 引擎把同一份已验收工作转成有界共识贡献。"
-  figureLabel="SYSTEM / SERVICE SETTLEMENT + CONSENSUS CONTRIBUTION"
-  visual={<AcvmSystemArchitecture />}
+  eyebrow="03 · WORKFLOW / ONE ORDER"
+  title="一单 AI 服务怎么跑完？"
+  accent="找服务、锁规则、做推理、验结果、再结算"
+  body="ACVM 用同一个 taskId 串起 ANS、智能体合约、雾节点和 Validator。验收通过后，结果费与 PoI 分别记账。"
+  figureLabel="ASCII MAP / DEMAND → ANS → CONTRACT → FOG → VERDICT → PAY + POI"
+  visual={<AcvmServiceWorkflowArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="ans"
+  className="ans-screen"
+  eyebrow="03 · WORKFLOW / ANS"
+  title="调用方怎么找到可信 Agent？"
+  accent="ANS 解析身份、能力、价格和信誉"
+  body="输入一个智能体名称，ANS 返回签名服务记录和 A2A 端点。调用方核验有效期与历史回执后，再签任务。"
+  figureLabel="ANS / NAME → VERIFIED SERVICE RECORD → A2A INTENT"
+  visual={<AgentResolutionArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="agentic-contract"
+  className="formal-screen contract-spec-screen"
+  eyebrow="03 · WORKFLOW / AGENTIC CONTRACT"
+  title="谁来管预算、权限和失败？"
+  accent="智能体合约把任务写成状态机"
+  body="合约固定输入输出、Worker、Validator、挑战期和付款条件。任务靠签名回执推进，执行方不能自行宣布完成。"
+  figureLabel="CONTRACT / SCHEMA · WORKER · VALIDATOR · SETTLEMENT"
+  visual={<ContractModelArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="fog-inference"
+  className="fog-screen"
+  eyebrow="03 · WORKFLOW / FOG COMPUTING"
+  title="数据不出域，推理怎么交付？"
+  accent="雾节点就近执行，链上只收证据"
+  body="ACVM 按地域、延迟、硬件证明和价格选择 Worker。原始数据留在业务现场，结果根、运行证明和裁决进入账本。"
+  figureLabel="FOG / LOCAL DATA → NEARBY INFERENCE → GLOBAL VERIFICATION"
+  visual={<FogInferenceArchitecture />}
 >
 </LessonChapter>
 
 <LessonChapter
   id="poi-proof"
   className="intelligence-screen"
-  eyebrow="03 · MECHANISM / PROOF OF INTELLIGENCE"
-  title="耗费算力还不够"
-  accent="四项同时成立才是有效 PoI"
-  body="真实需求签名、结果通过验收、执行可核验、任务未被重复计分；缺一项就不能进入贡献池。"
-  figureLabel="POI / SIGNED DEMAND · ACCEPTED RESULT · EXECUTION · FRESHNESS"
+  eyebrow="03 · WORKFLOW / PROOF OF INTELLIGENCE"
+  title="什么样的推理才算贡献？"
+  accent="真实订单、通过验收、执行可查、不能重放"
+  body="ACVM 同时检查需求签名、结果裁决、执行证明和 taskKey。四项都通过才生成 PoI；只有 GPU 用量不算。"
+  figureLabel="POI / DEMAND · RESULT · EXECUTION · FRESHNESS"
   visual={<IntelligenceProofArchitecture />}
 >
 </LessonChapter>
@@ -37,47 +69,11 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
 <LessonChapter
   id="poi-consensus"
   className="poi-consensus-screen"
-  eyebrow="03 · MECHANISM / BOOKKEEPING RIGHT"
-  title="PoI 产生候选权重"
-  accent="VRF 选择，BFT 终局"
-  body="有效 PoI 按任务类型归一、封顶并衰减；权重影响提议概率，但不能绕过区块验证与多数确认。"
+  eyebrow="03 · WORKFLOW / BOOKKEEPING RIGHT"
+  title="PoI 会直接买下记账权吗？"
+  accent="不会：PoI 加权，VRF 抽签，BFT 终局"
+  body="有效 PoI 先归一、封顶和衰减，只影响被抽中的概率。提议者仍要接受其他节点验块和多数确认。"
   figureLabel="CONSENSUS / POI WEIGHT → VRF PROPOSER → BFT FINALITY"
   visual={<PoiConsensusArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="agentic-evolution"
-  className="agentic-bridge-screen"
-  eyebrow="03 · MECHANISM / CONTRACT EVOLUTION"
-  title="智能合约处理交易"
-  accent="智能体合约管理任务"
-  body="ACVM 把跨区块、跨工具的 Agent 工作写成带身份、预算、回执、验收和结算的状态机。"
-  figureLabel="CONTRACT / EVM SMART CONTRACT → ACVM AGENTIC CONTRACT"
-  visual={<AgenticContractBridgeArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="agentic-contract"
-  className="formal-screen contract-spec-screen"
-  eyebrow="03 · MECHANISM / CONTRACT OBJECT"
-  title="一份智能体合约"
-  accent="同时固定执行与验收接口"
-  body="Schema、Worker、Validator 与 Settlement 共同生成 contractRoot；任何任务或验收规则变化都会成为新版本。"
-  figureLabel="CONTRACT OBJECT / VERSIONED AGENT TASK"
-  visual={<ContractModelArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="task-lifecycle"
-  className="product-lifecycle-screen"
-  eyebrow="03 · MECHANISM / END-TO-END"
-  title="一次真实推理"
-  accent="从需求走到 PoI 与终局"
-  body="同一个 taskId 串起真实需求、智能体合约、模型执行、结果验收、PoI 和最终结算。"
-  figureLabel="PRODUCT FLOW / SIGNED DEMAND → FINALIZED POI"
-  visual={<ProductLifecycleArchitecture />}
 >
 </LessonChapter>

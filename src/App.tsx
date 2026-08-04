@@ -494,11 +494,11 @@ export function App() {
             <div className="hero-copy">
               <span className="hero-eyebrow"><i /> AI + BLOCKCHAIN / USEFUL COMPUTE</span>
               <h1>让模型推理<br /><em className="hero-full-name">成为区块链的有效工作</em></h1>
-              <p>ACVM 用真实需求触发的模型推理生成 PoI，以 Agentic Contract 管理异步智能体任务，再把有效计算转成记账权重与结果结算。</p>
+              <p>客户先写清什么算达标。Agent 完成推理并留下证据；结果通过验收才付款，同时生成可用于共识的 PoI。</p>
               <ul className="hero-benefits" aria-label="ACVM 产品闭环">
-                <li><Icon name="spark" />PoI：证明真实模型推理服务</li>
-                <li><Icon name="brain" />Agentic Contract：管理异步任务</li>
-                <li><Icon name="shield" />VRF + BFT：选择提议者并终局</li>
+                <li><Icon name="key" />客户：不再为失败调用买单</li>
+                <li><Icon name="brain" />服务方：结果达标后拿结果费</li>
+                <li><Icon name="chain" />网络：把已验收推理计为有效工作</li>
               </ul>
               <div className="hero-actions">
                 <a href="#product-snapshot" className="button button--primary" onClick={(event) => { event.preventDefault(); goToScreen(1); }}>一页看懂 ACVM <Icon name="arrow" /></a>
@@ -507,7 +507,7 @@ export function App() {
             </div>
             <ProductThesis />
           </div>
-          <span className="hero-footnote"><i /> SIGNED DEMAND → INFERENCE → ACCEPTED RESULT → PoI → VRF → FINALITY</span>
+          <span className="hero-footnote"><i /> SIGNED DEMAND → ANS → AGENTIC CONTRACT → FOG INFERENCE → VERDICT → PAY + PoI</span>
           <span className="screen-number" aria-hidden="true">00</span>
         </section>
 
