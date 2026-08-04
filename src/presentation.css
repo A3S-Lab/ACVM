@@ -23,7 +23,7 @@
   --header-h: 56px;
   --deck-rail-width: 196px;
   --deck-rail-current: 0px;
-  --deck-guide-width: 360px;
+  --deck-guide-width: clamp(360px, 28vw, 410px);
   --deck-guide-current: 0px;
 }
 
@@ -141,7 +141,7 @@ body {
 
 .brand small {
   color: #778294;
-  font-size: 8px;
+  font-size: 9px;
   letter-spacing: 0.16em;
 }
 
@@ -155,7 +155,7 @@ body {
 .site-header nav a {
   padding: 21px 0 18px;
   color: #697487;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 650;
   white-space: nowrap;
 }
@@ -183,12 +183,12 @@ body {
 
 .deck-location small {
   color: #ed8266;
-  font: 700 8px var(--mono);
+  font: 700 9px var(--mono);
   letter-spacing: 0.13em;
 }
 
 .deck-location strong {
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .header-actions {
@@ -547,7 +547,7 @@ body {
 .hero-eyebrow,
 .section-eyebrow {
   color: var(--accent);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.18em;
 }
 
@@ -569,13 +569,13 @@ body {
 
 .chapter-bridge small {
   color: var(--accent);
-  font: 750 7px var(--font-mono);
+  font: 750 9px var(--font-mono);
   letter-spacing: 0.1em;
 }
 
 .chapter-bridge span {
   color: #c7d1de;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -607,7 +607,7 @@ body {
 
 .chapter-progress {
   color: #77879d;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .mechanism-compare {
@@ -641,13 +641,13 @@ body {
 }
 
 .tech-term {
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .figure-caption {
   min-height: 24px;
   padding-top: 7px;
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .screen-number {
@@ -734,7 +734,7 @@ body {
   border-color: rgba(230, 237, 247, 0.13);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.035);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .hero-actions {
@@ -788,7 +788,7 @@ body {
   left: 40px;
   bottom: 18px;
   color: #77879d;
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .blockchain-block {

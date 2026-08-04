@@ -3,6 +3,10 @@ import { join } from 'node:path';
 
 const deckSource = await readFile('src/deck.ts', 'utf8');
 const speakerGuideSource = await readFile('src/speakerGuide.ts', 'utf8');
+const speakerGuideDetailsSource = await readFile('src/speakerGuideDetails.ts', 'utf8');
+const speakerGuideDetailsBlock = speakerGuideDetailsSource.split('export const speakerGuideDetails = {')[1];
+
+if (!speakerGuideDetailsBlock) throw new Error('Could not find speakerGuideDetails declaration');
 const screensBlock = deckSource.match(/export const screens = \[([\s\S]*?)\] as const;/)?.[1];
 
 if (!screensBlock) throw new Error('Could not find the screens declaration in src/deck.ts');
@@ -23,6 +27,8 @@ const retiredTutorialIds = [
   'eth-boundary',
 ];
 const speakerGuideIds = [...speakerGuideSource.matchAll(/^  (?:'([^']+)'|([a-z][a-z-]*)): \{$/gm)]
+  .map((match) => match[1] ?? match[2]);
+const speakerGuideDetailIds = [...speakerGuideDetailsBlock.matchAll(/^  (?:'([^']+)'|([a-z][a-z-]*)): \{$/gm)]
   .map((match) => match[1] ?? match[2]);
 const contentDirectory = 'src/content';
 const contentFiles = (await readdir(contentDirectory))
@@ -60,8 +66,17 @@ if (contentFiles.length !== 6) {
 if (duplicates.length || missing.length || unexpected.length || !orderMatches) {
   throw new Error(JSON.stringify({ duplicates, missing, unexpected, orderMatches }, null, 2));
 }
-if (JSON.stringify(speakerGuideIds) !== JSON.stringify(screenIds)) {
-  throw new Error(`Speaker guide order does not match screens:\n${JSON.stringify({ screenIds, speakerGuideIds }, null, 2)}`);
+if (speakerGuideIds.length !== screenIds.length || !screenIds.every((id) => speakerGuideIds.includes(id))) {
+  throw new Error(`Speaker guide coverage does not match screens:\n${JSON.stringify({ screenIds, speakerGuideIds }, null, 2)}`);
+}
+if (speakerGuideDetailIds.length !== screenIds.length || !screenIds.every((id) => speakerGuideDetailIds.includes(id))) {
+  throw new Error(`Speaker guide detail coverage does not match screens:\n${JSON.stringify({ screenIds, speakerGuideDetailIds }, null, 2)}`);
+}
+for (const field of ['implementation', 'challenges', 'security', 'sources']) {
+  const count = speakerGuideDetailsBlock.match(new RegExp(`^    ${field}: \\[`, 'gm'))?.length ?? 0;
+  if (count !== screenIds.length) {
+    throw new Error(`Expected ${field} notes for all ${screenIds.length} slides; found ${count}`);
+  }
 }
 if (JSON.stringify(expectedSlideIds.slice(0, openingIds.length)) !== JSON.stringify(openingIds)) {
   throw new Error(`The payment condition and two core use cases must open the product story: ${JSON.stringify(expectedSlideIds.slice(0, 3))}`);
@@ -85,6 +100,7 @@ const artificialPhrases = ['本章', '本课程', '让我们', '综上所述', '
 const artificialMatches = [
   ...contentSources,
   { file: 'src/speakerGuide.ts', source: speakerGuideSource },
+  { file: 'src/speakerGuideDetails.ts', source: speakerGuideDetailsSource },
 ].flatMap(({ file, source }) => artificialPhrases
   .filter((phrase) => source.includes(phrase))
   .map((phrase) => `${file}: ${phrase}`));
@@ -92,4 +108,4 @@ if (artificialMatches.length) {
   throw new Error(`Narrator-style filler found:\n${artificialMatches.join('\n')}`);
 }
 
-console.log(`Product deck OK: ${actualSlideIds.length} content slides, ${contentFiles.length} sections, full speaker-guide coverage.`);
+console.log(`Product deck OK: ${actualSlideIds.length} content slides, ${contentFiles.length} sections, full speaker-guide and security-note coverage.`);

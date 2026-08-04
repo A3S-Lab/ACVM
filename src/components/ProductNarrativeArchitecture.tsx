@@ -33,7 +33,7 @@ export function ProductDefinitionArchitecture() {
         <i aria-hidden="true">→</i>
         <section className="product-endpoint is-output">
           <small>协议最后确认</small>
-          <strong>结果是否付款</strong>
+          <strong>何时可以付款</strong>
           <span>裁决 · 终局 · 付款</span>
         </section>
       </div>
@@ -44,10 +44,9 @@ export function ProductDefinitionArchitecture() {
         <span><Icon name="chain" /><b>底层链</b><small>托管资金并给出终局</small></span>
       </div>
 
-      <footer>
-        <DataChip tone="red">不替代模型运行时</DataChip>
-        <DataChip tone="red">不要求先造新链</DataChip>
-        <strong>ACVM 决定结果何时可以付款</strong>
+      <footer className="product-decision">
+        <Icon name="shield" />
+        <span><small>ACVM 只新增一个决定</small><strong>这份结果是否已经达到付款条件？</strong></span>
       </footer>
     </LearningPanel>
   );

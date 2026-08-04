@@ -18,15 +18,15 @@ import ProductDeliveryDeck from './content/06-product-delivery.mdx';
 import { chapterForScreen, navigation, screens } from './deck';
 
 const githubUrl = 'https://github.com/A3S-Lab/ACVM';
-const speakerGuideStorageKey = 'acvm-speaker-guide';
+const speakerGuideStorageKey = 'acvm-speaker-guide-v2';
 
 function initialSpeakerGuideState() {
   try {
     const stored = window.localStorage.getItem(speakerGuideStorageKey);
     if (stored) return stored === 'open';
-    return window.matchMedia('(min-width: 961px)').matches;
+    return false;
   } catch {
-    return true;
+    return false;
   }
 }
 
@@ -214,9 +214,7 @@ export function App() {
   const [activeScreen, setActiveScreen] = useState(initialScreenIndex);
   const [menuOpen, setMenuOpen] = useState(false);
   const [guideOpen, setGuideOpen] = useState(initialSpeakerGuideState);
-  const [outlineOpen, setOutlineOpen] = useState(() => (
-    window.matchMedia('(min-width: 1241px)').matches && !initialSpeakerGuideState()
-  ));
+  const [outlineOpen, setOutlineOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const activeId = screens[activeScreen]?.[0] ?? 'top';
@@ -492,16 +490,16 @@ export function App() {
           <BlockchainBackdrop />
           <div className="screen-inner hero-layout">
             <div className="hero-copy">
-              <span className="hero-eyebrow"><i /> AI + BLOCKCHAIN / USEFUL COMPUTE</span>
-              <h1>让模型推理<br /><em className="hero-full-name">成为区块链的有效工作</em></h1>
-              <p>客户先写清什么算达标。Agent 完成推理并留下证据；结果通过验收才付款，同时生成可用于共识的 PoI。</p>
+              <span className="hero-eyebrow"><i /> AI + BLOCKCHAIN / VERIFIED OUTCOME</span>
+              <h1>让 AI 服务<br /><em className="hero-full-name">按已验证结果付费</em></h1>
+              <p>ACVM 先锁定验收条件，再记录执行证据与裁决。结果通过才付款；同一份已验收推理再成为网络的有效工作。</p>
               <ul className="hero-benefits" aria-label="ACVM 产品闭环">
                 <li><Icon name="key" />客户：不再为失败调用买单</li>
                 <li><Icon name="brain" />服务方：结果达标后拿结果费</li>
                 <li><Icon name="chain" />网络：把已验收推理计为有效工作</li>
               </ul>
               <div className="hero-actions">
-                <a href="#product-snapshot" className="button button--primary" onClick={(event) => { event.preventDefault(); goToScreen(1); }}>一页看懂 ACVM <Icon name="arrow" /></a>
+                <a href="#product-snapshot" className="button button--primary" onClick={(event) => { event.preventDefault(); goToScreen(1); }}>先看一笔订单 <Icon name="arrow" /></a>
                 <a href="#poi-consensus" className="button button--secondary" onClick={(event) => { event.preventDefault(); goToScreen(screens.findIndex(([id]) => id === 'poi-consensus')); }}>查看 PoI 如何记账</a>
               </div>
             </div>

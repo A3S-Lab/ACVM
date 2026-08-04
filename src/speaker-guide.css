@@ -4,7 +4,7 @@
   right: 14px;
   bottom: 72px;
   z-index: 92;
-  width: min(360px, calc(100vw - 28px));
+  width: min(400px, calc(100vw - 28px));
   min-height: 0;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto;
@@ -57,7 +57,7 @@
 .speaker-guide__body section > small,
 .speaker-guide__transition small {
   color: #e0775d;
-  font: 750 8px var(--font-mono);
+  font: 750 10px var(--font-mono);
   letter-spacing: 0.12em;
 }
 
@@ -90,7 +90,7 @@
   padding: 0 16px;
   border-bottom: 1px solid #e1e4e6;
   color: #7d8896;
-  font: 700 8px var(--font-mono);
+  font: 700 10px var(--font-mono);
   letter-spacing: 0.08em;
 }
 
@@ -139,7 +139,7 @@
 
 .speaker-guide__focus p {
   color: #425066;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 650;
   line-height: 1.55;
 }
@@ -153,7 +153,7 @@
 
 .speaker-guide__chapter-question p {
   color: #223149;
-  font: 750 12px/1.55 var(--font-display);
+  font: 750 13px/1.55 var(--font-display);
 }
 
 .speaker-guide__connection {
@@ -165,7 +165,7 @@
 
 .speaker-guide__connection p {
   color: #5e4a46;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.55;
 }
 
@@ -176,7 +176,7 @@
   border-radius: 10px;
   background: #fff;
   color: #223149;
-  font: 700 12px/1.65 var(--font-display);
+  font: 700 13px/1.65 var(--font-display);
 }
 
 .speaker-guide__opening blockquote::before {
@@ -218,8 +218,143 @@
 .speaker-guide__beats p {
   padding-top: 2px;
   color: #586578;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.55;
+}
+
+.speaker-guide__deep-dive {
+  gap: 9px !important;
+}
+
+.speaker-guide__deep-dive details {
+  overflow: hidden;
+  border: 1px solid #d8dde2;
+  border-radius: 11px;
+  background: #f8f8f6;
+}
+
+.speaker-guide__deep-dive summary {
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 9px;
+  align-items: center;
+  padding: 0 12px;
+  color: #1c2a3d;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  list-style: none;
+}
+
+.speaker-guide__deep-dive summary::-webkit-details-marker {
+  display: none;
+}
+
+.speaker-guide__deep-dive summary b {
+  min-width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: #e7e9eb;
+  color: #667386;
+  font: 750 10px var(--font-mono);
+}
+
+.speaker-guide__deep-dive summary::after {
+  color: #e0775d;
+  content: '+';
+  font: 800 17px/1 var(--font-mono);
+}
+
+.speaker-guide__deep-dive details[open] summary {
+  border-bottom: 1px solid #dde1e4;
+  background: #fff;
+}
+
+.speaker-guide__deep-dive details[open] summary::after {
+  content: '−';
+}
+
+.speaker-guide__cards {
+  display: grid;
+  gap: 9px;
+  padding: 10px;
+}
+
+.speaker-guide__cards article {
+  padding: 11px 12px;
+  border: 1px solid #e0e3e6;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.speaker-guide__cards h3 {
+  margin: 0 0 8px;
+  color: #17263b;
+  font: 800 14px/1.35 var(--font-display);
+}
+
+.speaker-guide__cards p {
+  margin: 0;
+  color: #4d5b6e;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.speaker-guide__cards p + p {
+  margin-top: 7px;
+}
+
+.speaker-guide__cards em {
+  margin-right: 7px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: #e9edf1;
+  color: #435168;
+  font: 750 10px/1.5 var(--font-mono);
+  font-style: normal;
+  white-space: nowrap;
+}
+
+.speaker-guide__cards .speaker-guide__residual {
+  padding-top: 7px;
+  border-top: 1px dashed #d9dde1;
+  color: #776057;
+}
+
+.speaker-guide__cards .speaker-guide__residual em {
+  background: #fff0eb;
+  color: #a95340;
+}
+
+.speaker-guide__sources > div {
+  display: grid;
+  gap: 7px;
+}
+
+.speaker-guide__sources a {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px solid #dce0e4;
+  border-radius: 8px;
+  background: #fff;
+  color: #46546a;
+  font-size: 11px;
+  line-height: 1.4;
+  text-decoration: none;
+}
+
+.speaker-guide__sources a:hover {
+  border-color: #e29885;
+  color: #a95340;
+}
+
+.speaker-guide__sources a span {
+  color: #e0775d;
 }
 
 .speaker-guide__transition {
@@ -252,7 +387,7 @@
   display: grid;
   gap: 4px;
   color: #425066;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.45;
 }
 
@@ -333,7 +468,7 @@
   top: 14px;
   right: 14px;
   bottom: 72px;
-  width: min(360px, calc(100vw - 28px));
+  width: min(400px, calc(100vw - 28px));
   height: auto;
   border: 1px solid #ccd2d8;
   border-radius: 16px;
@@ -355,7 +490,7 @@
     top: calc(var(--header-h) + 8px);
     right: 8px;
     bottom: 62px;
-    width: min(360px, calc(100vw - 16px));
+    width: min(400px, calc(100vw - 16px));
     max-height: calc(100dvh - var(--header-h) - 78px);
   }
 }

@@ -28,20 +28,22 @@ The 17-slide presentation, including the cover, is organized into six sections:
    work from hash computation, then separates deterministic VM replay from the
    execution needs of long-running AI agents.
 3. **Order workflow.** An animated ASCII map connects signed demand, ANS agent
-   discovery, Agentic Contracts, fog inference, validation, settlement, PoI,
-   VRF proposer selection, and BFT finality.
-4. **Technical feasibility.** Hybrid result verification, three deployment
-   modes, and five explicit attack paths define what can be implemented and
-   what still needs pilot calibration.
+   discovery, Agentic Contracts, fog inference, result verification, PoI,
+   VRF proposer selection, BFT finality, and settlement.
+4. **Deployment and security.** Three deployment modes and five explicit
+   attack paths define what can be implemented and what still needs pilot
+   calibration.
 5. **Economics.** One concrete escrow example shows how accepted, rejected, and
    fraudulent outcomes pay each participant and assign risk.
 6. **Delivery.** One roadmap slide separates the current concept demonstration
    from the runtime, first real pilot, and an eventual PoI-weighted network.
 
-Each visible slide carries one claim and one diagram. Assumptions, formulas,
-edge cases, technical context, and transitions live in the closable speaker
-guide. The guide follows the active slide, remembers its open state, and can be
-toggled with `G`.
+Each visible slide carries one claim and one diagram. The closable speaker
+guide contains the implementation mechanism, acceptance check, engineering
+difficulty, mitigation, residual risk, blockchain-security comparisons, and
+primary references for every slide. It follows the active slide, remembers its
+open state, and can be toggled with `G`. The guide and thumbnail rail start
+closed so the audience view keeps the largest readable canvas.
 
 ## Current status
 
@@ -75,5 +77,6 @@ npm run build
 ```
 
 `src/deck.ts` is the source of truth for slide order and section grouping.
-`scripts/check-product-deck.mjs` verifies slide order, speaker-guide coverage,
-opening use cases, copy density, and the absence of retired tutorial slides.
+`scripts/check-product-deck.mjs` verifies slide order, spoken and deep-dive
+speaker-guide coverage, opening use cases, copy density, and the absence of
+retired tutorial slides.

@@ -3,35 +3,35 @@ import { DataChip, LearningPanel } from './LearningPanel';
 
 export function ProductThesis() {
   return (
-    <LearningPanel code="POW → POI / EVM → ACVM" status="USEFUL COMPUTE" className="product-thesis">
+    <LearningPanel code="CALL → VERDICT / COMPUTE → POI" status="ONE ORDER" className="product-thesis">
       <div className="thesis-question">
-        <small>两个替换，一条订单</small>
-        <strong>客户拿到结果，网络拿到可验证工作</strong>
+        <small>一笔订单，两份价值</small>
+        <strong>客户拿到已验收结果，网络拿到有效工作</strong>
       </div>
       <div className="thesis-replacement">
         <section className="is-before">
-          <header><Icon name="bolt" /><span><small>CONSENSUS WORK</small><strong>PoW 哈希竞争</strong></span></header>
-          <p>投入电力与芯片，产出只用于竞争提议机会。</p>
-          <DataChip tone="red">链外价值 ≈ 0</DataChip>
+          <header><Icon name="bolt" /><span><small>PROOF OF WORK</small><strong>哈希竞争</strong></span></header>
+          <p>付出计算成本，只得到区块提议机会。</p>
+          <DataChip tone="red">客户结果 = 0</DataChip>
         </section>
         <i aria-hidden="true">→</i>
         <section className="is-after">
-          <header><Icon name="brain" /><span><small>PROOF OF INTELLIGENCE</small><strong>模型推理服务证明</strong></span></header>
-          <p>真实订单完成并通过验收后，才生成 PoI。</p>
-          <DataChip tone="green">有效计算 → 候选权重</DataChip>
+          <header><Icon name="brain" /><span><small>PROOF OF INTELLIGENCE</small><strong>已验收模型服务</strong></span></header>
+          <p>先交付客户结果，再把证明计入 PoI。</p>
+          <DataChip tone="green">客户结果 + 候选权重</DataChip>
         </section>
       </div>
       <div className="thesis-replacement">
         <section className="is-before">
-          <header><Icon name="terminal" /><span><small>APPLICATION VM</small><strong>EVM 智能合约</strong></span></header>
-          <p>每个节点重放同一段确定性计算。</p>
-          <DataChip tone="amber">AI 任务超出边界</DataChip>
+          <header><Icon name="terminal" /><span><small>DETERMINISTIC CONTRACT</small><strong>EVM 型智能合约</strong></span></header>
+          <p>全网重放确定性计算，管不了长任务与外部工具。</p>
+          <DataChip tone="amber">只验证链内状态</DataChip>
         </section>
         <i aria-hidden="true">→</i>
         <section className="is-after">
           <header><LogoMark /><span><small>AGENTIC CONTRACT VM</small><strong>ACVM 智能体合约</strong></span></header>
-          <p>管理身份、预算、外部工具、回执和验收。</p>
-          <DataChip tone="violet">已验证结果 → 状态与结算</DataChip>
+          <p>管理身份、预算、权限、回执、验收和补偿。</p>
+          <DataChip tone="violet">管理一笔 AI 订单</DataChip>
         </section>
       </div>
       <footer className="thesis-result">

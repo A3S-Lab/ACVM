@@ -108,6 +108,11 @@
 .product-responsibility-strip .is-acvm svg { color: var(--violet, #9a82ff); }
 .product-definition-panel > footer { display: flex; align-items: center; gap: 8px; padding: 11px 18px; }
 .product-definition-panel > footer > strong { margin-left: auto; font-size: 11px; }
+.product-definition-panel > footer.product-decision { justify-content: center; gap: 10px; }
+.product-decision > svg { width: 18px; color: var(--green, #46d28f); }
+.product-decision > span { display: flex; align-items: baseline; gap: 10px; }
+.product-decision small { color: var(--muted, #9ca3af); font: 700 9px/1 var(--mono, monospace); }
+.product-decision strong { font-size: 12px; }
 
 .product-lifecycle-panel { display: grid; grid-template-rows: auto auto 1fr auto; }
 .product-lifecycle-question { display: flex; align-items: baseline; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--product-line); }
@@ -636,4 +641,94 @@
   .acvm-workflow-body { grid-template-columns: minmax(560px, 1fr) 220px; overflow-x: auto; }
   .acvm-workflow-nav { min-width: 660px; }
   .acvm-workflow-panel { overflow-x: auto; }
+}
+
+/* Presentation readability floor: secondary detail belongs in the guide, not in 7px type. */
+.lesson-diagram .diagram-panel small,
+.lesson-diagram .diagram-panel dt {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.lesson-diagram .diagram-panel p,
+.lesson-diagram .diagram-panel dd {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.lesson-diagram .diagram-panel code {
+  font-size: 10.5px;
+  line-height: 1.4;
+}
+
+.lesson-diagram .diagram-panel .panel-chrome code,
+.lesson-diagram .diagram-panel .panel-chrome strong {
+  font-size: 9px;
+}
+
+.lesson-diagram .diagram-panel :is(article, section, button) > strong {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.lesson-diagram .diagram-panel :is(article, section, button) > b,
+.lesson-diagram .diagram-panel span > b {
+  font-size: 10px;
+}
+
+.lesson-diagram .diagram-panel :is(.product-responsibility-strip, .product-snapshot-result) strong,
+.lesson-diagram .diagram-panel :is(.consensus-requirements, .system-fork, .poi-consensus-equation) strong,
+.lesson-diagram .diagram-panel :is(.acvm-workflow-current, .acvm-workflow-nav) strong,
+.lesson-diagram .diagram-panel :is(.settlement-scenario-tabs, .settlement-payout-list) strong,
+.lesson-diagram .diagram-panel :is(.ans-stage-nav, .ans-design, .fog-stage-nav, .fog-terms) strong {
+  font-size: 11px;
+}
+
+.lesson-diagram .acvm-workflow-body > pre {
+  font-size: clamp(11px, .82vw, 13px);
+  line-height: 1.42;
+}
+
+.lesson-diagram .service-demo-panel :is(.service-play-control, .service-stage-nav button > span),
+.lesson-diagram .service-demo-panel :is(.service-evidence-chain > span, .service-demo-boundary > span),
+.lesson-diagram .service-demo-panel :is(.geo-threshold > span, .geo-bar > span, .geo-pass) {
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.lesson-diagram .service-demo-panel .service-stage-nav button > strong {
+  font-size: 11px;
+}
+
+.lesson-diagram .service-demo-panel :is(.service-demo-thesis, .service-demo-scene > header) strong,
+.lesson-diagram .service-demo-panel .geo-settlement strong {
+  font-size: 12px;
+}
+
+.lesson-diagram .social-service-panel :is(.social-private-zone, .social-aggregate-node, .social-validator-node) strong,
+.lesson-diagram .social-service-panel .social-agent-list article strong {
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.lesson-diagram .social-service-panel .social-agent-list article code,
+.lesson-diagram .social-service-panel :is(.social-aggregate-node, .social-validator-node) code,
+.lesson-diagram .social-service-panel .social-result-node > b {
+  font-size: 9.5px;
+}
+
+@media (min-width: 1241px) {
+  .site-shell.is-speaker-guide-open .lesson-diagram .diagram-panel small,
+  .site-shell.is-speaker-guide-open .lesson-diagram .diagram-panel dt {
+    font-size: 9.5px;
+  }
+
+  .site-shell.is-speaker-guide-open .lesson-diagram .diagram-panel p,
+  .site-shell.is-speaker-guide-open .lesson-diagram .diagram-panel dd {
+    font-size: 10.5px;
+  }
+
+  .site-shell.is-speaker-guide-open .lesson-diagram .acvm-workflow-body > pre {
+    font-size: 9.5px;
+  }
 }

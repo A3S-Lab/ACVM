@@ -1,5 +1,6 @@
 import { AcvmServiceWorkflowArchitecture } from '../components/AcvmServiceWorkflow'
 import { AgentResolutionArchitecture } from '../components/AgentResolutionArchitecture'
+import { VerificationSpectrumArchitecture } from '../components/AiBlockchainFoundations'
 import { ContractModelArchitecture } from '../components/FormalSpecArchitecture'
 import { FogInferenceArchitecture } from '../components/FogInferenceArchitecture'
 import { LessonChapter } from '../components/LessonChapter'
@@ -51,6 +52,18 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
   body="ACVM 按地域、延迟、硬件证明和价格选择 Worker。原始数据留在业务现场，结果根、运行证明和裁决进入账本。"
   figureLabel="FOG / LOCAL DATA → NEARBY INFERENCE → GLOBAL VERIFICATION"
   visual={<FogInferenceArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="verification-engine"
+  className="verification-spectrum-screen"
+  eyebrow="03 · WORKFLOW / RESULT VERIFICATION"
+  title="开放式 AI 结果怎么验？"
+  accent="先写验收条件，再组合合适证据"
+  body="ACVM 按任务选择复算、挑战、TEE、零知识证明或业务验收。技术证明运行过程，业务规则判断结果是否达标。"
+  figureLabel="WORKFLOW / EXECUTION EVIDENCE → BUSINESS VERDICT"
+  visual={<VerificationSpectrumArchitecture />}
 >
 </LessonChapter>
 
