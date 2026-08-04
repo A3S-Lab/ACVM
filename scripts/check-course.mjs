@@ -69,6 +69,14 @@ const narratorPhrases = [
   '魔法般',
   '让我们',
   '我们将',
+  '值得注意的是',
+  '综上所述',
+  '不难发现',
+  '毋庸置疑',
+  '在当今',
+  '深入探讨',
+  '革命性',
+  '至关重要',
 ];
 const narratorMatches = [...contentSources, ...componentSources].flatMap(({ file, source }) =>
   narratorPhrases

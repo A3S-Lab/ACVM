@@ -1,5 +1,5 @@
 import { useId, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { screens, screenIndex } from '../course';
+import { chapterForScreen, screens, screenIndex } from '../course';
 import {
   TechnicalBackdrop,
   type TechnicalBackdropVariant,
@@ -139,6 +139,7 @@ export function LessonChapter({
   children,
 }: LessonChapterProps) {
   const index = screenIndex(id);
+  const chapter = chapterForScreen(id);
   const [view, setView] = useState<'diagram' | 'lesson'>('diagram');
   const tabsId = useId();
   const hasLesson = Boolean(children);
@@ -152,7 +153,12 @@ export function LessonChapter({
   };
 
   return (
-    <section className={`screen technical-screen ${className}`} id={id} data-screen={index}>
+    <section
+      className={`screen technical-screen ${className}`}
+      id={id}
+      data-screen={index}
+      data-chapter={chapter.key}
+    >
       <TechnicalBackdrop variant={technicalBackdrops[id] ?? 'flow'} />
       <div className="screen-inner technical-layout">
         <SectionHeading

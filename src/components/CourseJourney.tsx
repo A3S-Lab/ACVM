@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { screens } from '../course';
 import { Icon, LogoMark } from './Icons';
 import { DataChip, FlowArrow, LearningPanel } from './LearningPanel';
 
@@ -53,7 +54,7 @@ const transitions = ['交易排序', '外部计算', '任务协议'] as const;
 
 export function CourseJourney() {
   return (
-    <LearningPanel code="COURSE / EVOLUTION OF VERIFIABLE COMPUTATION" status="39 CHAPTERS" className="course-journey">
+    <LearningPanel code="COURSE / EVOLUTION OF VERIFIABLE COMPUTATION" status={`${screens.length - 1} SLIDES`} className="course-journey">
       <div className="journey-question">
         <small>共识检查</small>
         <strong>一条结果满足哪些条件，才能写入共享状态？</strong>
@@ -73,8 +74,8 @@ export function CourseJourney() {
       </div>
       <footer className="journey-invariant">
         <Icon name="shield" />
-        <span><small>共同约束</small><strong>共识节点只接受确定、可验证的状态转换</strong></span>
-        <code>VERIFY → COMMIT → SETTLE</code>
+        <span><small>中心主旨</small><strong>区块链扩展的是可验证状态，不是把所有计算塞进共识</strong></span>
+        <code>EVIDENCE → STATE → SETTLEMENT</code>
       </footer>
     </LearningPanel>
   );

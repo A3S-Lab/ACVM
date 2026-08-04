@@ -17,6 +17,8 @@ export const screens = [
   ['ai-execution', '链下执行'],
   ['ai-verification', '结果验证'],
   ['agentic-bridge', '智能体合约'],
+  ['trust-infrastructure', '五层信任框架'],
+  ['semantic-correctness', '任务语义验证'],
   ['spec-contract', '合约模型'],
   ['code-walkthrough', '代码示例'],
   ['lifecycle', '完整生命周期'],
@@ -39,18 +41,32 @@ export const screens = [
   ['simulation', '社会模拟'],
   ['chains', '链适配'],
   ['stories', '业务场景'],
+  ['conclusion', '核心结论'],
 ] as const;
 
 export const navigation = [
-  { id: 'btc-ledger', label: '比特币', screens: ['btc-ledger', 'btc-transaction', 'btc-pow', 'btc-consensus'] },
-  { id: 'consensus-anatomy', label: '共识机制', screens: ['consensus-anatomy', 'consensus-pos', 'consensus-bft', 'consensus-governance'] },
-  { id: 'eth-state', label: '以太坊', screens: ['eth-state', 'eth-evm', 'eth-transaction', 'eth-boundary'] },
-  { id: 'ai-gap', label: 'AI × 区块链', screens: ['ai-gap', 'acvm-execution-boundary', 'ai-execution', 'ai-verification', 'agentic-bridge'] },
-  { id: 'spec-contract', label: 'ACVM 合约', screens: ['spec-contract', 'code-walkthrough', 'lifecycle', 'runtime', 'onchain'] },
-  { id: 'spec-state', label: '状态验证', screens: ['spec-state', 'spec-receipt', 'dispute', 'properties'] },
-  { id: 'identity', label: '身份与证明', screens: ['identity', 'offchain', 'privacy', 'fog', 'sentry', 'proof', 'intelligence', 'spec-poi'] },
-  { id: 'ans', label: '智能体网络', screens: ['ans', 'composition', 'simulation', 'chains', 'stories'] },
+  { key: 'bitcoin', id: 'btc-ledger', label: '比特币', shortLabel: 'BITCOIN', screens: ['btc-ledger', 'btc-transaction', 'btc-pow', 'btc-consensus'] },
+  { key: 'consensus', id: 'consensus-anatomy', label: '共识机制', shortLabel: 'CONSENSUS', screens: ['consensus-anatomy', 'consensus-pos', 'consensus-bft', 'consensus-governance'] },
+  { key: 'ethereum', id: 'eth-state', label: '以太坊', shortLabel: 'ETHEREUM', screens: ['eth-state', 'eth-evm', 'eth-transaction', 'eth-boundary'] },
+  { key: 'agent', id: 'ai-gap', label: 'AI × 区块链', shortLabel: 'AI × CHAIN', screens: ['ai-gap', 'acvm-execution-boundary', 'ai-execution', 'ai-verification', 'agentic-bridge', 'trust-infrastructure', 'semantic-correctness'] },
+  { key: 'contract', id: 'spec-contract', label: 'ACVM 合约', shortLabel: 'CONTRACT', screens: ['spec-contract', 'code-walkthrough', 'lifecycle', 'runtime', 'onchain'] },
+  { key: 'state', id: 'spec-state', label: '状态验证', shortLabel: 'STATE', screens: ['spec-state', 'spec-receipt', 'dispute', 'properties'] },
+  { key: 'proof', id: 'identity', label: '身份与证明', shortLabel: 'TRUST', screens: ['identity', 'offchain', 'privacy', 'fog', 'sentry', 'proof', 'intelligence', 'spec-poi'] },
+  { key: 'network', id: 'ans', label: '智能体网络', shortLabel: 'NETWORK', screens: ['ans', 'composition', 'simulation', 'chains', 'stories'] },
+  { key: 'closing', id: 'conclusion', label: '核心结论', shortLabel: 'TAKEAWAY', screens: ['conclusion'] },
 ] as const;
+
+export const coverChapter = {
+  key: 'cover',
+  id: 'top',
+  label: '课程封面',
+  shortLabel: 'ACVM DECK',
+  screens: ['top'],
+} as const;
+
+export function chapterForScreen(id: string) {
+  return navigation.find((chapter) => chapter.screens.some((screen) => screen === id)) ?? coverChapter;
+}
 
 export function screenIndex(id: string) {
   const index = screens.findIndex(([screenId]) => screenId === id);

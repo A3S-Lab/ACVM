@@ -7,6 +7,7 @@ import {
 } from '../components/ProtocolExpansionArchitecture'
 import { ScenarioGraph } from '../components/ScenarioGraph'
 import { ChainArchitectureSimple } from '../components/SimplifiedArchitecture'
+import { AcvmConclusionArchitecture } from '../components/AgentTrustInfrastructure'
 
 <LessonChapter
   id="ans"
@@ -186,5 +187,44 @@ interface ChainAdapter {
 6. 链上最终保存哪些最小证据，谁能独立复查？
 
 三类系统处理不同对象：比特币确定**所有权历史**，以太坊确定**程序状态**，ACVM 概念模型根据证据和验收结果推进**链下任务状态**。ACVM 应用必须逐项定义授权、证据、验收、争议和最终性。
+
+</LessonChapter>
+
+<LessonChapter
+  id="conclusion"
+  className="foundation-screen conclusion-screen"
+  eyebrow="FINAL · TAKEAWAY"
+  title="ACVM 不复制外部计算"
+  accent="它验证回执，再结算责任"
+  body="比特币解决所有权与排序，以太坊解决确定性程序执行。ACVM 延续同一条原则：共识只接受满足授权、证据、验收、争议和终局条件的任务回执。"
+  comparison={{
+    traditionalLabel: '错误理解',
+    traditionalTitle: '把大模型搬进另一台链上虚拟机',
+    traditional: '全网复算仍会放大成本、隐私泄露、非确定性和外部副作用。',
+    acvmLabel: 'ACVM 边界',
+    acvmTitle: '链下完成工作，链上验证责任',
+    acvm: 'Intent 冻结目标，回执绑定过程，Validator 验收结果，状态机完成结算。',
+  }}
+  figureLabel="FINAL THESIS / VERIFY EVIDENCE → COMMIT STATE → SETTLE RESPONSIBILITY"
+  visual={<AcvmConclusionArchitecture />}
+>
+
+### 一套 ACVM 设计至少要回答五个问题
+
+1. **谁授权**：身份、能力和预算由谁签名，权限能否在委托中收窄？
+2. **做了什么**：输入、代码、模型、工具和输出怎样绑定到同一个 `taskId`？
+3. **凭什么接受**：计算、来源和结果质量分别由哪类证据或 Validator 判断？
+4. **失败怎样收场**：超时、挑战、申诉、补偿和跨链部分成功怎样进入确定性状态？
+5. **何时可以结算**：底层链达到什么终局条件后，资产与责任才能不可逆地转移？
+
+```text file="acvm-thesis.txt"
+Bitcoin  : valid ownership history
+Ethereum : valid deterministic state transition
+ACVM     : valid evidence-driven task transition
+
+Intent → Execute off-chain → Verify claims → Finalize state → Settle
+```
+
+如果一项设计只能展示 Agent 输出，却说不清授权、证据、验收、失败和终局，它仍是带钱包的链下服务，不是完整的 Agentic Contract 协议。
 
 </LessonChapter>

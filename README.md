@@ -1,7 +1,7 @@
 # ACVM Interactive Curriculum
 
-This repository is an interactive, Chinese-language course that derives the
-Agentic Contract VM concept from first principles. It starts with Bitcoin's
+This repository is a presentation-first, interactive Chinese-language course
+that derives the Agentic Contract VM concept from first principles. It starts with Bitcoin's
 ownership ledger, separates proposer selection from validation and finality,
 extends the model into Ethereum's programmable state machine, then introduces
 verifiable off-chain AI work before defining the ACVM protocol model.
@@ -13,8 +13,8 @@ production SDK.
 
 ## Learning path
 
-The 39 chapters follow one continuous question: why can a network accept a
-result without trusting the party that produced it?
+The 42 chapters follow one continuous question: what evidence is allowed to
+change shared state, and who remains accountable when external work fails?
 
 1. **Bitcoin — one valid ownership history (4 chapters).** Double-spending,
    signatures and UTXOs, Merkle commitments and proof of work, forks and
@@ -26,10 +26,11 @@ result without trusting the party that produced it?
 3. **Ethereum — a programmable state machine (4 chapters).** World state,
    deterministic EVM execution, Gas and transaction receipts, and the oracle
    boundary.
-4. **AI and blockchains — verifiable external work (5 chapters).** Why model
+4. **AI and blockchains — verifiable external work (7 chapters).** Why model
    inference should not be replicated by every validator, the exact EVM/ACVM
    execution boundary, the Worker/Validator pipeline, verification tradeoffs,
-   and asynchronous Agentic Contracts.
+   asynchronous Agentic Contracts, the five-layer trust-infrastructure model,
+   and the gap between transaction correctness and task correctness.
 5. **ACVM contract and runtime (5 chapters).** Content-addressed contract trees,
    the Task File ABI, the full lifecycle, runtime roles, and the consensus
    boundary.
@@ -40,10 +41,15 @@ result without trusting the party that produced it?
    incremental proofs, Proof of Intelligence, and its research boundary.
 8. **Agent networks and applications (5 chapters).** Agent discovery, task DAGs,
    private social simulation, chain adapters, and application review patterns.
+9. **Conclusion (1 chapter).** Bitcoin validates ownership history, Ethereum
+   validates deterministic program state, and ACVM validates evidence-driven
+   task transitions without replicating external computation.
 
 ## Teaching stack
 
 - Chapter summaries and deep-reading material live in `src/content/*.mdx`.
+- The desktop shell uses a centered 16:9 stage, slide thumbnails, keyboard and
+  touch navigation, a progress counter, and fullscreen presentation mode.
 - `LessonChapter` keeps every chapter's architecture diagram and MDX explanation
   in an accessible two-tab view.
 - Code Hike compiles fenced examples at build time and provides highlighted,
@@ -52,7 +58,12 @@ result without trusting the party that produced it?
   transaction finality, and verifiable execution.
 - `src/course.ts` is the source of truth for chapter order and navigation.
 - `scripts/check-course.mjs` ensures MDX chapter IDs exactly match that order and
-  guards minimum code and motion coverage.
+  guards minimum code and motion coverage as well as narrator-style filler.
+
+The AI-agent scalability section adapts the five-layer analysis from
+*A Survey of Blockchain Transaction Processing and Scalability: Toward a Trust
+Infrastructure for AI Agents*. The mapping to ACVM protocol objects is an
+engineering interpretation, not a claim made directly by the paper.
 
 ## Development
 
