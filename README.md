@@ -20,22 +20,23 @@ finality.
 
 ## Product story
 
-The 18-slide presentation, including the cover, is organized into six sections:
+The 19-slide presentation starts with a minimal one-line cover and is organized
+into six sections:
 
-1. **Product and use cases.** The payment condition is defined first, followed
-   by GEO result verification, privacy-sealed social simulation, and an explicit
-   boundary showing that traditional GEO can omit PoI, while an ACVM task cannot.
-2. **Engineering landscape.** Bittensor, Allora, Gensyn, EigenAI, EigenLayer,
-   and ChainOpera are compared by proof target, judge, and economic effect before
-   the deck explains why model execution cannot be replayed by every chain node.
+1. **Product and use cases.** The two product substitutions and payment
+   condition are defined first, followed immediately by GEO result verification
+   and privacy-sealed social simulation.
+2. **PoI and boundaries.** The deck distinguishes traditional delivery from an
+   ACVM task, compares Bittensor, Allora, Gensyn, EigenAI, EigenLayer, and
+   ChainOpera, and explains why model execution cannot be replayed by every node.
 3. **Order workflow.** An animated ASCII map separates AP2 authorization, A3S
    execution, ACVM verdicts, mandatory PoI, and existing-chain settlement before
    expanding ANS, Agentic Contracts, fog inference, and result verification.
-4. **Deployment and security.** A concrete adapter plan covers BSN, Spark Chain,
+4. **Economics.** One concrete escrow example shows how accepted, rejected, and
+   fraudulent outcomes pay each participant and assign risk.
+5. **Deployment and security.** A concrete adapter plan covers BSN, Spark Chain,
    ChainMaker, FISCO BCOS, and an optional EigenLayer AVS path, followed by
    explicit attack controls and residual risks.
-5. **Economics.** One concrete escrow example shows how accepted, rejected, and
-   fraudulent outcomes pay each participant and assign risk.
 6. **Delivery.** One roadmap slide separates the current concept demonstration
    from the runtime, first real pilot, and an eventual PoI-weighted network.
 

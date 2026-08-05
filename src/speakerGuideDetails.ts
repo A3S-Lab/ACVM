@@ -148,6 +148,32 @@ export const speakerGuideDetails = {
   top: {
     implementation: [
       {
+        title: '封面只保留一个产品承诺',
+        mechanism: '封面只出现 ACVM 和“让 AI 服务按已验证结果付费”。产品定义、PoI、场景和技术边界全部从后续页面展开。',
+        acceptance: '观众在十秒内能复述产品名与付款条件；封面没有目录、功能清单、按钮或机制说明。',
+      },
+    ],
+    challenges: [
+      {
+        title: '一句话容易被理解成保证业务成功',
+        failure: '“已验证结果”可能被误听成协议保证结果客观正确，而不是按事前规则完成验收。',
+        solution: '演讲者只读标语，不加绝对正确、零信任或全自动等承诺；下一页立即解释结果由签名验收条件定义。',
+        residual: '开放式任务仍依赖验收口径和 Validator 独立性，协议不能创造客观真值。',
+      },
+    ],
+    security: [
+      {
+        title: '封面承诺必须受产品边界约束',
+        failure: '若后续方案允许无验收、无执行证据或可重放任务付款，封面主张就无法成立。',
+        solution: '把 SignedDemand、AcceptedResult、ExecutionEvidence 和 UniqueTaskKey 固化为 ValidPoI 与付款的必要条件。',
+        residual: '必要条件只能证明按规则验收，验收规则本身仍需需求方、Validator 和治理共同负责。',
+      },
+    ],
+    sources: [sources.survey],
+  },
+  'product-thesis': {
+    implementation: [
+      {
         title: '先建立唯一任务身份',
         mechanism: '需求方签名后生成 taskId：把链标识、contractRoot、需求 nonce、需求方地址和 inputRoot 一起做域隔离哈希。此后 ANS 解析、Worker 回执、Validator 裁决、付款和 PoI 都必须引用它。',
         acceptance: '同一 taskId 只能存在一条合法状态链；任何缺字段、跨链复用或前后状态根不连续的回执都被拒绝。',
@@ -684,7 +710,7 @@ export const speakerGuideDetails = {
     implementation: [
       {
         title: '固定 ChainAdapter ABI，按网络实现 Driver',
-        mechanism: 'ACVM Core 只依赖 submitTaskRoot、submitVerdictRoot、finalityStatus、claimSettlement 和 subscribeEvents。Adapter 把 taskId、contractRoot、verdictRoot、amount、identityRef 和 nonce 映射到目标链合约；Prompt、原始数据、模型与详细证据留在 A3S 证据存储。',
+        mechanism: 'ACVM Core 只依赖 submitTaskRoot、submitPoIRoot、finalityStatus、claimSettlement 和 subscribeEvents。Adapter 把 taskId、contractRoot、poiRoot、verdictRoot、amount、identityRef 和 nonce 映射到目标链合约；Prompt、原始数据、模型与详细证据留在 A3S 证据存储。',
         acceptance: '每个 Driver 跑同一套 conformance fixtures：重复提交幂等、状态根连续、终局回报单调、重组可检测、同一 verdict 不重复结算。链上事件能反向定位 A3S evidence URI 与摘要。',
       },
       {

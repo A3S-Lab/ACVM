@@ -13,7 +13,7 @@ if (!screensBlock) throw new Error('Could not find the screens declaration in sr
 
 const screenIds = [...screensBlock.matchAll(/\['([^']+)'/g)].map((match) => match[1]);
 const expectedSlideIds = screenIds.slice(1);
-const openingIds = ['product-snapshot', 'geo-verification', 'simulation'];
+const openingIds = ['product-thesis', 'product-snapshot', 'geo-verification', 'simulation'];
 const retiredTutorialIds = [
   'btc-ledger',
   'btc-pow',
@@ -57,8 +57,8 @@ const missing = expectedSlideIds.filter((id) => !actualSlideIds.includes(id));
 const unexpected = actualSlideIds.filter((id) => !expectedSlideIds.includes(id));
 const orderMatches = JSON.stringify(expectedSlideIds) === JSON.stringify(actualSlideIds);
 
-if (screenIds.length !== 18) {
-  throw new Error(`Expected an 18-slide product deck including the cover; found ${screenIds.length}`);
+if (screenIds.length !== 19) {
+  throw new Error(`Expected a 19-slide product deck including the minimal cover; found ${screenIds.length}`);
 }
 if (contentFiles.length !== 6) {
   throw new Error(`Expected six product-deck MDX groups; found ${contentFiles.length}`);
@@ -79,7 +79,7 @@ for (const field of ['implementation', 'challenges', 'security', 'sources']) {
   }
 }
 if (JSON.stringify(expectedSlideIds.slice(0, openingIds.length)) !== JSON.stringify(openingIds)) {
-  throw new Error(`The payment condition and two core use cases must open the product story: ${JSON.stringify(expectedSlideIds.slice(0, 3))}`);
+  throw new Error(`The product thesis, payment condition, and two core use cases must open the story: ${JSON.stringify(expectedSlideIds.slice(0, openingIds.length))}`);
 }
 const storyQuestionCount = deckSource.match(/\bquestion: '/g)?.length ?? 0;
 if (storyQuestionCount !== 7) {

@@ -168,7 +168,7 @@ const a3sCapabilityGroups = [
 
 const chainAdapterCalls = [
   'submitTaskRoot()',
-  'submitVerdictRoot()',
+  'submitPoIRoot()',
   'finalityStatus()',
   'claimSettlement()',
 ] as const;

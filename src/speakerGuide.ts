@@ -11,12 +11,20 @@ export type SpeakerGuideEntry = {
 
 export const speakerGuides = {
   top: {
+    duration: '0:15',
+    focus: 'ACVM：让 AI 服务按已验证结果付费。',
+    connection: '封面只建立一个产品记忆点，机制从下一页开始。',
+    opening: 'ACVM，让 AI 服务按已验证结果付费。',
+    beats: ['只读产品名和标语，不在封面解释缩写。', '短暂停顿后进入产品命题，避免把封面讲成目录页。'],
+    transition: '这句话背后，是对工作量证明和智能合约的两项替换。',
+  },
+  'product-thesis': {
     duration: '1:00',
     focus: 'ACVM 把客户已经需要的模型推理，变成可结算、可记账的有效工作。',
     connection: 'PoI 改变工作证明的来源，智能体合约负责一笔 AI 订单的状态与责任。',
     opening: '今天的 AI 服务按调用量出账，区块链又单独花钱做哈希竞争。ACVM 想把两笔成本合成一笔：先服务客户，再为网络提供有效工作。',
     beats: ['客户先签名结果和验收条件，调用量只用于成本与限额。', 'Agent 完成任务并提交证据，Validator 独立验收；通过后生成 ValidPoI，再释放结果费。', '同一份 PoI 既是结算凭证，也是有效推理贡献；是否进入提议权重按网络阶段控制。'],
-    transition: '先从客户最关心的问题开始：什么条件应该触发付款。',
+    transition: '先把命题落到付款条件：一笔订单到底在什么状态下才能放款。',
   },
   'product-snapshot': {
     duration: '1:20',
@@ -112,7 +120,7 @@ export const speakerGuides = {
     connection: '归一、封顶和衰减限制大户权重；VRF 与 BFT 分开承担选择和确认。',
     opening: '如果谁做的推理多，谁就直接拥有记账权，系统很快会被大客户或刷单者控制。ACVM 只把 PoI 换成有上限的抽签权重。',
     beats: ['PoI 按任务类型归一，再乘质量系数和时间衰减，并设置单主体上限。', '候选者用 epoch 与 poiRoot 运行 VRF；权重越高，被抽中的概率越大，但结果不能预先挑选。', '获选者只能提议区块。其他节点仍要验证 PoI、交易和状态；达到 BFT 法定人数才终局。'],
-    transition: '任务和共识都跑通以后，接下来回答怎样借用现有链落地，而不是先造一条新链。',
+    transition: '机制说清以后，先看一笔订单里谁出钱、谁分钱、谁承担失败。',
   },
   'verification-engine': {
     duration: '1:50',
@@ -127,8 +135,8 @@ export const speakerGuides = {
     focus: 'A3S 与 ACVM 保持链外执行和确定裁决接口，按基础设施类型更换身份、终局和支付适配器。',
     connection: '国内产业链与 EigenLayer 不是同一种网络，页面分别给出接入边界，避免一句“兼容国家区块链网络”带过。',
     opening: '国内没有一个可以统称并用同一接口接入的“国家链”。BSN 是多框架部署与网关基础设施，星火·链网提供 BIF 与 BID，长安链和 FISCO BCOS 是联盟链技术体系。ACVM 用适配器接它们，而不是替换它们。',
-    beats: ['国内模式沿用 CA、BID 或 DID、国密与权限治理，只把 taskRoot、verdictRoot 和资金状态上链；原始 Prompt、数据和证据留在 A3S 证据存储。', '人民币托管和支付由现有合规支付系统完成，链上记录授权引用与结算状态，不要求原生代币，也不假设匿名 Validator。', '开放模式可把 ACVM Validator 实现为 EigenLayer AVS Operator Set，使用 quorum、挑战和 slashing；AVS 提供经济安全，业务验收 predicate 仍由 ACVM 定义。'],
-    transition: '部署门槛降低以后，剩下的是机制最容易被攻击的地方。',
+    beats: ['国内模式沿用 CA、BID 或 DID、国密与权限治理，只把 taskRoot、poiRoot 和资金状态上链；PoI 内含 verdictRoot，原始 Prompt、数据和详细证据留在 A3S 证据存储。', '人民币托管和支付由现有合规支付系统完成，链上记录授权引用与结算状态，不要求原生代币，也不假设匿名 Validator。', '开放模式可把 ACVM Validator 实现为 EigenLayer AVS Operator Set，使用 quorum、挑战和 slashing；AVS 提供经济安全，业务验收 predicate 仍由 ACVM 定义。'],
+    transition: '接入现有基础设施以后，还要正面处理刷单、重放和验证者串谋。',
   },
   'security-boundaries': {
     duration: '1:50',
@@ -136,7 +144,7 @@ export const speakerGuides = {
     connection: '安全措施直接进入试点指标：关联订单率、重放率、挑战成功率和 Validator 集中度。',
     opening: 'PoI 最危险的攻击不是破解密码学，而是把自己下给自己的垃圾订单包装成有效工作。ACVM 从需求、执行、验收和权重四个位置同时设限。',
     beats: ['关联身份分析、预算门槛和单主体封顶降低自交易刷单收益。', 'taskKey、输出根和 epoch 防重放；抽样复算、TEE 和业务验收控制伪造。', '随机 Validator 委员会、利益冲突限制、保证金和挑战奖励提高串谋成本。'],
-    transition: '这些角色都会产生费用，最后用一笔具体预算把收益和责任分开。',
+    transition: '部署边界和攻击面都明确后，最后只剩试点怎样一步步交付。',
   },
   'economy-roles': {
     duration: '2:00',
@@ -144,7 +152,7 @@ export const speakerGuides = {
     connection: '三种结算结果说明需求方、Worker、证据方、Validator、挑战者和协议各自得到什么。',
     opening: '用一笔 12 万元托管预算举例：10 万是结果费，其余支付证据、验收、链上费用和挑战准备金。三种结果走三条不同的账。',
     beats: ['验收通过：Worker 获得结果费；证据方、Validator 和协议获得已完成工作的费用。', '正常未达标：结果费退回需求方，Worker 不拿结果费但不罚保证金；验证成本照常支付。', '证明造假：结果费退回，Worker 保证金被罚没；有效挑战者和安全储备分得罚没资金。'],
-    transition: '经济关系已经可以放进试点，最后明确当前状态和下一项交付。',
+    transition: '账先分清楚，再看 ACVM 如何接入现有基础设施，并把这些利益关系约束住。',
   },
   'product-roadmap': {
     duration: '1:30',

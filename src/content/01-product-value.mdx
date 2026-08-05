@@ -5,6 +5,19 @@ import {
 import { LessonChapter } from '../components/LessonChapter'
 import { ProductDefinitionArchitecture } from '../components/ProductNarrativeArchitecture'
 import { GeoPoiDecisionArchitecture } from '../components/ProductEvidenceArchitecture'
+import { ProductThesis } from '../components/ProductThesis'
+
+<LessonChapter
+  id="product-thesis"
+  className="product-thesis-screen"
+  eyebrow="01 · PRODUCT / CORE THESIS"
+  title="ACVM 改变什么？"
+  accent="一次推理，同时交付结果与 PoI"
+  body="ACVM 用已验收的模型服务替代无意义哈希竞争，用智能体合约管理链下执行；客户拿结果，网络拿有效工作。"
+  figureLabel="THESIS / USEFUL INFERENCE → POI · AGENTIC CONTRACT → SETTLEMENT"
+  visual={<ProductThesis />}
+>
+</LessonChapter>
 
 <LessonChapter
   id="product-snapshot"
@@ -45,7 +58,7 @@ import { GeoPoiDecisionArchitecture } from '../components/ProductEvidenceArchite
 <LessonChapter
   id="geo-poi-boundary"
   className="geo-poi-boundary-screen"
-  eyebrow="01 · PRODUCT / NECESSITY"
+  eyebrow="02 · WHY / POI BOUNDARY"
   title="GEO 一定要用 PoI 吗？"
   accent="业务可以不用，ACVM 不能没有"
   body="单笔 GEO 可由中心化审计交付；接入 ACVM 后，验收通过必须生成 ValidPoI，作为结果付款凭证，并继续支持网络激励与记账。"

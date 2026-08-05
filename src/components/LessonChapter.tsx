@@ -7,6 +7,7 @@ import {
 import { TechTerm, type TechKey } from './TechTerm';
 
 const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = {
+  'product-thesis': 'flow',
   'product-snapshot': 'flow',
   'geo-verification': 'proof',
   simulation: 'network',

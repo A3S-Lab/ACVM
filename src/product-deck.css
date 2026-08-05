@@ -1,3 +1,50 @@
+.hero-cover-layout {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding-bottom: clamp(64px, 8vh, 96px);
+  text-align: center;
+}
+
+.hero-cover-lockup {
+  position: relative;
+  z-index: 2;
+  width: min(1120px, 88vw);
+  display: grid;
+  justify-items: center;
+  gap: clamp(28px, 4vh, 44px);
+}
+
+.hero-cover-product {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  color: #ff9e8a;
+}
+
+.hero-cover-product > svg {
+  width: clamp(42px, 3.4vw, 58px);
+  height: clamp(42px, 3.4vw, 58px);
+}
+
+.hero-cover-product > strong {
+  font: 800 clamp(28px, 2.5vw, 42px)/1 var(--font-display);
+  letter-spacing: .16em;
+}
+
+.hero-cover-lockup h1 {
+  max-width: 14ch;
+  margin: 0;
+  color: #f5f7fb;
+  font: 720 clamp(58px, 6.6vw, 106px)/1.04 var(--font-display);
+  letter-spacing: -.055em;
+  text-wrap: balance;
+}
+
+.screen.is-current .hero-cover-lockup {
+  animation: deck-copy-enter 520ms cubic-bezier(.2, .75, .25, 1) both;
+}
+
 .product-definition-panel,
 .product-lifecycle-panel,
 .product-readiness-panel,
@@ -636,6 +683,9 @@
 }
 
 @media (max-width: 760px) {
+  .hero-cover-layout { padding-inline: 24px; }
+  .hero-cover-lockup { width: 100%; gap: 24px; }
+  .hero-cover-lockup h1 { max-width: 11ch; font-size: clamp(46px, 14vw, 68px); }
   .acvm-workflow-current { grid-template-columns: auto 1fr auto; }
   .acvm-workflow-current > p,
   .acvm-workflow-current > code { display: none; }
