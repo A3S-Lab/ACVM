@@ -30,6 +30,22 @@ const sources = {
     label: 'AI Agent 交易处理与扩展性综述',
     url: 'https://www.elspub.com/doi/10.55092/blockchain20260005',
   },
+  dataTwenty: {
+    label: '中共中央、国务院“数据二十条”',
+    url: 'https://www.gov.cn/zhengce/2022-12/19/content_5732695.htm',
+  },
+  dataTerms: {
+    label: '国家数据局《数据领域常用名词解释（第一批）》',
+    url: 'https://www.nda.gov.cn/sjj/zwgk/zcfb/1230/20241230160715745237413_pc.html',
+  },
+  trustedDataSpacePlan: {
+    label: '国家数据局《可信数据空间发展行动计划（2024—2028年）》',
+    url: 'https://www.nda.gov.cn/sjj/zwgk/zcfb/1122/20241122164142182915964_pc.html',
+  },
+  trustedDataSpaceTech: {
+    label: '全国数标委《可信数据空间 技术架构》',
+    url: 'https://www.nda.gov.cn/sjj/ywpd/szkjyjcss/0430/20250430181352183912672_pc.html',
+  },
   bitcoin: {
     label: '工作量证明与最长链原始论文',
     url: 'https://bitcoin.org/bitcoin.pdf',
@@ -69,6 +85,10 @@ const sources = {
   did: {
     label: 'W3C DID Core',
     url: 'https://www.w3.org/TR/did-core/',
+  },
+  odrl: {
+    label: 'W3C ODRL 信息模型（用途与权限策略）',
+    url: 'https://www.w3.org/TR/odrl-model/',
   },
   agentSecurity: {
     label: 'OWASP Agentic Applications Top 10',
@@ -157,7 +177,7 @@ export const speakerGuideDetails = {
       {
         title: '一句话容易被理解成保证业务成功',
         failure: '“已验证结果”可能被误听成协议保证结果客观正确，而不是按事前规则完成验收。',
-        solution: '演讲者只读标语，不加绝对正确、零信任或全自动等承诺；下一页立即解释结果由签名验收条件定义。',
+        solution: '将“已验证结果”明确为按签名验收条件通过的结果。',
         residual: '开放式任务仍依赖验收口径和 Validator 独立性，协议不能创造客观真值。',
       },
     ],
@@ -175,21 +195,21 @@ export const speakerGuideDetails = {
     implementation: [
       {
         title: '先建立唯一任务身份',
-        mechanism: '需求方签名后生成 taskId：把链标识、contractRoot、需求 nonce、需求方地址和 inputRoot 一起做域隔离哈希。此后 ANS 解析、Worker 回执、Validator 裁决、付款和 PoI 都必须引用它。',
+        mechanism: '需求方签名后生成 taskId：把链标识、contractRoot、需求 nonce、需求方地址和 inputRoot 一起做域隔离哈希。此后 Worker 回执、Validator 裁决、付款和 PoI 都必须引用它；ANS 等发现协议只是可选适配。',
         acceptance: '同一 taskId 只能存在一条合法状态链；任何缺字段、跨链复用或前后状态根不连续的回执都被拒绝。',
       },
       {
-        title: '一份 PoI，两种用途',
-        mechanism: 'Validator 法定人数先签出 AcceptedResult；合约再检查执行证据和不可重复使用的 taskKey，生成 ValidPoI。结算合约以该 PoI 为付款凭证，贡献账也引用同一个 poiId。PoI 不能绕过 Validator，因为 AcceptedResult 是它的必要输入。',
-        acceptance: 'PaymentClaimed 和贡献记录必须指向同一 poiId 与 verdictRoot，usedTaskKey 集合保证一笔任务只结算、只计分一次。',
+        title: '三层责任不能互相冒充',
+        mechanism: 'Worker 或 A3S 只报告执行事实；ACVM Validator 按事前策略生成 AcceptedResult；现有链或支付系统只根据终局裁决释放资金。ValidPoI 是结算凭证，未来贡献账是独立开关。',
+        acceptance: 'A3S succeeded 不能直接提款；没有 AcceptedResult 不能生成 ValidPoI；网络权重关闭时，结算仍能独立完成。',
       },
     ],
     challenges: [
       {
-        title: '“有用”不是链上天然可知的事实',
-        failure: '模型确实运行过，不等于客户要的结果出现了。开放世界任务没有一个通用真值函数。',
-        solution: '每类任务预先选择验收策略：确定性任务复算，开放结果采用冻结数据源、多观察者、挑战期和人工仲裁兜底。合约只执行已经签名的策略，不临时改口径。',
-        residual: '协议能证明按约定验收，不能证明约定本身一定正确；这一点必须由需求方在签约前承担。',
+        title: '产品边界容易被愿景吞没',
+        failure: '如果把 AP2、ANS、雾计算、AVS、VRF 和 BFT 都说成 ACVM 的当前必选组件，早期落地会变成无法交付的全栈工程。',
+        solution: '主线只保留 SignedDemand、执行回执、独立裁决、ValidPoI 和结算；发现、隐私执行和网络权重全部通过版本化接口按需接入。',
+        residual: '适配器仍会带来版本和信任矩阵，试点必须只选择一组锁定实现。',
       },
     ],
     security: [
@@ -202,8 +222,8 @@ export const speakerGuideDetails = {
       {
         title: '自买自卖与重复计分',
         failure: '同一控制人制造需求、执行和验收，循环支付以换取 PoI 权重。',
-        solution: '要求真实托管成本，分析资金与身份关联，随机分配无利益冲突的 Validator，并对主体、任务类别和 epoch 设置权重上限。',
-        residual: '隐蔽关联无法被密码学彻底识别，因此 PoI 只增加提议概率，不能直接决定终局。',
+        solution: '试点阶段 PoI 权重系数保持为零；结果结算仍要求真实托管成本、独立 Validator 和唯一 taskKey。未来开放权重前再引入身份关联分析与主体上限。',
+        residual: '隐蔽关联无法被密码学彻底识别，因此即使未来开放，PoI 也只能增加提议概率，不能直接决定终局。',
       },
     ],
     sources: [sources.survey, sources.contracts],
@@ -282,6 +302,43 @@ export const speakerGuideDetails = {
     ],
     sources: [sources.survey, sources.contracts, sources.vrf],
   },
+  'data-space': {
+    implementation: [
+      {
+        title: '冻结多方数据清单与分账规则',
+        mechanism: '数字合约逐一记录企业、机构等数据贡献方的 dataProductId、dataRoot、授权范围、用途、次数和环境；SignedDemand 另行冻结业务结果谓词、预算、Validator、挑战期与 splitRoot。splitRoot 表达各方事前确认的分配规则，不代表 ACVM 能自动计算唯一的因果贡献。',
+        acceptance: '每个收款方都能追溯到有效数字合约和数据产品版本；缺少 AccessGrant、策略版本不匹配或分账总额不守恒时，ACVM 拒绝结算。',
+      },
+      {
+        title: '履约与结果同时通过后分配收益',
+        mechanism: '各方连接器记录数据交付、访问、计算和二次传输日志，并提交 UsageProof 与谱系证明。Worker 回执绑定模型、容器和 outputRoot；Validator 分别签署 UsageCompliant 与 AcceptedResult，两者终局后，ACVM 才按 splitRoot 向多方释放结果池。',
+        acceptance: '外部审计者能从数字合约重建到 AccessGrant、UsageProof、AcceptedResult 和 PaymentClaimed；分账总额严格等于结果池，且每个收款项只能领取一次。',
+      },
+    ],
+    challenges: [
+      {
+        title: '单条数据的因果贡献通常无法客观计算',
+        failure: '多个数据集、模型、提示词、算力和人工运营共同产生结果，事后声称某条数据贡献了固定比例会制造虚假精确度并引发分账争议。',
+        solution: '签约前冻结任务级分账公式、最低保底与上限；有可靠对照时可把消融实验或边际贡献作为调整证据，但不能在结果出现后单方改权重。',
+        residual: 'ACVM 能证明按约使用并产生已验收结果，不能证明唯一真实的因果份额；高价值任务仍需要合同治理与争议仲裁。',
+      },
+    ],
+    security: [
+      {
+        title: '伪造谱系或重复使用同一授权',
+        failure: 'Worker 伪造数据来源、替换数据集，或把一次 AccessGrant 在多个任务和环境中重复使用，再重复领取结果分成。',
+        solution: 'AccessGrant、dataRoot、usagePolicyRoot、环境证明和 outputRoot 全部绑定 taskId 与新鲜 nonce；受控环境和空间网关分别签名，Validator 检查连续日志、撤销状态与已使用 taskKey。',
+        residual: '若数据空间运营方与 Worker 同时串谋，签名日志仍可能一致但不真实，需要独立审计、抽样复核和组织责任追索。',
+      },
+      {
+        title: '越权复用、数据泄露与推断攻击',
+        failure: '模型或 Agent 通过出站网络、日志、缓存、提示词注入或过细输出带走原始数据，也可能在任务结束后继续留存和复用。',
+        solution: '最小字段授权、默认禁止出站、短期凭证、隔离执行、输出过滤、查询预算和可撤销密钥共同控制；高敏数据增加 TEE 或多方计算，并把保留与删除证明纳入挑战证据。',
+        residual: '硬件侧信道、内部人员和模型记忆无法被完全消除；极高敏数据仍需要线下合规审查、额度限制和人工批准。',
+      },
+    ],
+    sources: [sources.dataTerms, sources.dataTwenty, sources.trustedDataSpacePlan, sources.trustedDataSpaceTech, sources.odrl, sources.contracts, sources.agentSecurity],
+  },
   simulation: {
     implementation: [
       {
@@ -322,19 +379,19 @@ export const speakerGuideDetails = {
   'geo-poi-boundary': {
     implementation: [
       {
-        title: 'PoI 内置，网络权重分阶段接入',
-        mechanism: '把边界拆成三档：传统单组织可以只用签名报告与审计库，但不称为 ACVM；跨组织 ACVM 在 AcceptedResult 后必须生成 ValidPoI，再由现有链将 PoI 与付款一起终局；开放 Worker 与 Validator 后，同一 PoI 才进一步累计为激励和提议权重。',
-        acceptance: '任何标记为 ACVM 的 AcceptedResult 都必须对应唯一 ValidPoI，PaymentClaimed 必须引用该证明；网络权重开关关闭时，PoI 仍需生成、持久化并可独立验证。',
+        title: '跨组织结果协作采用 ACVM',
+        mechanism: '参与方跨组织、结果可争议或需要验收后付款时，ACVM 统一固定验收、挑战、追责和结算规则。',
+        acceptance: '试点立项材料明确签名订单、验收证据、挑战期、分账规则和结算接口。',
       },
       {
-        title: '一份 PoI，结算与共识使用两套不变量',
-        mechanism: '结算不变量要求 SignedDemand、Evidence、AcceptedResult、UniqueTaskKey、ValidPoI 和 Settlement；网络不变量另要求贡献归一、权重上限、VRF 输入与 BFT 终局。两条路径从同一 poiRoot 分流。',
-        acceptance: '删除、篡改或重放 PoI 都不能通过结算验证；关闭提议权重后，PoI 仍能完成 GEO 付款；重新开启权重也不能改变已经终局的业务付款。',
+        title: '结算价值与网络愿景分开验收',
+        mechanism: '跨组织 ACVM 在 AcceptedResult 后生成 ValidPoI，并由现有链或支付系统完成结果结算。开放供给后，同一 PoI 才可能进入激励和提议权重；两条路径使用独立开关与不变量。',
+        acceptance: '网络权重关闭时，ValidPoI 仍能完成 GEO 付款；未来重新开启权重也不能改变已经终局的业务付款。',
       },
     ],
     challenges: [
       {
-        title: '开放网络是否真的带来净收益',
+        title: '跨组织独立性建设',
         failure: '如果首批需求方、Worker 和 Validator 都由同一团队运营，PoI 还不能证明开放网络已经具有独立性。',
         solution: '先用 permissioned pilot 生成 shadow PoI，测量观察成本、争议率、供给集中度和跨机构需求；只有新增独立供给显著降低成本或提高覆盖，才让 PoI 影响真实激励。',
         residual: '早期合作伙伴样本会高估协同意愿，开放网络的经济性必须用对抗性订单重新验证。',
@@ -801,8 +858,8 @@ export const speakerGuideDetails = {
     implementation: [
       {
         title: '托管分账瀑布',
-        mechanism: '预算拆成结果费、证据费、验证费、链上费和安全准备金。Accepted 支付已完成工作；正常未达标退结果费但支付诚实验证成本；Fraud 才罚没保证金。',
-        acceptance: '会计不变量覆盖三条路径，任何状态下资产都可归属；Worker 的正常失败与可证明作恶使用不同错误码和资金结果。',
+        mechanism: '预算拆成结果池、数据或执行费、证据费、验证费、链上费和安全准备金。GEO 的结果池可付给单一 Worker；可信数据空间可按 splitRoot 分给数据提供方、模型方和运营方。Accepted 释放结果池；正常未达标只退结果池；Fraud 才罚保证金。',
+        acceptance: '会计不变量覆盖三条路径，任何状态下资产都可归属；正常未达标与可证明作恶使用不同错误码和资金结果，所有分账之和严格等于对应资金池。',
       },
       {
         title: '用攻击成本反推保证金',
@@ -838,7 +895,7 @@ export const speakerGuideDetails = {
         residual: '承诺—揭示增加一轮延迟，且无法消除跨域信息泄露；高价值任务应优先隐私交易入口。',
       },
     ],
-    sources: [sources.contracts, sources.cometBft, sources.survey],
+    sources: [sources.dataTwenty, sources.trustedDataSpacePlan, sources.contracts, sources.cometBft, sources.survey],
   },
   'product-roadmap': {
     implementation: [
@@ -848,9 +905,9 @@ export const speakerGuideDetails = {
         acceptance: '每阶段都有退出条件：重复结算为零、证据取回率达标、挑战可用、Validator 有效独立数达标，且完成重组与密钥失守演练。',
       },
       {
-        title: '首个试点留下完整审计链',
-        mechanism: '选 GEO 或社会模拟的一种，固定一个验证策略和单链结算。记录需求、版本、证据、裁决、付款、争议与成本，不急着覆盖所有模型和链。',
-        acceptance: '外部审计者能从 SignedDemand 重建到 VerdictFinalized、ValidPoI 和 PaymentClaimed；客户能解释为何付款，Worker 能解释为何得款或被拒。PoI 权重关闭时，结算证明链仍完整。',
+        title: '真实首单只跑一条轨道',
+        mechanism: 'GEO 与可信数据空间二选一，并固定一个验证策略和一个结算实现。GEO 锁定观察口径；数据空间锁定数字合约、连接器履约证明与分账规则。两者都记录需求、版本、证据、裁决、付款、争议与成本。',
+        acceptance: '外部审计者能从 SignedDemand 重建到 VerdictFinalized、ValidPoI 和 PaymentClaimed；需求方能解释为何付款，各结果贡献方能解释为何得款或被拒。PoI 权重关闭时，结算证明链仍完整。',
       },
     ],
     challenges: [
@@ -875,6 +932,6 @@ export const speakerGuideDetails = {
         residual: '严重共识或桥故障仍需人工协调，因此责任人和决策时限必须在上线前公开。',
       },
     ],
-    sources: [sources.a3s, sources.a3sRuntime, sources.a3sPower, sources.contracts, sources.agentSecurity, sources.survey],
+    sources: [sources.a3s, sources.a3sRuntime, sources.a3sPower, sources.trustedDataSpacePlan, sources.trustedDataSpaceTech, sources.contracts, sources.agentSecurity, sources.survey],
   },
 } as const satisfies Record<ScreenId, SpeakerGuideDetails>;

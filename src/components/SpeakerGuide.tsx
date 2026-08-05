@@ -10,11 +10,10 @@ export function SpeakerGuide({
   activeScreen: number;
   onClose: () => void;
 }) {
-  const [screenId, title] = screens[activeScreen];
+  const [screenId] = screens[activeScreen];
   const guide = speakerGuides[screenId as ScreenId];
   const details = speakerGuideDetails[screenId as ScreenId];
   const chapter = chapterForScreen(screenId);
-  const isChapterOpening = chapter.id === screenId;
 
   return (
     <aside className="speaker-guide" id="speaker-guide" aria-labelledby="speaker-guide-title">
@@ -34,30 +33,17 @@ export function SpeakerGuide({
 
       <div className="speaker-guide__body" key={screenId} data-local-scroll>
         <section className="speaker-guide__focus">
-          <small>这一页只讲清</small>
-          <h2>{title}</h2>
+          <small>核心结论</small>
           <p>{guide.focus}</p>
         </section>
 
-        {isChapterOpening ? (
-          <section className="speaker-guide__chapter-question">
-            <small>这一部分要回答</small>
-            <p>{chapter.question}</p>
-          </section>
-        ) : null}
-
-        <section className="speaker-guide__connection">
-          <small>放回主线</small>
-          <p>{guide.connection}</p>
-        </section>
-
         <section className="speaker-guide__opening">
-          <small>开场句</small>
-          <blockquote>{guide.opening}</blockquote>
+          <small>实际例子</small>
+          <p className="speaker-guide__example">{guide.example}</p>
         </section>
 
         <section className="speaker-guide__beats">
-          <small>口述展开</small>
+          <small>讲述要点</small>
           <ol>
             {guide.beats.map((beat, index) => (
               <li key={beat}><span>{index + 1}</span><p>{beat}</p></li>
@@ -66,9 +52,9 @@ export function SpeakerGuide({
         </section>
 
         <section className="speaker-guide__deep-dive">
-          <small>现场追问展开</small>
+          <small>按需展开</small>
 
-          <details open>
+          <details>
             <summary><span>技术实现</span><b>{details.implementation.length}</b></summary>
             <div className="speaker-guide__cards">
               {details.implementation.map((item) => (
@@ -108,24 +94,19 @@ export function SpeakerGuide({
               ))}
             </div>
           </details>
-        </section>
-
-        <section className="speaker-guide__sources">
-          <small>资料依据</small>
-          <div>
-            {details.sources.map((source) => (
-              <a key={source.url} href={source.url} target="_blank" rel="noreferrer">
-                {source.label}<span aria-hidden="true">↗</span>
-              </a>
-            ))}
-          </div>
+          <details>
+            <summary><span>资料依据</span><b>{details.sources.length}</b></summary>
+            <div className="speaker-guide__source-list">
+              {details.sources.map((source) => (
+                <a key={source.url} href={source.url} target="_blank" rel="noreferrer">
+                  {source.label}<span aria-hidden="true">↗</span>
+                </a>
+              ))}
+            </div>
+          </details>
         </section>
       </div>
 
-      <footer className="speaker-guide__transition">
-        <span><Icon name="arrow" /></span>
-        <p><small>自然转场</small>{guide.transition}</p>
-      </footer>
     </aside>
   );
 }

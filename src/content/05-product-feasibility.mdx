@@ -1,27 +1,13 @@
 import { LessonChapter } from '../components/LessonChapter'
-import { PoiSecurityArchitecture } from '../components/ProductMechanismArchitecture'
-import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchitecture'
+import { ProductReadinessArchitecture } from '../components/ProductNarrativeArchitecture'
 
 <LessonChapter
-  id="deployment-modes"
-  className="chains-screen"
-  eyebrow="05 · FEASIBILITY / INTEGRATION"
-  title="ACVM 要重新造一条链吗？"
-  accent="A3S 跑任务，ACVM 生成 PoI，现有链做终局"
-  body="不用。国内模式接 BSN、星火·链网或联盟链 SDK；开放模式可接 EigenLayer AVS。ACVM 不替换既有身份、支付和终局。"
-  figureLabel="INTEGRATION / AP2 → A3S → ACVM → CHAIN ADAPTER / AVS"
-  visual={<AcvmIntegrationArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="security-boundaries"
-  className="security-boundaries-screen"
-  eyebrow="05 · FEASIBILITY / ATTACK SURFACE"
-  title="刷单和串谋怎么防？"
-  accent="逐条设防，不把安全押在信誉分上"
-  body="关联订单、重复计分、伪造结果和验证者串谋分别处理。身份关联、taskKey、随机委员会、保证金和挑战共同抬高成本。"
-  figureLabel="SECURITY / THREAT → CONTROL → RESIDUAL RISK"
-  visual={<PoiSecurityArchitecture />}
+  id="product-roadmap"
+  className="product-readiness-screen"
+  eyebrow="05 / 交付状态"
+  title="当前交付：规范与演示"
+  accent="下一步：最小结算闭环"
+  body="A3S 已开源；ACVM 适配器、裁决状态机与结算集成待实现。"
+  visual={<ProductReadinessArchitecture />}
 >
 </LessonChapter>

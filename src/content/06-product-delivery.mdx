@@ -1,14 +1,119 @@
+import {
+  SocialSimulationArchitecture,
+} from '../components/CoreUseCaseAnimations'
+import { AcvmExecutionBoundaryArchitecture } from '../components/AcvmExecutionBoundary'
+import { AgentResolutionArchitecture } from '../components/AgentResolutionArchitecture'
+import { ContractModelArchitecture } from '../components/FormalSpecArchitecture'
+import { FogInferenceArchitecture } from '../components/FogInferenceArchitecture'
 import { LessonChapter } from '../components/LessonChapter'
-import { ProductReadinessArchitecture } from '../components/ProductNarrativeArchitecture'
+import { AcvmIntegrationArchitecture, PoiLandscapeArchitecture } from '../components/ProductEvidenceArchitecture'
+import { PoiConsensusArchitecture } from '../components/ProductMechanismArchitecture'
+import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitecture'
 
 <LessonChapter
-  id="product-roadmap"
-  className="product-readiness-screen"
-  eyebrow="06 · DELIVERY / READINESS"
-  title="第一项可验收交付是什么？"
-  accent="先跑通真实任务，不先造新链"
-  body="A3S 已提供执行底座。下一步接入真实需求方、Worker 和 Validator，跑通 SignedDemand 到 ValidPoI 再到付款。"
-  figureLabel="DELIVERY / A3S FOUNDATION → SHADOW POI → SETTLEMENT → NETWORK"
-  visual={<ProductReadinessArchitecture />}
+  id="simulation"
+  className="core-use-case-screen simulation-screen"
+  eyebrow="06 · APPENDIX / EXPANSION CASE"
+  title="隐私数据留在本地"
+  accent="聚合统计与验证证明可复核"
+  body="模型、样本、随机过程与隐私预算事前固定。"
+  figureLabel="APPENDIX / SEALED INPUT → VERIFIED SIMULATION → SETTLEMENT"
+  visual={<SocialSimulationArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="useful-work"
+  className="useful-work-screen"
+  eyebrow="06 · APPENDIX / ENGINEERING LANDSCAPE"
+  title="AI 网络验证不同命题"
+  accent="相对质量、执行正确、经济安全和业务达标是不同命题"
+  body="选型需按目标版本复核；ACVM 可复用执行证明与经济安全。"
+  figureLabel="APPENDIX / PROOF TARGET → JUDGE → ECONOMIC EFFECT"
+  visual={<PoiLandscapeArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="execution-boundary"
+  className="acvm-execution-boundary-screen"
+  eyebrow="06 · APPENDIX / EXECUTION BOUNDARY"
+  title="模型链下执行"
+  accent="Worker 执行一次，节点只验回执"
+  body="GPU、私有数据与外部工具不进入全网重放。"
+  figureLabel="APPENDIX / REPLAY COST → RECEIPT VERIFICATION"
+  visual={<AcvmExecutionBoundaryArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="ans"
+  className="ans-screen"
+  eyebrow="06 · APPENDIX / OPTIONAL ANS"
+  title="ANS 提供签名服务卡"
+  accent="服务发现绑定身份、能力、价格与信誉"
+  body="名称、价格、任务量和信誉均为演示数据。"
+  figureLabel="APPENDIX / ILLUSTRATIVE ANS RECORD → A2A INTENT"
+  visual={<AgentResolutionArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="agentic-contract"
+  className="formal-screen contract-spec-screen"
+  eyebrow="06 · APPENDIX / AGENTIC CONTRACT"
+  title="智能体合约管理长任务"
+  accent="预算、权限、失败路径事前固定"
+  body="输入输出、参与方、挑战期和付款条件事前固定。"
+  figureLabel="APPENDIX / SCHEMA · WORKER · VALIDATOR · SETTLEMENT"
+  visual={<ContractModelArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="fog-inference"
+  className="fog-screen"
+  eyebrow="06 · APPENDIX / OPTIONAL FOG"
+  title="数据本地执行，结果可交付"
+  accent="雾节点就近执行，账本只收证据"
+  body="原始数据留在现场；账本只记录结果根、运行证明与裁决。"
+  figureLabel="APPENDIX / LOCAL DATA → NEARBY INFERENCE → GLOBAL VERIFICATION"
+  visual={<FogInferenceArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="poi-proof"
+  className="intelligence-screen"
+  eyebrow="06 · APPENDIX / PROOF OF INTELLIGENCE"
+  title="PoI 绑定需求、结果与执行"
+  accent="真实需求、结果达标、执行可查、不能重放"
+  body="SignedDemand、AcceptedResult、ExecutionEvidence 和 UniqueTaskKey 缺一不可。"
+  figureLabel="APPENDIX / DEMAND · RESULT · EXECUTION · FRESHNESS"
+  visual={<IntelligenceProofArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="poi-consensus"
+  className="poi-consensus-screen"
+  eyebrow="06 · APPENDIX / FUTURE NETWORK"
+  title="PoI 加权，法定人数确认终局"
+  accent="未来选项；试点阶段权重为零"
+  body="最终确认仍由法定人数完成。"
+  figureLabel="APPENDIX / FUTURE POI WEIGHT → VRF PROPOSER → BFT FINALITY"
+  visual={<PoiConsensusArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="deployment-modes"
+  className="chains-screen"
+  eyebrow="06 · APPENDIX / CANDIDATE INTEGRATIONS"
+  title="ACVM 适配现有基础设施"
+  accent="适配路径以试点选型和实现为准"
+  body="国内联盟链与开放网络路径均待试点选型和实现。"
+  figureLabel="APPENDIX / PROPOSED ADAPTERS · NOT YET IMPLEMENTED"
+  visual={<AcvmIntegrationArchitecture />}
 >
 </LessonChapter>

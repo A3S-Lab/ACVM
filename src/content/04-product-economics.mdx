@@ -1,14 +1,25 @@
 import { SettlementWaterfallArchitecture } from '../components/EconomicModelArchitecture'
 import { LessonChapter } from '../components/LessonChapter'
+import { PoiSecurityArchitecture } from '../components/ProductMechanismArchitecture'
 
 <LessonChapter
   id="economy-roles"
   className="foundation-screen economy-roles-screen"
-  eyebrow="04 · ECONOMICS / ONE ESCROW"
-  title="一笔 12 万元订单，钱给谁？"
-  accent="达标付结果费，造假罚保证金"
-  body="10 万元是结果费，其余支付证据、验证、链上费用和挑战准备金。未达标退结果费，造假再罚保证金。"
-  figureLabel="ECONOMY / ACCEPTED · REJECTED · FRAUD"
+  eyebrow="04 / 资金规则"
+  title="结果费与验证成本分开"
+  accent="达标才释放结果池"
+  body="未达标不罚；可证明造假才罚没。"
   visual={<SettlementWaterfallArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="security-boundaries"
+  className="security-boundaries-screen"
+  eyebrow="04 / 风险控制"
+  title="防刷单，先锁定真实订单"
+  accent="唯一任务、独立验证、挑战罚没"
+  body="剩余风险必须通过真实试点校准。"
+  visual={<PoiSecurityArchitecture />}
 >
 </LessonChapter>

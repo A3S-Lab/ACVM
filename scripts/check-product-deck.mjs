@@ -13,7 +13,29 @@ if (!screensBlock) throw new Error('Could not find the screens declaration in sr
 
 const screenIds = [...screensBlock.matchAll(/\['([^']+)'/g)].map((match) => match[1]);
 const expectedSlideIds = screenIds.slice(1);
-const openingIds = ['product-thesis', 'product-snapshot', 'geo-verification', 'simulation'];
+const mainlineIds = [
+  'product-snapshot',
+  'product-thesis',
+  'geo-poi-boundary',
+  'geo-verification',
+  'data-space',
+  'system-architecture',
+  'verification-engine',
+  'economy-roles',
+  'security-boundaries',
+  'product-roadmap',
+];
+const appendixIds = [
+  'simulation',
+  'useful-work',
+  'execution-boundary',
+  'ans',
+  'agentic-contract',
+  'fog-inference',
+  'poi-proof',
+  'poi-consensus',
+  'deployment-modes',
+];
 const retiredTutorialIds = [
   'btc-ledger',
   'btc-pow',
@@ -57,8 +79,8 @@ const missing = expectedSlideIds.filter((id) => !actualSlideIds.includes(id));
 const unexpected = actualSlideIds.filter((id) => !expectedSlideIds.includes(id));
 const orderMatches = JSON.stringify(expectedSlideIds) === JSON.stringify(actualSlideIds);
 
-if (screenIds.length !== 19) {
-  throw new Error(`Expected a 19-slide product deck including the minimal cover; found ${screenIds.length}`);
+if (screenIds.length !== 20) {
+  throw new Error(`Expected a 20-slide deck with one cover, ten mainline slides, and nine appendix slides; found ${screenIds.length}`);
 }
 if (contentFiles.length !== 6) {
   throw new Error(`Expected six product-deck MDX groups; found ${contentFiles.length}`);
@@ -69,6 +91,11 @@ if (duplicates.length || missing.length || unexpected.length || !orderMatches) {
 if (speakerGuideIds.length !== screenIds.length || !screenIds.every((id) => speakerGuideIds.includes(id))) {
   throw new Error(`Speaker guide coverage does not match screens:\n${JSON.stringify({ screenIds, speakerGuideIds }, null, 2)}`);
 }
+const speakerExampleCount = speakerGuideSource.match(/^    example: '/gm)?.length ?? 0;
+const twoBeatCount = speakerGuideSource.match(/^    beats: \['[^']*', '[^']*'\],$/gm)?.length ?? 0;
+if (speakerExampleCount !== screenIds.length || twoBeatCount !== screenIds.length) {
+  throw new Error(`Every slide needs one concrete example and exactly two speaking points: ${JSON.stringify({ speakerExampleCount, twoBeatCount })}`);
+}
 if (speakerGuideDetailIds.length !== screenIds.length || !screenIds.every((id) => speakerGuideDetailIds.includes(id))) {
   throw new Error(`Speaker guide detail coverage does not match screens:\n${JSON.stringify({ screenIds, speakerGuideDetailIds }, null, 2)}`);
 }
@@ -78,12 +105,11 @@ for (const field of ['implementation', 'challenges', 'security', 'sources']) {
     throw new Error(`Expected ${field} notes for all ${screenIds.length} slides; found ${count}`);
   }
 }
-if (JSON.stringify(expectedSlideIds.slice(0, openingIds.length)) !== JSON.stringify(openingIds)) {
-  throw new Error(`The product thesis, payment condition, and two core use cases must open the story: ${JSON.stringify(expectedSlideIds.slice(0, openingIds.length))}`);
+if (JSON.stringify(expectedSlideIds.slice(0, mainlineIds.length)) !== JSON.stringify(mainlineIds)) {
+  throw new Error(`The ten-slide decision narrative is out of order: ${JSON.stringify(expectedSlideIds.slice(0, mainlineIds.length))}`);
 }
-const storyQuestionCount = deckSource.match(/\bquestion: '/g)?.length ?? 0;
-if (storyQuestionCount !== 7) {
-  throw new Error(`Expected one question for the cover and six product sections; found ${storyQuestionCount}`);
+if (JSON.stringify(expectedSlideIds.slice(mainlineIds.length)) !== JSON.stringify(appendixIds)) {
+  throw new Error(`The technical appendix is out of order: ${JSON.stringify(expectedSlideIds.slice(mainlineIds.length))}`);
 }
 if (closingTags !== actualSlideIds.length) {
   throw new Error(`LessonChapter tags are unbalanced: ${actualSlideIds.length} open, ${closingTags} closed`);
@@ -107,5 +133,29 @@ const artificialMatches = [
 if (artificialMatches.length) {
   throw new Error(`Narrator-style filler found:\n${artificialMatches.join('\n')}`);
 }
+const audienceFacingNarratorPhrases = ['这一页', '这页', '下一页', '上一页', '主线到此', '先来看', '再来看'];
+const audienceFacingNarratorMatches = [
+  ...contentSources,
+  { file: 'src/speakerGuide.ts', source: speakerGuideSource },
+].flatMap(({ file, source }) => audienceFacingNarratorPhrases
+  .filter((phrase) => source.includes(phrase))
+  .map((phrase) => `${file}: ${phrase}`));
+if (audienceFacingNarratorMatches.length) {
+  throw new Error(`Audience-facing narrator copy found:\n${audienceFacingNarratorMatches.join('\n')}`);
+}
+const selfQuestionPhrases = ['为什么', '怎么', '如何', '是否', '谁来', '究竟'];
+const selfQuestionMatches = [
+  ...contentSources,
+  { file: 'src/speakerGuide.ts', source: speakerGuideSource },
+  { file: 'src/speakerGuideDetails.ts', source: speakerGuideDetailsSource },
+].flatMap(({ file, source }) => selfQuestionPhrases
+  .filter((phrase) => source.includes(phrase))
+  .map((phrase) => `${file}: ${phrase}`));
+if (selfQuestionMatches.length || contentSources.some(({ source }) => /title="[^"]*[？?]/.test(source))) {
+  throw new Error(`Self-questioning copy found:\n${selfQuestionMatches.join('\n')}`);
+}
+if (speakerGuideSource.includes('transition:')) {
+  throw new Error('Speaker-guide transition scripts must remain removed.');
+}
 
-console.log(`Product deck OK: ${actualSlideIds.length} content slides, ${contentFiles.length} sections, full speaker-guide and security-note coverage.`);
+console.log(`Product deck OK: ${mainlineIds.length}-slide decision narrative + ${appendixIds.length}-slide technical appendix, full speaker-guide and security-note coverage.`);

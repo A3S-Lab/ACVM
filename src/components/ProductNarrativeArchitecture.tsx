@@ -2,51 +2,64 @@ import { Icon, type IconName } from './Icons';
 import { DataChip, LearningPanel } from './LearningPanel';
 
 const productModules = [
-  { code: '01', name: '任务规则', detail: '目标、预算、权限和验收办法', icon: 'key' },
-  { code: '02', name: '执行证据', detail: '产物、观测和运行回执', icon: 'eye' },
-  { code: '03', name: '独立裁决', detail: '通过、拒绝或进入挑战', icon: 'shield' },
-  { code: '04', name: 'PoI 结算', detail: '达标才生成证明并付款', icon: 'receipt' },
+  { code: '01', name: '事前定规则', detail: '目标 · 证据 · 预算', icon: 'key' },
+  { code: '02', name: '事后做验收', detail: '通过 · 拒绝 · 挑战', icon: 'shield' },
+  { code: '03', name: '按裁决付款', detail: '释放 · 退回 · 罚没', icon: 'receipt' },
 ] as const satisfies readonly { code: string; name: string; detail: string; icon: IconName }[];
 
 export function ProductDefinitionArchitecture() {
   return (
-    <LearningPanel code="ACVM / WHAT TRIGGERS PAYMENT" status="VERIFIED RESULT" className="product-definition-panel">
-      <div className="product-definition-flow">
-        <section className="product-endpoint is-input">
-          <small>客户先写清</small>
-          <strong>什么算达标</strong>
-          <span>目标 · 门槛 · 预算</span>
+    <LearningPanel code="ACVM / VERIFIED OUTCOME" status="ONE PAYMENT DECISION" className="product-definition-panel is-simple">
+      <div className="decision-flow" aria-label="事前定规则、事后做验收、按裁决付款">
+        {productModules.map((module, index) => (
+          <span className="decision-flow-fragment" key={module.code}>
+            <article>
+              <header><b>{module.code}</b><Icon name={module.icon} /></header>
+              <strong>{module.name}</strong>
+              <small>{module.detail}</small>
+            </article>
+            {index < productModules.length - 1 ? <i aria-hidden="true">→</i> : null}
+          </span>
+        ))}
+      </div>
+      <footer className="decision-statement">
+        <span><small>执行层提交</small><strong>任务回执</strong></span>
+        <i aria-hidden="true">→</i>
+        <span className="is-acvm"><small>ACVM 生成</small><strong>结果裁决与付款指令</strong></span>
+      </footer>
+    </LearningPanel>
+  );
+}
+
+export function TrustedDataSpaceArchitecture() {
+  return (
+    <LearningPanel code="MULTI-PARTY DATA / SPLIT" status="TRUSTED DATA SPACE + ACVM" className="trusted-data-space-panel is-simple">
+      <div className="multi-party-data-flow" aria-label="多方数据形成联合数据产品并按有效结果分配收益">
+        <section className="data-contributors">
+          <small>多方数据贡献</small>
+          <div><span>企业 A</span><span>机构 B</span><span>企业 C</span></div>
         </section>
         <i aria-hidden="true">→</i>
-        <section className="product-core">
-          <header><Icon name="chain" /><span><small>任务、证据、裁决、付款</small><strong>ACVM</strong></span></header>
-          <div>
-            {productModules.map((module) => (
-              <article key={module.code}>
-                <span><b>{module.code}</b><Icon name={module.icon} /></span>
-                <strong>{module.name}</strong>
-                <small>{module.detail}</small>
-              </article>
-            ))}
-          </div>
+        <section className="trusted-data-product">
+          <Icon name="lock" />
+          <small>可信数据空间</small>
+          <strong>联合数据产品</strong>
+          <p>授权 · 用数 · 谱系可核对</p>
         </section>
         <i aria-hidden="true">→</i>
-        <section className="product-endpoint is-output">
-          <small>协议最后确认</small>
-          <strong>何时生成 PoI</strong>
-          <span>裁决 · 证明 · 付款</span>
+        <section className="accepted-outcome">
+          <Icon name="shield" />
+          <small>ACVM</small>
+          <strong>验收结果并分账</strong>
+          <p>AcceptedResult · splitRoot</p>
         </section>
       </div>
-
-      <div className="product-responsibility-strip">
-        <span><Icon name="brain" /><b>A3S Runtime</b><small>编排模型、工具与回执</small></span>
-        <span className="is-acvm"><Icon name="shield" /><b>ACVM</b><small>裁决结果并生成 PoI</small></span>
-        <span><Icon name="chain" /><b>底层链</b><small>托管资金并给出终局</small></span>
+      <div className="data-space-gate">
+        <span>UsageProof</span><b>+</b><span>AcceptedResult</span><i aria-hidden="true">→</i><strong>释放结果池</strong>
       </div>
-
-      <footer className="product-decision">
-        <Icon name="shield" />
-        <span><small>ACVM 只新增一个决定</small><strong>这份结果能否生成 PoI 并领取结果费？</strong></span>
+      <footer className="data-space-payees">
+        <small>按签约时冻结的 splitRoot 分配</small>
+        <span>企业 A</span><span>机构 B</span><span>企业 C</span><span>其他约定参与方</span>
       </footer>
     </LearningPanel>
   );
@@ -65,7 +78,7 @@ export function ProductLifecycleArchitecture() {
   return (
     <LearningPanel code="ONE TASK / SERVICE → POI → FINALITY" status="6 PRODUCT EVENTS" className="product-lifecycle-panel">
       <div className="product-lifecycle-question">
-        <small>一笔 AI 服务如何同时产生客户结果与网络贡献？</small>
+        <small>一笔 AI 服务同时形成客户结果与网络贡献</small>
         <strong>每一步都引用同一个 taskId</strong>
       </div>
       <div className="product-lifecycle-flow">
@@ -92,42 +105,31 @@ export function ProductLifecycleArchitecture() {
 
 const readinessStages = [
   {
-    stage: 'TODAY',
-    title: 'A3S 执行底座可复用',
-    detail: 'Flow、Runtime、Box、Power 已开源；ACVM 适配器待实现',
-    status: '当前',
+    stage: '01',
+    title: '已有底座',
+    detail: 'A3S 开源执行组件；ACVM 产品规范与演示',
+    status: '已有',
     tone: 'current',
   },
   {
-    stage: 'NEXT',
-    title: '跑通结果结算',
-    detail: 'AP2 适配、A3S 回执、ACVM Shadow PoI',
+    stage: '02',
+    title: '最小闭环',
+    detail: '任务适配、回执绑定、裁决状态机、Shadow PoI',
     status: '下一步',
     tone: 'next',
   },
   {
-    stage: 'PILOT',
-    title: '真实业务试点',
-    detail: 'GEO 或社会模拟先做影子结算',
-    status: '需共建',
-    tone: 'future',
-  },
-  {
-    stage: 'SCALE',
-    title: 'PoI 接入网络权重',
-    detail: '供给侧开放后，再接 AVS、VRF 与 BFT',
-    status: '条件成立',
+    stage: '03',
+    title: '真实首单',
+    detail: 'GEO 或可信数据空间二选一，接入小额结果付款',
+    status: '试点',
     tone: 'future',
   },
 ] as const;
 
 export function ProductReadinessArchitecture() {
   return (
-    <LearningPanel code="DELIVERY / FROM DEMO TO PILOT" status="NEXT MILESTONE" className="product-readiness-panel">
-      <header className="product-readiness-status">
-        <span><Icon name="terminal" /><small>现在</small><strong>A3S 执行底座 + ACVM 产品规范</strong></span>
-        <DataChip tone="amber">A3S BASE</DataChip>
-      </header>
+    <LearningPanel code="DELIVERY / READINESS" status="FOUNDATION → BUILD → PILOT" className="product-readiness-panel is-simple">
       <div className="product-readiness-track">
         {readinessStages.map((item, index) => (
           <span className="product-readiness-stage" key={item.stage}>
@@ -140,37 +142,7 @@ export function ProductReadinessArchitecture() {
           </span>
         ))}
       </div>
-      <footer><Icon name="check" /><strong>下一项交付</strong><span>让一笔真实任务从签约、A3S 执行、验收走到 PoI 与付款</span></footer>
-    </LearningPanel>
-  );
-}
-
-const pilotInputs = [
-  ['01', '需求', '谁签名真实任务并托管预算？'],
-  ['02', '推理', '哪项模型服务创造实际价值？'],
-  ['03', '验收', '什么条件代表结果已达标？'],
-  ['04', '证明', '怎样绑定模型、输入、输出与环境？'],
-  ['05', '共识', 'PoI 权重如何封顶并进入提议？'],
-  ['06', '结算', '终局后奖励、费用与罚没怎样分配？'],
-] as const;
-
-export function ProductClosingArchitecture() {
-  return (
-    <LearningPanel code="PILOT / SIX REQUIRED INPUTS" status="READY TO SPEC" className="product-closing-panel">
-      <div className="product-closing-headline">
-        <Icon name="receipt" />
-        <span><small>ACVM PRODUCT THESIS</small><strong>真实推理 · 可信记账 · 按结果结算</strong></span>
-      </div>
-      <div className="product-closing-inputs">
-        {pilotInputs.map(([index, name, question]) => (
-          <article key={index}><b>{index}</b><strong>{name}</strong><p>{question}</p></article>
-        ))}
-      </div>
-      <footer>
-        <span><Icon name="spark" /><b>能回答这六个问题</b><small>就能把 AI 服务写成一份智能体合约</small></span>
-        <i aria-hidden="true">→</i>
-        <strong>SignedDemand → Inference → Verdict → PoI → Finality</strong>
-      </footer>
+      <footer><Icon name="check" /><strong>下一项可验收交付</strong><span>一笔真实订单跑到 Shadow PoI 与小额付款</span></footer>
     </LearningPanel>
   );
 }

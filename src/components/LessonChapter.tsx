@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { chapterForScreen, screens, screenIndex, type ScreenId } from '../deck';
+import { chapterForScreen, screenIndex, type ScreenId } from '../deck';
 import {
   TechnicalBackdrop,
   type TechnicalBackdropVariant,
@@ -10,6 +10,7 @@ const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = 
   'product-thesis': 'flow',
   'product-snapshot': 'flow',
   'geo-verification': 'proof',
+  'data-space': 'network',
   simulation: 'network',
   'geo-poi-boundary': 'proof',
   'useful-work': 'proof',
@@ -77,24 +78,21 @@ function MechanismCompare({
 }
 
 function SectionHeading({
-  index,
   eyebrow,
   title,
   accent,
   body,
   comparison,
   terms = [],
-}: Omit<LessonChapterProps, 'id' | 'className' | 'figureLabel' | 'visual' | 'children'> & { index: number }) {
+}: Omit<LessonChapterProps, 'id' | 'className' | 'figureLabel' | 'visual' | 'children'>) {
   return (
     <header className="section-heading">
       <div className="section-meta">
         <span className="section-eyebrow"><i /> {eyebrow}</span>
-        <span className="chapter-progress" aria-label={`第 ${index} 页，共 ${screens.length - 1} 页`}>
-          SLIDE {String(index).padStart(2, '0')} / {String(screens.length - 1).padStart(2, '0')}
-        </span>
       </div>
-      <h2>{title}<br /><em>{accent}</em></h2>
-      <p>{body}</p>
+      <h2>{title}</h2>
+      <p className="section-accent">{accent}</p>
+      <p className="section-summary">{body}</p>
       {comparison ? <MechanismCompare {...comparison} /> : null}
       {terms.length > 0 ? (
         <div className="section-terms">
@@ -114,7 +112,6 @@ export function LessonChapter({
   body,
   comparison,
   terms,
-  figureLabel = 'ACVM TECHNICAL ARCHITECTURE / REV. 01',
   visual,
 }: LessonChapterProps) {
   const index = screenIndex(id);
@@ -130,7 +127,6 @@ export function LessonChapter({
       <TechnicalBackdrop variant={technicalBackdrops[id] ?? 'flow'} />
       <div className="screen-inner technical-layout">
         <SectionHeading
-          index={index}
           eyebrow={eyebrow}
           title={title}
           accent={accent}
@@ -140,12 +136,8 @@ export function LessonChapter({
         />
         <div className="technical-visual lesson-stage">
           <div className="lesson-diagram">{visual}</div>
-          <div className="figure-caption" aria-hidden="true">
-            <span>FIG. {String(index).padStart(2, '0')}</span><i /><span>{figureLabel}</span>
-          </div>
         </div>
       </div>
-      <span className="screen-number" aria-hidden="true">{String(index).padStart(2, '0')}</span>
     </section>
   );
 }

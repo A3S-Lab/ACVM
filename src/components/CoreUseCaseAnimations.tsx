@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { Icon, type IconName } from './Icons';
+import { LearningPanel } from './LearningPanel';
 import { useStepPlayback } from './useStepPlayback';
 
 type ServiceStep = {
@@ -167,57 +168,28 @@ function StepInspector({ step, index, total }: { step: ServiceStep; index: numbe
 }
 
 export function GeoVerificationArchitecture() {
-  const { rootRef, activeStep, isPlaying, selectStep, togglePlayback } = useStepPlayback(geoSteps.length, 2500);
-  const step = geoSteps[activeStep];
-
   return (
-    <div ref={rootRef} className={`diagram-panel service-demo-panel geo-service-panel service-stage-${activeStep + 1} ${isPlaying ? 'is-playing' : ''}`}>
-      <header className="panel-chrome service-demo-chrome">
-        <span><i /><i /><i /></span>
-        <code>GEO RESULT VERIFICATION AS A SERVICE</code>
-        <PlaybackButton isPlaying={isPlaying} onClick={togglePlayback} />
-      </header>
-
-      <section className="service-demo-thesis">
-        <span><small>品牌方购买</small><strong>引用份额真实提升 ≥ 8pp</strong></span>
-        <b><Icon name="arrow" /> ACVM</b>
-        <span><small>不是购买</small><strong>文章数量、截图或自报成绩</strong></span>
-      </section>
-
-      <StageNavigation steps={geoSteps} activeStep={activeStep} onSelect={selectStep} />
-
-      <div className="service-demo-body">
-        <section className="service-demo-scene geo-service-scene" aria-label="GEO 引用份额从基线到独立观测结果的变化">
-          <header><span><small>FROZEN OBSERVATION</small><strong>Generative Engine Optimization · 30 DAYS</strong></span><code>task geo-2048</code></header>
-          <div className="geo-measurement">
-            <div className="geo-chart">
-              <i className="geo-threshold"><span>验收线 22.2%</span></i>
-              <div className="geo-bar geo-bar--baseline"><b>14.2%</b><i /><span>冻结基线</span></div>
-              <div className="geo-bar geo-bar--observed"><b>25.8%</b><i /><span>独立观测</span></div>
-              <span className="geo-scanner" aria-hidden="true" />
-            </div>
-            <div className="geo-delta">
-              <small>VALIDATED DELTA</small>
-              <strong>+11.6<em>pp</em></strong>
-              <span className="geo-pass"><Icon name="check" /> 超过 8pp 门槛</span>
-              <div className="geo-settlement"><Icon name="receipt" /><span><small>11.6pp × ¥10,000</small><strong>结算 ¥116,000</strong></span></div>
-            </div>
-          </div>
-          <div className="service-evidence-chain" aria-label="GEO 验证证据链">
-            {['任务与基线', '站点产物', '观测样本', '多数裁决', '终局回执'].map((label, index) => (
-              <span className={index <= activeStep ? 'is-ready' : ''} key={label}><i />{label}</span>
-            ))}
-          </div>
-        </section>
-        <StepInspector step={step} index={activeStep} total={geoSteps.length} />
+    <LearningPanel code="GEO / INDEPENDENT MEASUREMENT" status="ILLUSTRATIVE DATA" className="geo-proof-simple">
+      <div className="geo-proof-rule">
+        <span><small>冻结基线</small><strong>14.2%</strong></span>
+        <span><small>验收门槛</small><strong>+8pp</strong></span>
+        <span><small>观察窗口</small><strong>30 天</strong></span>
       </div>
-
-      <footer className="service-demo-boundary">
-        <span><Icon name="brain" /><b>GEO Agent</b> 决定怎样优化</span>
-        <i aria-hidden="true">≠</i>
-        <span><Icon name="shield" /><b>ACVM</b> 决定哪份效果证据可以触发付款</span>
+      <div className="geo-proof-result" aria-label="引用份额从 14.2% 提升到 25.8%">
+        <div className="geo-proof-bars">
+          <span className="is-baseline"><b>14.2%</b><i /><small>签约基线</small></span>
+          <span className="is-observed"><b>25.8%</b><i /><small>独立复测</small></span>
+        </div>
+        <div className="geo-proof-delta">
+          <small>已验证增量</small>
+          <strong>+11.6<em>pp</em></strong>
+          <span><Icon name="check" /> 达标</span>
+        </div>
+      </div>
+      <footer className="geo-proof-settlement">
+        <span>独立复测超过门槛</span><i aria-hidden="true">→</i><strong>释放结果费</strong>
       </footer>
-    </div>
+    </LearningPanel>
   );
 }
 

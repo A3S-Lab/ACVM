@@ -96,7 +96,7 @@ export function AgentResolutionArchitecture() {
     <div className={`diagram-panel ans-panel ans-stage-${activeStage + 1} ${playing ? 'is-playing' : 'is-paused'}`} ref={panelRef}>
       <header className="panel-chrome">
         <span><i /><i /><i /></span>
-        <code>ANS / AGENT NAME SERVICE / A2A</code>
+        <code>ANS / A2A · ILLUSTRATIVE RECORDS</code>
         <button type="button" className="ans-play-control" onClick={() => setPlaying((value) => !value)} aria-label={playing ? '暂停 ANS 解析动画' : '继续 ANS 解析动画'}>
           <Icon name={playing ? 'pause' : 'play'} />{playing ? 'PAUSE' : 'PLAY'}
         </button>

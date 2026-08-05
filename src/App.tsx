@@ -289,6 +289,7 @@ export function App() {
     const updateActiveScreen = () => {
       window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(() => {
+        if (wheelLockedRef.current) return;
         const viewportHeight = window.innerHeight;
         const visible = sections
           .map((section) => {
@@ -489,8 +490,12 @@ export function App() {
           <BlockchainBackdrop />
           <div className="screen-inner hero-cover-layout">
             <div className="hero-cover-lockup">
-              <span className="hero-cover-product"><LogoMark /><strong>ACVM</strong></span>
-              <h1>让 AI 服务，按已验证结果付费</h1>
+              <span className="hero-cover-product">
+                <LogoMark />
+                <span><strong>ACVM</strong><small>AGENTIC CONTRACT VIRTUAL MACHINE</small></span>
+              </span>
+              <h1>让 AI 服务按已验证结果付费</h1>
+              <p className="hero-cover-scope">结果验收 <i /> 条件结算 <i /> 多方按约分账</p>
             </div>
           </div>
         </section>

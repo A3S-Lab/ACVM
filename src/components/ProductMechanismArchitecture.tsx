@@ -146,33 +146,29 @@ export function PoiConsensusArchitecture() {
       <div className="poi-consensus-equation">
         <code>proposer = argmin(VRF(epoch ∥ poiRoot) / boundedWeight)</code>
         <span><DataChip tone="green">PROPOSAL</DataChip><b>PoI 影响被选概率</b></span>
-        <i>≠</i>
-        <span><DataChip tone="violet">FINALITY</DataChip><b>法定人数决定是否确认</b></span>
+        <i>→</i>
+        <span><DataChip tone="violet">FINALITY</DataChip><b>法定人数完成最终确认</b></span>
       </div>
-      <footer><Icon name="eye" /><strong>获得记账权，不等于获得改规则的权力</strong><span>其他节点仍检查交易、PoI、状态转换与区块签名。</span></footer>
+      <footer><Icon name="eye" /><strong>提议权与规则权分离</strong><span>其他节点检查交易、PoI、状态转换与区块签名。</span></footer>
     </LearningPanel>
   );
 }
 
 const threats = [
-  ['自造需求 / 刷单', '需求签名、预算托管、关联身份分析、权重封顶'],
-  ['同一任务重复计分', 'taskKey 写入 Spent 集合；PoI 绑定 epoch 与输出根'],
-  ['伪造执行或结果', '执行度量、抽样复算、业务验收与挑战窗口'],
-  ['Worker 与 Validator 串谋', '随机委员会、利益冲突限制、保证金与罚没'],
-  ['不同任务难度不可比', '按任务类型归一、质量系数、时间衰减与上限'],
+  ['虚假需求与重复结算', '签名订单 · 预算托管 · 唯一 taskKey'],
+  ['伪造证据与验证串谋', '独立证据源 · 随机 Validator · 利益冲突限制'],
+  ['争议与恶意挑战', '冻结规则 · 挑战窗口 · 保证金 · 可重建裁决链'],
 ] as const;
 
 export function PoiSecurityArchitecture() {
   return (
-    <LearningPanel code="FEASIBILITY / ATTACK SURFACE" status="CONTROLS EXPLICIT" className="poi-security-architecture">
-      <div className="poi-security-head"><span><small>安全目标</small><strong>只有真实、有效、唯一的模型服务才能影响网络权重</strong></span><code>ValidPoI = Dsig ∧ Raccept ∧ VerifyExec ∧ Fresh</code></div>
-      <div className="poi-threat-table">
-        <header><span>攻击路径</span><span>协议控制</span></header>
+    <LearningPanel code="THREAT → CONTROL" status="RESIDUAL RISK EXPLICIT" className="poi-security-architecture is-simple">
+      <div className="security-control-list">
         {threats.map(([threat, control], index) => (
-          <article key={threat}><b>0{index + 1}</b><strong>{threat}</strong><i>→</i><p>{control}</p></article>
+          <article key={threat}><b>0{index + 1}</b><strong>{threat}</strong><i aria-hidden="true">→</i><p>{control}</p></article>
         ))}
       </div>
-      <footer><Icon name="shield" /><span><strong>可行不等于风险归零</strong><small>需求价值归一、关联方识别和开放网络参数仍需通过真实试点校准。</small></span></footer>
+      <footer><Icon name="shield" /><span><strong>不能靠协议消除的风险</strong><small>身份关联、Validator 独立性与挑战有效性，需要在试点中验证。</small></span></footer>
     </LearningPanel>
   );
 }

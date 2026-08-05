@@ -1,92 +1,25 @@
 import { AcvmServiceWorkflowArchitecture } from '../components/AcvmServiceWorkflow'
-import { AgentResolutionArchitecture } from '../components/AgentResolutionArchitecture'
 import { VerificationSpectrumArchitecture } from '../components/AiBlockchainFoundations'
-import { ContractModelArchitecture } from '../components/FormalSpecArchitecture'
-import { FogInferenceArchitecture } from '../components/FogInferenceArchitecture'
 import { LessonChapter } from '../components/LessonChapter'
-import { PoiConsensusArchitecture } from '../components/ProductMechanismArchitecture'
-import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitecture'
 
 <LessonChapter
   id="system-architecture"
   className="system-architecture-screen"
-  eyebrow="03 · WORKFLOW / ONE ORDER"
-  title="一笔 AI 订单怎么跑到底？"
-  accent="AP2 授权，A3S 执行，ACVM 验收"
-  body="AP2 签授权，A3S 执行任务，ACVM 验收并生成 PoI，现有链或 AVS 负责终局。四层用同一 taskId 连接。"
-  figureLabel="STACK / AUTHORIZATION → A3S EXECUTION → ACVM POI → FINALITY"
+  eyebrow="03 / 一笔订单"
+  title="一笔订单，五步闭环"
+  accent="规则 → 执行 → 证据 → 裁决 → 结算"
+  body="所有记录绑定同一个 taskId。"
   visual={<AcvmServiceWorkflowArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="ans"
-  className="ans-screen"
-  eyebrow="03 · WORKFLOW / ANS"
-  title="调用方怎么找到可信 Agent？"
-  accent="ANS 返回一张可验证的服务卡"
-  body="ANS 把名称解析为带签名的身份、能力、价格和 A2A 端点。调用方核验有效期与历史回执后再下单。"
-  figureLabel="ANS / NAME → VERIFIED SERVICE RECORD → A2A INTENT"
-  visual={<AgentResolutionArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="agentic-contract"
-  className="formal-screen contract-spec-screen"
-  eyebrow="03 · WORKFLOW / AGENTIC CONTRACT"
-  title="谁来管预算、权限和失败？"
-  accent="智能体合约把任务写成状态机"
-  body="智能体合约固定输入输出、参与方、挑战期和付款条件。状态只能由签名回执推进，Worker 不能自行宣布完成。"
-  figureLabel="CONTRACT / SCHEMA · WORKER · VALIDATOR · SETTLEMENT"
-  visual={<ContractModelArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="fog-inference"
-  className="fog-screen"
-  eyebrow="03 · WORKFLOW / FOG COMPUTING"
-  title="数据不出域，推理怎么交付？"
-  accent="雾节点就近执行，链上只收证据"
-  body="ACVM 按地域、延迟、硬件证明和价格调度 Worker。原始数据留在现场，只把结果根、运行证明和裁决写入账本。"
-  figureLabel="FOG / LOCAL DATA → NEARBY INFERENCE → GLOBAL VERIFICATION"
-  visual={<FogInferenceArchitecture />}
 >
 </LessonChapter>
 
 <LessonChapter
   id="verification-engine"
   className="verification-spectrum-screen"
-  eyebrow="03 · WORKFLOW / RESULT VERIFICATION"
-  title="开放式结果如何验收？"
-  accent="运行证明与业务证据分开检查"
-  body="复算、挑战、TEE 和零知识证明验证运行过程；冻结数据源、多方观察和业务规则判断结果是否达标。"
-  figureLabel="WORKFLOW / EXECUTION EVIDENCE → BUSINESS VERDICT"
+  eyebrow="03 / 结果验收"
+  title="验执行，也验结果"
+  accent="两类证据缺一不可"
+  body="技术证明记录执行过程；业务证据证明结果达标。"
   visual={<VerificationSpectrumArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="poi-proof"
-  className="intelligence-screen"
-  eyebrow="03 · WORKFLOW / PROOF OF INTELLIGENCE"
-  title="什么样的推理才算 PoI？"
-  accent="真实需求、结果达标、执行可查、不能重放"
-  body="SignedDemand、AcceptedResult、ExecutionEvidence 和 UniqueTaskKey 缺一不可。没有 ValidPoI，就不能领取结果费。"
-  figureLabel="POI / DEMAND · RESULT · EXECUTION · FRESHNESS"
-  visual={<IntelligenceProofArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="poi-consensus"
-  className="poi-consensus-screen"
-  eyebrow="03 · WORKFLOW / BOOKKEEPING RIGHT"
-  title="PoI 等于记账权吗？"
-  accent="不等于：PoI 加权，VRF 抽签，BFT 终局"
-  body="PoI 经过归一、封顶和衰减，只影响 VRF 抽签概率。提议者仍需其他节点验块，并由 BFT 或底层链确认终局。"
-  figureLabel="CONSENSUS / POI WEIGHT → VRF PROPOSER → BFT FINALITY"
-  visual={<PoiConsensusArchitecture />}
 >
 </LessonChapter>

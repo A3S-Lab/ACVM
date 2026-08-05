@@ -1,68 +1,25 @@
-import {
-  GeoVerificationArchitecture,
-  SocialSimulationArchitecture,
-} from '../components/CoreUseCaseAnimations'
 import { LessonChapter } from '../components/LessonChapter'
 import { ProductDefinitionArchitecture } from '../components/ProductNarrativeArchitecture'
-import { GeoPoiDecisionArchitecture } from '../components/ProductEvidenceArchitecture'
 import { ProductThesis } from '../components/ProductThesis'
-
-<LessonChapter
-  id="product-thesis"
-  className="product-thesis-screen"
-  eyebrow="01 · PRODUCT / CORE THESIS"
-  title="ACVM 替换了什么？"
-  accent="一次推理，交付结果，也生成 PoI"
-  body="真实需求替代空耗算力，智能体合约管理链下执行。客户只为达标结果付费，网络得到可验证的有效工作。"
-  figureLabel="THESIS / USEFUL INFERENCE → POI · AGENTIC CONTRACT → SETTLEMENT"
-  visual={<ProductThesis />}
->
-</LessonChapter>
 
 <LessonChapter
   id="product-snapshot"
   className="product-snapshot-screen"
-  eyebrow="01 · PRODUCT / PAYMENT CONDITION"
-  title="什么条件触发付款？"
-  accent="调用只计成本，验收通过才放款"
-  body="任务开始前锁定目标、证据和付款条件。结果通过验收才生成 ValidPoI，底层链据此释放托管资金。"
-  figureLabel="PRODUCT / OUTCOME SPEC → EVIDENCE → VERDICT → POI → PAY"
+  eyebrow="01 / 客户问题"
+  title="结果验收成为付款条件"
+  accent="事前定规则，事后验结果"
+  body="独立裁决通过后释放结果费。"
   visual={<ProductDefinitionArchitecture />}
 >
 </LessonChapter>
 
 <LessonChapter
-  id="geo-verification"
-  className="core-use-case-screen geo-verification-screen"
-  eyebrow="01 · PRODUCT / GEO VERIFICATION"
-  title="品牌方怎么确认 GEO 真有效？"
-  accent="冻结口径，独立复测，增量达标才付款"
-  body="先冻结问题集、基线和观察窗口，再由独立节点复测。引用增量达到门槛，才生成 PoI 并付款。"
-  figureLabel="CORE CASE / DEMAND → INFERENCE → OBSERVATION → POI → SETTLEMENT"
-  visual={<GeoVerificationArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="simulation"
-  className="core-use-case-screen simulation-screen"
-  eyebrow="01 · PRODUCT / SOCIAL SIMULATION"
-  title="数据不能公开，结论怎么让人信？"
-  accent="数据留在本地，只公开统计和证明"
-  body="模型、样本承诺和随机过程先固定。雾节点在数据所在地运行，只提交聚合结果和证明，Validator 不读取个人轨迹。"
-  figureLabel="CORE CASE / SEALED INPUT → VERIFIED SIMULATION → SETTLEMENT"
-  visual={<SocialSimulationArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="geo-poi-boundary"
-  className="geo-poi-boundary-screen"
-  eyebrow="02 · WHY / POI BOUNDARY"
-  title="GEO 一定要用 PoI 吗？"
-  accent="业务可以不用，ACVM 不能没有"
-  body="传统 GEO 可用中心化审计；ACVM 任务必须把验收结果生成 ValidPoI。它先解锁结果费，再进入网络激励与记账。"
-  figureLabel="BOUNDARY / BUSINESS CAN OMIT POI · ACVM CANNOT"
-  visual={<GeoPoiDecisionArchitecture />}
+  id="product-thesis"
+  className="product-thesis-screen"
+  eyebrow="01 / 产品边界"
+  title="ACVM 负责结果裁决"
+  accent="结果达标后触发付款"
+  body="执行由服务方负责；资金终局由现有链或支付系统负责。"
+  visual={<ProductThesis />}
 >
 </LessonChapter>

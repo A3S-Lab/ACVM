@@ -1,27 +1,37 @@
-import { AcvmExecutionBoundaryArchitecture } from '../components/AcvmExecutionBoundary'
+import { GeoVerificationArchitecture } from '../components/CoreUseCaseAnimations'
 import { LessonChapter } from '../components/LessonChapter'
-import { PoiLandscapeArchitecture } from '../components/ProductEvidenceArchitecture'
+import { GeoPoiDecisionArchitecture } from '../components/ProductEvidenceArchitecture'
+import { TrustedDataSpaceArchitecture } from '../components/ProductNarrativeArchitecture'
 
 <LessonChapter
-  id="useful-work"
-  className="useful-work-screen"
-  eyebrow="02 · WHY / ENGINEERING LANDSCAPE"
-  title="其他 AI 网络究竟证明什么？"
-  accent="相对质量、执行正确、业务达标是三类命题"
-  body="现有工程分别验证相对质量、执行过程、广义贡献或节点行为。ACVM 验证签名订单的业务结果，并把裁决生成 PoI。"
-  figureLabel="LANDSCAPE / PROOF TARGET → JUDGE → ECONOMIC EFFECT"
-  visual={<PoiLandscapeArchitecture />}
+  id="geo-poi-boundary"
+  className="geo-poi-boundary-screen"
+  eyebrow="02 / 推荐场景"
+  title="跨组织结果协作使用 ACVM"
+  accent="独立裁决、条件结算、按约分账"
+  body="ACVM 为高价值、可争议的协作提供可追责结果账本。"
+  visual={<GeoPoiDecisionArchitecture />}
 >
 </LessonChapter>
 
 <LessonChapter
-  id="execution-boundary"
-  className="acvm-execution-boundary-screen"
-  eyebrow="02 · WHY / APPLICATION VM"
-  title="为什么模型不能在链上重跑？"
-  accent="Worker 执行一次，节点只验回执"
-  body="GPU、私有数据和外部工具无法由全网重复执行。Worker 运行一次，节点只验证回执、裁决和状态变化。"
-  figureLabel="FIRST PRINCIPLE / REPLAY COST → RECEIPT VERIFICATION"
-  visual={<AcvmExecutionBoundaryArchitecture />}
+  id="geo-verification"
+  className="core-use-case-screen geo-verification-screen"
+  eyebrow="02 / GEO 场景"
+  title="GEO 按增量结果结算"
+  accent="冻结基线，独立复测，达标付款"
+  body="按独立观测到的引用增量结算。"
+  visual={<GeoVerificationArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="data-space"
+  className="trusted-data-space-screen"
+  eyebrow="02 / 可信数据空间"
+  title="多方数据共同形成可用的数据产品"
+  accent="验收后，ACVM 按约分配收益"
+  body="空间记录授权、用数和谱系；ACVM 在结果验收后按事前规则释放各方收益。"
+  visual={<TrustedDataSpaceArchitecture />}
 >
 </LessonChapter>

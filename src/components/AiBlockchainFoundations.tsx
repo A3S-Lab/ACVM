@@ -121,28 +121,30 @@ const verificationMethods = [
 ] as const;
 
 export function VerificationSpectrumArchitecture() {
-  const [activeId, setActiveId] = useState<(typeof verificationMethods)[number]['id']>('tee');
-  const active = verificationMethods.find((method) => method.id === activeId) ?? verificationMethods[0];
-
   return (
-    <LearningPanel code="AI × BLOCKCHAIN / VERIFICATION SPECTRUM" status="SELECT A TRUST MODEL" className="verification-panel">
-      <div className="verification-tabs" role="tablist" aria-label="AI 结果验证方法">
-        {verificationMethods.map((method, index) => (
-          <button className={method.id === activeId ? 'is-active' : ''} type="button" role="tab" aria-selected={method.id === activeId} onClick={() => setActiveId(method.id)} key={method.id}>
-            <span>{String(index + 1).padStart(2, '0')}</span><strong>{method.label}</strong>
-          </button>
-        ))}
+    <LearningPanel code="EXECUTION EVIDENCE + BUSINESS EVIDENCE" status="BOTH REQUIRED" className="verification-panel is-simple">
+      <div className="verification-pair">
+        <article>
+          <Icon name="terminal" />
+          <small>技术证明</small>
+          <strong>执行过程可复核</strong>
+          <p>复算 · 挑战 · TEE · zkML</p>
+        </article>
+        <i aria-hidden="true">+</i>
+        <article className="is-business">
+          <Icon name="eye" />
+          <small>业务证据</small>
+          <strong>业务结果达标</strong>
+          <p>冻结口径 · 独立观测 · 业务规则</p>
+        </article>
       </div>
-      <div className="verification-detail" role="tabpanel">
-        <section className={`verification-orb is-${active.tone}`}><Icon name={active.id === 'zkml' ? 'spark' : active.id === 'tee' ? 'lock' : active.id === 'judgement' ? 'eye' : 'shield'} /><span>{active.label}</span></section>
-        <dl>
-          <div><dt>它证明什么</dt><dd>{active.proof}</dd></div>
-          <div><dt>适合什么</dt><dd>{active.goodFor}</dd></div>
-          <div><dt>仍然信任</dt><dd>{active.trust}</dd></div>
-          <div><dt>主要代价</dt><dd>{active.cost}</dd></div>
-        </dl>
+      <div className="verification-verdict">
+        <span>SignedDemand</span><b>+</b><span>ExecutionEvidence</span><b>+</b><span>AcceptedResult</span><i aria-hidden="true">→</i><strong>ValidPoI</strong>
       </div>
-      <footer className="verification-rule"><Icon name="shield" /><span><strong>各方法验证的命题不同</strong><small>程序执行、数据来源和业务质量需要分别验证。</small></span></footer>
+      <footer className="verification-boundary">
+        <Icon name="shield" />
+        <strong>技术证明与业务验收共同构成 ValidPoI。</strong>
+      </footer>
     </LearningPanel>
   );
 }

@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { Icon, type IconName } from './Icons';
 import { DataChip, LearningPanel } from './LearningPanel';
 
@@ -91,39 +91,33 @@ const settlementScenarios = {
   accepted: {
     label: '验收通过',
     status: 'ACCEPTED + FINALIZED',
-    summary: '结果满足冻结规则并通过挑战期，结果奖励释放。',
+    summary: '结果满足冻结规则并通过挑战期，结果池按事前公式释放。',
     payouts: [
-      ['Worker', '¥100,000', '结果奖励', 'is-success'],
-      ['Validator', '¥8,000', '验收费用', ''],
-      ['Evidence', '¥5,000', '证据费用', ''],
-      ['Chain / Protocol', '¥2,000', 'Gas 与协议费', ''],
-      ['Requester', '¥5,000', '挑战准备金退回', 'is-refund'],
+      ['结果参与方', '¥100,000', 'GEO Worker；或多方数据按 splitRoot 分账', 'is-success'],
+      ['证据与验证', '¥15,000', '证据、Validator 与协议成本', ''],
+      ['需求方', '¥5,000', '挑战准备金退回', 'is-refund'],
     ],
     note: '业务付款只在 verdict = accepted 且 finalityReached 时发生。',
   },
   rejected: {
     label: '正常未达标',
     status: 'REJECTED · NO FRAUD',
-    summary: 'Worker 如实交付，但结果没有达到门槛；不罚没，也不支付结果奖励。',
+    summary: '参与方如实履约，但结果没有达到门槛；不罚没，也不释放结果池。',
     payouts: [
-      ['Requester', '¥105,000', '结果奖励与准备金退回', 'is-refund'],
-      ['Worker', '¥0', '没有结果奖励', 'is-zero'],
-      ['Validator', '¥8,000', '验收费用', ''],
-      ['Evidence', '¥5,000', '证据费用', ''],
-      ['Chain / Protocol', '¥2,000', 'Gas 与协议费', ''],
+      ['需求方', '¥105,000', '结果池与准备金退回', 'is-refund'],
+      ['证据与验证', '¥15,000', '已完成的协议工作', ''],
+      ['结果参与方', '¥0', '未达标，不释放结果费', 'is-zero'],
     ],
     note: '没有达到目标不等于作弊；罚没只针对可证明的违规行为。',
   },
   fraud: {
     label: '发现作弊',
     status: 'FRAUD PROVEN',
-    summary: '挑战者证明回执或证据造假，结果奖励退回，Worker 保证金另行罚没。',
+    summary: '挑战者证明回执、授权或证据造假，结果池退回，责任方保证金另行罚没。',
     payouts: [
-      ['Requester', '¥105,000', '托管结果资金退回', 'is-refund'],
-      ['Worker', '−¥20,000', '保证金被罚没', 'is-loss'],
-      ['Challenger', '+¥12,000', '有效挑战奖励', 'is-success'],
-      ['Safety Treasury', '+¥8,000', '保险与复核储备', ''],
-      ['Verify + Chain', '¥15,000', '证据、验收和协议费', ''],
+      ['需求方', '¥105,000', '托管结果资金退回', 'is-refund'],
+      ['证据与验证', '¥15,000', '已完成的协议工作', ''],
+      ['责任方保证金', '−¥20,000', '罚给挑战者与安全储备', 'is-loss'],
     ],
     note: '挑战奖励来自违规保证金，不从需求方的结果预算重复扣款。',
   },
@@ -134,13 +128,11 @@ export function SettlementWaterfallArchitecture() {
   const active = settlementScenarios[scenario];
 
   return (
-    <LearningPanel code="ESCROW ¥120,000 / THREE POSSIBLE OUTCOMES" status={active.status} className="settlement-waterfall-panel">
-      <div className="settlement-budget-bar" aria-label="托管预算构成">
-        <span style={{ '--share': 100 } as CSSProperties}><small>RESULT REWARD</small><strong>¥100,000</strong></span>
-        <span style={{ '--share': 8 } as CSSProperties}><small>VERIFY</small><strong>¥8k</strong></span>
-        <span style={{ '--share': 5 } as CSSProperties}><small>EVIDENCE</small><strong>¥5k</strong></span>
-        <span style={{ '--share': 2 } as CSSProperties}><small>CHAIN</small><strong>¥2k</strong></span>
-        <span style={{ '--share': 5 } as CSSProperties}><small>RESERVE</small><strong>¥5k</strong></span>
+    <LearningPanel code="ILLUSTRATIVE ESCROW / NOT PRICING" status={active.status} className="settlement-waterfall-panel is-simple">
+      <div className="settlement-budget-summary" aria-label="示例托管预算十二万元">
+        <span><small>条件结果池</small><strong>¥100,000</strong></span>
+        <i aria-hidden="true">+</i>
+        <span><small>证据、验证、协议与准备金</small><strong>¥20,000</strong></span>
       </div>
       <div className="settlement-scenario-tabs" role="tablist" aria-label="选择结算结果">
         {(Object.keys(settlementScenarios) as SettlementScenario[]).map((key) => (
@@ -157,7 +149,7 @@ export function SettlementWaterfallArchitecture() {
           ))}
         </div>
       </section>
-      <footer className="settlement-rule"><Icon name="shield" /><span><strong>{active.note}</strong><small>结果奖励 = 条件支付；验证费用 = 已完成的协议工作；二者不能混为一项。</small></span></footer>
+      <footer className="settlement-rule"><Icon name="shield" /><strong>{active.note}</strong></footer>
     </LearningPanel>
   );
 }

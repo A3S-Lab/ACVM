@@ -1,94 +1,41 @@
 import { Icon, type IconName } from './Icons';
 import { LearningPanel } from './LearningPanel';
 
-const geoMinimumLoop = [
+const acvmAdoptionTriggers = [
   {
-    code: '01',
-    title: '冻结口径',
-    detail: '问题集、基线、观察窗口与目标增量',
-    record: 'querySetRoot · baselineRoot',
-    icon: 'key',
+    label: '跨组织',
+    title: '独立裁决',
+    detail: '多方协作 · 权责分离 · 可追责',
   },
   {
-    code: '02',
-    title: '独立复测',
-    detail: '多观察源、对照组与异常样本处理',
-    record: 'observationRoot',
-    icon: 'eye',
+    label: '按结果付款',
+    title: '条件结算',
+    detail: '冻结门槛 · 独立验收 · 达标放款',
   },
   {
-    code: '03',
-    title: 'PoI 结算',
-    detail: '达到门槛才生成证明并付款',
-    record: 'verdictRoot · ValidPoI',
-    icon: 'receipt',
-  },
-] as const satisfies readonly {
-  code: string;
-  title: string;
-  detail: string;
-  record: string;
-  icon: IconName;
-}[];
-
-const geoDeploymentChoices = [
-  {
-    title: '传统单机构 GEO',
-    detail: '签名报告 + 审计数据库',
-    decision: '能交付，但不形成 ACVM PoI',
-    tone: 'plain',
-  },
-  {
-    title: '跨机构托管结算',
-    detail: 'ACVM 状态机 + 现有链终局',
-    decision: '每笔达标结果必须生成 PoI',
-    tone: 'settlement',
-  },
-  {
-    title: '开放供给与验证网络',
-    detail: '开放 Worker / Validator / 网络激励',
-    decision: 'PoI 再进入激励与提议权重',
-    tone: 'poi',
+    label: '多方数据',
+    title: '按约分账',
+    detail: '授权用数 · 谱系记录 · 收益分配',
   },
 ] as const;
 
 export function GeoPoiDecisionArchitecture() {
   return (
-    <LearningPanel code="GEO / ACVM PRODUCT BOUNDARY" status="POI CORE" className="geo-poi-decision">
-      <section className="geo-minimum-loop" aria-label="GEO 按结果结算的最小闭环">
-        <header><small>接入 ACVM 后</small><strong>验收、PoI 与付款闭环</strong><span>PoI 是已验证结果凭证</span></header>
-        <div>
-          {geoMinimumLoop.map((step, index) => (
-            <span className="geo-loop-fragment" key={step.code}>
-              <article>
-                <header><b>{step.code}</b><Icon name={step.icon} /></header>
-                <strong>{step.title}</strong>
-                <p>{step.detail}</p>
-                <code>{step.record}</code>
-              </article>
-              {index < geoMinimumLoop.length - 1 ? <i aria-hidden="true">→</i> : null}
-            </span>
-          ))}
-        </div>
-      </section>
-
-      <section className="geo-poi-choices" aria-label="PoI 在不同 GEO 协作范围中的作用">
-        <header><small>PoI 承担什么</small><strong>同一份证明，两级用途</strong></header>
-        <div>
-          {geoDeploymentChoices.map((choice, index) => (
-            <article className={`is-${choice.tone}`} key={choice.title}>
-              <span>{String(index + 1).padStart(2, '0')}</span>
+    <LearningPanel code="ACVM / RECOMMENDED USE" status="RESULT-BASED COLLABORATION" className="geo-poi-decision is-simple">
+      <div className="fit-spectrum" aria-label="应使用 ACVM 的三类协作">
+        {acvmAdoptionTriggers.map((choice, index) => (
+          <span className="fit-spectrum-fragment" key={choice.title}>
+            <article>
+              <small>{choice.label}</small>
               <strong>{choice.title}</strong>
               <p>{choice.detail}</p>
-              <b>{choice.decision}</b>
             </article>
-          ))}
-        </div>
-      </section>
-
-      <footer>
-        <Icon name="check" />
-        <strong>结论：GEO 本身不强制 PoI；选择 ACVM，就必须用 PoI 把结果变成有效工作。</strong>
+            {index < acvmAdoptionTriggers.length - 1 ? <i aria-hidden="true">→</i> : null}
+          </span>
+        ))}
+      </div>
+      <footer className="fit-trigger">
+        <span>跨组织交付</span><b>·</b><span>结果付款</span><b>·</b><span>多方分账</span><i aria-hidden="true">→</i><strong>使用 ACVM</strong>
       </footer>
     </LearningPanel>
   );
@@ -103,13 +50,13 @@ const proofLandscape = [
   },
   {
     project: 'Gensyn Verde / EigenAI',
-    target: '声明的模型是否忠实执行',
+    target: '声明模型的执行忠实性',
     judge: '可复现重跑、挑战与争议定位',
     outcome: '验执行，不验业务目标',
   },
   {
     project: 'EigenLayer AVS',
-    target: 'Operator 是否按 AVS 规则响应',
+    target: 'Operator 对 AVS 规则的响应',
     judge: 'Operator quorum、挑战与 slashing',
     outcome: '提供经济安全底座',
   },
@@ -167,19 +114,19 @@ const a3sCapabilityGroups = [
 ] as const;
 
 const chainAdapterCalls = [
-  'submitTaskRoot()',
-  'submitPoIRoot()',
-  'finalityStatus()',
-  'claimSettlement()',
+  'submitTaskRoot',
+  'submitPoIRoot',
+  'finalityStatus',
+  'claimSettlement',
 ] as const;
 
 export function AcvmIntegrationArchitecture() {
   return (
-    <LearningPanel code="ACVM / IMPLEMENTATION PORTS" status="EXISTING INFRASTRUCTURE" className="acvm-integration">
+    <LearningPanel code="ACVM / CANDIDATE IMPLEMENTATION PORTS" status="PROPOSED" className="acvm-integration">
       <div className="integration-stack" aria-label="AP2、A3S、ACVM 和区块链基础设施的职责分层">
         <section className="is-protocol">
-          <header><Icon name="key" /><span><small>AUTHORIZATION &amp; DISCOVERY</small><strong>AP2 · A2A · ANS</strong></span></header>
-          <p>签名意图、交易授权、服务发现</p>
+          <header><Icon name="key" /><span><small>OPTIONAL AUTHORIZATION &amp; DISCOVERY</small><strong>AP2 · A2A · ANS</strong></span></header>
+          <p>候选适配：签名意图、交易授权、服务发现</p>
           <code>Intent / Cart Mandate → SignedDemand</code>
         </section>
         <i aria-hidden="true">→</i>
@@ -206,12 +153,12 @@ export function AcvmIntegrationArchitecture() {
 
       <div className="trust-anchor-targets">
         <article className="is-domestic">
-          <header><small>国家级 / 产业级基础设施</small><strong>BSN 网关 · 星火·链网 · 长安链 · FISCO BCOS</strong></header>
+          <header><small>待选型的国内候选基础设施</small><strong>BSN 网关 · 星火·链网 · 长安链 · FISCO BCOS</strong></header>
           <p>CA / BID / DID、国密与权限治理沿用现有体系；链上只存任务根、裁决根和资金状态。</p>
           <b>人民币托管或支付留在合规支付系统，不要求原生代币。</b>
         </article>
         <article className="is-public">
-          <header><small>开放网络可选路径</small><strong>EigenLayer AVS Operator Set</strong></header>
+          <header><small>待验证的开放网络候选路径</small><strong>EigenLayer AVS Operator Set</strong></header>
           <p>ACVM Validator 可接 quorum、挑战与 slashing；AVS 提供经济安全，ACVM 仍定义业务判定。</p>
           <b>复用现有终局与安全，PoI 仍由 ACVM 生成和解释。</b>
         </article>

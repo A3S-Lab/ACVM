@@ -314,7 +314,7 @@
 
 .integration-stack {
   display: grid;
-  grid-template-columns: 0.95fr 24px 1.45fr 24px 1.05fr;
+  grid-template-columns: minmax(0, 0.95fr) 18px minmax(0, 1.45fr) 18px minmax(0, 1.05fr);
   align-items: stretch;
   gap: 7px;
   padding: 14px 18px 11px;
@@ -353,6 +353,10 @@
   gap: 8px;
 }
 
+.integration-stack section > header span {
+  min-width: 0;
+}
+
 .integration-stack section > header svg {
   width: 19px;
   color: var(--violet, #9a82ff);
@@ -381,11 +385,13 @@
   margin-top: auto;
   color: var(--green, #46d28f);
   font-size: 9px;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .integration-stack section.is-a3s > div {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 7px;
   margin-block: auto;
 }
@@ -413,7 +419,7 @@
 
 .chain-adapter-abi {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: minmax(170px, 200px) minmax(0, 1fr);
   align-items: center;
   gap: 12px;
   padding: 10px 18px;
@@ -446,22 +452,24 @@
 
 .chain-adapter-abi > div {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 7px;
 }
 
 .chain-adapter-abi code {
-  padding: 7px 6px;
+  min-width: 0;
+  padding: 7px 3px;
   border: 1px solid var(--evidence-line);
   border-radius: 7px;
   color: var(--green, #46d28f);
   text-align: center;
-  font-size: 8.5px;
+  font-size: 8px;
+  white-space: nowrap;
 }
 
 .trust-anchor-targets {
   display: grid;
-  grid-template-columns: 1.35fr 1fr;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
   gap: 10px;
   padding: 11px 18px 14px;
 }
