@@ -66,63 +66,44 @@ export function PoiLandscapeArchitecture() {
   );
 }
 
-const a3sCapabilityGroups = [
-  ['Code / Flow', 'Agent 编排与可重放工作流'],
-  ['Runtime / Event', '生命周期、幂等请求与事件证据'],
-  ['Box / Power', '隔离执行、模型推理与运行回执'],
-  ['Gateway / Sentry', '协议入口与分级安全控制'],
-] as const;
-
-const chainAdapterCalls = [
-  'submitTaskRoot',
-  'submitPoIRoot',
-  'finalityStatus',
-  'claimSettlement',
-] as const;
-
 export function AcvmIntegrationArchitecture() {
   return (
-    <LearningPanel code="ACVM / CANDIDATE IMPLEMENTATION PORTS" status="PROPOSED" className="acvm-integration">
-      <div className="integration-stack" aria-label="AP2、A3S、ACVM 和区块链基础设施的职责分层">
-        <section className="is-protocol">
-          <header><Icon name="key" /><span><small>OPTIONAL AUTHORIZATION &amp; DISCOVERY</small><strong>AP2 · A2A · ANS</strong></span></header>
-          <p>候选适配：签名意图、交易授权、服务发现</p>
-          <code>Intent / Cart Mandate → SignedDemand</code>
+    <LearningPanel code="ACVM / INFRASTRUCTURE ADAPTERS" status="REUSE EXISTING SYSTEMS" className="acvm-integration integration-simple">
+      <div className="integration-simple-flow" aria-label="既有身份与授权进入 A3S 执行，ACVM 完成结果控制，再由合规支付或底层链提供终局">
+        <section>
+          <Icon name="key" />
+          <small>IDENTITY &amp; AUTHORIZATION</small>
+          <strong>既有身份与授权</strong>
+          <span>DID / CA · 签名意图</span>
         </section>
         <i aria-hidden="true">→</i>
-        <section className="is-a3s">
-          <header><Icon name="brain" /><span><small>OPEN-SOURCE EXECUTION FOUNDATION</small><strong>A3S 开源框架</strong></span></header>
-          <div>
-            {a3sCapabilityGroups.map(([name, detail]) => (
-              <span key={name}><b>{name}</b><small>{detail}</small></span>
-            ))}
-          </div>
+        <section>
+          <Icon name="brain" />
+          <small>OFF-CHAIN EXECUTION</small>
+          <strong>A3S 执行任务</strong>
+          <span>模型 · 工具 · 执行回执</span>
         </section>
         <i aria-hidden="true">→</i>
         <section className="is-acvm">
-          <header><Icon name="receipt" /><span><small>OUTCOME CONTROL PLANE</small><strong>ACVM</strong></span></header>
-          <p>智能体合约 · 验收策略 · 裁决/挑战 · PoI · 结算</p>
-          <code>ExecReceipt + BusinessEvidence → ValidPoI</code>
+          <Icon name="receipt" />
+          <small>OUTCOME CONTROL</small>
+          <strong>ACVM 验收结果</strong>
+          <span>裁决 · 挑战 · PoI</span>
+        </section>
+        <i aria-hidden="true">→</i>
+        <section>
+          <Icon name="chain" />
+          <small>SETTLEMENT FINALITY</small>
+          <strong>支付或链完成终局</strong>
+          <span>托管放款 · 状态确认</span>
         </section>
       </div>
 
-      <div className="chain-adapter-abi">
-        <header><Icon name="chain" /><span><small>CHAIN ADAPTER ABI</small><strong>底层链只接收确定状态</strong></span></header>
-        <div>{chainAdapterCalls.map((call) => <code key={call}>{call}</code>)}</div>
-      </div>
-
-      <div className="trust-anchor-targets">
-        <article className="is-domestic">
-          <header><small>待选型的国内候选基础设施</small><strong>BSN 网关 · 星火·链网 · 长安链 · FISCO BCOS</strong></header>
-          <p>CA / BID / DID、国密与权限治理沿用现有体系；链上只存任务根、裁决根和资金状态。</p>
-          <b>人民币托管或支付留在合规支付系统，不要求原生代币。</b>
-        </article>
-        <article className="is-public">
-          <header><small>待验证的开放网络候选路径</small><strong>EigenLayer AVS Operator Set</strong></header>
-          <p>ACVM Validator 可接 quorum、挑战与 slashing；AVS 提供经济安全，ACVM 仍定义业务判定。</p>
-          <b>复用现有终局与安全，PoI 仍由 ACVM 生成和解释。</b>
-        </article>
-      </div>
+      <footer className="integration-simple-boundary">
+        <span><b>链上或支付系统</b><small>任务根 · 裁决根 · 资金状态</small></span>
+        <i />
+        <span><b>受控链下存储</b><small>原始数据 · Prompt · 详细证据</small></span>
+      </footer>
     </LearningPanel>
   );
 }

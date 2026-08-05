@@ -576,71 +576,42 @@ export function StateModelArchitecture() {
   );
 }
 
-const contractParts: Array<[HintKey, string, string, string]> = [
-  ['definitionFile', 'M', 'contract.ts', '业务参数 · 入口'],
-  ['schemaFiles', 'S', 'schemas.ts', '输入 · 结果 · 裁决'],
-  ['worker', 'W', 'worker/', '执行工作负载'],
-  ['validator', 'V', 'validator/', '核验工作负载'],
-  ['finality', 'F', 'settle.ts', '结算与终局'],
-];
+const contractFlowSteps = [
+  ['01', '固定任务规则', '目标 · 权限 · 预算', 'key'],
+  ['02', 'Worker 执行', '提交签名回执', 'bolt'],
+  ['03', 'Validator 验收', '接受 · 拒绝 · 挑战', 'shield'],
+  ['04', '更新结算状态', '释放 · 退回 · 等待', 'receipt'],
+] as const satisfies readonly [string, string, string, IconName][];
 
 export function ContractModelArchitecture() {
   return (
-    <div className="diagram-panel formal-panel contract-model-panel">
-      <SpecChrome chapter="01 · AGENTIC CONTRACT" status="2 WORKLOADS / 1 CONTRACT" />
-      <div className="formal-panel-body">
-        <Equation
-          number="ACVM.2"
-          title="Agentic Contract 目录树"
-          explanation="一份可部署合约由五类业务文件组成，整棵目录的内容根就是合约版本。"
-        >
-          <FormulaToken hint="agenticContract">C<sub>A</sub></FormulaToken>{' '}
-          <FormulaOperator hint="definition">≡</FormulaOperator>{' '}
-          <FormulaToken hint="contractTree">Tree</FormulaToken>({' '}
-          <FormulaToken hint="definitionFile">M</FormulaToken>,{' '}
-          <FormulaToken hint="schemaFiles">S</FormulaToken>,{' '}
-          <FormulaToken hint="worker">W<sub>box</sub></FormulaToken>,{' '}
-          <FormulaToken hint="validator">V<sub>box</sub></FormulaToken>,{' '}
-          <FormulaToken hint="finality">F</FormulaToken>)
-        </Equation>
-        <div className="contract-part-grid" aria-label="Agentic Contract 五元组">
-          {contractParts.map(([hint, code, title, detail], index) => (
-            <div className="contract-part" key={code}>
+    <div className="diagram-panel formal-panel contract-model-panel contract-model-simple">
+      <SpecChrome chapter="AGENTIC CONTRACT" status="RULES FIXED BEFORE RUN" />
+      <div className="contract-simple-body">
+        <section className="contract-simple-root">
+          <Icon name="lock" />
+          <span><small>CONTRACT ROOT</small><strong>同一任务沿用同一套规则</strong></span>
+          <code>contractRoot + taskId</code>
+        </section>
+
+        <div className="contract-simple-flow" aria-label="智能体合约固定规则、接收执行回执、完成独立验收并更新结算状态">
+          {contractFlowSteps.map(([code, title, detail, icon], index) => (
+            <div className="contract-simple-step" key={code}>
               <article>
-                <FormulaToken hint={hint}><b>{code}</b></FormulaToken>
+                <header><b>{code}</b><Icon name={icon} /></header>
                 <strong>{title}</strong>
                 <small>{detail}</small>
               </article>
-              {index < contractParts.length - 1 ? <i aria-hidden="true">→</i> : null}
+              {index < contractFlowSteps.length - 1 ? <i aria-hidden="true">→</i> : null}
             </div>
           ))}
         </div>
-        <div className="contract-call">
-          <span><Icon name="terminal" /><small>CONTRACT TREE</small><strong><FormulaToken hint="contractTree">业务目录根</FormulaToken></strong></span>
-          <i>→</i>
-          <span className="is-contract"><Icon name="bolt" /><small>A3S-BOX / WORKER</small><strong><FormulaToken hint="runBox">执行任务</FormulaToken></strong></span>
-          <i>→</i>
-          <span className="is-contract"><Icon name="shield" /><small>A3S-BOX / VALIDATOR</small><strong><FormulaToken hint="verifyBox">独立验收</FormulaToken></strong></span>
-          <i>→</i>
-          <span><Icon name="receipt" /><small>ON-CHAIN TRACE</small><strong><FormulaToken hint="trace">回执 + 状态根</FormulaToken></strong></span>
-        </div>
+
+        <section className="contract-simple-exceptions">
+          <small>明确处理</small>
+          <strong>超时 · 拒绝 · 挑战 · 人工审批</strong>
+        </section>
       </div>
-      <footer className="formal-note">
-        <span>CONTRACT ROOT</span>
-        <strong>
-          <FormulaToken hint="contractTree">root(C<sub>A</sub>)</FormulaToken> ={' '}
-          <FormulaToken hint="hash">H<sub>tree</sub></FormulaToken>({' '}
-          <FormulaToken hint="definitionFile">M</FormulaToken>{' '}
-          <FormulaOperator hint="treeConcatenate">∥</FormulaOperator>{' '}
-          <FormulaToken hint="schemaFiles">S</FormulaToken>{' '}
-          <FormulaOperator hint="treeConcatenate">∥</FormulaOperator>{' '}
-          <FormulaToken hint="worker">W</FormulaToken>{' '}
-          <FormulaOperator hint="treeConcatenate">∥</FormulaOperator>{' '}
-          <FormulaToken hint="validator">V</FormulaToken>{' '}
-          <FormulaOperator hint="treeConcatenate">∥</FormulaOperator>{' '}
-          <FormulaToken hint="finality">F</FormulaToken>)
-        </strong>
-      </footer>
     </div>
   );
 }

@@ -600,19 +600,19 @@ export function LongTaskArchitectureSimple() {
 
 export function IntelligenceProofArchitecture() {
   const steps: Array<{ code: string; title: string; detail: string; icon: IconName }> = [
-    { code: '01', title: '实际任务', detail: '用户签名 · SLA · 验收条件', icon: 'fingerprint' },
-    { code: '02', title: '执行计算', detail: 'a3s-power 运行固定模型', icon: 'brain' },
-    { code: '03', title: '结果验收', detail: '抽样复算 · 质量检查 · 挑战', icon: 'check' },
-    { code: '04', title: '生成 PoI', detail: '验收 + 执行 + 防重放', icon: 'spark' },
+    { code: '01', title: '签名订单', detail: '目标与预算', icon: 'fingerprint' },
+    { code: '02', title: '执行回执', detail: '模型与环境', icon: 'brain' },
+    { code: '03', title: '结果验收', detail: '独立证据', icon: 'check' },
+    { code: '04', title: '防止重放', detail: '唯一 taskKey', icon: 'shield' },
   ];
 
   return (
-    <div className="diagram-panel intelligence-proof">
+    <div className="diagram-panel intelligence-proof intelligence-proof-simple">
       <PanelChrome label="PROOF OF INTELLIGENCE / POI" status="WORK VERIFIED" />
-      <div className="poi-flow" aria-label="PoI 生成流程">
+      <div className="poi-flow poi-flow-simple" aria-label="PoI 由签名订单、执行回执、结果验收和防重放条件共同生成">
         {steps.map((step, index) => (
           <div className="flow-fragment" key={step.code}>
-            <article className={index === steps.length - 1 ? 'is-proof' : ''}>
+            <article>
               <span>{step.code}</span>
               <Icon name={step.icon} />
               <strong>{step.title}</strong>
@@ -622,29 +622,13 @@ export function IntelligenceProofArchitecture() {
           </div>
         ))}
       </div>
-      <div className="poi-equation">
-        <code>
-          <ArchitectureDetail hint="poi">PoI</ArchitectureDetail> ={' '}
-          <ArchitectureDetail hint="signedDemand">SignedDemand</ArchitectureDetail> ∧{' '}
-          <ArchitectureDetail hint="acceptedResult">AcceptedResult</ArchitectureDetail> ∧{' '}
-          <ArchitectureDetail hint="attestedExecution">AttestedExecution</ArchitectureDetail> ∧{' '}
-          <ArchitectureDetail hint="antiReplay">AntiReplay</ArchitectureDetail>
-        </code>
-        <span>自造任务、重复回执和未通过验收的结果不能生成 PoI，也不能领取结果费</span>
-      </div>
-      <div className="poi-finality">
-        <section>
-          <small>订单结算</small>
-          <strong>ValidPoI 解锁结果费</strong>
-          <span>底层链继续负责最终确认</span>
-        </section>
-        <i />
-        <section>
-          <small>多方数据</small>
-          <strong>按 splitRoot 分配收益</strong>
-          <span>分配规则在签约时冻结</span>
-        </section>
-      </div>
+      <footer className="poi-simple-outcome">
+        <span><small>四项同时成立</small><strong>ValidPoI</strong></span>
+        <i aria-hidden="true">→</i>
+        <span><small>单方服务</small><strong>释放结果费</strong></span>
+        <b>或</b>
+        <span><small>多方数据</small><strong>按 splitRoot 分账</strong></span>
+      </footer>
     </div>
   );
 }

@@ -85,71 +85,34 @@ export function ParticipantEconomyArchitecture() {
   );
 }
 
-type SettlementScenario = 'accepted' | 'rejected' | 'fraud';
-
-const settlementScenarios = {
-  accepted: {
-    label: '验收通过',
-    status: 'ACCEPTED + FINALIZED',
-    summary: '结果满足冻结规则并通过挑战期，结果池按事前公式释放。',
-    payouts: [
-      ['结果参与方', '¥100,000', 'GEO Worker；或多方数据按 splitRoot 分账', 'is-success'],
-      ['证据与验证', '¥15,000', '证据、Validator 与协议成本', ''],
-      ['需求方', '¥5,000', '挑战准备金退回', 'is-refund'],
-    ],
-    note: '业务付款只在 verdict = accepted 且 finalityReached 时发生。',
-  },
-  rejected: {
-    label: '正常未达标',
-    status: 'REJECTED · NO FRAUD',
-    summary: '参与方如实履约，但结果没有达到门槛；不罚没，也不释放结果池。',
-    payouts: [
-      ['需求方', '¥105,000', '结果池与准备金退回', 'is-refund'],
-      ['证据与验证', '¥15,000', '已完成的协议工作', ''],
-      ['结果参与方', '¥0', '未达标，不释放结果费', 'is-zero'],
-    ],
-    note: '没有达到目标不等于作弊；罚没只针对可证明的违规行为。',
-  },
-  fraud: {
-    label: '发现作弊',
-    status: 'FRAUD PROVEN',
-    summary: '挑战者证明回执、授权或证据造假，结果池退回，责任方保证金另行罚没。',
-    payouts: [
-      ['需求方', '¥105,000', '托管结果资金退回', 'is-refund'],
-      ['证据与验证', '¥15,000', '已完成的协议工作', ''],
-      ['责任方保证金', '−¥20,000', '罚给挑战者与安全储备', 'is-loss'],
-    ],
-    note: '挑战奖励来自违规保证金，不从需求方的结果预算重复扣款。',
-  },
-} as const;
-
 export function SettlementWaterfallArchitecture() {
-  const [scenario, setScenario] = useState<SettlementScenario>('accepted');
-  const active = settlementScenarios[scenario];
-
   return (
-    <LearningPanel code="ILLUSTRATIVE ESCROW / NOT PRICING" status={active.status} className="settlement-waterfall-panel is-simple">
-      <div className="settlement-budget-summary" aria-label="示例托管预算十二万元">
-        <span><small>条件结果池</small><strong>¥100,000</strong></span>
+    <LearningPanel code="ILLUSTRATIVE BUDGET / NOT PRICING" status="SEPARATE MONEY POOLS" className="settlement-waterfall-panel settlement-simple">
+      <div className="settlement-simple-pools" aria-label="示例预算拆分为十万元结果池和两万元验证成本">
+        <section className="is-result-pool">
+          <header><small>CONDITIONAL RESULT POOL</small><strong>¥100,000</strong></header>
+          <div>
+            <span><Icon name="check" /><b>结果通过</b><small>释放给结果参与方</small></span>
+            <span><Icon name="receipt" /><b>正常未达标</b><small>退回需求方</small></span>
+          </div>
+        </section>
+
         <i aria-hidden="true">+</i>
-        <span><small>证据、验证、协议与准备金</small><strong>¥20,000</strong></span>
+
+        <section className="is-verification-pool">
+          <header><small>EVIDENCE &amp; VERIFICATION</small><strong>¥20,000</strong></header>
+          <div>
+            <span><Icon name="eye" /><b>证据与验收</b><small>按实际完成计费</small></span>
+            <span><Icon name="chain" /><b>协议与准备金</b><small>承担终局和挑战成本</small></span>
+          </div>
+        </section>
       </div>
-      <div className="settlement-scenario-tabs" role="tablist" aria-label="选择结算结果">
-        {(Object.keys(settlementScenarios) as SettlementScenario[]).map((key) => (
-          <button type="button" role="tab" aria-selected={scenario === key} className={scenario === key ? 'is-active' : ''} onClick={() => setScenario(key)} key={key}>
-            <small>{key === 'accepted' ? '01' : key === 'rejected' ? '02' : '03'}</small><strong>{settlementScenarios[key].label}</strong>
-          </button>
-        ))}
-      </div>
-      <section className="settlement-result">
-        <header><span><small>CURRENT OUTCOME</small><strong>{active.label}</strong></span><p>{active.summary}</p></header>
-        <div className="settlement-payout-list">
-          {active.payouts.map(([actor, amount, reason, className]) => (
-            <article className={className} key={actor}><span><strong>{actor}</strong><small>{reason}</small></span><b>{amount}</b></article>
-          ))}
-        </div>
-      </section>
-      <footer className="settlement-rule"><Icon name="shield" /><strong>{active.note}</strong></footer>
+
+      <footer className="settlement-simple-fraud">
+        <Icon name="shield" />
+        <small>FRAUD ONLY</small>
+        <strong>只有可证明造假才罚没责任方保证金</strong>
+      </footer>
     </LearningPanel>
   );
 }
