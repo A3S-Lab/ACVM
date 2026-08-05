@@ -21,11 +21,12 @@ const mainlineIds = [
   'system-architecture',
   'economy-roles',
   'security-boundaries',
-  'product-roadmap',
 ];
 const appendixIds = [
-  'execution-boundary',
+  'ans',
   'agentic-contract',
+  'fog-inference',
+  'execution-boundary',
   'deployment-modes',
 ];
 const retiredTutorialIds = [
@@ -71,11 +72,11 @@ const missing = expectedSlideIds.filter((id) => !actualSlideIds.includes(id));
 const unexpected = actualSlideIds.filter((id) => !expectedSlideIds.includes(id));
 const orderMatches = JSON.stringify(expectedSlideIds) === JSON.stringify(actualSlideIds);
 
-if (screenIds.length !== 12) {
-  throw new Error(`Expected a 12-slide deck with one cover, eight mainline slides, and three appendix slides; found ${screenIds.length}`);
+if (screenIds.length !== 13) {
+  throw new Error(`Expected a 13-slide deck with one cover, seven mainline slides, and five appendix slides; found ${screenIds.length}`);
 }
-if (contentFiles.length !== 6) {
-  throw new Error(`Expected six product-deck MDX groups; found ${contentFiles.length}`);
+if (contentFiles.length !== 5) {
+  throw new Error(`Expected five product-deck MDX groups; found ${contentFiles.length}`);
 }
 if (duplicates.length || missing.length || unexpected.length || !orderMatches) {
   throw new Error(JSON.stringify({ duplicates, missing, unexpected, orderMatches }, null, 2));
@@ -98,7 +99,7 @@ for (const field of ['implementation', 'challenges', 'security', 'sources']) {
   }
 }
 if (JSON.stringify(expectedSlideIds.slice(0, mainlineIds.length)) !== JSON.stringify(mainlineIds)) {
-  throw new Error(`The eight-slide decision narrative is out of order: ${JSON.stringify(expectedSlideIds.slice(0, mainlineIds.length))}`);
+  throw new Error(`The seven-slide decision narrative is out of order: ${JSON.stringify(expectedSlideIds.slice(0, mainlineIds.length))}`);
 }
 if (JSON.stringify(expectedSlideIds.slice(mainlineIds.length)) !== JSON.stringify(appendixIds)) {
   throw new Error(`The technical appendix is out of order: ${JSON.stringify(expectedSlideIds.slice(mainlineIds.length))}`);

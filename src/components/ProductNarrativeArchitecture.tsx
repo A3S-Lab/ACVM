@@ -39,7 +39,7 @@ export function TrustedDataSpaceArchitecture() {
       <div className="multi-party-data-flow" aria-label="多方数据形成联合数据产品并按有效结果分配收益">
         <section className="data-contributors">
           <small>多方数据贡献</small>
-          <div><span>企业 A</span><span>机构 B</span><span>企业 C</span></div>
+          <div><span>设备厂</span><span>工厂</span><span>维保商</span></div>
         </section>
         <i aria-hidden="true">→</i>
         <section className="trusted-data-product">
@@ -61,7 +61,7 @@ export function TrustedDataSpaceArchitecture() {
       </div>
       <footer className="data-space-payees">
         <small>按签约时冻结的 splitRoot 分配</small>
-        <span>企业 A</span><span>机构 B</span><span>企业 C</span><span>其他约定参与方</span>
+        <span>设备厂</span><span>工厂</span><span>维保商</span><span>其他约定参与方</span>
       </footer>
     </LearningPanel>
   );

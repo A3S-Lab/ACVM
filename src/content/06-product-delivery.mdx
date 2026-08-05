@@ -1,39 +1,65 @@
 import { AcvmExecutionBoundaryArchitecture } from '../components/AcvmExecutionBoundary'
+import { AgentResolutionArchitecture } from '../components/AgentResolutionArchitecture'
 import { ContractModelArchitecture } from '../components/FormalSpecArchitecture'
+import { FogInferenceArchitecture } from '../components/FogInferenceArchitecture'
 import { LessonChapter } from '../components/LessonChapter'
 import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchitecture'
 
 <LessonChapter
-  id="execution-boundary"
-  className="acvm-execution-boundary-screen"
-  eyebrow="06 · APPENDIX / EXECUTION BOUNDARY"
-  title="模型链下执行"
-  accent="Worker 执行一次，节点只验回执"
-  body="GPU、私有数据与外部工具不进入全网重放。"
-  figureLabel="APPENDIX / REPLAY COST → RECEIPT VERIFICATION"
-  visual={<AcvmExecutionBoundaryArchitecture />}
+  id="ans"
+  className="ans-screen"
+  eyebrow="05 · APPENDIX / SERVICE DISCOVERY"
+  title="ANS 提供可验证的服务发现"
+  accent="服务卡绑定身份、能力、接口、价格与有效期"
+  body="调用方先解析带签名的服务卡，再核验记录签名、撤销状态和历史回执；ANS 负责发现服务，不替代 ACVM 的结果验收与结算。"
+  figureLabel="APPENDIX / SIGNED SERVICE CARD → VERIFIED A2A ENDPOINT"
+  visual={<AgentResolutionArchitecture />}
 >
 </LessonChapter>
 
 <LessonChapter
   id="agentic-contract"
   className="formal-screen contract-spec-screen"
-  eyebrow="06 · APPENDIX / AGENTIC CONTRACT"
+  eyebrow="05 · APPENDIX / AGENTIC CONTRACT"
   title="智能体合约管理长任务"
-  accent="预算、权限、失败路径事前固定"
-  body="输入输出、参与方、挑战期和付款条件事前固定。"
+  accent="任务开始前固定预算、权限、超时、挑战与付款条件"
+  body="智能体合约预先定义输入输出、参与方、权限和失败路径，再用签名回执推进可能持续数小时或数天的任务状态。"
   figureLabel="APPENDIX / SCHEMA · WORKER · VALIDATOR · SETTLEMENT"
   visual={<ContractModelArchitecture />}
 >
 </LessonChapter>
 
 <LessonChapter
+  id="fog-inference"
+  className="fog-screen"
+  eyebrow="05 · APPENDIX / FOG COMPUTING"
+  title="雾节点让数据本地执行、结果可验证"
+  accent="原始数据留在现场，外部只接收结果根、运行证明与裁决"
+  body="任务调度到靠近数据的隔离节点执行，Worker 返回绑定模型、环境和 taskId 的签名回执；ACVM 验证明与业务结果，不接触原始数据。"
+  figureLabel="APPENDIX / LOCAL DATA → NEARBY EXECUTION → VERIFIABLE RECEIPT"
+  visual={<FogInferenceArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="execution-boundary"
+  className="acvm-execution-boundary-screen"
+  eyebrow="05 · APPENDIX / EXECUTION BOUNDARY"
+  title="模型链下执行"
+  accent="Worker 在链下完成一次任务，节点只验证回执和状态变化"
+  body="模型推理、私有数据处理和外部工具调用不进入全网重放；节点不重复业务动作，只验证签名回执、证明和确定性的状态变化。"
+  figureLabel="APPENDIX / REPLAY COST → RECEIPT VERIFICATION"
+  visual={<AcvmExecutionBoundaryArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
   id="deployment-modes"
   className="chains-screen"
-  eyebrow="06 · APPENDIX / CANDIDATE INTEGRATIONS"
+  eyebrow="05 · APPENDIX / CANDIDATE INTEGRATIONS"
   title="ACVM 适配现有基础设施"
-  accent="适配路径以试点选型和实现为准"
-  body="国内联盟链与开放网络路径均待试点选型和实现。"
+  accent="具体路径必须在项目中完成选型、适配和验收"
+  body="ACVM 通过适配器复用既有身份、支付与共识终局；联盟链、合规支付和开放网络路径均需在具体项目中完成实现和验证。"
   figureLabel="APPENDIX / PROPOSED ADAPTERS · NOT YET IMPLEMENTED"
   visual={<AcvmIntegrationArchitecture />}
 >

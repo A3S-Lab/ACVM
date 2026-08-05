@@ -20,6 +20,12 @@ export const speakerGuides = {
     example: 'GEO Worker 更新内容，观察方独立复测；ACVM 判定引用增量达标后，现有支付系统释放结果费。',
     beats: ['签约时冻结目标、证据、预算和挑战规则。', '执行层提交回执，ACVM 负责裁决，支付或链完成资金终局。'],
   },
+  'poi-proof': {
+    duration: '0:45',
+    focus: 'PoI 是结果验收后的结算凭证。',
+    example: '同一个预测结果即使被复制到两个订单，也只有同时匹配签名需求、验收结果、执行回执和唯一 taskKey 的订单可以领取一次费用。',
+    beats: ['SignedDemand 证明真实订单与预算，AcceptedResult 证明结果已按约通过。', 'ExecutionEvidence 与 AntiReplay 保证执行可查且不能重复结算。'],
+  },
   'geo-verification': {
     duration: '0:50',
     focus: 'GEO 按独立观测到的增量结算，不按内容数量结算。',
@@ -50,17 +56,11 @@ export const speakerGuides = {
     example: '服务方自建关联公司下单，再把同一输出重复提交，就可能伪造“有效需求”和收入。',
     beats: ['签名订单、预算托管和唯一 taskKey 控制虚假需求与重放。', '独立证据源、随机 Validator、挑战和罚没控制伪造与串谋。'],
   },
-  'product-roadmap': {
+  ans: {
     duration: '0:40',
-    focus: '当前有执行底座与产品规范，最小结算闭环仍待实现。',
-    example: '当前可以演示 SignedDemand、证据和裁决流程，但还不能宣称已接入生产支付或生产链。',
-    beats: ['A3S 提供开源执行组件；ACVM 当前交付规范与演示。', '下一项是任务适配、回执绑定、裁决状态机和小额结算。'],
-  },
-  'execution-boundary': {
-    duration: '0:45',
-    focus: 'Worker 执行一次，节点验证回执和状态变化。',
-    example: '采购 Agent 发送真实订单会产生外部副作用，不能让每个共识节点重复发送一次。',
-    beats: ['GPU 推理、私有数据和外部工具不适合全网重放。', '节点只检查签名、承诺、证明、裁决和确定性结算状态。'],
+    focus: 'ANS 用带签名的服务卡完成服务发现，ACVM 继续负责结果验收与结算。',
+    example: '工厂 Agent 查询 fog.infer.ans，取得端点、能力、报价和有效期；核验签名与撤销状态后再创建推理任务。',
+    beats: ['服务卡把名称解析为可核验的身份、接口和交易条件。', '历史回执提供履约参考，不能替代本次订单的独立验收。'],
   },
   'agentic-contract': {
     duration: '0:45',
@@ -68,11 +68,17 @@ export const speakerGuides = {
     example: '采购 Agent 可能运行三天并等待人工审批；Worker 不能因为完成一次工具调用就自行宣布订单完成。',
     beats: ['Schema 固定输入、结果、证据和裁决格式。', '超时、拒绝、挑战和付款都有明确状态转换。'],
   },
-  'poi-proof': {
+  'fog-inference': {
     duration: '0:45',
-    focus: 'PoI 是结果验收后的结算凭证。',
-    example: '同一个预测结果即使被复制到两个订单，也只有同时匹配签名需求、验收结果、执行回执和唯一 taskKey 的订单可以领取一次费用。',
-    beats: ['SignedDemand 证明真实订单与预算，AcceptedResult 证明结果已按约通过。', 'ExecutionEvidence 与 AntiReplay 保证执行可查且不能重复结算。'],
+    focus: '雾节点让原始数据留在现场，同时向外部提交可验证结果。',
+    example: '工厂质检图像留在厂区节点完成缺陷识别，外部只接收缺陷统计、模型版本、运行证明和绑定 taskId 的签名回执。',
+    beats: ['调度租约固定节点、模型、环境、资源上限和截止时间。', 'ACVM 验证明与业务结果，公共节点不接触原始图像。'],
+  },
+  'execution-boundary': {
+    duration: '0:45',
+    focus: 'Worker 执行一次，节点验证回执和状态变化。',
+    example: '采购 Agent 发送真实订单会产生外部副作用，不能让每个共识节点重复发送一次。',
+    beats: ['GPU 推理、私有数据和外部工具不适合全网重放。', '节点只检查签名、承诺、证明、裁决和确定性结算状态。'],
   },
   'deployment-modes': {
     duration: '0:45',

@@ -339,6 +339,43 @@ export const speakerGuideDetails = {
     ],
     sources: [sources.dataAvailability, sources.contracts, sources.survey],
   },
+  ans: {
+    implementation: [
+      {
+        title: '签名服务记录',
+        mechanism: 'ANS 记录包含名称、DID、能力 schema、版本、A2A 端点、价格、有效期、序号、Validator 策略和记录签名。大字段存内容寻址层，链上保存 recordRoot。',
+        acceptance: '解析器验证 DID 控制密钥、签名、单调序号、validUntil 和 recordRoot；A2A 握手还要证明端点持有记录中声明的密钥。',
+      },
+      {
+        title: '信誉按能力隔离',
+        mechanism: '每份终局回执只更新对应能力、任务类别和价格区间的成功率、争议率与样本量，不能把廉价分类任务的成绩搬到高风险任务。',
+        acceptance: '信誉查询返回统计窗口、样本量和回执根，客户端能够独立抽查原始终局事件。',
+      },
+    ],
+    challenges: [
+      {
+        title: '更新、缓存与撤销存在时间差',
+        failure: 'Agent 已更换密钥或被撤销，调用方仍从缓存拿到旧端点。',
+        solution: '记录使用短 TTL 和单调序号；高风险调用同时查链上根和两个独立解析器。紧急撤销单独上链，客户端维护撤销列表并拒绝降序记录。',
+        residual: '链停摆时新撤销无法传播，高风险客户端应 fail closed，暂停新任务。',
+      },
+    ],
+    security: [
+      {
+        title: '名称劫持与缓存投毒',
+        failure: '攻击者让熟悉名称解析到自己的 A2A 端点，截获任务和预算。',
+        solution: '注册和更新都验证控制密钥；敏感名称启用时间锁与多签。解析结果带可验证包含证明，客户端固定 DID 或组织根并校验 TLS/A2A 密钥绑定。',
+        residual: '同形字和社会工程仍可能误导用户，界面要同时展示组织 DID、风险标识和最近变更。',
+      },
+      {
+        title: 'Sybil 信誉与回执刷分',
+        failure: '攻击者创建大量需求方，互相签低成本任务以制造漂亮的成功率。',
+        solution: '信誉展示真实支付额、独立需求方数量和身份集中度；关联账户合并计算，低价值任务权重封顶，争议和退款也进入指标。',
+        residual: '信誉是风险信号，不是身份真伪证明；高价值订单仍需白名单或额外尽调。',
+      },
+    ],
+    sources: [sources.did, sources.survey],
+  },
   'system-architecture': {
     implementation: [
       {
@@ -417,6 +454,43 @@ export const speakerGuideDetails = {
       },
     ],
     sources: [sources.agentSecurity, sources.contracts, sources.survey],
+  },
+  'fog-inference': {
+    implementation: [
+      {
+        title: '可验证调度租约',
+        mechanism: '调度器按地域、延迟、加速卡、价格、数据驻留和证明策略过滤 Worker，随后签发绑定 taskId、镜像哈希、资源上限和到期时间的 lease。',
+        acceptance: 'Worker 在 lease 内回传启动证明；超时、镜像不符或资源声明不匹配即撤销，调度器转交备用节点。',
+      },
+      {
+        title: '证明环境而不是公开数据',
+        mechanism: '可信执行环境以挑战 nonce 生成远程证明，绑定测量值、镜像哈希和临时加密公钥。需求方只向通过证明的公钥加密输入，结果以 outputRoot 和加密产物返回。',
+        acceptance: 'Verifier 检查证明签发链、新鲜 nonce、允许的测量值和安全版本；过期或被撤销的平台证书不接受。',
+      },
+    ],
+    challenges: [
+      {
+        title: '异构硬件与可用性',
+        failure: '不同 TEE、驱动和 GPU 组合的证明格式不同；严格白名单会使节点不足，宽松又扩大攻击面。',
+        solution: '用统一 Evidence API 适配厂商证明，策略按任务敏感度分级；高敏任务只用审核组合并保留跨厂商备用池，普通任务可采用抽样复算。',
+        residual: '硬件供应集中和补丁窗口无法由协议消除，必须把可用容量和撤销演练纳入 SLA。',
+      },
+    ],
+    security: [
+      {
+        title: '证明回放、降级与侧信道',
+        failure: '恶意 Worker 重放旧证明、降级到有漏洞固件，或通过缓存和时间侧信道窃取数据。',
+        solution: 'nonce 绑定 taskId 和 lease；校验安全版本与撤销状态；禁用调试、限制共享资源、最小化驻留时间。高价值任务在不同厂商节点重复执行或采用 MPC，避免单点 TEE 信任。',
+        residual: '远程证明只能说明某个测量环境启动，不能证明芯片无后门或运行期无侧信道。',
+      },
+      {
+        title: '恶意镜像、模型供应链与数据外泄',
+        failure: '签名镜像依赖被投毒，或 Agent 借合法网络工具把输入发往外部。',
+        solution: '镜像和模型使用可复现构建、SBOM、签名与 allowlist；默认关闭出站网络，按域名和数据类型授权。密钥短期注入，任务结束后销毁并记录证明。',
+        residual: '供应链审计只能降低概率，关键任务还需多实现比对和异常输出检测。',
+      },
+    ],
+    sources: [sources.a3s, sources.a3sPower, sources.agentSecurity, sources.survey],
   },
   'poi-proof': {
     implementation: [
@@ -588,42 +662,5 @@ export const speakerGuideDetails = {
       },
     ],
     sources: [sources.dataTwenty, sources.trustedDataSpacePlan, sources.contracts, sources.cometBft, sources.survey],
-  },
-  'product-roadmap': {
-    implementation: [
-      {
-        title: '用安全门槛推进，而不是按功能列表推进',
-        mechanism: '阶段一在 A3S Flow / Runtime / Box / Power 上跑通任务、回执绑定、ACVM 状态机和 shadow PoI；阶段二让 ValidPoI 驱动小额托管并开放挑战；阶段三才把累计 PoI 接入 VRF、BFT 或 AVS 权重。',
-        acceptance: '每阶段都有退出条件：重复结算为零、证据取回率达标、挑战可用、Validator 有效独立数达标，且完成重组与密钥失守演练。',
-      },
-      {
-        title: '真实订单先跑一条轨道',
-        mechanism: 'GEO 与可信数据空间二选一，并固定一个验证策略和一个结算实现。GEO 锁定观察口径；数据空间锁定数字合约、连接器履约证明与分账规则。两者都记录需求、版本、证据、裁决、付款、争议与成本。',
-        acceptance: '外部审计者能从 SignedDemand 重建到 VerdictFinalized、ValidPoI 和 PaymentClaimed；需求方能解释为何付款，各结果贡献方能解释为何得款或被拒。PoI 权重关闭时，结算证明链仍完整。',
-      },
-    ],
-    challenges: [
-      {
-        title: '没有真实数据就无法定费率和权重',
-        failure: '概念阶段给出固定 PoI 参数、保证金和挑战期，会制造“方案已经定型”的假象。',
-        solution: '先以 shadow mode 收集耗时、失败率、串谋收益和重组延迟；参数写入可审计配置，明确置信区间和调整规则。',
-        residual: '早期样本仍会偏向合作伙伴，开放网络前必须重新做对抗性测试。',
-      },
-    ],
-    security: [
-      {
-        title: '上线前的工程安全门槛',
-        failure: '概念验证直接承载真实大额资金，代码、参数、密钥和运维流程都未经攻击检验。',
-        solution: '建立托管与状态机形式化不变量，做单元、属性、模糊和跨模块集成测试；完成两家独立审计、公开测试网、漏洞赏金和事件响应演练。初期限额并延迟提款。',
-        residual: '审计和测试降低已知风险，不等于生产安全证明；规模只能随观测到的可靠性逐级提高。',
-      },
-      {
-        title: '升级、密钥与事件响应',
-        failure: '补丁发布过慢会扩大损失，过快又可能由单一管理员植入后门。',
-        solution: '预先定义只冻结不转账的紧急暂停；升级多签与时间锁分离，发布可复现构建和差异报告。建立密钥轮换、证据保全、用户通知、退款和复盘流程。',
-        residual: '严重共识或桥故障仍需人工协调，因此责任人和决策时限必须在上线前公开。',
-      },
-    ],
-    sources: [sources.a3s, sources.a3sRuntime, sources.a3sPower, sources.trustedDataSpacePlan, sources.trustedDataSpaceTech, sources.contracts, sources.agentSecurity, sources.survey],
   },
 } as const satisfies Record<ScreenId, SpeakerGuideDetails>;

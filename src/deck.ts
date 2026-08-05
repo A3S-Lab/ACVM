@@ -7,9 +7,10 @@ export const screens = [
   ['system-architecture', '一笔订单的五步闭环'],
   ['economy-roles', '结果池与验证成本分开'],
   ['security-boundaries', '真实订单与独立验证抑制作恶'],
-  ['product-roadmap', '当前交付：规范与演示'],
-  ['execution-boundary', '模型链下执行'],
+  ['ans', 'ANS 可验证服务发现'],
   ['agentic-contract', '智能体合约状态机'],
+  ['fog-inference', '雾节点本地执行'],
+  ['execution-boundary', '模型链下执行'],
   ['deployment-modes', '适配既有基础设施'],
 ] as const;
 
@@ -45,18 +46,11 @@ export const navigation = [
     screens: ['economy-roles', 'security-boundaries'],
   },
   {
-    key: 'delivery',
-    id: 'product-roadmap',
-    label: '交付状态',
-    shortLabel: '05 / DELIVERY',
-    screens: ['product-roadmap'],
-  },
-  {
     key: 'appendix',
-    id: 'execution-boundary',
+    id: 'ans',
     label: '技术附录',
-    shortLabel: '06 / APPENDIX',
-    screens: ['execution-boundary', 'agentic-contract', 'deployment-modes'],
+    shortLabel: '05 / APPENDIX',
+    screens: ['ans', 'agentic-contract', 'fog-inference', 'execution-boundary', 'deployment-modes'],
   },
 ] as const;
 

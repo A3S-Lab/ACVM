@@ -10,6 +10,8 @@ const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = 
   'product-snapshot': 'flow',
   'geo-verification': 'proof',
   'data-space': 'network',
+  ans: 'network',
+  'fog-inference': 'fog',
   'execution-boundary': 'flow',
   'system-architecture': 'flow',
   'agentic-contract': 'state',
@@ -17,7 +19,6 @@ const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = 
   'deployment-modes': 'chains',
   'security-boundaries': 'proof',
   'economy-roles': 'network',
-  'product-roadmap': 'state',
 };
 
 export type MechanismComparison = {

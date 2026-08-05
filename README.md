@@ -11,8 +11,8 @@ rules; an existing chain or payment system provides settlement finality.
 
 ## Decision narrative
 
-The 12-slide deck contains one cover, an 8-slide decision narrative, and a
-3-slide technical appendix. PoI is introduced before the two priority scenarios:
+The 13-slide deck contains one cover, a 7-slide decision narrative, and a
+5-slide technical appendix. PoI is introduced before the two priority scenarios:
 
 1. **GEO result verification.** Freeze a query set, baseline, observation
    window, evidence sources, and improvement threshold; release the result pool
@@ -47,10 +47,10 @@ The mainline sequence is:
 5. One-order workflow with execution and business evidence
 6. Illustrative settlement waterfall
 7. Attack controls and residual risks
-8. Current delivery status
 
-The appendix covers the off-chain execution boundary, Agentic Contract state
-management, and candidate deployment adapters.
+The appendix follows the technical path from ANS signed service discovery to
+Agentic Contract state management, fog-node local execution, off-chain receipt
+verification, and candidate deployment adapters.
 
 ## Evidence and product boundaries
 
@@ -63,17 +63,6 @@ The speaker guide cites primary sources for every slide. The trusted-data-space
 track is grounded in the State Council's data-system policy, the National Data
 Administration's terminology, the *Trusted Data Space Development Action Plan
 (2024-2028)*, and the 2025 *Trusted Data Space - Technology Architecture*.
-
-## Current status
-
-A3S provides the existing open-source execution foundation. ACVM's adapters,
-verdict state machine, Shadow PoI derivation, settlement integration, and
-trusted-data-space connector integration remain to be implemented and tested.
-
-The next milestone is one real order in a priority scenario. It should run from
-`SignedDemand` through execution and evidence, an accepted or rejected verdict,
-Shadow PoI, and a small settlement. A trusted-data-space pilot additionally
-binds the data-space digital contract and usage proof to the same `taskId`.
 
 ## Presentation controls
 
