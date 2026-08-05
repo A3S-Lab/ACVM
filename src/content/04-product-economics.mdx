@@ -5,10 +5,10 @@ import { PoiSecurityArchitecture } from '../components/ProductMechanismArchitect
 <LessonChapter
   id="economy-roles"
   className="foundation-screen economy-roles-screen"
-  eyebrow="04 / 资金规则"
+  eyebrow="05 / 资金规则"
   title="结果费与验证成本分开"
-  accent="结果通过后才释放结果池，验证工作按实际完成计费"
-  body="正常履约但未达标时，结果池退回需求方，已完成的证据与验证工作仍按约付费；只有回执、授权或证据造假等可证明违规才触发罚没。"
+  accent="结果达标才释放结果池"
+  body="未达标退回结果池，验证仍按约付费；仅证据造假等违规触发罚没。"
   visual={<SettlementWaterfallArchitecture />}
 >
 </LessonChapter>
@@ -16,10 +16,10 @@ import { PoiSecurityArchitecture } from '../components/ProductMechanismArchitect
 <LessonChapter
   id="security-boundaries"
   className="security-boundaries-screen"
-  eyebrow="04 / 风险控制"
+  eyebrow="05 / 风险控制"
   title="防刷单，先锁定真实订单"
-  accent="真实需求、唯一任务与独立验证共同抬高作弊成本"
-  body="签名订单和预算托管证明需求真实，唯一 taskKey 防止重复结算；独立证据源、随机 Validator 与挑战机制用于识别伪造和串谋。"
+  accent="真实订单与独立验证防作弊"
+  body="预算托管证明需求，taskKey 防重结算，独立验证识别造假。"
   visual={<PoiSecurityArchitecture />}
 >
 </LessonChapter>

@@ -1,31 +1,36 @@
 import { Icon } from './Icons';
 import { LearningPanel } from './LearningPanel';
 
+const trustStages = [
+  ['01', '规则冻结', 'Contract Root', '目标 · 权限 · 验收 · 分账', 'lock'],
+  ['02', '可信执行', 'Exec Receipt', '镜像 · 模型 · 环境 · nonce', 'terminal'],
+  ['03', '独立验收', 'Accepted Result', '技术证明 · 业务证据 · 法定人数', 'eye'],
+  ['04', '链上终局', 'ValidPoI', '验签 · 状态机 · 防重放', 'shield'],
+] as const;
+
 export function AcvmExecutionBoundaryArchitecture() {
   return (
-    <LearningPanel code="EXECUTION BOUNDARY" status="EXECUTE ONCE · VERIFY MANY" className="acvm-boundary-panel boundary-panel-simple">
-      <div className="boundary-simple-lanes" aria-label="EVM 重放确定性交易，ACVM 对链下任务只验证回执">
-        <section className="boundary-simple-evm">
-          <header><Icon name="terminal" /><span><small>EVM</small><strong>确定性交易由节点重放</strong></span></header>
-          <div><span>封闭输入</span><i aria-hidden="true">→</i><span>N 个节点执行</span></div>
-        </section>
-
-        <section className="boundary-simple-acvm">
-          <header><Icon name="receipt" /><span><small>ACVM</small><strong>外部任务一次执行，节点验回执</strong></span></header>
-          <div>
-            <span>链下任务</span>
-            <i aria-hidden="true">→</i>
-            <span className="is-worker">Worker 执行</span>
-            <i aria-hidden="true">→</i>
-            <span className="is-verify">节点验回执</span>
-          </div>
-        </section>
+    <LearningPanel code="AGENTIC CONTRACT / TRUST CHAIN" status="EXECUTION PROOF + OUTCOME PROOF" className="agentic-trust-panel">
+      <div className="agentic-trust-flow" aria-label="链下 Agentic Contract 从规则冻结、可信执行、独立验收到链上终局的证据链">
+        {trustStages.map(([index, title, output, detail, icon], stageIndex) => (
+          <span className={`agentic-trust-fragment is-stage-${stageIndex + 1}`} key={index}>
+            <section>
+              <header><b>{index}</b><Icon name={icon} /></header>
+              <strong>{title}</strong>
+              <small>{detail}</small>
+              <code>{output}</code>
+            </section>
+            {stageIndex < trustStages.length - 1 ? <i aria-hidden="true">→</i> : null}
+          </span>
+        ))}
       </div>
 
-      <footer className="boundary-simple-rule">
-        <Icon name="shield" />
-        <strong>共识只处理确定性状态变化</strong>
-        <span>签名 · 证明 · 裁决 · 防重放</span>
+      <footer className="agentic-trust-rule">
+        <span><Icon name="terminal" /><strong>执行可信</strong><small>a3s-box / TEE 回执</small></span>
+        <i>∧</i>
+        <span><Icon name="eye" /><strong>结果有效</strong><small>独立证据 / Validator</small></span>
+        <i>→</i>
+        <b>ValidPoI · 结算</b>
       </footer>
     </LearningPanel>
   );

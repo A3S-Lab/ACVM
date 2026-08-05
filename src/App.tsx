@@ -493,8 +493,8 @@ export function App() {
                 <LogoMark />
                 <span><strong>ACVM</strong><small>AGENTIC CONTRACT VIRTUAL MACHINE</small></span>
               </span>
-              <h1>让 AI 服务按已验证结果付费</h1>
-              <p className="hero-cover-scope">结果验收 <i /> 条件结算 <i /> 多方按约分账</p>
+              <h1>让有效推理成为链上价值</h1>
+              <p className="hero-cover-scope">推理可证明 <i /> 结果可验收 <i /> 收益可分配</p>
             </div>
           </div>
         </section>

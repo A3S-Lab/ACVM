@@ -3,16 +3,18 @@
 This repository contains an interactive Chinese-language product presentation
 for ACVM, the Agentic Contract Virtual Machine.
 
-ACVM is positioned as a result-verdict and settlement-control layer. It does
-not replace the execution runtime, a trusted data space, or the underlying
-ledger. A task is specified before execution; a Worker or A3S produces the
-result and receipts; an independent Validator evaluates the frozen acceptance
-rules; an existing chain or payment system provides settlement finality.
+ACVM turns accepted useful inference into verifiable on-chain value. A valid
+PoI can trigger settlement and multi-party revenue sharing, and can contribute
+bounded proposer-candidate weight. ACVM does not replace the execution runtime,
+a trusted data space, or the underlying ledger: A3S produces execution
+evidence, independent Validators evaluate frozen acceptance rules, and an
+existing chain or payment system provides settlement finality.
 
 ## Decision narrative
 
-The 13-slide deck contains one cover, a 7-slide decision narrative, and a
-5-slide technical appendix. PoI is introduced before the two priority scenarios:
+The 18-slide deck contains one cover, a 10-slide decision narrative, and a
+7-slide technical appendix. PoI is introduced before the three recommended
+scenarios:
 
 1. **GEO result verification.** Freeze a query set, baseline, observation
    window, evidence sources, and improvement threshold; release the result pool
@@ -22,6 +24,9 @@ The 13-slide deck contains one cover, a 7-slide decision narrative, and a
    compliant data circulation; use ACVM to add a separate business-result
    verdict and a pre-agreed revenue split. Payment by accepted outcome is an
    ACVM transaction mechanism, not the definition of a trusted data space.
+3. **Social simulation as a service.** Keep institutional and enterprise data
+   local, run a frozen model and random process, aggregate only permitted
+   statistics, and settle after ACVM verifies the experiment and result receipt.
 
 The trusted-data-space example combines equipment parameters from a
 manufacturer, operating data from a factory, and fault work orders from a
@@ -38,19 +43,24 @@ space boundary: trusted control, resource interaction, and value co-creation
 belong to the data space; outcome adjudication and conditional settlement are
 the proposed ACVM addition.
 
-The mainline sequence is:
+The decision sequence is:
 
-1. ACVM's result-verdict role and payment boundary
-2. PoI as the settlement credential for an accepted result
-3. GEO result verification
-4. Trusted data space and outcome-based data-element settlement
-5. One-order workflow with execution and business evidence
-6. Illustrative settlement waterfall
-7. Attack controls and residual risks
+1. Traditional hash work versus inference as proof
+2. ACVM's result-verdict and settlement role
+3. PoI as the credential for an accepted result
+4. GEO result verification
+5. Trusted data space and multi-party outcome settlement
+6. Social simulation as a service
+7. ValidPoI, bounded weight, VRF selection, and BFT finality
+8. One-order workflow with execution and business evidence
+9. Result-pool and verification-cost separation
+10. Attack controls and residual risks
 
 The appendix follows the technical path from ANS signed service discovery to
-Agentic Contract state management, fog-node local execution, off-chain receipt
-verification, and candidate deployment adapters.
+Agentic Contract state management, fog-node local execution, the separate
+verification of trusted execution and accepted outcomes, a3s-box isolation,
+a3s-power TEE privacy plus GGUF layer-streaming inference, and domestic-chain
+deployment adapters.
 
 ## Evidence and product boundaries
 

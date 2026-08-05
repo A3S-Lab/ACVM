@@ -193,6 +193,47 @@ export function GeoVerificationArchitecture() {
   );
 }
 
+export function SocialSimulationSimpleArchitecture() {
+  return (
+    <LearningPanel code="SOCIAL SIMULATION AS A SERVICE" status="PRIVATE INPUT · VERIFIED OUTPUT" className="social-simulation-simple">
+      <div className="social-simulation-simple-flow" aria-label="私有数据经过本地社会模拟、安全聚合与 ACVM 验收形成可结算结果">
+        <section>
+          <Icon name="lock" />
+          <small>PRIVATE INPUT</small>
+          <strong>机构、企业与个人数据</strong>
+          <span>原始画像与轨迹不出域</span>
+        </section>
+        <i aria-hidden="true">→</i>
+        <section className="is-simulation">
+          <Icon name="brain" />
+          <small>SEALED SIMULATION</small>
+          <strong>按冻结假设运行</strong>
+          <span>模型 · 样本 · 随机种子</span>
+        </section>
+        <i aria-hidden="true">→</i>
+        <section>
+          <Icon name="chain" />
+          <small>SECURE AGGREGATION</small>
+          <strong>只汇总群体指标</strong>
+          <span>统计值 · 置信区间</span>
+        </section>
+        <i aria-hidden="true">→</i>
+        <section className="is-accepted">
+          <Icon name="shield" />
+          <small>ACVM VERDICT</small>
+          <strong>验管线与结果回执</strong>
+          <span>通过后结算服务费</span>
+        </section>
+      </div>
+      <footer className="social-simulation-simple-boundary">
+        <span><b>能够证明</b> 按冻结假设与统计管线运行</span>
+        <i aria-hidden="true">≠</i>
+        <span><b>不能证明</b> 模拟结论必然等于现实</span>
+      </footer>
+    </LearningPanel>
+  );
+}
+
 export function SocialSimulationArchitecture() {
   const { rootRef, activeStep, isPlaying, selectStep, togglePlayback } = useStepPlayback(simulationSteps.length, 2600);
   const step = simulationSteps[activeStep];

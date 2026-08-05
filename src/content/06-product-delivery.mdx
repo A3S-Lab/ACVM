@@ -1,4 +1,5 @@
 import { AcvmExecutionBoundaryArchitecture } from '../components/AcvmExecutionBoundary'
+import { A3sBoxCapabilitiesArchitecture, A3sPowerCapabilitiesArchitecture } from '../components/A3sCapabilitiesArchitecture'
 import { AgentResolutionArchitecture } from '../components/AgentResolutionArchitecture'
 import { ContractModelArchitecture } from '../components/FormalSpecArchitecture'
 import { FogInferenceArchitecture } from '../components/FogInferenceArchitecture'
@@ -8,10 +9,10 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
 <LessonChapter
   id="ans"
   className="ans-screen"
-  eyebrow="05 · APPENDIX / SERVICE DISCOVERY"
+  eyebrow="06 · APPENDIX / SERVICE DISCOVERY"
   title="ANS 提供可验证的服务发现"
-  accent="服务卡绑定身份、能力、接口、价格与有效期"
-  body="调用方解析带签名的服务卡并核验签名、撤销状态与历史回执；ANS 负责服务发现，ACVM 负责结果验收与结算。"
+  accent="签名服务卡绑定服务身份"
+  body="调用方核验签名与撤销状态；ANS 负责发现，ACVM 负责验收结算。"
   figureLabel="APPENDIX / SIGNED SERVICE CARD → VERIFIED A2A ENDPOINT"
   visual={<AgentResolutionArchitecture />}
 >
@@ -20,10 +21,10 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
 <LessonChapter
   id="agentic-contract"
   className="formal-screen contract-spec-screen"
-  eyebrow="05 · APPENDIX / AGENTIC CONTRACT"
+  eyebrow="06 · APPENDIX / AGENTIC CONTRACT"
   title="智能体合约管理长任务"
-  accent="任务开始前固定预算、权限、超时、挑战与付款条件"
-  body="智能体合约预先定义输入输出、权限和失败路径，并用签名回执推进可能持续数小时或数天的任务状态。"
+  accent="长任务先定规则再执行"
+  body="合约固定预算、权限、超时和挑战，以签名回执推进任务。"
   figureLabel="APPENDIX / SCHEMA · WORKER · VALIDATOR · SETTLEMENT"
   visual={<ContractModelArchitecture />}
 >
@@ -32,10 +33,10 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
 <LessonChapter
   id="fog-inference"
   className="fog-screen"
-  eyebrow="05 · APPENDIX / FOG COMPUTING"
+  eyebrow="06 · APPENDIX / FOG COMPUTING"
   title="雾节点让数据本地执行、结果可验证"
-  accent="原始数据留在现场，外部只接收结果根、运行证明与裁决"
-  body="任务在靠近数据的隔离节点执行，Worker 返回绑定模型、环境和 taskId 的签名回执；ACVM 只验证证明与业务结果。"
+  accent="数据留现场，结果可验证"
+  body="任务在隔离雾节点执行，回执绑定模型、环境和 taskId，ACVM 验证结果。"
   figureLabel="APPENDIX / LOCAL DATA → NEARBY EXECUTION → VERIFIABLE RECEIPT"
   visual={<FogInferenceArchitecture />}
 >
@@ -44,23 +45,45 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
 <LessonChapter
   id="execution-boundary"
   className="acvm-execution-boundary-screen"
-  eyebrow="05 · APPENDIX / EXECUTION BOUNDARY"
-  title="模型链下执行"
-  accent="Worker 在链下完成一次任务，节点只验证回执和状态变化"
-  body="模型推理、私有数据处理和外部工具调用不进入全网重放；Worker 执行一次，节点只验证回执、证明和确定性状态变化。"
-  figureLabel="APPENDIX / REPLAY COST → RECEIPT VERIFICATION"
+  eyebrow="06 · APPENDIX / TRUST CHAIN"
+  title="链下 Agentic Contract 的可信闭环"
+  accent="执行可信，结果有效，状态可终局"
+  body="合约根冻结规则；执行回执证明过程，独立证据证明结果，链上只接受不可重放的终局状态。"
+  figureLabel="APPENDIX / CONTRACT ROOT → EXECUTION PROOF → OUTCOME PROOF → FINALITY"
   visual={<AcvmExecutionBoundaryArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="a3s-box"
+  className="a3s-box-screen"
+  eyebrow="06 · APPENDIX / A3S-BOX"
+  title="a3s-box 固定任务的隔离执行边界"
+  accent="镜像、资源与生命周期统一管理"
+  body="默认使用专用内核 MicroVM，显式选择 Sandbox；运行中不静默切换后端。"
+  visual={<A3sBoxCapabilitiesArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="a3s-power"
+  className="a3s-power-screen"
+  eyebrow="06 · APPENDIX / A3S-POWER"
+  title="a3s-power 提供隐私计算与参数流式推理"
+  accent="TEE 保密执行，活跃层参数按层加载"
+  body="当前层参数进入可信内存，计算后立即释放；峰值内存约为单层规模，并输出可核验回执。"
+  visual={<A3sPowerCapabilitiesArchitecture />}
 >
 </LessonChapter>
 
 <LessonChapter
   id="deployment-modes"
   className="chains-screen"
-  eyebrow="05 · APPENDIX / CANDIDATE INTEGRATIONS"
-  title="ACVM 适配现有基础设施"
-  accent="具体路径必须在项目中完成选型、适配和验收"
-  body="ACVM 通过适配器复用既有身份、支付与共识终局；具体链、身份和支付接口在项目中完成选型、实现与验收。"
-  figureLabel="APPENDIX / PROPOSED ADAPTERS · NOT YET IMPLEMENTED"
+  eyebrow="06 · IMPLEMENTATION / A3S + CHAIN"
+  title="A3S 与国内区块链实现 ACVM"
+  accent="隔离执行、推理证明、链上终局"
+  body="a3s-box 执行，a3s-power 出具证明；ACVM 验收并计算 PoI。"
+  figureLabel="IMPLEMENTATION / A3S-BOX → A3S-POWER → ACVM → DOMESTIC CHAIN"
   visual={<AcvmIntegrationArchitecture />}
 >
 </LessonChapter>

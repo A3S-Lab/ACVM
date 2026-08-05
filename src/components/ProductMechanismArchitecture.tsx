@@ -61,26 +61,21 @@ export function AcvmProductSnapshotArchitecture() {
 
 export function UsefulWorkOpportunityArchitecture() {
   return (
-    <LearningPanel code="FIRST PRINCIPLE / WHAT CONSENSUS ACTUALLY NEEDS" status="PROPOSAL ≠ FINALITY" className="useful-work-opportunity">
-      <div className="consensus-requirements">
-        <span><b>01</b><Icon name="fingerprint" /><strong>抗女巫成本</strong><small>身份不能无限低成本复制</small></span>
-        <i>→</i>
-        <span><b>02</b><Icon name="spark" /><strong>公开选提议者</strong><small>选择不可预先操纵且可验证</small></span>
-        <i>→</i>
-        <span><b>03</b><Icon name="check" /><strong>冲突后终局</strong><small>有效区块仍需多数确认</small></span>
-      </div>
+    <LearningPanel code="TRADITIONAL CHAIN / POI CHAIN" status="INFERENCE AS PROOF" className="useful-work-opportunity useful-work-simple">
       <div className="work-source-compare">
         <section className="is-hash">
-          <header><Icon name="bolt" /><span><small>HASH WORK</small><strong>哈希竞争</strong></span></header>
-          <div><b>投入</b><span>电力 · 芯片 · nonce 尝试</span></div>
-          <div><b>链外价值</b><span className="is-zero">≈ 0</span></div>
+          <header><Icon name="bolt" /><span><small>传统区块链</small><strong>哈希即工作量</strong></span></header>
+          <div><b>投入</b><span>电力 · 芯片 · nonce</span></div>
+          <div><b>验证</b><span>哈希低于目标值</span></div>
+          <div><b>链外结果</b><span className="is-zero">无可交付业务结果</span></div>
           <code>H(blockHeader ∥ nonce) &lt; target</code>
         </section>
-        <i aria-hidden="true">替换工作来源</i>
+        <i aria-hidden="true">替换工作来源 →</i>
         <section className="is-intelligence">
-          <header><Icon name="brain" /><span><small>INTELLIGENCE WORK</small><strong>模型推理服务</strong></span></header>
+          <header><Icon name="brain" /><span><small>基于 PoI 的区块链</small><strong>推理即证明</strong></span></header>
           <div><b>投入</b><span>模型 · GPU · 工具 · 专业能力</span></div>
-          <div><b>链外价值</b><span className="is-value">客户已验收的 AI 结果</span></div>
+          <div><b>验证</b><span>真实需求 · 结果验收 · 执行证据</span></div>
+          <div><b>链外结果</b><span className="is-value">客户已验收的 AI 结果</span></div>
           <code>SignedDemand ∧ AcceptedResult ∧ ExecProof</code>
         </section>
       </div>
@@ -126,15 +121,15 @@ export function AcvmSystemArchitecture() {
 }
 
 const consensusStages = [
-  { index: '01', title: '有效 PoI 池', detail: '需求 · 结果 · 执行 · 防重放', code: 'poiRoot', icon: 'shield' },
-  { index: '02', title: '有界权重', detail: '按任务类型归一、封顶并衰减', code: 'weightᵢ', icon: 'brain' },
-  { index: '03', title: 'VRF 抽签', detail: '权重影响概率，随机性可验证', code: 'yᵢ / weightᵢ', icon: 'spark' },
-  { index: '04', title: 'BFT 终局', detail: '多数节点重验区块并签名确认', code: 'QC ≥ 2f+1', icon: 'check' },
+  { index: '01', title: '有效 PoI', detail: '需求、结果、执行与防重放同时成立', code: 'ValidPoI = Dsig ∧ Rok ∧ πexec ∧ ¬Replay', icon: 'shield' },
+  { index: '02', title: '有界权重', detail: '按任务类别归一、封顶并随时间衰减', code: 'wᵢ = min(cap, Normalize(Σqₜcₜe⁻λΔt))', icon: 'brain' },
+  { index: '03', title: 'VRF 抽签', detail: '权重只影响成为候选提议者的概率', code: 'scoreᵢ = VRFᵢ(epoch ∥ poiRoot) / wᵢ', icon: 'spark' },
+  { index: '04', title: 'BFT 终局', detail: '其他节点重验区块并达到法定人数', code: 'Final ⇔ ValidBlock ∧ QC ≥ 2f+1', icon: 'check' },
 ] as const satisfies readonly { index: string; title: string; detail: string; code: string; icon: IconName }[];
 
 export function PoiConsensusArchitecture() {
   return (
-    <LearningPanel code="POI → PROPOSER → FINALITY" status="BOOKKEEPING RIGHT" className="poi-consensus-architecture">
+    <LearningPanel code="ACVM / CORE ALGORITHM" status="VERIFY → WEIGHT → DRAW → FINALIZE" className="poi-consensus-architecture poi-algorithm-simple">
       <div className="poi-consensus-flow">
         {consensusStages.map((stage, index) => (
           <span className="poi-consensus-fragment" key={stage.index}>
@@ -142,12 +137,6 @@ export function PoiConsensusArchitecture() {
             {index < consensusStages.length - 1 ? <i>→</i> : null}
           </span>
         ))}
-      </div>
-      <div className="poi-consensus-equation">
-        <code>proposer = argmin(VRF(epoch ∥ poiRoot) / boundedWeight)</code>
-        <span><DataChip tone="green">PROPOSAL</DataChip><b>PoI 影响被选概率</b></span>
-        <i>→</i>
-        <span><DataChip tone="violet">FINALITY</DataChip><b>法定人数完成最终确认</b></span>
       </div>
       <footer><Icon name="eye" /><strong>提议权与规则权分离</strong><span>其他节点检查交易、PoI、状态转换与区块签名。</span></footer>
     </LearningPanel>

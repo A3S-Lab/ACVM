@@ -14,10 +14,13 @@ if (!screensBlock) throw new Error('Could not find the screens declaration in sr
 const screenIds = [...screensBlock.matchAll(/\['([^']+)'/g)].map((match) => match[1]);
 const expectedSlideIds = screenIds.slice(1);
 const mainlineIds = [
+  'useful-work',
   'product-snapshot',
   'poi-proof',
   'geo-verification',
   'data-space',
+  'simulation',
+  'poi-consensus',
   'system-architecture',
   'economy-roles',
   'security-boundaries',
@@ -27,6 +30,8 @@ const appendixIds = [
   'agentic-contract',
   'fog-inference',
   'execution-boundary',
+  'a3s-box',
+  'a3s-power',
   'deployment-modes',
 ];
 const retiredTutorialIds = [
@@ -72,8 +77,8 @@ const missing = expectedSlideIds.filter((id) => !actualSlideIds.includes(id));
 const unexpected = actualSlideIds.filter((id) => !expectedSlideIds.includes(id));
 const orderMatches = JSON.stringify(expectedSlideIds) === JSON.stringify(actualSlideIds);
 
-if (screenIds.length !== 13) {
-  throw new Error(`Expected a 13-slide deck with one cover, seven mainline slides, and five appendix slides; found ${screenIds.length}`);
+if (screenIds.length !== 18) {
+  throw new Error(`Expected an 18-slide deck with one cover, ten mainline slides, and seven appendix slides; found ${screenIds.length}`);
 }
 if (contentFiles.length !== 5) {
   throw new Error(`Expected five product-deck MDX groups; found ${contentFiles.length}`);
@@ -99,7 +104,7 @@ for (const field of ['implementation', 'challenges', 'security', 'sources']) {
   }
 }
 if (JSON.stringify(expectedSlideIds.slice(0, mainlineIds.length)) !== JSON.stringify(mainlineIds)) {
-  throw new Error(`The seven-slide decision narrative is out of order: ${JSON.stringify(expectedSlideIds.slice(0, mainlineIds.length))}`);
+  throw new Error(`The ten-slide decision narrative is out of order: ${JSON.stringify(expectedSlideIds.slice(0, mainlineIds.length))}`);
 }
 if (JSON.stringify(expectedSlideIds.slice(mainlineIds.length)) !== JSON.stringify(appendixIds)) {
   throw new Error(`The technical appendix is out of order: ${JSON.stringify(expectedSlideIds.slice(mainlineIds.length))}`);

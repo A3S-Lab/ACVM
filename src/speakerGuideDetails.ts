@@ -114,8 +114,12 @@ const sources = {
     label: 'A3S Runtime 持久生命周期与回执',
     url: 'https://github.com/A3S-Lab/Runtime',
   },
+  a3sBox: {
+    label: 'A3S Box 隔离工作负载与全生命周期能力',
+    url: 'https://github.com/A3S-Lab/Box',
+  },
   a3sPower: {
-    label: 'A3S Power 可验证推理与执行回执',
+    label: 'A3S Power 隐私计算、参数流式推理与可验证回执',
     url: 'https://github.com/A3S-Lab/Power',
   },
   bittensor: {
@@ -168,25 +172,25 @@ export const speakerGuideDetails = {
   top: {
     implementation: [
       {
-        title: '封面只保留一个产品承诺',
-        mechanism: '封面只出现 ACVM 和“让 AI 服务按已验证结果付费”。产品定义、PoI、场景和技术边界全部从后续页面展开。',
-        acceptance: '观众在十秒内能复述产品名与付款条件；封面没有目录、功能清单、按钮或机制说明。',
+        title: '封面给出整套演示的总命题',
+        mechanism: '封面以“让有效推理成为链上价值”统领 PoI、结果验收、按约结算和多方分账。产品定义、场景、算法与实现路径由后续页面逐层展开。',
+        acceptance: '观众在十秒内能复述 ACVM 的作用：把有效推理转成可验证、可结算、可分配的链上价值。',
       },
     ],
     challenges: [
       {
-        title: '一句话容易被理解成保证业务成功',
-        failure: '“已验证结果”可能被误听成协议保证结果客观正确，而不是按事前规则完成验收。',
-        solution: '将“已验证结果”明确为按签名验收条件通过的结果。',
-        residual: '开放式任务仍依赖验收口径和 Validator 独立性，协议不能创造客观真值。',
+        title: '链上价值不等于把全部数据写入链上',
+        failure: '观众可能把“链上价值”理解为原始数据、模型与推理过程全部公开，或误解为对资产价格的承诺。',
+        solution: '链上只锚定任务根、裁决根、PoI 根和结算状态；原始数据、模型与详细证据留在受控链下环境。',
+        residual: '链上记录保证状态可追溯，业务结果仍取决于事前验收口径与 Validator 独立性。',
       },
     ],
     security: [
       {
-        title: '封面承诺必须受产品边界约束',
-        failure: '若后续方案允许无验收、无执行证据或可重放任务付款，封面主张就无法成立。',
-        solution: '把 SignedDemand、AcceptedResult、ExecutionEvidence 和 UniqueTaskKey 固化为 ValidPoI 与付款的必要条件。',
-        residual: '必要条件只能证明按规则验收，验收规则本身仍需需求方、Validator 和治理共同负责。',
+        title: '有效推理必须由完整证据链定义',
+        failure: '若无真实需求、无验收、无执行证明或允许重放，普通模型调用也会被包装成链上贡献。',
+        solution: '把 SignedDemand、AcceptedResult、ExecutionEvidence 和 UniqueTaskKey 固化为 ValidPoI 与结算的必要条件。',
+        residual: '完整证据链证明任务按规则完成，验收规则本身仍需需求方、Validator 和治理共同负责。',
       },
     ],
     sources: [sources.survey],
@@ -305,9 +309,9 @@ export const speakerGuideDetails = {
   'execution-boundary': {
     implementation: [
       {
-        title: '链下执行，链上验证回执',
-        mechanism: 'Worker 回执至少包含 taskId、contractRoot、inputRoot、modelRoot、envRoot、outputRoot、前后状态、nonce、证据引用和签名。共识节点只执行有界、确定性的验证器。',
-        acceptance: '节点校验签名、根承诺、状态转移和证据策略后得到同一布尔结果；不要求每台节点重跑 GPU 推理。',
+        title: '可信执行与结果有效使用两条独立证据链',
+        mechanism: 'Worker 回执至少包含 taskId、contractRoot、inputRoot、modelRoot、envRoot、toolCallRoot、outputRoot、前后状态、nonce 和签名，用于证明任务按冻结环境执行。AcceptedResult 另行绑定独立业务证据、验收谓词版本、Validator 身份与法定人数签名，用于证明结果按约达标。',
+        acceptance: '节点分别验证执行证明和结果证明，再检查状态转移与防重放；两者同时成立才生成 ValidPoI，不要求每台节点重跑 GPU 推理。',
       },
       {
         title: '副作用采用意图—确认两阶段',
@@ -529,8 +533,153 @@ export const speakerGuideDetails = {
     ],
     sources: [sources.survey, sources.contracts],
   },
+  'useful-work': {
+    implementation: [
+      {
+        title: '安全功能与工作来源分开',
+        mechanism: 'PoW 通过可公开验证的哈希竞争形成稀缺成本。ACVM 保留抗女巫、抽签与终局，把候选贡献来源替换为真实需求触发、结果已验收且带执行证据的模型推理。',
+        acceptance: '替换前后都能独立验证候选资格；PoI 不能绕过 VRF 抽签、区块重验和法定人数终局。',
+      },
+    ],
+    challenges: [
+      {
+        title: '有业务价值不自动等于共识安全',
+        failure: '推理结果即使有客户，也可能由关联方循环下单，或成本低到可以大量复制身份。',
+        solution: '只接收带预算托管、独立验收和唯一 taskKey 的订单，并将身份成本、保证金与有界权重共同纳入候选资格。',
+        residual: 'PoI 网络的抗女巫强度仍需用真实攻击成本和开放网络数据验证。',
+      },
+    ],
+    security: [
+      {
+        title: '自交易把虚假推理包装成贡献',
+        failure: '同一控制方下单、执行和验收，可用循环资金制造 PoI 权重。',
+        solution: '要求签名需求、预算托管、独立验收和唯一 taskKey；关联订单降权，并对单主体贡献设置上限。',
+        residual: '链下关联无法完全识别，开放网络仍需挑战机制、治理和经济上限。',
+      },
+    ],
+    sources: [sources.bitcoin, sources.chainOpera, sources.survey],
+  },
+  simulation: {
+    implementation: [
+      {
+        title: '冻结实验后在各数据域本地运行',
+        mechanism: '订单固定 modelRoot、sampleRoot、policyRoot、随机种子、统计口径与隐私预算。各机构在受控执行域运行同一版本，只提交加密统计、聚合记录和执行回执。',
+        acceptance: 'Validator 能重建统计管线并核对样本承诺、随机种子与聚合结果；任何一方都不需要公开个体画像和轨迹。',
+      },
+    ],
+    challenges: [
+      {
+        title: '模拟结果不等于现实因果结论',
+        failure: '模型假设、样本偏差或行为规则错误，会得到形式正确但现实失真的群体预测。',
+        solution: '把假设、适用范围、置信区间和敏感性分析写进验收条件，并用历史回测和多模型对照限制结论强度。',
+        residual: 'ACVM 只能证明实验按约运行，不能证明模型对现实社会具有绝对解释力。',
+      },
+    ],
+    security: [
+      {
+        title: '聚合输出仍可能泄露个体信息',
+        failure: '小样本切片、重复查询或差分攻击可从统计结果反推出敏感属性。',
+        solution: '设置最小群组规模、查询预算和差分隐私参数；跨机构聚合采用 MPC 或等价受控方案，原始轨迹只保留到挑战期结束。',
+        residual: '隐私与统计精度存在不可消除的权衡，高敏场景仍需人工合规审批。',
+      },
+    ],
+    sources: [sources.a3s, sources.a3sPower, sources.dataAvailability, sources.survey],
+  },
+  'poi-consensus': {
+    implementation: [
+      {
+        title: '四个确定公式连接验收到终局',
+        mechanism: 'ValidPoI 先检查需求、结果、执行与防重放；随后按任务类别归一、封顶和衰减得到 wᵢ。候选者计算 VRF 分数，获选者只提交区块，最终由 ValidBlock 与 QC ≥ 2f+1 确认。',
+        acceptance: '任意节点从同一终局 PoI 集合和参数重算得到相同权重、poiRoot 与区块有效性；没有法定人数证书不得进入最终状态。',
+      },
+    ],
+    challenges: [
+      {
+        title: '异构任务权重需要持续校准',
+        failure: '简单任务与高成本任务按次数同权会诱导拆单，按自报成本计权又会诱导夸大资源。',
+        solution: '按任务类别设置基准成本与质量门槛，使用终局证据估值，并对单主体、单类别和单周期设置上限与衰减。',
+        residual: '跨类别公平权重只能通过真实网络数据逐步校准，早期参数应保守且可治理。',
+      },
+    ],
+    security: [
+      {
+        title: '高权重主体不能同时控制终局',
+        failure: '若 PoI 权重直接等于确认票权，积累大量任务的主体可自提议、自验证并固化错误区块。',
+        solution: 'PoI 只进入有界候选权重；VRF 保持不可预测选择，其他节点独立重验交易、PoI 和状态转换，再由 BFT 法定人数签名。',
+        residual: 'Validator 集合仍可能串谋，需要成员独立性、轮换、挑战和治理恢复机制。',
+      },
+    ],
+    sources: [sources.vrf, sources.cometBft, sources.bitcoin, sources.chainOpera],
+  },
+  'a3s-box': {
+    implementation: [
+      {
+        title: 'ExecutionManager 管完整工作负载生命周期',
+        mechanism: 'a3s-box 从镜像、构建、网络、卷和快照开始，统一管理 create、start、exec、attach、pause、wait、restart、health、logs、stats、events 与 cleanup。请求、解析后的后端、策略和代际都进入持久状态。',
+        acceptance: '任务重启或管理进程恢复后仍绑定同一镜像摘要、资源策略和执行后端；重复操作使用同一操作身份，不重复启动、解冻或清理。',
+      },
+      {
+        title: '隔离模式显式选择且不静默降级',
+        mechanism: '未提供 isolation 时选择专用内核 MicroVM；显式 Sandbox 才选择共享宿主内核路径。能力预检失败即拒绝，不能从 MicroVM 自动退到 Sandbox，也不能因后续策略变化重路由既有任务。',
+        acceptance: '审计记录同时包含请求模式、resolved backend、策略摘要和运行代际；故障恢复沿用原路径，能力不匹配时 fail closed。',
+      },
+    ],
+    challenges: [
+      {
+        title: '不同平台与后端的能力并不相同',
+        failure: '把 Linux KVM、Apple HVF、Windows WHPX 与共享内核 Sandbox 当成等价环境，会错误宣称 TEE、网络、快照或 PTY 能力。',
+        solution: '任务启动前读取主机能力并匹配明确的 profile；只宣传通过真实主机门禁的组合，未资格化功能直接拒绝。',
+        residual: '硬件、内核和驱动升级会改变资格状态，生产部署仍需持续回归与证据留存。',
+      },
+    ],
+    security: [
+      {
+        title: '共享内核 Sandbox 不是强租户边界',
+        failure: '宿主内核漏洞、恶意管理员、硬件侧信道或危险 bind mount 仍可能突破共享内核隔离。',
+        solution: '不可信任务默认使用专用内核 MicroVM；Sandbox 仅用于可信或半可信工具，并限制挂载、网络、设备和密钥。',
+        residual: 'MicroVM 也不能消除宿主、固件和侧信道风险，高敏任务还需 TEE、最小权限与远程证明。',
+      },
+    ],
+    sources: [sources.a3sBox, sources.a3sRuntime, sources.a3s],
+  },
+  'a3s-power': {
+    implementation: [
+      {
+        title: 'TEE 隐私计算建立可独立验证的信任链',
+        mechanism: 'a3s-power 可运行在 a3s-box 的 SEV-SNP 或 TDX MicroVM 中，将硬件报告、启动测量、客户端 nonce、modelRoot、运行策略和请求级回执绑定。加密模型加载、日志深度脱敏、敏感内存清零与 RA-TLS / vsock 共同缩小数据暴露面。',
+        acceptance: '严格验证器必须校验硬件签名、预期测量值、nonce 新鲜性、模型与策略绑定；模拟 TEE 或缺少任一 pin 的报告不得进入高保证 ValidPoI。',
+      },
+      {
+        title: '参数流式推理将内存峰值控制在单层规模',
+        mechanism: 'picolm 的 GGUF 层流式路径只把当前计算层所需权重页载入可信内存，完成 attention 与 FFN 计算后立即释放，再推进下一层。峰值权重驻留量为 O(layer_size)，无需让完整模型常驻 TEE；嵌入式库与服务接口复用同一证明和隐私契约。Token SSE 仅是接口输出能力，不定义流式推理。',
+        acceptance: '目标 TEE 能在受限内存中完成完整推理；最终回执绑定实际模型、运行策略、请求摘要与输出摘要，层流路径在不支持的后端上 fail closed。',
+      },
+    ],
+    challenges: [
+      {
+        title: '执行可信不等于业务结果正确',
+        failure: '硬件证明可以确认代码、模型和请求在声明环境中运行，但不能证明模型回答满足业务目标。',
+        solution: '将 Power 回执作为 ExecutionEvidence，仍由 ACVM Validator 使用独立业务证据生成 AcceptedResult。',
+        residual: '模型偏差、幻觉和验收口径缺陷仍需业务治理，不能用 TEE 报告替代。',
+      },
+    ],
+    security: [
+      {
+        title: '证明回放、模型替换与流式侧信道',
+        failure: '攻击者可能重放旧报告、替换模型文件，或利用 Token 数量、时间和错误日志推断敏感信息。',
+        solution: '每次请求绑定新 nonce、模型哈希、运行策略和输出摘要；严格验证硬件签名与测量值，日志脱敏、可选 Token 指标抑制，并在卸载时清零内存。',
+        residual: '硬件侧信道、固件漏洞与流量形态泄露无法完全消除，高敏任务仍需批处理、限流和额外隐私预算。',
+      },
+    ],
+    sources: [sources.a3sPower, sources.a3sBox],
+  },
   'deployment-modes': {
     implementation: [
+      {
+        title: 'a3s-box 与 a3s-power 形成执行证明层',
+        mechanism: 'a3s-box 固定工具、网络、文件系统和资源边界，生成绑定 taskId 的执行回执；a3s-power 绑定 modelRoot、envRoot、inputRoot、outputRoot 与挑战 nonce，提供模型推理和环境证明。ACVM 将两类证据交给版本化 Validator。',
+        acceptance: '替换模型、镜像或环境必须改变对应根；旧 nonce、越权工具调用或缺失证明的任务不能进入 AcceptedResult 与 ValidPoI。',
+      },
       {
         title: '固定 ChainAdapter ABI，按网络实现 Driver',
         mechanism: 'ACVM Core 只依赖 submitTaskRoot、submitPoIRoot、finalityStatus、claimSettlement 和 subscribeEvents。Adapter 把 taskId、contractRoot、poiRoot、verdictRoot、amount、identityRef 和 nonce 映射到目标链合约；Prompt、原始数据、模型与详细证据留在 A3S 证据存储。',
@@ -540,11 +689,6 @@ export const speakerGuideDetails = {
         title: '国内基础设施按三类接口接入',
         mechanism: 'BSN 走城市节点 / 专网网关 API 与其承载的联盟链合约；星火·链网走 BIF-Core SDK，并可用 BID 解析主体；自建联盟链直接接长安链或 FISCO BCOS SDK、CA、国密与权限治理。ACVM 不把这些不同产品称成一条统一“国家链”。',
         acceptance: '选定一个具体部署配置后，锁定网络、节点、链框架、证书体系、密码套件、合约地址和终局规则。试点证明国密账户可签名、权限可撤销、任务根可查询、裁决事件可审计。',
-      },
-      {
-        title: '开放网络把 Validator 服务做成 AVS',
-        mechanism: 'ACVM TaskManager 发布 verdict task；EigenLayer Operator Set 读取证据、按 verificationPolicy 执行 Validator、签名响应，Aggregator 达到 quorum 后提交聚合结果；挑战期内用客观反例触发争议和可配置 slashing。',
-        acceptance: '先按 EigenLayer 官方示例跑测试网：任务响应、quorum、BLS 聚合、挑战和错误响应处置都有集成测试。只有可客观判定的违规进入 slashing；主观业务争议不自动罚没 restaked 资产。',
       },
     ],
     challenges: [
@@ -563,19 +707,13 @@ export const speakerGuideDetails = {
         residual: '许可链的安全上限由成员治理决定；治理机构共同失守时，ACVM 只能暂停并按审计与恢复方案迁移。',
       },
       {
-        title: 'AVS slashing 逻辑或治理失守',
-        failure: 'EigenLayer 官方文档明确提示：恶意 AVS、受损治理或 Operator 可让委托 stake 面临罚没风险。把主观 GEO 争议直接接 slashing 会造成不可恢复的误罚。',
-        solution: '第一阶段只奖励不罚没；随后仅对双签、超时、无效签名或可确定反例等客观违规启用有限 slashing。Operator Set、redistribution recipient、升级和退出延迟全部公开并加时间锁。',
-        residual: '再质押提高攻击成本，也放大合约和治理错误的损失；它不是业务正确性的替代品。',
-      },
-      {
         title: '把敏感业务材料直接上链',
         failure: '联盟链也会复制数据给多个成员，Prompt、个人轨迹、商业策略或完整模型日志一旦写入账本便难以删除和控制用途。',
         solution: '链上只保存最小根、状态和身份引用；A3S 执行域保存加密证据并按 retention policy 删除。高敏任务使用权限化取证、TEE 或隐私计算，审计者按角色取回。',
         residual: '摘要和时间模式仍可能泄露业务活动，必要时使用批量提交、延迟和访问隔离降低侧信道。',
       },
     ],
-    sources: [sources.bsn, sources.sparkChain, sources.chainMaker, sources.fisco, sources.eigenRestaking, sources.eigenAvs, sources.a3s],
+    sources: [sources.a3s, sources.a3sRuntime, sources.a3sBox, sources.a3sPower, sources.bsn, sources.sparkChain, sources.chainMaker, sources.fisco],
   },
   'security-boundaries': {
     implementation: [

@@ -68,41 +68,41 @@ export function PoiLandscapeArchitecture() {
 
 export function AcvmIntegrationArchitecture() {
   return (
-    <LearningPanel code="ACVM / INFRASTRUCTURE ADAPTERS" status="REUSE EXISTING SYSTEMS" className="acvm-integration integration-simple">
-      <div className="integration-simple-flow" aria-label="既有身份与授权进入 A3S 执行，ACVM 完成结果控制，再由合规支付或底层链提供终局">
+    <LearningPanel code="A3S + ACVM + DOMESTIC CHAIN" status="IMPLEMENTATION PATH" className="acvm-integration integration-simple">
+      <div className="integration-simple-flow" aria-label="a3s-box 隔离执行，a3s-power 生成推理证明，ACVM 验收并计算 PoI，国内区块链基础设施提供账本与终局">
         <section>
-          <Icon name="key" />
-          <small>IDENTITY &amp; AUTHORIZATION</small>
-          <strong>既有身份与授权</strong>
-          <span>DID / CA · 签名意图</span>
+          <Icon name="terminal" />
+          <small>ISOLATED EXECUTION</small>
+          <strong>a3s-box</strong>
+          <span>任务隔离 · 工具边界 · 执行回执</span>
         </section>
         <i aria-hidden="true">→</i>
         <section>
           <Icon name="brain" />
-          <small>OFF-CHAIN EXECUTION</small>
-          <strong>A3S 执行任务</strong>
-          <span>模型 · 工具 · 执行回执</span>
+          <small>INFERENCE PROOF</small>
+          <strong>a3s-power</strong>
+          <span>模型根 · 环境根 · nonce · 证明</span>
         </section>
         <i aria-hidden="true">→</i>
         <section className="is-acvm">
           <Icon name="receipt" />
-          <small>OUTCOME CONTROL</small>
-          <strong>ACVM 验收结果</strong>
-          <span>裁决 · 挑战 · PoI</span>
+          <small>OUTCOME &amp; POI</small>
+          <strong>ACVM Core</strong>
+          <span>结果验收 · 状态转换 · ValidPoI</span>
         </section>
         <i aria-hidden="true">→</i>
         <section>
           <Icon name="chain" />
-          <small>SETTLEMENT FINALITY</small>
-          <strong>支付或链完成终局</strong>
-          <span>托管放款 · 状态确认</span>
+          <small>DOMESTIC INFRASTRUCTURE</small>
+          <strong>联盟链适配器</strong>
+          <span>BSN · 星火链网 · 长安链 · FISCO BCOS</span>
         </section>
       </div>
 
       <footer className="integration-simple-boundary">
-        <span><b>链上或支付系统</b><small>任务根 · 裁决根 · 资金状态</small></span>
+        <span><b>链上最小状态</b><small>taskRoot · verdictRoot · poiRoot · finality</small></span>
         <i />
-        <span><b>受控链下存储</b><small>原始数据 · Prompt · 详细证据</small></span>
+        <span><b>受控链下执行</b><small>原始数据 · Prompt · 模型 · 详细证据</small></span>
       </footer>
     </LearningPanel>
   );

@@ -1,14 +1,26 @@
 import { LessonChapter } from '../components/LessonChapter'
 import { ProductDefinitionArchitecture } from '../components/ProductNarrativeArchitecture'
+import { UsefulWorkOpportunityArchitecture } from '../components/ProductMechanismArchitecture'
 import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitecture'
+
+<LessonChapter
+  id="useful-work"
+  className="useful-work-screen"
+  eyebrow="01 / 传统区块链缺陷"
+  title="无意义哈希换成推理即证明"
+  accent="已验收的推理成为工作量"
+  body="PoI 只替换提议权的工作来源；VRF 抽签，BFT 或底层链完成终局。"
+  visual={<UsefulWorkOpportunityArchitecture />}
+>
+</LessonChapter>
 
 <LessonChapter
   id="product-snapshot"
   className="product-snapshot-screen"
-  eyebrow="01 / 产品价值与边界"
+  eyebrow="02 / ACVM 产品价值"
   title="ACVM 把结果验收变成付款条件"
-  accent="签约时固定目标与证据，验收通过后才触发付款"
-  body="执行层负责完成任务并提交可验证回执；ACVM 按事前规则独立裁决，现有支付系统或区块链依据终局裁决释放或退回资金。"
+  accent="先定验收条件，按结果付款"
+  body="执行方提交回执，ACVM 按规则裁决，资金据此释放或退回。"
   visual={<ProductDefinitionArchitecture />}
 >
 </LessonChapter>
@@ -16,10 +28,10 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
 <LessonChapter
   id="poi-proof"
   className="intelligence-screen"
-  eyebrow="01 / PoI 结果凭证"
+  eyebrow="02 / PoI 结果凭证"
   title="PoI 是结果验收后的结算凭证"
-  accent="真实需求、结果验收、执行证据与防重放共同成立"
-  body="四项条件同时成立后，ACVM 才生成有效 PoI，并据此释放单方结果费或按 splitRoot 分账。"
+  accent="四项条件缺一不可"
+  body="PoI 通过验收后生成，用于单方付款或按 splitRoot 分账。"
   figureLabel="DEMAND · RESULT · EXECUTION · FRESHNESS"
   visual={<IntelligenceProofArchitecture />}
 >
