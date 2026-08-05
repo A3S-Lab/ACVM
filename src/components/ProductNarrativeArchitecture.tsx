@@ -5,7 +5,7 @@ const productModules = [
   { code: '01', name: '任务规则', detail: '目标、预算、权限和验收办法', icon: 'key' },
   { code: '02', name: '执行证据', detail: '产物、观测和运行回执', icon: 'eye' },
   { code: '03', name: '独立裁决', detail: '通过、拒绝或进入挑战', icon: 'shield' },
-  { code: '04', name: '结算', detail: '终局后只支付一次', icon: 'receipt' },
+  { code: '04', name: 'PoI 结算', detail: '达标才生成证明并付款', icon: 'receipt' },
 ] as const satisfies readonly { code: string; name: string; detail: string; icon: IconName }[];
 
 export function ProductDefinitionArchitecture() {
@@ -33,20 +33,20 @@ export function ProductDefinitionArchitecture() {
         <i aria-hidden="true">→</i>
         <section className="product-endpoint is-output">
           <small>协议最后确认</small>
-          <strong>何时可以付款</strong>
-          <span>裁决 · 终局 · 付款</span>
+          <strong>何时生成 PoI</strong>
+          <span>裁决 · 证明 · 付款</span>
         </section>
       </div>
 
       <div className="product-responsibility-strip">
         <span><Icon name="brain" /><b>A3S Runtime</b><small>编排模型、工具与回执</small></span>
-        <span className="is-acvm"><Icon name="shield" /><b>ACVM</b><small>记录约定与验收</small></span>
+        <span className="is-acvm"><Icon name="shield" /><b>ACVM</b><small>裁决结果并生成 PoI</small></span>
         <span><Icon name="chain" /><b>底层链</b><small>托管资金并给出终局</small></span>
       </div>
 
       <footer className="product-decision">
         <Icon name="shield" />
-        <span><small>ACVM 只新增一个决定</small><strong>这份结果是否已经达到付款条件？</strong></span>
+        <span><small>ACVM 只新增一个决定</small><strong>这份结果能否生成 PoI 并领取结果费？</strong></span>
       </footer>
     </LearningPanel>
   );
@@ -101,7 +101,7 @@ const readinessStages = [
   {
     stage: 'NEXT',
     title: '跑通结果结算',
-    detail: 'AP2 适配、A3S 回执、ACVM Verdict；PoI 关闭',
+    detail: 'AP2 适配、A3S 回执、ACVM Shadow PoI',
     status: '下一步',
     tone: 'next',
   },
@@ -114,8 +114,8 @@ const readinessStages = [
   },
   {
     stage: 'SCALE',
-    title: '按需开放网络',
-    detail: '供给侧开放后，再接 AVS 或启用 PoI',
+    title: 'PoI 接入网络权重',
+    detail: '供给侧开放后，再接 AVS、VRF 与 BFT',
     status: '条件成立',
     tone: 'future',
   },
@@ -140,7 +140,7 @@ export function ProductReadinessArchitecture() {
           </span>
         ))}
       </div>
-      <footer><Icon name="check" /><strong>下一项交付</strong><span>让一笔真实任务从签约、A3S 执行、验收走到付款</span></footer>
+      <footer><Icon name="check" /><strong>下一项交付</strong><span>让一笔真实任务从签约、A3S 执行、验收走到 PoI 与付款</span></footer>
     </LearningPanel>
   );
 }

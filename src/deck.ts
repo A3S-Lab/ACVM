@@ -27,7 +27,7 @@ export const navigation = [
     id: 'product-snapshot',
     label: '产品场景',
     shortLabel: '01 / PRODUCT',
-    question: '客户为什么要从按调用量付费改成按结果付费，PoI 又在何时才有必要？',
+    question: '客户为什么要按结果付费，PoI 又怎样把结果变成可结算的有效工作？',
     screens: ['product-snapshot', 'geo-verification', 'simulation', 'geo-poi-boundary'],
   },
   {
@@ -77,7 +77,7 @@ export const coverChapter = {
   id: 'top',
   label: '产品封面',
   shortLabel: 'ACVM / PRODUCT',
-  question: '怎样让客户只为已验证结果付费；开放网络需要时，又怎样把结果计为贡献？',
+  question: '怎样让客户只为已验证结果付费，并把这份结果变成 PoI？',
   screens: ['top'],
 } as const;
 

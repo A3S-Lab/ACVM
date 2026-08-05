@@ -153,9 +153,9 @@ export const speakerGuideDetails = {
         acceptance: '同一 taskId 只能存在一条合法状态链；任何缺字段、跨链复用或前后状态根不连续的回执都被拒绝。',
       },
       {
-        title: '一份裁决，两本账',
-        mechanism: 'AcceptedResult 终局后，结算合约释放结果费；同一裁决再派生不可重复使用的 taskKey，写入 PoI 贡献记录。PoI 不是付款凭证，也不能绕过 Validator。',
-        acceptance: '付款回执和 PoI 记录必须指向同一 verdictRoot，usedTaskKey 集合保证一笔任务只结算、只计分一次。',
+        title: '一份 PoI，两种用途',
+        mechanism: 'Validator 法定人数先签出 AcceptedResult；合约再检查执行证据和不可重复使用的 taskKey，生成 ValidPoI。结算合约以该 PoI 为付款凭证，贡献账也引用同一个 poiId。PoI 不能绕过 Validator，因为 AcceptedResult 是它的必要输入。',
+        acceptance: 'PaymentClaimed 和贡献记录必须指向同一 poiId 与 verdictRoot，usedTaskKey 集合保证一笔任务只结算、只计分一次。',
       },
     ],
     challenges: [
@@ -296,29 +296,29 @@ export const speakerGuideDetails = {
   'geo-poi-boundary': {
     implementation: [
       {
-        title: '默认关闭 PoI，按协作边界逐级启用',
-        mechanism: '把方案拆成三档：单组织用签名报告与审计库；跨组织用 ACVM 状态机和现有链终局；只有开放 Worker、开放 Validator、跨任务奖励同时成立时，才在 VerdictFinalized 后派生 PoI。',
-        acceptance: '架构决策记录必须回答参与方是否互不信任、是否有共同账本需求、贡献是否跨任务累计。任一条件不成立，PoI 开关保持关闭且不能影响付款。',
+        title: 'PoI 内置，网络权重分阶段接入',
+        mechanism: '把边界拆成三档：传统单组织可以只用签名报告与审计库，但不称为 ACVM；跨组织 ACVM 在 AcceptedResult 后必须生成 ValidPoI，再由现有链将 PoI 与付款一起终局；开放 Worker 与 Validator 后，同一 PoI 才进一步累计为激励和提议权重。',
+        acceptance: '任何标记为 ACVM 的 AcceptedResult 都必须对应唯一 ValidPoI，PaymentClaimed 必须引用该证明；网络权重开关关闭时，PoI 仍需生成、持久化并可独立验证。',
       },
       {
-        title: '业务闭环与网络闭环使用两套不变量',
-        mechanism: '业务不变量只要求 SignedDemand、Evidence、Verdict 和 Settlement；网络不变量另要求 uniqueTaskKey、贡献归一、权重上限与终局规则。两者通过 verdictRoot 单向连接。',
-        acceptance: '关闭 PoI 后，GEO 订单仍能完整结算；开启 PoI 后，删除或重放贡献记录都不能改变已经终局的业务付款。',
+        title: '一份 PoI，结算与共识使用两套不变量',
+        mechanism: '结算不变量要求 SignedDemand、Evidence、AcceptedResult、UniqueTaskKey、ValidPoI 和 Settlement；网络不变量另要求贡献归一、权重上限、VRF 输入与 BFT 终局。两条路径从同一 poiRoot 分流。',
+        acceptance: '删除、篡改或重放 PoI 都不能通过结算验证；关闭提议权重后，PoI 仍能完成 GEO 付款；重新开启权重也不能改变已经终局的业务付款。',
       },
     ],
     challenges: [
       {
         title: '开放网络是否真的带来净收益',
-        failure: '如果首批需求方、Worker 和 Validator 都由同一团队运营，PoI 只增加链上成本、治理参数和攻击面，没有增加可信度。',
-        solution: '先用 permissioned pilot 测量观察成本、争议率、供给集中度和跨机构需求；只有新增独立供给显著降低成本或提高覆盖，才进入 PoI shadow mode。',
+        failure: '如果首批需求方、Worker 和 Validator 都由同一团队运营，PoI 还不能证明开放网络已经具有独立性。',
+        solution: '先用 permissioned pilot 生成 shadow PoI，测量观察成本、争议率、供给集中度和跨机构需求；只有新增独立供给显著降低成本或提高覆盖，才让 PoI 影响真实激励。',
         residual: '早期合作伙伴样本会高估协同意愿，开放网络的经济性必须用对抗性订单重新验证。',
       },
     ],
     security: [
       {
-        title: '过早启用 PoI 会把刷单变成共识攻击',
+        title: '过早让 PoI 控制权重会把刷单变成共识攻击',
         failure: '需求方与 Worker 自买自卖，仍能完成形式上的 GEO 订单，再把付款循环成贡献权重。',
-        solution: 'PoI 上线门槛包括独立需求方比例、关联交易率、制造单位权重的最低成本和 Validator 有效独立数；不达标时只结算业务，不产生网络权重。',
+        solution: 'PoI 权重上线门槛包括独立需求方比例、关联交易率、制造单位权重的最低成本和 Validator 有效独立数；不达标时仍生成 PoI 并结算业务，但权重系数保持为零。',
         residual: '组织关联无法由密码学完全识别，因此 PoI 永远不能单独决定付款或 BFT 终局。',
       },
     ],
@@ -554,9 +554,9 @@ export const speakerGuideDetails = {
   'poi-proof': {
     implementation: [
       {
-        title: '启用贡献网络时，四条件共同成立',
-        mechanism: 'ValidPoI = SignedDemand ∧ AcceptedResult ∧ ExecutionEvidence ∧ UniqueTaskKey。taskKey 由 taskId、verdictRoot、Worker 和任务类别做域隔离哈希；PoI feature flag 关闭时不执行这条支路。',
-        acceptance: '验证器逐项检查需求签名与托管、终局裁决、执行证据策略和 usedTaskKey；任一失败都不写 PoI。关闭 PoI 不得阻断已经终局的结果付款。',
+        title: '四项条件共同生成结算凭证',
+        mechanism: 'ValidPoI = SignedDemand ∧ AcceptedResult ∧ ExecutionEvidence ∧ UniqueTaskKey。taskKey 由 taskId、verdictRoot、Worker 和任务类别做域隔离哈希；任何 AcceptedResult 都必须执行这条确定性派生路径。',
+        acceptance: '验证器逐项检查需求签名与托管、终局裁决、执行证据策略和 usedTaskKey；任一失败都不写 PoI，也不能领取结果费。失败任务只生成 FailureReceipt，不伪装成有效贡献。',
       },
       {
         title: '贡献可重算、不可转移',
@@ -818,13 +818,13 @@ export const speakerGuideDetails = {
     implementation: [
       {
         title: '用安全门槛推进，而不是按功能列表推进',
-        mechanism: '阶段一在 A3S Flow / Runtime / Box / Power 上跑通任务、回执绑定和 ACVM 状态机；阶段二影子结算真实任务但不自动放款；阶段三小额托管并开放挑战；数据稳定后才试 PoI 或 AVS。',
+        mechanism: '阶段一在 A3S Flow / Runtime / Box / Power 上跑通任务、回执绑定、ACVM 状态机和 shadow PoI；阶段二让 ValidPoI 驱动小额托管并开放挑战；阶段三才把累计 PoI 接入 VRF、BFT 或 AVS 权重。',
         acceptance: '每阶段都有退出条件：重复结算为零、证据取回率达标、挑战可用、Validator 有效独立数达标，且完成重组与密钥失守演练。',
       },
       {
         title: '首个试点留下完整审计链',
         mechanism: '选 GEO 或社会模拟的一种，固定一个验证策略和单链结算。记录需求、版本、证据、裁决、付款、争议与成本，不急着覆盖所有模型和链。',
-        acceptance: '外部审计者能从 SignedDemand 重建到 VerdictFinalized 和 PaymentClaimed；客户能解释为何付款，Worker 能解释为何得款或被拒。若 PoI 关闭，审计链仍完整。',
+        acceptance: '外部审计者能从 SignedDemand 重建到 VerdictFinalized、ValidPoI 和 PaymentClaimed；客户能解释为何付款，Worker 能解释为何得款或被拒。PoI 权重关闭时，结算证明链仍完整。',
       },
     ],
     challenges: [

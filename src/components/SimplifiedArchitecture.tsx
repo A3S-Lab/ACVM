@@ -128,7 +128,7 @@ const architectureHints = {
   poi: {
     title: 'PoI · 有效智能证明',
     summary: '一条同时带真实需求、结果验收、执行证明和防重放检查的有效计算记录。',
-    details: [{ label: '生成', value: '四项条件缺一不可，任何一项失败都不会进入有效工作池。' }, { label: '用途', value: '贡献计分、信誉、任务调度和开放网络的提议者抽签。' }],
+    details: [{ label: '生成', value: '四项条件缺一不可，任何一项失败都不会进入有效工作池。' }, { label: '用途', value: '结果结算、贡献计分、信誉、任务调度和开放网络的提议者抽签。' }],
   },
   identitySemantic: {
     title: 'Identity · 责任身份语义',
@@ -630,13 +630,13 @@ export function IntelligenceProofArchitecture() {
           <ArchitectureDetail hint="attestedExecution">AttestedExecution</ArchitectureDetail> ∧{' '}
           <ArchitectureDetail hint="antiReplay">AntiReplay</ArchitectureDetail>
         </code>
-        <span>自造任务、重复回执和未通过验收的结果不计入贡献</span>
+        <span>自造任务、重复回执和未通过验收的结果不能生成 PoI，也不能领取结果费</span>
       </div>
       <div className="poi-finality">
         <section>
-          <small>联盟链</small>
-          <strong>有效计算回执与调度记录</strong>
-          <span>原链继续负责共识与最终确认</span>
+          <small>订单结算</small>
+          <strong>ValidPoI 解锁结果费</strong>
+          <span>底层链继续负责最终确认</span>
         </section>
         <i />
         <section>

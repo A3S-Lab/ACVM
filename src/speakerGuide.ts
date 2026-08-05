@@ -15,7 +15,7 @@ export const speakerGuides = {
     focus: 'ACVM 把客户已经需要的模型推理，变成可结算、可记账的有效工作。',
     connection: 'PoI 改变工作证明的来源，智能体合约负责一笔 AI 订单的状态与责任。',
     opening: '今天的 AI 服务按调用量出账，区块链又单独花钱做哈希竞争。ACVM 想把两笔成本合成一笔：先服务客户，再为网络提供有效工作。',
-    beats: ['客户先签名结果和验收条件，调用量只用于成本与限额。', 'Agent 完成任务并提交证据，Validator 独立验收；通过后才付款。', '开放网络需要贡献记账时，可由同一份裁决派生 PoI；单笔业务并不依赖 PoI。'],
+    beats: ['客户先签名结果和验收条件，调用量只用于成本与限额。', 'Agent 完成任务并提交证据，Validator 独立验收；通过后生成 ValidPoI，再释放结果费。', '同一份 PoI 既是结算凭证，也是有效推理贡献；是否进入提议权重按网络阶段控制。'],
     transition: '先从客户最关心的问题开始：什么条件应该触发付款。',
   },
   'product-snapshot': {
@@ -23,7 +23,7 @@ export const speakerGuides = {
     focus: 'ACVM 把付款条件从“调用成功”改成“结果验收通过”。',
     connection: 'A3S 负责编排与执行，ACVM 负责约定、证据与裁决，底层链负责托管和终局。',
     opening: '接口返回 200，只能证明调用发生了，不能证明客户要的结果已经出现。ACVM 让客户先写清达标条件，达到终局后再放款。',
-    beats: ['任务规则锁定目标、门槛、预算、权限和截止时间。', '执行证据绑定产物、观测结果和运行回执，Worker 不能临时换口径。', 'Validator 给出通过、拒绝或挑战裁决；底层链只在裁决终局后改变资金状态。'],
+    beats: ['任务规则锁定目标、门槛、预算、权限和截止时间。', '执行证据绑定产物、观测结果和运行回执，Worker 不能临时换口径。', 'Validator 给出通过、拒绝或挑战裁决；只有通过裁决生成 ValidPoI，底层链才改变资金状态。'],
     transition: 'GEO 是最直观的例子，因为它的业务结果可以被外部观测。',
   },
   'geo-verification': {
@@ -31,7 +31,7 @@ export const speakerGuides = {
     focus: 'GEO 按独立观测到的引用增量结算，不按生成内容数量结算。',
     connection: '这笔订单天然包含真实需求、模型执行、外部证据和结果裁决。',
     opening: '品牌方买的不是十篇文章，而是生成式搜索里的引用增长。ACVM 在优化前冻结问题集、基线和观察窗口，让优化方不能给自己打分。',
-    beats: ['品牌方签名问题集、目标引擎、站点版本、基线和增量门槛。', 'GEO Worker 调用模型与工具完成优化；独立观察节点按同一口径复测。', 'Validator 确认有效增量并等待挑战期结束；此时释放结果费。是否派生 PoI 是下一层决定。'],
+    beats: ['品牌方签名问题集、目标引擎、站点版本、基线和增量门槛。', 'GEO Worker 调用模型与工具完成优化；独立观察节点按同一口径复测。', 'Validator 确认有效增量并等待挑战期结束；ACVM 生成 ValidPoI，底层链据此释放结果费。'],
     transition: '如果原始数据不能公开，流程不变，证据的做法要换。',
   },
   simulation: {
@@ -40,22 +40,22 @@ export const speakerGuides = {
     connection: '雾计算、隔离执行和独立复核解决隐私数据无法复制到全网的问题。',
     opening: '社会模拟的难点不是多跑几个 Agent，而是个人轨迹不能外泄，研究方又不能只交一张成绩单。ACVM 固定实验条件，只让统计结果和证明离开隔离域。',
     beats: ['合约先锁定模型版本、样本承诺、随机种子、隐私预算和统计口径。', '雾节点运行模拟，个体轨迹不出域；安全聚合只输出群体指标和置信区间。', 'Validator 复核统计管线与重复实验。协议能证明按约定运行，不能证明模型假设一定符合现实。'],
-    transition: '这两个场景证明了按结果结算的价值，但还不能推出每笔业务都需要 PoI。',
+    transition: '这两个场景都能形成已验证结果，下一页说明为什么业务可以不用 PoI，而 ACVM 不能没有 PoI。',
   },
   'geo-poi-boundary': {
     duration: '1:40',
-    focus: 'GEO 需要可验证结果，不天然需要 PoI；PoI 是开放贡献网络的可选记账层。',
-    connection: '先把单笔业务闭环与网络激励拆开，才能正面回答“为什么非用区块链不可”。',
-    opening: '技术评审问 GEO 是否一定要用 PoI，答案是否定的。单一机构内部做 GEO，用签名报告和审计库就够了；跨机构结算才需要共享终局，开放供给网络才可能需要 PoI。',
-    beats: ['无论是否上链，GEO 都必须先冻结问题集、基线、观察窗口和增量门槛。', '跨机构托管时，用 ACVM 状态机和现有链记录裁决；此时仍可关闭 PoI。', '只有 Worker、Validator 和需求方开放加入，贡献还要跨任务累积并影响网络激励时，PoI 才产生额外价值。'],
-    transition: '明确 PoI 不是万能前提后，再比较其他 AI 网络各自在证明什么。',
+    focus: 'GEO 业务可以靠传统审计交付；ACVM 必须把验收结果铸成不可重放的 PoI。',
+    connection: '把“业务能不能做”与“ACVM 为什么不同”拆开，才能正面回答 PoI 的必要性。',
+    opening: '技术评审问 GEO 离开 PoI 能不能做，答案是能：单一机构用签名报告和审计库就能交付。但那不是 ACVM。进入 ACVM 的任务，只有生成 ValidPoI 才能领取结果费。',
+    beats: ['无论采用什么系统，GEO 都要冻结问题集、基线、观察窗口和增量门槛。', 'ACVM 把 SignedDemand、执行回执、AcceptedResult 和唯一 taskKey 合成 ValidPoI；它是结果付款的必要凭证。', '开放网络再把同一 PoI 汇总成贡献权重。PoI 始终存在，分阶段接入的是激励和记账权。'],
+    transition: '明确 PoI 是核心结果凭证后，再比较其他 AI 网络各自在证明什么。',
   },
   'useful-work': {
     duration: '2:10',
     focus: '同样叫“证明智能”，工程上可能验证评分、执行、经济安全或业务结果，不能混为一谈。',
     connection: 'ACVM 不重复建设模型市场或再质押层，它补的是从签名订单到业务裁决和结果结算的缺口。',
     opening: '比较 PoI 不能先比名字，要先比 predicate，也就是系统最终判断真假的那个条件。Bittensor 和 Allora 聚合质量评分，Gensyn 与 EigenAI验证执行，EigenLayer 提供可罚没安全，ChainOpera 做广义贡献计量。',
-    beats: ['Bittensor、Allora 的核心是相对质量和激励分配，结果依赖各自 Validator 或 Reputer 的评分机制。', 'Gensyn Verde 与 EigenAI 能回答声明的模型是否忠实执行，但官方资料也明确：执行忠实不等于业务答案正确。', 'ACVM 接受这些执行证明或经济安全服务，把它们放进事前约定的业务验收，再决定结果费；PoI 仍是可选派生物。'],
+    beats: ['Bittensor、Allora 的核心是相对质量和激励分配，结果依赖各自 Validator 或 Reputer 的评分机制。', 'Gensyn Verde 与 EigenAI 能回答声明的模型是否忠实执行，但官方资料也明确：执行忠实不等于业务答案正确。', 'ACVM 接受这些执行证明或经济安全服务，把它们放进事前约定的业务验收，生成能触发结果费的 ValidPoI。'],
     transition: '要形成这种任务级裁决，首先必须解释模型为什么不能像普通链上程序那样由每个节点重跑。',
   },
   'execution-boundary': {
@@ -68,10 +68,10 @@ export const speakerGuides = {
   },
   'system-architecture': {
     duration: '2:10',
-    focus: 'AP2 管授权，A3S 管执行，ACVM 管业务裁决，底层链或 AVS 管终局与经济安全。',
+    focus: 'AP2 管授权，A3S 管执行，ACVM 管业务裁决与 PoI，底层链或 AVS 管终局与经济安全。',
     connection: '四层通过同一个 taskId、contractRoot 和回执根连接，各层不越权替代下一层。',
     opening: '这不是再造一个全栈协议。AP2 已经定义 Agent 支付授权，A3S 已经具备工作流、生命周期、隔离推理和安全回执；ACVM 只新增结果条件、独立裁决和结果结算。',
-    beats: ['AP2 的 Intent 或 Cart Mandate 绑定授权主体和交易意图，ACVM 把 mandateHash 纳入 SignedDemand，并补上业务验收条件。', 'A3S Flow、Runtime、Event、Box、Power、Gateway 和 Sentry 执行任务、保留事件历史并生成可绑定的运行证据。', 'ACVM Validator 把执行证据与业务证据分别检查，形成 verdictRoot；现有链结算，开放网络可再由 AVS 或 PoI 承担经济安全与贡献记账。'],
+    beats: ['AP2 的 Intent 或 Cart Mandate 绑定授权主体和交易意图，ACVM 把 mandateHash 纳入 SignedDemand，并补上业务验收条件。', 'A3S Flow、Runtime、Event、Box、Power、Gateway 和 Sentry 执行任务、保留事件历史并生成可绑定的运行证据。', 'ACVM Validator 把执行证据与业务证据分别检查，形成 verdictRoot 与 ValidPoI；现有链结算，开放网络可再用 AVS 保护验证者集合。'],
     transition: '流程的第一步是发现服务。地址只能定位账户，ANS 还要回答这个 Agent 能做什么。',
   },
   ans: {
@@ -103,7 +103,7 @@ export const speakerGuides = {
     focus: 'PoI 只记录真实、有效、可核验且唯一的模型服务。',
     connection: '需求、执行、结果和防重放四项条件都绑定同一个 taskId。',
     opening: '一张 GPU 使用证明只能说明烧过算力，不能说明客户需要这项工作，也不能说明结果可用。ACVM 要求四个条件同时成立。',
-    beats: ['SignedDemand 证明订单来自真实需求方，并锁定预算与 nonce。', 'AcceptedResult 证明结果通过验收；执行证明绑定模型、输入、输出和运行环境。', '只有启用贡献网络时，taskKey 才进入 PoI 已使用集合；普通结果付款到裁决终局就结束。'],
+    beats: ['SignedDemand 证明订单来自真实需求方，并锁定预算与 nonce。', 'AcceptedResult 证明结果通过验收；执行证明绑定模型、输入、输出和运行环境。', 'taskKey 必须先写入已使用集合，才生成唯一 ValidPoI；结算合约只接受尚未领取过的有效 PoI。'],
     transition: '有效 PoI 进入贡献池后，还不能直接决定谁记账。',
   },
   'poi-consensus': {
@@ -148,10 +148,10 @@ export const speakerGuides = {
   },
   'product-roadmap': {
     duration: '1:30',
-    focus: '下一项交付是基于 A3S 跑通一笔从签约到已验证付款的真实任务；PoI 先保持关闭。',
-    connection: '先验证任务、证据和结算，再逐步开放 PoI 共识，避免把未验证参数写成既定方案。',
+    focus: '下一项交付是基于 A3S 跑通一笔从签约、ValidPoI 到已验证付款的真实任务。',
+    connection: 'PoI 从第一天生成；先做影子证明，再接真实结算，最后才让累计 PoI 影响提议权。',
     opening: 'ACVM 目前是概念规范和产品演示，不是生产网络。下一步不需要证明所有场景，只需要把一笔真实订单跑到底。',
-    beats: ['先在 A3S Flow / Runtime / Box / Power 上实现任务适配器、回执绑定和 ACVM 状态机，跑通本地流程。', '选择 GEO 或社会模拟试点，接入真实需求方、Worker、证据源和 Validator，以 shadow settlement 验证裁决。', '只有开放供给确有需求、攻击成本数据达标后，才实现 PoI 权重、VRF、BFT 或 EigenLayer AVS 路径。'],
+    beats: ['先在 A3S Flow / Runtime / Box / Power 上实现任务适配器、回执绑定、ACVM 状态机和 shadow PoI。', '选择 GEO 或社会模拟试点，接入真实需求方、Worker、证据源和 Validator，让 ValidPoI 驱动小额结果结算。', '只有开放供给确有需求、攻击成本数据达标后，才把累计 PoI 接入 VRF、BFT 或 EigenLayer AVS 路径。'],
     transition: 'ACVM 的首个交付标准很具体：客户能解释为什么付款，服务方能证明为什么得款，评审能从签名需求重建到终局裁决。',
   },
 } as const satisfies Record<ScreenId, SpeakerGuideEntry>;

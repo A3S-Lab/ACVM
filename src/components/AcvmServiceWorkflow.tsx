@@ -45,10 +45,10 @@ const workflowStages = [
   },
   {
     code: '06',
-    title: '结算 / 可选记账',
-    actor: '底层链 / AVS',
-    solution: '终局裁决触发结果付款；只有开放网络需要跨任务贡献权重时，才从同一裁决派生 PoI。',
-    record: 'Settlement · PoI?',
+    title: '生成 PoI 并结算',
+    actor: 'ACVM / 底层链 / AVS',
+    solution: '通过裁决生成不可重放的 ValidPoI，并据此释放结果费；开放网络再把同一 PoI 纳入贡献权重。',
+    record: 'ValidPoI · Settlement · Weight',
     icon: 'receipt',
   },
 ] as const satisfies readonly {
@@ -75,8 +75,9 @@ const diagramLines = [
   { stage: 4, text: '    │' },
   { stage: 4, text: '    ▼' },
   { stage: 4, text: '[ ACVM Validator ] ── 业务验收 / 挑战' },
-  { stage: 5, text: '    ├──▶ [ 结果结算 ]  现有链 / 支付系统' },
-  { stage: 5, text: '    └──▶ [ PoI? ]  仅开放贡献网络启用' },
+  { stage: 5, text: '    ▼' },
+  { stage: 5, text: '[ ValidPoI ] ──▶ [ 结果结算 ]  现有链 / 支付系统' },
+  { stage: 5, text: '      └────────▶ [ 贡献权重 ]  开放网络逐级接入' },
 ] as const;
 
 export function AcvmServiceWorkflowArchitecture() {
@@ -107,7 +108,7 @@ export function AcvmServiceWorkflowArchitecture() {
 
   return (
     <div ref={panelRef} className={`acvm-service-workflow ${playing ? 'is-playing' : 'is-paused'}`}>
-      <LearningPanel code="ACVM / ONE ORDER, ONE TASK ID" status="RESULT FIRST" className="acvm-workflow-panel">
+      <LearningPanel code="ACVM / ONE ORDER, ONE TASK ID" status="POI BUILT-IN" className="acvm-workflow-panel">
         <header className="acvm-workflow-current" aria-live="polite">
           <span><b>{current.code}</b><Icon name={current.icon} /></span>
           <div><small>{current.actor}</small><strong>{current.title}</strong></div>
@@ -139,7 +140,7 @@ export function AcvmServiceWorkflowArchitecture() {
           ))}
         </nav>
 
-        <footer><Icon name="spark" /><strong>AP2 管授权 · A3S 管执行 · ACVM 管裁决 · 现有基础设施管终局。</strong></footer>
+        <footer><Icon name="spark" /><strong>AP2 管授权 · A3S 管执行 · ACVM 管裁决与 PoI · 现有基础设施管终局。</strong></footer>
       </LearningPanel>
     </div>
   );

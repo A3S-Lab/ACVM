@@ -12,11 +12,11 @@ first-principles substitutions:
 
 These substitutions form one product loop. A model-inference task first creates
 value for a customer. Signed demand, accepted output, execution evidence, and
-anti-replay checks can then create a Proof of Intelligence (`PoI`) when an open
-network actually needs contribution accounting. PoI is optional for ordinary
-result settlement. If enabled, it may contribute bounded proposer weight;
-verifiable randomness selects a proposer, while BFT or configured base-chain
-rules provide finality.
+anti-replay checks must then create a Proof of Intelligence (`PoI`) before an
+ACVM result can settle. The same PoI is also the network's unit of useful AI
+work. Coupling accumulated PoI to proposer weight is staged: verifiable
+randomness selects a proposer, while BFT or configured base-chain rules provide
+finality.
 
 ## Product story
 
@@ -24,12 +24,12 @@ The 18-slide presentation, including the cover, is organized into six sections:
 
 1. **Product and use cases.** The payment condition is defined first, followed
    by GEO result verification, privacy-sealed social simulation, and an explicit
-   decision rule showing that GEO does not inherently require PoI.
+   boundary showing that traditional GEO can omit PoI, while an ACVM task cannot.
 2. **Engineering landscape.** Bittensor, Allora, Gensyn, EigenAI, EigenLayer,
    and ChainOpera are compared by proof target, judge, and economic effect before
    the deck explains why model execution cannot be replayed by every chain node.
 3. **Order workflow.** An animated ASCII map separates AP2 authorization, A3S
-   execution, ACVM verdicts, existing-chain settlement, and optional PoI before
+   execution, ACVM verdicts, mandatory PoI, and existing-chain settlement before
    expanding ANS, Agentic Contracts, fog inference, and result verification.
 4. **Deployment and security.** A concrete adapter plan covers BSN, Spark Chain,
    ChainMaker, FISCO BCOS, and an optional EigenLayer AVS path, followed by
@@ -50,10 +50,12 @@ closed so the audience view keeps the largest readable canvas.
 
 The repository currently provides a concept specification and product
 presentation. A3S is the proposed open-source execution foundation; the ACVM
-adapters, verdict state machine, and settlement integration shown here remain
-to be implemented and validated. The next milestone is one real task running
-from `SignedDemand` through an A3S execution receipt to `VerdictFinalized` and a
-payment receipt, with PoI disabled by default.
+adapters, verdict state machine, PoI derivation, and settlement integration
+shown here remain to be implemented and validated. The next milestone is one
+real task running from `SignedDemand` through an A3S execution receipt and an
+accepted verdict to a shadow `ValidPoI`, then to a payment receipt. PoI is
+always produced for an accepted ACVM task; only its proposer-weight coupling is
+disabled during the first pilot.
 
 ## Presentation controls
 

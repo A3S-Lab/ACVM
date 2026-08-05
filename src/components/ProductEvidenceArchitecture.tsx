@@ -18,9 +18,9 @@ const geoMinimumLoop = [
   },
   {
     code: '03',
-    title: '裁决付款',
-    detail: '达到门槛才释放结果费',
-    record: 'verdictRoot · settlement',
+    title: 'PoI 结算',
+    detail: '达到门槛才生成证明并付款',
+    record: 'verdictRoot · ValidPoI',
     icon: 'receipt',
   },
 ] as const satisfies readonly {
@@ -33,30 +33,30 @@ const geoMinimumLoop = [
 
 const geoDeploymentChoices = [
   {
-    title: '同一机构内部',
+    title: '传统单机构 GEO',
     detail: '签名报告 + 审计数据库',
-    decision: '不需要链，也不需要 PoI',
+    decision: '能交付，但不形成 ACVM PoI',
     tone: 'plain',
   },
   {
     title: '跨机构托管结算',
     detail: 'ACVM 状态机 + 现有链终局',
-    decision: '需要可审计裁决；PoI 关闭',
+    decision: '每笔达标结果必须生成 PoI',
     tone: 'settlement',
   },
   {
     title: '开放供给与验证网络',
     detail: '开放 Worker / Validator / 网络激励',
-    decision: '裁决通过后，可派生 PoI',
+    decision: 'PoI 再进入激励与提议权重',
     tone: 'poi',
   },
 ] as const;
 
 export function GeoPoiDecisionArchitecture() {
   return (
-    <LearningPanel code="GEO / MINIMUM TRUST LOOP" status="POI OPTIONAL" className="geo-poi-decision">
+    <LearningPanel code="GEO / ACVM PRODUCT BOUNDARY" status="POI CORE" className="geo-poi-decision">
       <section className="geo-minimum-loop" aria-label="GEO 按结果结算的最小闭环">
-        <header><small>业务必须有</small><strong>验收与付款闭环</strong><span>与是否发行 PoI 无关</span></header>
+        <header><small>接入 ACVM 后</small><strong>验收、PoI 与付款闭环</strong><span>PoI 是已验证结果凭证</span></header>
         <div>
           {geoMinimumLoop.map((step, index) => (
             <span className="geo-loop-fragment" key={step.code}>
@@ -72,8 +72,8 @@ export function GeoPoiDecisionArchitecture() {
         </div>
       </section>
 
-      <section className="geo-poi-choices" aria-label="不同 GEO 协作范围下是否需要 PoI">
-        <header><small>何时增加 PoI</small><strong>看协作边界，不看任务名字</strong></header>
+      <section className="geo-poi-choices" aria-label="PoI 在不同 GEO 协作范围中的作用">
+        <header><small>PoI 承担什么</small><strong>同一份证明，两级用途</strong></header>
         <div>
           {geoDeploymentChoices.map((choice, index) => (
             <article className={`is-${choice.tone}`} key={choice.title}>
@@ -88,7 +88,7 @@ export function GeoPoiDecisionArchitecture() {
 
       <footer>
         <Icon name="check" />
-        <strong>结论：GEO 需要可验证结果；只有跨任务累积贡献时，才需要 PoI。</strong>
+        <strong>结论：GEO 本身不强制 PoI；选择 ACVM，就必须用 PoI 把结果变成有效工作。</strong>
       </footer>
     </LearningPanel>
   );
@@ -123,7 +123,7 @@ const proofLandscape = [
     project: 'ACVM',
     target: '签名订单约定的业务结果',
     judge: '事前验收策略、独立 Validator 与挑战',
-    outcome: '先付结果费；PoI 可选',
+    outcome: 'PoI 触发结算并计量贡献',
   },
 ] as const;
 
@@ -153,7 +153,7 @@ export function PoiLandscapeArchitecture() {
       <footer>
         <Icon name="shield" />
         <span><small>ACVM 补的空位</small><strong>把“执行过”推进到“结果达标，因此可以结算”</strong></span>
-        <code>AcceptedResult → Settlement → PoI?</code>
+        <code>AcceptedResult → ValidPoI → Settlement / Weight</code>
       </footer>
     </LearningPanel>
   );
@@ -194,8 +194,8 @@ export function AcvmIntegrationArchitecture() {
         <i aria-hidden="true">→</i>
         <section className="is-acvm">
           <header><Icon name="receipt" /><span><small>OUTCOME CONTROL PLANE</small><strong>ACVM</strong></span></header>
-          <p>智能体合约 · 验收策略 · 裁决/挑战 · 结算 · 可选 PoI</p>
-          <code>ExecReceipt + BusinessEvidence → Verdict</code>
+          <p>智能体合约 · 验收策略 · 裁决/挑战 · PoI · 结算</p>
+          <code>ExecReceipt + BusinessEvidence → ValidPoI</code>
         </section>
       </div>
 
@@ -213,7 +213,7 @@ export function AcvmIntegrationArchitecture() {
         <article className="is-public">
           <header><small>开放网络可选路径</small><strong>EigenLayer AVS Operator Set</strong></header>
           <p>ACVM Validator 可接 quorum、挑战与 slashing；AVS 提供经济安全，ACVM 仍定义业务判定。</p>
-          <b>先复用终局与安全，再决定是否建设 PoI 网络。</b>
+          <b>复用现有终局与安全，PoI 仍由 ACVM 生成和解释。</b>
         </article>
       </div>
     </LearningPanel>

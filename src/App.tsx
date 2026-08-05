@@ -492,20 +492,20 @@ export function App() {
             <div className="hero-copy">
               <span className="hero-eyebrow"><i /> AI + BLOCKCHAIN / VERIFIED OUTCOME</span>
               <h1>让 AI 服务<br /><em className="hero-full-name">按已验证结果付费</em></h1>
-              <p>ACVM 先锁定验收条件，再记录执行证据与裁决。结果通过才付款；开放供给网络需要时，这份验收记录还可用于贡献计量。</p>
+              <p>ACVM 先锁定验收条件，再记录执行证据与裁决。结果通过后生成 PoI，客户据此付款，网络据此确认有效推理贡献。</p>
               <ul className="hero-benefits" aria-label="ACVM 产品闭环">
                 <li><Icon name="key" />客户：不再为失败调用买单</li>
                 <li><Icon name="brain" />服务方：结果达标后拿结果费</li>
-                <li><Icon name="chain" />网络：按需把已验收推理计入贡献</li>
+                <li><Icon name="chain" />网络：按已验收推理积累 PoI</li>
               </ul>
               <div className="hero-actions">
                 <a href="#product-snapshot" className="button button--primary" onClick={(event) => { event.preventDefault(); goToScreen(1); }}>查看产品机制 <Icon name="arrow" /></a>
-                <a href="#poi-consensus" className="button button--secondary" onClick={(event) => { event.preventDefault(); goToScreen(screens.findIndex(([id]) => id === 'poi-consensus')); }}>查看可选 PoI 机制</a>
+                <a href="#poi-consensus" className="button button--secondary" onClick={(event) => { event.preventDefault(); goToScreen(screens.findIndex(([id]) => id === 'poi-consensus')); }}>查看 PoI 机制</a>
               </div>
             </div>
             <ProductThesis />
           </div>
-          <span className="hero-footnote"><i /> SIGNED DEMAND → ANS → AGENTIC CONTRACT → FOG INFERENCE → VERDICT → PAY [→ OPTIONAL PoI]</span>
+          <span className="hero-footnote"><i /> SIGNED DEMAND → ANS → AGENTIC CONTRACT → FOG INFERENCE → VERDICT → PoI → PAY / WEIGHT</span>
           <span className="screen-number" aria-hidden="true">00</span>
         </section>
 

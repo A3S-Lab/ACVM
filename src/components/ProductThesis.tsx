@@ -3,10 +3,10 @@ import { DataChip, LearningPanel } from './LearningPanel';
 
 export function ProductThesis() {
   return (
-    <LearningPanel code="CALL → VERDICT / COMPUTE → OPTIONAL POI" status="ONE ORDER" className="product-thesis">
+    <LearningPanel code="CALL → VERDICT / COMPUTE → POI" status="ONE ORDER" className="product-thesis">
       <div className="thesis-question">
         <small>一笔订单，两份价值</small>
-        <strong>客户拿到已验收结果；开放网络按需记录贡献</strong>
+        <strong>客户拿到已验收结果；网络拿到有效工作证明</strong>
       </div>
       <div className="thesis-replacement">
         <section className="is-before">
@@ -17,8 +17,8 @@ export function ProductThesis() {
         <i aria-hidden="true">→</i>
         <section className="is-after">
           <header><Icon name="brain" /><span><small>PROOF OF INTELLIGENCE</small><strong>已验收模型服务</strong></span></header>
-          <p>先交付客户结果，开放网络需要时再计入 PoI。</p>
-          <DataChip tone="green">客户结果 + 可选权重</DataChip>
+          <p>验收通过生成 PoI，同时进入结算与贡献账。</p>
+          <DataChip tone="green">客户结果 + 有效工作</DataChip>
         </section>
       </div>
       <div className="thesis-replacement">
@@ -36,7 +36,7 @@ export function ProductThesis() {
       </div>
       <footer className="thesis-result">
         <Icon name="spark" />
-        <span><small>ONE ORDER</small><strong>真实需求 → 找 Agent → 执行 → 验收 → 付款 [→ 可选 PoI]</strong></span>
+        <span><small>ONE ORDER</small><strong>真实需求 → 找 Agent → 执行 → 验收 → PoI → 付款 / 计权</strong></span>
       </footer>
     </LearningPanel>
   );
