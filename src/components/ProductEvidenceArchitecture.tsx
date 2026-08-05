@@ -68,25 +68,25 @@ export function PoiLandscapeArchitecture() {
 
 export function AcvmIntegrationArchitecture() {
   return (
-    <LearningPanel code="CHAINADAPTER / DOMESTIC INFRASTRUCTURE" status="IDENTITY · EVENT · FINALITY" className="acvm-integration integration-simple">
+    <LearningPanel code="ChainAdapter / 国内区块链基础设施" status="身份 · 事件 · 终局统一映射" className="acvm-integration integration-simple">
       <div className="integration-simple-flow" aria-label="ACVM 标准任务状态通过 ChainAdapter 映射到国内区块链的身份、事件和终局接口">
         <section>
           <Icon name="receipt" />
-          <small>ACVM CANONICAL STATE</small>
+          <small>ACVM 标准状态</small>
           <strong>ACVM 标准状态</strong>
           <span>taskRoot · verdictRoot · poiRoot</span>
         </section>
         <i aria-hidden="true">→</i>
         <section className="is-acvm">
           <Icon name="spark" />
-          <small>CHAIN ADAPTER</small>
+          <small>链适配器</small>
           <strong>ChainAdapter</strong>
           <span>身份映射 · 事件编码 · 终局回执</span>
         </section>
         <i aria-hidden="true">→</i>
         <section>
           <Icon name="chain" />
-          <small>DOMESTIC INFRASTRUCTURE</small>
+          <small>国内基础设施</small>
           <strong>国内区块链</strong>
           <span>BSN · 星火链网 · 长安链 · FISCO BCOS</span>
         </section>

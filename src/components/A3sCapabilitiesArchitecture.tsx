@@ -10,7 +10,7 @@ const boxStages = [
 
 export function A3sBoxCapabilitiesArchitecture() {
   return (
-    <LearningPanel code="A3S-BOX / LOCAL WORKLOAD PLANE" status="BOUNDARY NEVER CHANGES SILENTLY" className="a3s-box-capability">
+    <LearningPanel code="a3s-box / 本地工作负载平面" status="执行边界不静默切换" className="a3s-box-capability">
       <div className="a3s-box-capability-flow" aria-label="a3s-box 从准备工作负载、解析隔离策略到生命周期和运行证据的能力流程">
         {boxStages.map(([index, title, detail, icon], stageIndex) => (
           <span className="a3s-box-capability-fragment" key={index}>
@@ -26,13 +26,13 @@ export function A3sBoxCapabilitiesArchitecture() {
 
       <div className="a3s-box-isolation-rule">
         <section>
-          <small>DEFAULT</small>
+          <small>默认后端</small>
           <strong>专用内核 MicroVM</strong>
           <span>适合不可信任务与更强租户边界</span>
         </section>
         <b>不静默降级</b>
         <section>
-          <small>EXPLICIT</small>
+          <small>显式选择</small>
           <strong>共享内核 Sandbox</strong>
           <span>适合可信或半可信工具与自动化</span>
         </section>
@@ -88,17 +88,17 @@ function PowerCapabilityLane({
 
 export function A3sPowerCapabilitiesArchitecture() {
   return (
-    <LearningPanel code="A3S-POWER / PRIVATE LAYER-STREAMING" status="MODEL-NEUTRAL · VERIFIABLE" className="a3s-power-capability">
+    <LearningPanel code="a3s-power / 隐私计算与参数流式推理" status="模型无关 · 回执可核验" className="a3s-power-capability">
       <div className="a3s-power-capability-lanes" aria-label="a3s-power 的隐私计算与参数流式推理能力">
         <PowerCapabilityLane
-          eyebrow="PRIVACY COMPUTING"
+          eyebrow="隐私计算"
           title="隐私计算"
           icon="lock"
           steps={powerPrivacySteps}
           className="is-privacy"
         />
         <PowerCapabilityLane
-          eyebrow="LAYER-STREAMING INFERENCE"
+          eyebrow="参数流式推理"
           title="参数流式推理"
           icon="brain"
           steps={powerStreamingSteps}
@@ -108,7 +108,7 @@ export function A3sPowerCapabilitiesArchitecture() {
 
       <footer className="a3s-power-receipt">
         <Icon name="receipt" />
-        <span><small>CANONICAL RECEIPT</small><strong>modelRoot · runtimePolicy · nonce · requestDigest · outputDigest</strong></span>
+        <span><small>标准执行回执</small><strong>modelRoot · runtimePolicy · nonce · requestDigest · outputDigest</strong></span>
       </footer>
     </LearningPanel>
   );

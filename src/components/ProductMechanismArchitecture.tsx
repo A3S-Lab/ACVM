@@ -61,7 +61,7 @@ export function AcvmProductSnapshotArchitecture() {
 
 export function UsefulWorkOpportunityArchitecture() {
   return (
-    <LearningPanel code="TRADITIONAL CHAIN / POI CHAIN" status="INFERENCE AS PROOF" className="useful-work-opportunity useful-work-simple">
+    <LearningPanel code="传统区块链 / 基于 PoI 的区块链" status="推理即证明" className="useful-work-opportunity useful-work-simple">
       <div className="work-source-compare">
         <section className="is-hash">
           <header><Icon name="bolt" /><span><small>传统区块链</small><strong>哈希即工作量</strong></span></header>
@@ -76,7 +76,7 @@ export function UsefulWorkOpportunityArchitecture() {
           <div><b>投入</b><span>模型 · GPU · 工具 · 专业能力</span></div>
           <div><b>验证</b><span>任务约束 · 推理结果 · 执行证据</span></div>
           <div><b>可交付结果</b><span className="is-value">诊断 · 预测 · 分析等模型输出</span></div>
-          <code>Demand ∧ Result ∧ ExecProof</code>
+          <code>SignedDemand ∧ AcceptedResult ∧ ExecReceipt</code>
         </section>
       </div>
       <footer><Icon name="shield" /><strong>工作量来源由哈希搜索变为真实推理</strong><span>工作来源改变，共识安全机制仍须独立定义。</span></footer>
@@ -129,7 +129,7 @@ const consensusStages = [
 
 export function PoiConsensusArchitecture() {
   return (
-    <LearningPanel code="ACVM / CORE ALGORITHM" status="NORMALIZE → CAP → DRAW → FINALIZE" className="poi-consensus-architecture poi-algorithm-simple">
+    <LearningPanel code="ACVM / 核心共识算法" status="归一 → 封顶 → 抽签 → 终局" className="poi-consensus-architecture poi-algorithm-simple">
       <div className="poi-consensus-flow">
         {consensusStages.map((stage, index) => (
           <span className="poi-consensus-fragment" key={stage.index}>

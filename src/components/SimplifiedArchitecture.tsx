@@ -599,35 +599,67 @@ export function LongTaskArchitectureSimple() {
 }
 
 export function IntelligenceProofArchitecture() {
-  const steps: Array<{ code: string; title: string; detail: string; icon: IconName }> = [
-    { code: '01', title: '签名订单', detail: '目标与预算', icon: 'fingerprint' },
-    { code: '02', title: '执行回执', detail: '模型与环境', icon: 'brain' },
-    { code: '03', title: '结果验收', detail: '独立证据', icon: 'check' },
-    { code: '04', title: '防止重放', detail: '唯一 taskKey', icon: 'shield' },
-  ];
-
   return (
-    <div className="diagram-panel intelligence-proof intelligence-proof-simple">
-      <PanelChrome label="PROOF OF INTELLIGENCE / POI" status="WORK VERIFIED" />
-      <div className="poi-flow poi-flow-simple" aria-label="PoI 由签名订单、执行回执、结果验收和防重放条件共同生成">
-        {steps.map((step, index) => (
-          <div className="flow-fragment" key={step.code}>
-            <article>
-              <span>{step.code}</span>
-              <Icon name={step.icon} />
-              <strong>{step.title}</strong>
-              <small>{step.detail}</small>
-            </article>
-            {index < steps.length - 1 ? <Arrow /> : null}
-          </div>
-        ))}
+    <div className="diagram-panel intelligence-proof intelligence-proof-simple principle-panel poi-principle-panel">
+      <PanelChrome label="PoI / 证据合流算法" status="确定性生成" />
+      <div className="principle-canvas poi-principle-canvas">
+        <svg className="principle-svg poi-principle-svg" viewBox="0 0 900 430" role="img" aria-labelledby="poi-principle-title poi-principle-desc">
+          <title id="poi-principle-title">PoI 证据合流动画</title>
+          <desc id="poi-principle-desc">签名需求、执行回执、结果验收和唯一任务键分别绑定同一 taskId，确定性生成 ValidPoI。</desc>
+
+          <g className="principle-grid" aria-hidden="true">
+            <path d="M40 108H860M40 215H860M40 322H860" />
+            <path d="M225 35V395M450 35V395M675 35V395" />
+          </g>
+
+          <g className="poi-evidence-links" aria-hidden="true">
+            <path className="poi-evidence-link is-link-1" d="M244 105C330 105 348 164 394 191" />
+            <path className="poi-evidence-link is-link-2" d="M656 105C570 105 552 164 506 191" />
+            <path className="poi-evidence-link is-link-3" d="M244 325C330 325 348 266 394 239" />
+            <path className="poi-evidence-link is-link-4" d="M656 325C570 325 552 266 506 239" />
+          </g>
+
+          <g className="poi-evidence-node is-node-1" transform="translate(66 65)">
+            <rect width="178" height="80" rx="5" />
+            <text className="principle-kicker" x="16" y="21">01 / 真实需求</text>
+            <text className="principle-title" x="16" y="47">SignedDemand</text>
+            <text className="principle-detail" x="16" y="67">签名主体 · budgetRoot</text>
+            <circle cx="178" cy="40" r="4" />
+          </g>
+          <g className="poi-evidence-node is-node-2" transform="translate(656 65)">
+            <rect width="178" height="80" rx="5" />
+            <text className="principle-kicker" x="16" y="21">02 / 执行证明</text>
+            <text className="principle-title" x="16" y="47">ExecReceipt</text>
+            <text className="principle-detail" x="16" y="67">modelRoot · envRoot</text>
+            <circle cx="0" cy="40" r="4" />
+          </g>
+          <g className="poi-evidence-node is-node-3" transform="translate(66 285)">
+            <rect width="178" height="80" rx="5" />
+            <text className="principle-kicker" x="16" y="21">03 / 结果验收</text>
+            <text className="principle-title" x="16" y="47">AcceptedResult</text>
+            <text className="principle-detail" x="16" y="67">verdictRoot · 法定人数</text>
+            <circle cx="178" cy="40" r="4" />
+          </g>
+          <g className="poi-evidence-node is-node-4" transform="translate(656 285)">
+            <rect width="178" height="80" rx="5" />
+            <text className="principle-kicker" x="16" y="21">04 / 防重放</text>
+            <text className="principle-title" x="16" y="47">UniqueTaskKey</text>
+            <text className="principle-detail" x="16" y="67">taskId · nonce · 域隔离</text>
+            <circle cx="0" cy="40" r="4" />
+          </g>
+
+          <g className="poi-core" transform="translate(450 215)">
+            <circle className="poi-core-orbit" r="78" />
+            <circle className="poi-core-node" r="58" />
+            <text className="principle-kicker" textAnchor="middle" y="-20">结果已验收</text>
+            <text className="principle-core-title" textAnchor="middle" y="8">ValidPoI</text>
+            <text className="principle-detail" textAnchor="middle" y="31">H(taskId ∥ verdictRoot)</text>
+          </g>
+        </svg>
       </div>
-      <footer className="poi-simple-outcome">
-        <span><small>四项同时成立</small><strong>ValidPoI</strong></span>
-        <i aria-hidden="true">→</i>
-        <span><small>单方服务</small><strong>释放结果费</strong></span>
-        <b>或</b>
-        <span><small>多方数据</small><strong>按 splitRoot 分账</strong></span>
+      <footer className="principle-statusbar poi-principle-statusbar">
+        <code>ValidPoI = SignedDemand ∧ ExecReceipt ∧ AcceptedResult ∧ ¬Spent(taskKey)</code>
+        <span>结算 · splitRoot 分账 · 有界权重</span>
       </footer>
     </div>
   );

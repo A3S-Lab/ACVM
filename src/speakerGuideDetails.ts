@@ -277,42 +277,47 @@ export const speakerGuideDetails = {
     ],
     sources: [sources.survey, sources.contracts, sources.vrf],
   },
-  'data-space': {
+  'agent-rental': {
     implementation: [
       {
-        title: '冻结多方数据清单与分账规则',
-        mechanism: '数字合约逐一记录企业、机构等数据贡献方的 dataProductId、dataRoot、授权范围、用途、次数和环境；SignedDemand 另行冻结业务结果谓词、预算、Validator、挑战期与 splitRoot。splitRoot 表达各方事前确认的分配规则，不代表 ACVM 能自动计算唯一的因果贡献。',
-        acceptance: '每个收款方都能追溯到有效数字合约和数据产品版本；缺少 AccessGrant、策略版本不匹配或分账总额不守恒时，ACVM 拒绝结算。',
+        title: '服务能力与任务订单分别签名',
+        mechanism: '智能体所有者通过 ANS 发布绑定 DID、capabilityRoot、endpoint、version、pricePolicy、validUntil 和 recordRoot 的签名服务卡。租用方另行签署 SignedDemand，冻结 taskId、目标、输入权限、预算、截止时间、Validator 与验收规则。',
+        acceptance: '解析器先验证服务卡签名、序号、有效期和撤销状态；ACVM 再确认订单引用同一 capabilityRoot 与 endpoint。服务卡过期、能力版本不符或预算未托管时，任务不能进入执行队列。',
       },
       {
-        title: '履约与结果同时通过后分配收益',
-        mechanism: '各方连接器记录数据交付、访问、计算和二次传输日志，并提交 UsageProof 与谱系证明。Worker 回执绑定模型、容器和 outputRoot；Validator 分别签署 UsageCompliant 与 AcceptedResult，两者终局后，ACVM 才按 splitRoot 向多方释放结果池。',
-        acceptance: '外部审计者能从数字合约重建到 AccessGrant、UsageProof、AcceptedResult 和 PaymentClaimed；分账总额严格等于结果池，且每个收款项只能领取一次。',
+        title: '所有权留在执行域，结果进入结算域',
+        mechanism: 'A3S 用 a3s-box 固定工具、网络和文件边界，用 a3s-power 保护模型、Prompt 与私有数据，并生成绑定 taskId、modelRoot、envRoot、outputRoot 和 nonce 的 ExecReceipt。Validator 使用独立业务证据生成 AcceptedResult。',
+        acceptance: '租用方只能取得约定输出或 outputRoot，不能下载模型、系统提示词或私有数据；没有合格 ExecReceipt 与 AcceptedResult 时，ACVM 不释放结果费，也不生成 ValidPoI。',
+      },
+      {
+        title: '组合服务按冻结规则分账',
+        mechanism: '订单可用 splitRoot 记录智能体所有者、模型方、算力方和数据贡献方的固定比例、保底与上限。AcceptedResult 终局后，PaymentClaim 按同一 taskId 一次性分配结果池。',
+        acceptance: '每个收款项都能追溯到已签名订单与终局裁决；分账总额严格等于结果池，任何主体、比例或收款地址变化都要求新的 SignedDemand。',
       },
     ],
     challenges: [
       {
-        title: '单条数据的因果贡献通常无法客观计算',
-        failure: '多个数据集、模型、提示词、算力和人工运营共同产生结果，事后声称某条数据贡献了固定比例会制造虚假精确度并引发分账争议。',
-        solution: '签约前冻结任务级分账公式、最低保底与上限；有可靠对照时可把消融实验或边际贡献作为调整证据，但不能在结果出现后单方改权重。',
-        residual: 'ACVM 能证明按约使用并产生已验收结果，不能证明唯一真实的因果份额；高价值任务仍需要合同治理与争议仲裁。',
+        title: '开放式智能体任务难以逐字验收',
+        failure: '同一智能体在不同采样、工具响应和业务环境下可能产生不同文本，租用方也可能在结果出现后改变成功口径。',
+        solution: '签约时优先冻结结构化输出、阈值、禁用动作、外部观测和人工复核规则；开放任务用性质验证与挑战窗口，不把逐字一致作为唯一标准。',
+        residual: '协议能确认结果满足冻结规则，不能证明开放式回答存在唯一真值；高价值任务仍需要专业人员承担最终业务责任。',
       },
     ],
     security: [
       {
-        title: '伪造谱系或重复使用同一授权',
-        failure: 'Worker 伪造数据来源、替换数据集，或把一次 AccessGrant 在多个任务和环境中重复使用，再重复领取结果分成。',
-        solution: 'AccessGrant、dataRoot、usagePolicyRoot、环境证明和 outputRoot 全部绑定 taskId 与新鲜 nonce；受控环境和空间网关分别签名，Validator 检查连续日志、撤销状态与已使用 taskKey。',
-        residual: '若数据空间运营方与 Worker 同时串谋，签名日志仍可能一致但不真实，需要独立审计、抽样复核和组织责任追索。',
+        title: '恶意工具调用与数据外泄',
+        failure: '被租用的智能体可能借浏览器、HTTP、日志或插件窃取输入，也可能执行订单范围外的邮件、转账或系统写入。',
+        solution: 'a3s-box 默认禁止出站并按域名、工具和数据类型授权；高风险动作使用短期能力令牌、幂等键和人工确认。回执记录 toolCallRoot、网络策略和副作用确认。',
+        residual: '提示词注入、供应链后门和内部人员风险无法完全消除，高敏订单仍需专用镜像、独立审计与最小数据披露。',
       },
       {
-        title: '越权复用、数据泄露与推断攻击',
-        failure: '模型或 Agent 通过出站网络、日志、缓存、提示词注入或过细输出带走原始数据，也可能在任务结束后继续留存和复用。',
-        solution: '最小字段授权、默认禁止出站、短期凭证、隔离执行、输出过滤、查询预算和可撤销密钥共同控制；高敏数据增加 TEE 或多方计算，并把保留与删除证明纳入挑战证据。',
-        residual: '硬件侧信道、内部人员和模型记忆无法被完全消除；极高敏数据仍需要线下合规审查、额度限制和人工批准。',
+        title: '所有者自交易制造租赁量与 PoI',
+        failure: '同一控制方创建租用账户、运行智能体并控制 Validator，可循环资金制造收入、成功率和候选权重。',
+        solution: '要求真实预算托管、独立业务证据、关联账户合并、任务类别封顶与随机 Validator；低价值关联订单降低信誉与 PoI 贡献。',
+        residual: '链下控制关系无法完全识别，信誉和 PoI 只能作为有界风险信号，高权重服务仍需身份成本与持续审计。',
       },
     ],
-    sources: [sources.dataTerms, sources.dataTwenty, sources.trustedDataSpacePlan, sources.trustedDataSpaceTech, sources.odrl, sources.contracts, sources.agentSecurity],
+    sources: [sources.did, sources.a3s, sources.a3sBox, sources.a3sPower, sources.contracts, sources.agentSecurity],
   },
   'execution-boundary': {
     implementation: [
@@ -396,81 +401,81 @@ export const speakerGuideDetails = {
   'system-architecture': {
     implementation: [
       {
-        title: '把 AP2 授权映射为 ACVM 需求，不改写 AP2',
-        mechanism: '适配器验证 Intent Mandate 或 Cart Mandate 的签名、主体、范围和有效期，计算 mandateHash 并写入 SignedDemand。ACVM 另加 resultSpecRoot、verificationPolicyRoot、budget、deadline 和 disputePolicy；AP2 负责授权与支付可追责性，ACVM 负责履约结果。',
-        acceptance: '官方 AP2 测试向量能通过签名与 schema 校验；mandateHash、需求主体或支付范围不匹配时任务不能入池。没有 AcceptedResult 时，AP2 授权本身不能触发 ACVM 结果费。',
+        title: '订单规则与资金池同时冻结',
+        mechanism: 'SignedDemand 绑定 taskId、contractRoot、resultSpecRoot、verificationPolicyRoot、splitRoot、deadline、nonce 与需求方签名。Escrow 分开记录 ResultPool、VerificationPool 和各责任方 Bond，执行开始后不能单方改动。',
+        acceptance: '资金守恒检查在任务创建时通过；预算未足额托管、splitRoot 总和不等于 ResultPool、规则版本缺失或 nonce 重复时，订单不能进入执行队列。',
       },
       {
-        title: 'A3S 是实际执行底座，不是架构占位符',
-        mechanism: 'A3S Flow 记录可重放工作流；Runtime 用 caller-owned request ID 和持久回执管理 Task / Service；Event 保存事件历史；Box 明确选择 MicroVM 或 Sandbox；Power 绑定模型、环境、nonce 与执行回执；Gateway / Sentry 管协议入口和安全控制。ACVM Adapter 将这些记录归一为 ExecReceipt。',
-        acceptance: '故障测试在步骤执行后、回执提交前杀进程，恢复后不得重复副作用；ExecReceipt 必须能追到 A3S runId、requestId、artifact digest、policy digest 和证明引用。缺少任一绑定字段则不能进入业务验收。',
+        title: '双证据生成三态终局裁决',
+        mechanism: '承诺 C 固定 taskId、inputRoot、modelRoot、policyRoot、verifyRule 与 splitRoot；ExecOK = VerifyExec(πexec, C, outputRoot, nonce) 验证 a3s-box / TEE 回执。Validator 对独立证据执行冻结谓词并验签，达到阈值 q 后才令 OutcomeOK 成立。挑战窗口结束后，FinalVerdict 只能是 Accepted、Rejected 或 Fraud。',
+        acceptance: 'Accepted 必须满足 ExecOK 与 OutcomeOK 且 taskKey 未消费；Rejected 表示结果未达标但无可证明造假；Fraud 必须引用可重放的伪证、双签或篡改证据。任何模糊状态都不能触发资金终局。',
       },
       {
-        title: 'Verdict 是执行层与结算层之间的唯一闸门',
-        mechanism: 'A3S 只报告执行事实，不宣布业务成功。ACVM Validator 分别检查 executionEvidence 和 businessEvidence，生成 verdictRoot；底层链或 AVS 只接受版本化 verifier 对该根的确定判断。',
-        acceptance: '替换模型、A3S Provider、支付轨道或底层链后，同一验收测试向量仍得到相同 Verdict；任何 A3S succeeded 状态都不能绕过 AcceptedResult 直接提款。',
+        title: '一个终局函数处理付款、退款、罚没与 PoI',
+        mechanism: 'Settle(taskId, FinalVerdict) 按三条确定路径执行：Accepted 将 ResultPool 按 splitRoot 分账并记录 ValidPoI；Rejected 退回 ResultPool 且不记录 PoI；Fraud 执行责任 Bond 的罚没。VerificationPool 仅按已完成的证据与验证工作支付。',
+        acceptance: '三条路径都满足资金守恒、一次性领取和幂等重放；只有 Accepted 产生 ValidPoI，只有 FraudProof=1 产生 Slash，普通模型误判不能被包装成作恶。',
       },
     ],
     challenges: [
       {
-        title: '三套协议版本会独立演进',
-        failure: 'AP2 schema、A3S receipt 和 ACVM contractRoot 任一升级，都可能让旧任务无法重放或被新验证器误判。',
-        solution: '每个任务固定 ap2Profile、a3sReceiptVersion、acvmContractVersion 和 verifierHash；适配器按版本注册，发布前跑跨版本 golden fixtures，运行中任务禁止隐式升级。',
-        residual: '版本矩阵会增加运维成本，早期试点应只支持一组明确锁定的协议版本。',
+        title: '正常未达标与可证明作恶必须分开',
+        failure: '模型本身存在不确定性；如果结果未达标就罚没，执行方会只接简单任务或把风险全部加到报价中。',
+        solution: '验收规则明确区分 Accepted、Rejected、SLA breach 与 Fraud；Fraud 仅接受双签、伪造证据、隐瞒样本或越权执行等可重放证明。',
+        residual: '边界案例仍需仲裁，仲裁权限、费用和最长时限必须在 SignedDemand 中冻结。',
       },
     ],
     security: [
       {
-        title: 'Mandate 重放与权限过宽',
-        failure: '攻击者把同一授权搬到另一任务、商户或支付轨道，或者利用模糊意图扩大金额和商品范围。',
-        solution: 'mandateHash 做 domain separation，绑定主体、商户、支付轨道、币种、金额上限、有效期、nonce 和 taskId；任何范围扩张必须取得新签名，敏感执行采用最小权限能力令牌。',
-        residual: '自然语言意图仍可能含歧义，高金额任务必须把可执行范围转成结构化字段并允许人工确认。',
+        title: '自交易、重放与关联主体刷量',
+        failure: '同一控制方创建需求方、Worker 和 Validator，并把同一输出提交给多个订单，可能伪造收入、成功率与 PoI。',
+        solution: '要求真实预算托管、taskKey 域隔离、防重放集合、关联账户合并、任务类别封顶和随机 Validator；低价值关联订单降低 PoI 贡献。',
+        residual: '链下控制关系无法完全识别，高权重服务仍需要身份成本、异常图谱和持续人工审计。',
       },
       {
-        title: '执行回执摘要不等于硬件真实性',
-        failure: '攻击者可以自己构造格式正确的 receipt JSON；仅有 SHA-256 只能证明相对某个可信锚点未变化，不能证明运行发生在声明硬件上。',
-        solution: '普通任务用签名 Provider 身份与抽检；高保证任务要求 A3S Power / Box 的远程证明、nonce 新鲜性、可信发布或等价外部 pin，并校验证明链和撤销状态。',
-        residual: 'TEE 厂商、证明服务和签名发布仍是显式信任根，不能包装成无条件密码学真相。',
+        title: 'Validator 串谋与挑战洪泛',
+        failure: '同一故障域的 Validator 可共同签错结果；攻击者也可用廉价挑战长期冻结诚实付款。',
+        solution: '委员会按运营主体、数据源、云区域和证明硬件去相关；挑战者缴纳与复核成本相匹配的 Bond，有效挑战获奖励，无效挑战支付验证成本。',
+        residual: '组织独立性无法完全密码学证明，极高价值订单仍需更多证据源、人工复核和限额。',
       },
     ],
-    sources: [sources.ap2, sources.ap2Overview, sources.ap2Lab, sources.a3s, sources.a3sRuntime, sources.a3sPower, sources.survey],
+    sources: [sources.a3s, sources.a3sBox, sources.a3sPower, sources.contracts, sources.agentSecurity, sources.cometBft, sources.survey],
   },
   'fog-inference': {
     implementation: [
       {
-        title: '可验证调度租约',
-        mechanism: '调度器按地域、延迟、加速卡、价格、数据驻留和证明策略过滤 Worker，随后签发绑定 taskId、镜像哈希、资源上限和到期时间的 lease。',
-        acceptance: 'Worker 在 lease 内回传启动证明；超时、镜像不符或资源声明不匹配即撤销，调度器转交备用节点。',
+        title: 'a3s-box 把任务固定到本地隔离实例',
+        mechanism: '调度器签发 lease = H(taskId ∥ imageRoot ∥ resourcePolicy ∥ deadline)。a3s-box 在数据现场创建专用内核 MicroVM，挂载只读模型与临时数据卷，并按 netPolicyRoot、工具白名单和资源上限执行。',
+        acceptance: '实际后端、镜像、网络策略、卷、CPU、内存和生命周期都与 lease 一致；运行中不能静默降级为共享内核，任务结束后临时卷、密钥和进程被清理。',
       },
       {
-        title: '证明环境而不是公开数据',
-        mechanism: '可信执行环境以挑战 nonce 生成远程证明，绑定测量值、镜像哈希和临时加密公钥。需求方只向通过证明的公钥加密输入，结果以 outputRoot 和加密产物返回。',
-        acceptance: 'Verifier 检查证明签发链、新鲜 nonce、允许的测量值和安全版本；过期或被撤销的平台证书不接受。',
+        title: '原始数据留在隔离域，外部只验回执',
+        mechanism: '摄像头、传感器和本地日志只进入 a3s-box 数据卷；外部收到绑定 taskId、modelRoot、envRoot、outputRoot、nonce 与执行策略的 ExecReceipt，以及独立业务证据。高敏任务可叠加 a3s-power / TEE 保护使用中数据。',
+        acceptance: '出站网络测试不能传出原始字节、Prompt 或完整日志；ACVM 能验证回执签名、策略根、输出根和业务证据，但无法通过公共接口读取本地原始数据。',
       },
     ],
     challenges: [
       {
-        title: '异构硬件与可用性',
-        failure: '不同 TEE、驱动和 GPU 组合的证明格式不同；严格白名单会使节点不足，宽松又扩大攻击面。',
-        solution: '用统一 Evidence API 适配厂商证明，策略按任务敏感度分级；高敏任务只用审核组合并保留跨厂商备用池，普通任务可采用抽样复算。',
-        residual: '硬件供应集中和补丁窗口无法由协议消除，必须把可用容量和撤销演练纳入 SLA。',
+        title: '现场节点资源有限且环境异构',
+        failure: '厂区节点的内核、驱动、加速卡和网络条件不同，严格策略可能找不到可运行节点，宽松策略又会扩大数据暴露面。',
+        solution: '按任务敏感度预注册可接受的 a3s-box 后端、镜像和资源档位；调度器保留同地域备用节点，普通任务允许 Sandbox 但必须由订单显式选择。',
+        residual: '现场硬件故障和补丁窗口无法由协议消除，容量、切换条件与最长中断时间仍需写入 SLA。',
       },
     ],
     security: [
       {
-        title: '证明回放、降级与侧信道',
-        failure: '恶意 Worker 重放旧证明、降级到有漏洞固件，或通过缓存和时间侧信道窃取数据。',
-        solution: 'nonce 绑定 taskId 和 lease；校验安全版本与撤销状态；禁用调试、限制共享资源、最小化驻留时间。高价值任务在不同厂商节点重复执行或采用 MPC，避免单点 TEE 信任。',
-        residual: '远程证明只能说明某个测量环境启动，不能证明芯片无后门或运行期无侧信道。',
+        title: '后端降级、卷残留与跨任务读取',
+        failure: 'Worker 把 MicroVM 降级为共享内核、复用上一任务的数据卷，或在清理失败后让后续任务读取残留内容。',
+        solution: 'a3s-box 把后端代际、卷 ID、策略根和清理回执写入生命周期事件；恢复必须沿用原后端，清理失败时节点隔离并停止接单。',
+        residual: '主机固件、存储控制器和运维人员仍是显式信任边界，高敏数据需叠加磁盘加密、TEE 或专用节点。',
       },
       {
         title: '恶意镜像、模型供应链与数据外泄',
         failure: '签名镜像依赖被投毒，或 Agent 借合法网络工具把输入发往外部。',
-        solution: '镜像和模型使用可复现构建、SBOM、签名与 allowlist；默认关闭出站网络，按域名和数据类型授权。密钥短期注入，任务结束后销毁并记录证明。',
+        solution: '镜像和模型使用可复现构建、SBOM、签名与 allowlist；a3s-box 默认关闭出站网络，按域名、工具和数据类型授权。密钥短期注入，任务结束后销毁并记录清理回执。',
         residual: '供应链审计只能降低概率，关键任务还需多实现比对和异常输出检测。',
       },
     ],
-    sources: [sources.a3s, sources.a3sPower, sources.agentSecurity, sources.survey],
+    sources: [sources.a3s, sources.a3sBox, sources.a3sPower, sources.agentSecurity, sources.survey],
   },
   'poi-proof': {
     implementation: [
@@ -695,17 +700,17 @@ export const speakerGuideDetails = {
     implementation: [
       {
         title: 'Rust Runtime 只执行确定性状态转换',
-        mechanism: '原生节点把 DeployContract、OpenInferenceTask、SubmitExecReceipt、SubmitVerdict、ResumeContract、Settle 和 RecordPoI 定义为版本化交易。Runtime 固定编码、验签、根承诺、防重放与状态转换；P2P、交易池、状态数据库和区块执行可参考 Rust 区块链 SDK 与 rust-libp2p 组件实现。',
+        mechanism: '原生节点把 DeployContract、OpenInferenceTask、SubmitExecReceipt、SubmitVerdict、ResumeContract、Settle 和 RecordPoI 定义为版本化交易。任务根 T = H(taskId ∥ modelRoot ∥ inputRoot ∥ policyRoot)，状态按 Requested → AwaitingInference → Accepted → Resumed / Settled 单向推进。',
         acceptance: '所有全节点对同一区块重放后得到相同 stateRoot；模型推理、私有数据和外部工具不进入同步区块执行。',
       },
       {
         title: 'PoI Worker 是链上 ACVM 的推理服务层',
-        mechanism: 'Agentic Contract 发布绑定 taskId、modelRoot、inputRoot、policyRoot、预算、截止时间和 Validator 规则的 InferenceTask，并进入 AwaitingInference。PoI Worker 使用 a3s-box 固定执行边界、使用 a3s-power 完成隐私推理，提交 ExecReceipt；AcceptedResult 通过后 Runtime 恢复合约状态。',
+        mechanism: 'Agentic Contract 发布 T 并进入 AwaitingInference。PoI Worker 使用 a3s-box 固定执行边界、使用 a3s-power 完成隐私推理，提交 rExec = SignW(T ∥ outputRoot ∥ πexec ∥ nonce)；Validator 形成 R = QC(H(T ∥ rExec ∥ verdictRoot))。',
         acceptance: '同一 taskId 的合格结果只能被消费一次；合约能读取规范化输出或 outputRoot，继续生成业务状态、工具意图、付款与 splitRoot 分账。',
       },
       {
         title: '同一次有效推理同时形成服务收益与 PoI',
-        mechanism: 'AcceptedResult 触发结果费，同时按 SignedDemand、ExecutionEvidence、AcceptedResult 和 UniqueTaskKey 派生 ValidPoI。PoI 经过任务类别归一、封顶和衰减后只形成候选提议权重；VRF 负责抽签，BFT 法定人数负责区块终局。',
+        mechanism: 'Verify(R) 且 taskKey 未消费时，Sₙ₊₁ = δACVM(Sₙ, outputRoot, AcceptedResult) 恢复合约并结算；PoIₙ₊₁ = UpdateBounded(PoIₙ, ValidPoI) 同步更新有界贡献。VRF 负责抽签，BFT 法定人数负责区块终局。',
         acceptance: '服务结算、PoI 记录与状态恢复引用同一 taskId 和 verdictRoot；重复任务、退款或被挑战撤销的结果不能继续累积有效权重。',
       },
     ],
@@ -744,91 +749,5 @@ export const speakerGuideDetails = {
       },
     ],
     sources: [sources.polkadotSdk, sources.rustLibp2p, sources.a3sBox, sources.a3sPower, sources.chainOpera, sources.vrf, sources.cometBft, sources.dataAvailability],
-  },
-  'security-boundaries': {
-    implementation: [
-      {
-        title: '按资产—入口—控制—恢复做威胁模型',
-        mechanism: '对预算、结果、PoI、密钥和隐私数据分别列出攻击者目标；每条路径至少有预防、检测和恢复措施，并指定可观测指标与负责人。',
-        acceptance: '上线门槛不是“做过审计”，而是关键威胁都有可执行测试、报警阈值、暂停权限和恢复演练记录。',
-      },
-      {
-        title: '密钥与治理分权',
-        mechanism: 'Worker、Validator、升级、暂停、资金和桥接使用不同密钥；高权限密钥进入 HSM/硬件钱包，多签成员跨机构，变更带时间锁。',
-        acceptance: '演练单个密钥失守、成员离线和全网暂停；系统应能吊销角色而不改写已终局任务。',
-      },
-    ],
-    challenges: [
-      {
-        title: '“多个 Validator”可能只是同一个故障域',
-        failure: '表面上有五个节点，实际共用云账号、RPC、数据源、代码和运营团队，一次故障就全部失真。',
-        solution: '登记运营主体、云区域、客户端、证明硬件和数据源；委员会抽样按故障域去相关。安全看板展示有效独立数，而不是只数地址。',
-        residual: '组织关系很难完全验证，需要合同披露、随机审计和经济惩罚共同约束。',
-      },
-    ],
-    security: [
-      {
-        title: '自交易、串谋与贿赂',
-        failure: '需求方、Worker 和 Validator 隐蔽关联，或攻击者用链下贿赂换取通过票。',
-        solution: '资金与身份图谱只做风险分层；委员会临近验收才随机揭示；Validator 锁定高于可得贿赂的保证金，投票和证据公开可挑战，单主体权重封顶。',
-        residual: '无法证明所有链下关系，极高价值任务需要更多独立证据和人工合规。',
-      },
-      {
-        title: '审查、拒绝服务与挑战洪泛',
-        failure: '攻击者堵塞任务队列、阻止挑战上链，或用大量无效挑战拖延所有付款。',
-        solution: '请求先付费并限速；挑战者缴纳与验证成本相关的 bond；多入口广播、优先通道和自动延长挑战期。核心合约避免无界循环，批量任务可分段结算。',
-        residual: '链级拥堵无法完全规避，应为长时间停机定义退款和线下争议流程。',
-      },
-      {
-        title: '治理捕获与紧急权限滥用',
-        failure: '管理员以“修复漏洞”为由修改权重、替换 Validator 或转移托管资金。',
-        solution: '参数、代码、成员和资金权限分开；常规变更走多签时间锁，紧急暂停只能冻结不能转账。所有动作公开事件，恢复需更高门槛并给用户退出期。',
-        residual: '紧急治理是明确的信任假设，演示中不能把它包装成纯算法自治。',
-      },
-    ],
-    sources: [sources.contracts, sources.agentSecurity, sources.cometBft, sources.survey],
-  },
-  'economy-roles': {
-    implementation: [
-      {
-        title: '托管分账瀑布',
-        mechanism: '预算拆成结果池、数据或执行费、证据费、验证费、链上费和安全准备金。GEO 的结果池可付给单一 Worker；可信数据空间可按 splitRoot 分给数据提供方、模型方和运营方。Accepted 释放结果池；正常未达标只退结果池；Fraud 才罚保证金。',
-        acceptance: '会计不变量覆盖三条路径，任何状态下资产都可归属；正常未达标与可证明作恶使用不同错误码和资金结果，所有分账之和严格等于对应资金池。',
-      },
-      {
-        title: '用攻击成本反推保证金',
-        mechanism: 'Worker bond 至少覆盖一次可获不当收益与调查成本；Validator bond 按其可影响的在途订单上限计算。大额订单提高委员会规模或分阶段验收。',
-        acceptance: '定期做偿付能力压力测试：同时争议、资产价格下跌和链上 gas 飙升时，准备金仍能支付挑战与退款。',
-      },
-    ],
-    challenges: [
-      {
-        title: '不能把模型不确定性都当作作恶',
-        failure: '如果任何未达标都罚没，Worker 会提高报价或只接简单任务，市场反而失去有效供给。',
-        solution: '区分 normal miss、SLA breach 和 fraud：正常未达标不拿结果费；超时按 SLA 扣款；只有双签、伪证或隐瞒样本等可验证行为才罚没。',
-        residual: '边界案例仍需仲裁，仲裁费和时限要在签约时写明。',
-      },
-    ],
-    security: [
-      {
-        title: '贿赂与保证金不足',
-        failure: 'Validator 可获贿赂高于被罚金额，或资产价格暴跌后保证金不再覆盖风险。',
-        solution: '按在途风险动态提高 bond，使用流动性好且设置折扣的抵押品；随机委员会和延迟解押延长追责窗口。单次可影响金额不得超过有效保证金的倍数上限。',
-        residual: '极端行情仍可能穿透抵押，需限额、保险准备金和暂停新增大单。',
-      },
-      {
-        title: '挑战骚扰与拖延付款',
-        failure: '竞争对手不断提交廉价挑战，耗尽验证资源并拖垮 Worker 现金流。',
-        solution: '挑战 bond 随证据成本定价；无效挑战支付复核费用，成功挑战退 bond 并领取罚没奖励。重复理由合并处理，挑战窗口到期后确定终局。',
-        residual: '高 bond 会阻挡资金较少的诚实挑战者，可由独立安全池代垫但需防止其被捕获。',
-      },
-      {
-        title: '抢跑、排序权与 MEV',
-        failure: '排序者看见高价值任务后抢先注册相似需求，或审查挑战和结算交易以提取收益。',
-        solution: '敏感参数先承诺后揭示，批量竞价或统一截止时间减少先到优势；挑战提供强制入口，结算价格不依赖单区块可操纵的现货值。',
-        residual: '承诺—揭示增加一轮延迟，且无法消除跨域信息泄露；高价值任务应优先隐私交易入口。',
-      },
-    ],
-    sources: [sources.dataTwenty, sources.trustedDataSpacePlan, sources.contracts, sources.cometBft, sources.survey],
   },
 } as const satisfies Record<ScreenId, SpeakerGuideDetails>;

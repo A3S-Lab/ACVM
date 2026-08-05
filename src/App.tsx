@@ -11,7 +11,6 @@ import { SpeakerGuide } from './components/SpeakerGuide';
 import ProductValueDeck from './content/01-product-value.mdx';
 import ProductCoreDeck from './content/02-product-core.mdx';
 import ProductTrustDeck from './content/03-product-trust.mdx';
-import ProductEconomicsDeck from './content/04-product-economics.mdx';
 import ProductDeliveryDeck from './content/06-product-delivery.mdx';
 import { chapterForScreen, navigation, screens } from './deck';
 
@@ -502,7 +501,6 @@ export function App() {
         <ProductValueDeck />
         <ProductCoreDeck />
         <ProductTrustDeck />
-        <ProductEconomicsDeck />
         <ProductDeliveryDeck />
       </main>
 

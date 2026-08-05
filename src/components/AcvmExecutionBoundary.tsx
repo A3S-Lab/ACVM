@@ -1,24 +1,54 @@
-import { Icon } from './Icons';
+import { Icon, type IconName } from './Icons';
 import { LearningPanel } from './LearningPanel';
 
 const trustStages = [
-  ['01', '规则冻结', 'Contract Root', '目标 · 权限 · 验收 · 分账', 'lock'],
-  ['02', '执行证明', 'Exec Receipt', '代码 · 模型 · 环境 · nonce', 'terminal'],
-  ['03', '结果证明', 'Outcome Evidence', '业务观测 · 复测 · 签章', 'eye'],
-  ['04', '确定性验收', 'Accepted Result', '验签 · 法定人数 · 防重放', 'shield'],
-] as const;
+  {
+    index: '01',
+    title: '冻结规则承诺',
+    detail: '任务、输入、模型、策略、验收与分账在执行前固定',
+    formula: 'C = H(taskId ∥ inputRoot ∥ modelRoot ∥ policyRoot ∥ verifyRule ∥ splitRoot)',
+    icon: 'lock',
+  },
+  {
+    index: '02',
+    title: '验证链下执行',
+    detail: '回执绑定同一承诺、输出根与本次 nonce',
+    formula: 'ExecOK = VerifyExec(πexec, C, outputRoot, nonce)',
+    icon: 'terminal',
+  },
+  {
+    index: '03',
+    title: '验证业务结果',
+    detail: 'Validator 验签后按冻结谓词检查独立业务证据',
+    formula: 'OutcomeOK ⇔ Σᵥ 𝟙[VerifySig(σᵥ) ∧ P(result,eᵥ)] ≥ q',
+    icon: 'eye',
+  },
+  {
+    index: '04',
+    title: '生成终局裁决',
+    detail: 'taskKey 绑定任务、输出与 nonce，保证只消费一次',
+    formula: 'taskKey = H(taskId ∥ outputRoot ∥ nonce); Accepted = ExecOK ∧ OutcomeOK ∧ ¬Spent(taskKey)',
+    icon: 'shield',
+  },
+] as const satisfies readonly {
+  index: string;
+  title: string;
+  detail: string;
+  formula: string;
+  icon: IconName;
+}[];
 
 export function AcvmExecutionBoundaryArchitecture() {
   return (
-    <LearningPanel code="AGENTIC CONTRACT / TRUST CHAIN" status="EXECUTION PROOF ≠ OUTCOME PROOF" className="agentic-trust-panel">
-      <div className="agentic-trust-flow" aria-label="链下 Agentic Contract 从规则冻结、执行证明、结果证明到确定性验收的证据链">
-        {trustStages.map(([index, title, output, detail, icon], stageIndex) => (
-          <span className={`agentic-trust-fragment is-stage-${stageIndex + 1}`} key={index}>
+    <LearningPanel code="Agentic Contract / 链下可信算法" status="执行证明与结果证明分别验证" className="agentic-trust-panel principle-panel">
+      <div className="agentic-trust-flow" aria-label="链下计算先冻结规则承诺，再分别验证执行证明和业务结果，最后检查防重放并生成终局裁决">
+        {trustStages.map((stage, stageIndex) => (
+          <span className={`agentic-trust-fragment is-stage-${stageIndex + 1}`} key={stage.index}>
             <section>
-              <header><b>{index}</b><Icon name={icon} /></header>
-              <strong>{title}</strong>
-              <small>{detail}</small>
-              <code>{output}</code>
+              <header><b>{stage.index}</b><Icon name={stage.icon} /></header>
+              <strong>{stage.title}</strong>
+              <small>{stage.detail}</small>
+              <code>{stage.formula}</code>
             </section>
             {stageIndex < trustStages.length - 1 ? <i aria-hidden="true">→</i> : null}
           </span>
@@ -26,11 +56,8 @@ export function AcvmExecutionBoundaryArchitecture() {
       </div>
 
       <footer className="agentic-trust-rule">
-        <span><Icon name="terminal" /><strong>执行证明</strong><small>确认按约运行</small></span>
-        <i>≠</i>
-        <span><Icon name="eye" /><strong>结果证明</strong><small>确认业务目标达标</small></span>
-        <i>→</i>
-        <b>AcceptedResult</b>
+        <code>Sₙ₊₁ = δACVM(Sₙ, AcceptedResult)</code>
+        <span><Icon name="check" /><strong>节点重验公式与证据</strong><small>不在区块内重跑模型</small></span>
       </footer>
     </LearningPanel>
   );

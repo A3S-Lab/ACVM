@@ -1,7 +1,9 @@
 import { GeoVerificationArchitecture, SocialSimulationSimpleArchitecture } from '../components/CoreUseCaseAnimations'
+import { AgentResolutionArchitecture } from '../components/AgentResolutionArchitecture'
+import { FogInferenceArchitecture } from '../components/FogInferenceArchitecture'
 import { LessonChapter } from '../components/LessonChapter'
 import { PoiConsensusArchitecture } from '../components/ProductMechanismArchitecture'
-import { TrustedDataSpaceArchitecture } from '../components/ProductNarrativeArchitecture'
+import { AgentRentalArchitecture } from '../components/ProductNarrativeArchitecture'
 
 <LessonChapter
   id="geo-verification"
@@ -15,13 +17,37 @@ import { TrustedDataSpaceArchitecture } from '../components/ProductNarrativeArch
 </LessonChapter>
 
 <LessonChapter
-  id="data-space"
-  className="trusted-data-space-screen"
-  eyebrow="03 / 可信数据空间"
-  title="多方数据共同形成可用的数据产品"
-  accent="结果达标，ACVM 按约分账"
-  body="空间记录各方授权、用数和谱系，达标后按 splitRoot 分配收益。"
-  visual={<TrustedDataSpaceArchitecture />}
+  id="fog-inference"
+  className="fog-screen"
+  eyebrow="03 / 雾计算执行"
+  title="雾计算让敏感数据留在现场"
+  accent="数据在 a3s-box 内计算"
+  body="a3s-box 在现场节点创建 MicroVM，限制网络、文件和工具权限。原始数据只在隔离域内计算，对外仅提交结果、回执和业务证据。"
+  figureLabel="本地数据 → a3s-box 隔离执行 → 签名回执 → ACVM"
+  visual={<FogInferenceArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="ans"
+  className="ans-screen"
+  eyebrow="03 / ANS 服务发现"
+  title="ANS 统一发现并核验服务"
+  accent="先确认服务身份，再创建任务订单"
+  body="服务卡公开能力、接口和调用条件；调用方核验签名与撤销状态后再下单。"
+  figureLabel="签名服务卡 → 已核验端点 → ACVM 订单"
+  visual={<AgentResolutionArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="agent-rental"
+  className="agent-rental-screen"
+  eyebrow="03 / 智能体服务租赁"
+  title="智能体按结果提供服务"
+  accent="所有权不转移，只开放服务能力"
+  body="所有者保留模型、Prompt 和私有数据；租用方锁定任务与验收规则，ACVM 在结果通过后付款。"
+  visual={<AgentRentalArchitecture />}
 >
 </LessonChapter>
 
@@ -41,8 +67,8 @@ import { TrustedDataSpaceArchitecture } from '../components/ProductNarrativeArch
   className="poi-consensus-screen"
   eyebrow="04 / ACVM 核心算法"
   title="ACVM 核心算法公式"
-  accent="先归一和封顶，再进入抽签"
-  body="有效 PoI 按任务类别归一并衰减，形成有界候选权重；VRF 选择提议者，BFT 完成终局。"
+  accent="不同任务先换算，再公平抽签"
+  body="有效 PoI 先按任务类别换算并限制上限，随后由 VRF 选出候选者，BFT 完成最终确认。"
   visual={<PoiConsensusArchitecture />}
 >
 </LessonChapter>

@@ -31,9 +31,9 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
   className="intelligence-screen"
   eyebrow="02 / PoI 结果凭证"
   title="PoI 是结果验收后的结算凭证"
-  accent="签名需求、结果、执行与唯一性"
-  body="四项条件同时成立才生成 PoI；它可触发单方付款，也可按 splitRoot 为多方分账。"
-  figureLabel="DEMAND · RESULT · EXECUTION · FRESHNESS"
+  accent="只有真实任务和有效结果才能形成 PoI"
+  body="订单、执行回执、结果验收和防重放同时通过后，ACVM 才生成可付款、可计量的 PoI。"
+  figureLabel="真实需求 · 执行证明 · 结果验收 · 防重放"
   visual={<IntelligenceProofArchitecture />}
 >
 </LessonChapter>
@@ -42,10 +42,10 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
   id="execution-boundary"
   className="acvm-execution-boundary-screen"
   eyebrow="02 / 可信链下执行"
-  title="链下 Agentic Contract 的可信闭环"
-  accent="过程证明与结果证明各司其职"
-  body="合约根冻结规则；执行证明确认按约运行，独立业务证据确认结果达标，链上只重放确定性验证与状态转换。"
-  figureLabel="CONTRACT ROOT → EXECUTION PROOF → OUTCOME PROOF → FINALITY"
+  title="链下计算采用双证据验收"
+  accent="先证明按约执行，再证明结果达标"
+  body="a3s-box 或 TEE 证明任务绑定的执行环境；Validator 再核验独立业务证据，全部条件成立后才推进链上状态。"
+  figureLabel="规则承诺 → 执行验证 → 结果验证 → 确定性终局"
   visual={<AcvmExecutionBoundaryArchitecture />}
 >
 </LessonChapter>

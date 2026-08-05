@@ -19,16 +19,14 @@ const mainlineIds = [
   'poi-proof',
   'execution-boundary',
   'geo-verification',
-  'data-space',
+  'fog-inference',
+  'ans',
+  'agent-rental',
   'simulation',
   'poi-consensus',
   'system-architecture',
-  'economy-roles',
-  'security-boundaries',
 ];
 const appendixIds = [
-  'ans',
-  'fog-inference',
   'a3s-box',
   'a3s-power',
   'deployment-modes',
@@ -77,11 +75,11 @@ const missing = expectedSlideIds.filter((id) => !actualSlideIds.includes(id));
 const unexpected = actualSlideIds.filter((id) => !expectedSlideIds.includes(id));
 const orderMatches = JSON.stringify(expectedSlideIds) === JSON.stringify(actualSlideIds);
 
-if (screenIds.length !== 18) {
-  throw new Error(`Expected an 18-slide deck with one cover, eleven mainline slides, five appendix slides, and one native-chain slide; found ${screenIds.length}`);
+if (screenIds.length !== 16) {
+  throw new Error(`Expected a 16-slide deck with one cover, eleven mainline slides, three appendix slides, and one native-chain slide; found ${screenIds.length}`);
 }
-if (contentFiles.length !== 5) {
-  throw new Error(`Expected five product-deck MDX groups; found ${contentFiles.length}`);
+if (contentFiles.length !== 4) {
+  throw new Error(`Expected four product-deck MDX groups; found ${contentFiles.length}`);
 }
 if (duplicates.length || missing.length || unexpected.length || !orderMatches) {
   throw new Error(JSON.stringify({ duplicates, missing, unexpected, orderMatches }, null, 2));

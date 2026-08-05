@@ -169,7 +169,7 @@ function StepInspector({ step, index, total }: { step: ServiceStep; index: numbe
 
 export function GeoVerificationArchitecture() {
   return (
-    <LearningPanel code="GEO / INDEPENDENT MEASUREMENT" status="ILLUSTRATIVE DATA" className="geo-proof-simple">
+    <LearningPanel code="GEO / 独立复测" status="示例数据" className="geo-proof-simple">
       <div className="geo-proof-rule">
         <span><small>冻结基线</small><strong>14.2%</strong></span>
         <span><small>验收门槛</small><strong>+8pp</strong></span>
@@ -195,32 +195,32 @@ export function GeoVerificationArchitecture() {
 
 export function SocialSimulationSimpleArchitecture() {
   return (
-    <LearningPanel code="SOCIAL SIMULATION AS A SERVICE" status="PRIVATE INPUT · VERIFIED OUTPUT" className="social-simulation-simple">
+    <LearningPanel code="社会模拟即服务" status="私有输入 · 可验证输出" className="social-simulation-simple">
       <div className="social-simulation-simple-flow" aria-label="私有数据经过本地社会模拟、安全聚合与 ACVM 验收形成可结算结果">
         <section>
           <Icon name="lock" />
-          <small>PRIVATE INPUT</small>
+          <small>私有输入</small>
           <strong>机构、企业与个人数据</strong>
           <span>原始画像与轨迹不出域</span>
         </section>
         <i aria-hidden="true">→</i>
         <section className="is-simulation">
           <Icon name="brain" />
-          <small>SEALED SIMULATION</small>
+          <small>隔离仿真</small>
           <strong>按冻结假设运行</strong>
           <span>模型 · 样本 · 随机种子</span>
         </section>
         <i aria-hidden="true">→</i>
         <section>
           <Icon name="chain" />
-          <small>SECURE AGGREGATION</small>
+          <small>安全聚合</small>
           <strong>只汇总群体指标</strong>
           <span>统计值 · 置信区间</span>
         </section>
         <i aria-hidden="true">→</i>
         <section className="is-accepted">
           <Icon name="shield" />
-          <small>ACVM VERDICT</small>
+          <small>ACVM 裁决</small>
           <strong>验管线与结果回执</strong>
           <span>通过后结算服务费</span>
         </section>

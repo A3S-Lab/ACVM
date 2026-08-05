@@ -1,75 +1,80 @@
 import { Icon, type IconName } from './Icons';
 import { LearningPanel } from './LearningPanel';
 
-const inferenceServiceStages = [
+const nativeAlgorithmStages = [
   {
     index: '01',
-    eyebrow: 'ON-CHAIN ACVM',
+    actor: '链上 ACVM',
     title: '发布推理任务',
-    detail: '模型根 · 输入根 · 验收规则',
-    output: 'InferenceTask',
+    detail: '合约进入 AwaitingInference，区块继续出块',
+    formula: 'T = H(taskId ∥ modelRoot ∥ inputRoot ∥ policyRoot)',
     icon: 'receipt',
     tone: 'chain',
   },
   {
     index: '02',
-    eyebrow: 'POI WORKER',
-    title: '提供模型推理',
-    detail: 'a3s-box · a3s-power',
-    output: 'ExecReceipt',
+    actor: 'PoI Worker',
+    title: '异步提供推理',
+    detail: 'a3s-box 固定边界，a3s-power 保护模型与数据',
+    formula: 'rExec = SignW(T ∥ outputRoot ∥ πexec ∥ nonce)',
     icon: 'brain',
     tone: 'compute',
   },
   {
     index: '03',
-    eyebrow: 'VALIDATOR',
-    title: '验收执行与结果',
-    detail: '运行证明 · 业务证据',
-    output: 'AcceptedResult',
+    actor: 'Validator',
+    title: '形成门限裁决',
+    detail: '分别验证执行证明与业务结果',
+    formula: 'R = QC(H(T ∥ rExec ∥ verdictRoot))',
     icon: 'eye',
     tone: 'verify',
   },
   {
     index: '04',
-    eyebrow: 'ON-CHAIN ACVM',
+    actor: '链上 ACVM',
     title: '恢复合约并结算',
-    detail: '状态转换 · 分账 · 防重放',
-    output: 'ValidPoI',
+    detail: '先验证门限裁决，再用 taskKey 防止重复恢复合约',
+    formula: 'taskKey = H(taskId ∥ outputRoot ∥ nonce); Accept ⇔ Verify(R) ∧ ¬Spent(taskKey)',
     icon: 'shield',
     tone: 'chain',
   },
 ] as const satisfies readonly {
   index: string;
-  eyebrow: string;
+  actor: string;
   title: string;
   detail: string;
-  output: string;
+  formula: string;
   icon: IconName;
   tone: 'chain' | 'compute' | 'verify';
 }[];
 
 export function AcvmNativeChainArchitecture() {
   return (
-    <LearningPanel code="RUST ACVM NATIVE CHAIN" status="ASYNC INFERENCE · DETERMINISTIC FINALITY" className="native-chain-panel">
-      <div className="native-chain-service-flow" aria-label="链上 ACVM 发布推理任务，PoI Worker 通过 a3s-box 和 a3s-power 提供推理服务，Validator 验收后恢复合约状态并生成 ValidPoI">
-        {inferenceServiceStages.map((stage, stageIndex) => (
+    <LearningPanel code="Rust 原生链 / ACVM 异步推理算法" status="推理不阻塞出块，裁决确定性终局" className="native-chain-panel native-chain-algorithm-panel principle-panel">
+      <div className="native-chain-service-flow" aria-label="链上 ACVM 异步发布任务，PoI Worker 提供推理，Validator 形成门限裁决，ACVM 恢复合约并更新 PoI">
+        {nativeAlgorithmStages.map((stage, stageIndex) => (
           <span className={`native-chain-service-fragment is-${stage.tone}`} key={stage.index}>
             <section>
               <header><b>{stage.index}</b><Icon name={stage.icon} /></header>
-              <small>{stage.eyebrow}</small>
+              <small>{stage.actor}</small>
               <strong>{stage.title}</strong>
               <p>{stage.detail}</p>
-              <code>{stage.output}</code>
+              <code>{stage.formula}</code>
             </section>
-            {stageIndex < inferenceServiceStages.length - 1 ? <i aria-hidden="true">→</i> : null}
+            {stageIndex < nativeAlgorithmStages.length - 1 ? <i aria-hidden="true">→</i> : null}
           </span>
         ))}
       </div>
 
+      <div className="native-chain-state-machine">
+        <span><small>链上任务状态</small><code>Requested → AwaitingInference → Accepted → Resumed / Settled</code></span>
+        <b>区块不等待模型</b>
+      </div>
+
       <footer className="native-chain-service-result">
-        <span><Icon name="spark" /><strong>同一次有效推理</strong><small>服务 Agentic Contract，同时生成 ValidPoI</small></span>
-        <i aria-hidden="true">→</i>
-        <b>服务收益 · 有界权重 · VRF / BFT</b>
+        <code>Sₙ₊₁ = δACVM(Sₙ, outputRoot, AcceptedResult)</code>
+        <i aria-hidden="true">+</i>
+        <code>PoIₙ₊₁ = UpdateBounded(PoIₙ, ValidPoI)</code>
       </footer>
     </LearningPanel>
   );

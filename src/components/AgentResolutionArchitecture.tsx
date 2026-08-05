@@ -1,47 +1,84 @@
-import { Icon } from './Icons';
+const leftServices = [
+  { x: 225, y: 76, label: 'GEO' },
+  { x: 334, y: 136, label: '雾计算' },
+  { x: 334, y: 294, label: '诊断' },
+  { x: 225, y: 354, label: '模拟' },
+  { x: 116, y: 294, label: '数据服务' },
+  { x: 116, y: 136, label: 'Web' },
+] as const;
+
+const rightServices = leftServices.map((service) => ({ ...service, x: service.x + 450 }));
+
+const meshEdges = leftServices.flatMap((from, fromIndex) =>
+  leftServices.slice(fromIndex + 1).map((to, edgeIndex) => ({
+    from,
+    to,
+    key: `${fromIndex}-${fromIndex + edgeIndex + 1}`,
+  })),
+);
 
 export function AgentResolutionArchitecture() {
   return (
-    <div className="diagram-panel ans-panel ans-panel-simple">
+    <div className="diagram-panel ans-panel ans-panel-simple principle-panel ans-principle-panel">
       <header className="panel-chrome">
         <span><i /><i /><i /></span>
-        <code>ANS / SIGNED SERVICE DISCOVERY</code>
-        <strong><i /> ILLUSTRATIVE RECORD</strong>
+        <code>ANS / 签名服务发现</code>
+        <strong><i /> 实时核验服务记录</strong>
       </header>
 
-      <div className="ans-simple-flow" aria-label="调用方解析 ANS 服务卡、核验记录并创建 ACVM 结果订单">
-        <section className="ans-simple-query">
-          <Icon name="fingerprint" />
-          <small>CALLER AGENT</small>
-          <strong>查询服务</strong>
-          <code>fog.infer.ans</code>
-        </section>
+      <div className="principle-canvas ans-principle-canvas">
+        <svg className="principle-svg ans-principle-svg" viewBox="0 0 900 430" role="img" aria-labelledby="ans-principle-title ans-principle-desc">
+          <title id="ans-principle-title">ANS 服务发现原理</title>
+          <desc id="ans-principle-desc">左侧服务逐一互联，右侧服务通过签名 ANS 记录完成统一发现、身份核验和能力解析。</desc>
 
-        <i aria-hidden="true">→</i>
+          <path className="ans-divider" d="M450 24V406" />
+          <text className="principle-section-title" x="225" y="28" textAnchor="middle">点对点直连</text>
+          <text className="principle-section-title" x="675" y="28" textAnchor="middle">签名服务目录</text>
 
-        <section className="ans-simple-card">
-          <header><Icon name="chain" /><span><small>SIGNED SERVICE CARD</small><strong>fog.infer.ans</strong></span></header>
-          <div>
-            <span><small>身份</small><b>did:a3s:fog-01</b></span>
-            <span><small>能力</small><b>private.infer/v1</b></span>
-            <span><small>交易条件</small><b>价格 · 有效期 · Validator</b></span>
-          </div>
-        </section>
+          <circle className="ans-orbit" cx="225" cy="215" r="139" />
+          <g className="ans-mesh" aria-hidden="true">
+            {meshEdges.map(({ from, to, key }) => (
+              <line className="ans-mesh-line" x1={from.x} y1={from.y} x2={to.x} y2={to.y} key={key} />
+            ))}
+          </g>
+          <g className="ans-service-nodes is-legacy">
+            {leftServices.map((service) => (
+              <g transform={`translate(${service.x} ${service.y})`} key={service.label}>
+                <circle r="9" />
+                <text className="principle-node-label" textAnchor="middle" y="-17">{service.label}</text>
+              </g>
+            ))}
+          </g>
+          <text className="principle-metric" x="225" y="403" textAnchor="middle">N(N−1)/2 条定制连接</text>
 
-        <i aria-hidden="true">→</i>
+          <circle className="ans-orbit" cx="675" cy="215" r="139" />
+          <g className="ans-hub-links" aria-hidden="true">
+            {rightServices.map((service, index) => (
+              <path className={`ans-hub-line is-route-${index + 1}`} d={`M${service.x} ${service.y}Q675 ${service.y} 675 215`} key={service.label} />
+            ))}
+          </g>
+          <g className="ans-service-nodes is-resolved">
+            {rightServices.map((service) => (
+              <g transform={`translate(${service.x} ${service.y})`} key={service.label}>
+                <circle r="9" />
+                <text className="principle-node-label" textAnchor="middle" y="-17">{service.label}</text>
+              </g>
+            ))}
+          </g>
 
-        <section className="ans-simple-verify">
-          <Icon name="shield" />
-          <small>CALLER VERIFICATION</small>
-          <strong>核验后创建订单</strong>
-          <span>签名 · 撤销状态 · 历史回执</span>
-        </section>
+          <g className="ans-core" transform="translate(675 215)">
+            <rect x="-65" y="-44" width="130" height="88" rx="5" />
+            <text className="principle-kicker" textAnchor="middle" y="-18">签名服务卡</text>
+            <text className="principle-core-title" textAnchor="middle" y="8">ANS</text>
+            <text className="principle-detail" textAnchor="middle" y="29">recordRoot · seq</text>
+          </g>
+          <text className="principle-metric is-good" x="675" y="403" textAnchor="middle">统一发现入口 · 每次调用先核验</text>
+        </svg>
       </div>
 
-      <footer className="ans-simple-boundary">
-        <span><b>ANS</b><small>发现并解析服务</small></span>
-        <i aria-hidden="true">→</i>
-        <span><b>ACVM</b><small>验收结果并触发结算</small></span>
+      <footer className="principle-statusbar ans-principle-statusbar">
+        <code>name → DID → capabilityRoot → endpoint → recordRoot</code>
+        <span>签名 · 有效期 · 撤销状态 · 历史回执</span>
       </footer>
     </div>
   );

@@ -1,38 +1,12 @@
 import { A3sBoxCapabilitiesArchitecture, A3sPowerCapabilitiesArchitecture } from '../components/A3sCapabilitiesArchitecture'
 import { AcvmNativeChainArchitecture } from '../components/AcvmNativeChainArchitecture'
-import { AgentResolutionArchitecture } from '../components/AgentResolutionArchitecture'
-import { FogInferenceArchitecture } from '../components/FogInferenceArchitecture'
 import { LessonChapter } from '../components/LessonChapter'
 import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchitecture'
 
 <LessonChapter
-  id="ans"
-  className="ans-screen"
-  eyebrow="06 · APPENDIX / SERVICE DISCOVERY"
-  title="ANS 提供可验证的服务发现"
-  accent="签名服务卡绑定服务身份"
-  body="调用方核验签名与撤销状态；ANS 负责发现，ACVM 负责验收结算。"
-  figureLabel="APPENDIX / SIGNED SERVICE CARD → VERIFIED A2A ENDPOINT"
-  visual={<AgentResolutionArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="fog-inference"
-  className="fog-screen"
-  eyebrow="06 · APPENDIX / FOG COMPUTING"
-  title="雾节点让数据本地执行、结果可验证"
-  accent="数据留现场，结果可验证"
-  body="任务在隔离雾节点执行，回执绑定模型、环境和 taskId，ACVM 验证结果。"
-  figureLabel="APPENDIX / LOCAL DATA → NEARBY EXECUTION → VERIFIABLE RECEIPT"
-  visual={<FogInferenceArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
   id="a3s-box"
   className="a3s-box-screen"
-  eyebrow="06 · APPENDIX / A3S-BOX"
+  eyebrow="05 / a3s-box"
   title="a3s-box 固定任务的隔离执行边界"
   accent="镜像、资源与生命周期统一管理"
   body="默认使用专用内核 MicroVM，显式选择 Sandbox；运行中不静默切换后端。"
@@ -43,7 +17,7 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
 <LessonChapter
   id="a3s-power"
   className="a3s-power-screen"
-  eyebrow="06 · APPENDIX / A3S-POWER"
+  eyebrow="05 / a3s-power"
   title="a3s-power 提供隐私计算与参数流式推理"
   accent="TEE 保密执行，活跃层参数按层加载"
   body="当前层参数进入可信内存，计算后立即释放；峰值内存约为单层规模，并输出可核验回执。"
@@ -54,11 +28,11 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
 <LessonChapter
   id="deployment-modes"
   className="chains-screen"
-  eyebrow="06 · IMPLEMENTATION / A3S + CHAIN"
+  eyebrow="05 / 国内区块链接入"
   title="ChainAdapter 将 ACVM 接入国内区块链"
   accent="统一映射身份、事件与终局"
   body="A3S 执行结果先进入 ACVM；ChainAdapter 再把标准任务状态映射到目标链。"
-  figureLabel="ACVM STATE → CHAIN ADAPTER → DOMESTIC INFRASTRUCTURE"
+  figureLabel="ACVM 标准状态 → ChainAdapter → 国内区块链基础设施"
   visual={<AcvmIntegrationArchitecture />}
 >
 </LessonChapter>
@@ -66,11 +40,11 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
 <LessonChapter
   id="native-chain"
   className="native-chain-screen"
-  eyebrow="07 · NATIVE CHAIN / RUST"
-  title="PoI 推理计算直接服务链上 ACVM"
-  accent="真实合约需求产生有效推理工作量"
-  body="ACVM 异步发布推理任务；验收结果恢复合约状态，同时完成结算、PoI 计量与有界候选权重更新。"
-  figureLabel="ACVM TASK → POI INFERENCE SERVICE → ACCEPTED RESULT → VALID POI"
+  eyebrow="06 / Rust 原生链"
+  title="原生 ACVM 异步执行推理任务"
+  accent="PoI Worker 为链上合约提供推理服务"
+  body="区块只处理任务、回执和确定性状态转换，不等待模型；AcceptedResult 恢复合约，并同步完成结算与有界 PoI 更新。"
+  figureLabel="ACVM 任务 → PoI 推理服务 → AcceptedResult → 状态恢复与 ValidPoI"
   visual={<AcvmNativeChainArchitecture />}
 >
 </LessonChapter>

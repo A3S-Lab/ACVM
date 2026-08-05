@@ -9,7 +9,7 @@ const productModules = [
 
 export function ProductDefinitionArchitecture() {
   return (
-    <LearningPanel code="ACVM / VERIFIED OUTCOME" status="ONE PAYMENT DECISION" className="product-definition-panel is-simple">
+    <LearningPanel code="ACVM / 结果验收" status="一次裁决决定一次付款" className="product-definition-panel is-simple">
       <div className="decision-flow" aria-label="事前定规则、事后做验收、按裁决付款">
         {productModules.map((module, index) => (
           <span className="decision-flow-fragment" key={module.code}>
@@ -33,35 +33,44 @@ export function ProductDefinitionArchitecture() {
   );
 }
 
-export function TrustedDataSpaceArchitecture() {
+export function AgentRentalArchitecture() {
   return (
-    <LearningPanel code="MULTI-PARTY DATA / SPLIT" status="TRUSTED DATA SPACE + ACVM" className="trusted-data-space-panel is-simple">
-      <div className="multi-party-data-flow" aria-label="多方数据形成联合数据产品并按有效结果分配收益">
-        <section className="data-contributors">
-          <small>多方数据贡献</small>
-          <div><span>设备厂</span><span>工厂</span><span>维保商</span></div>
+    <LearningPanel code="智能体服务租赁 / 按结果结算" status="所有权始终由服务方保留" className="trusted-data-space-panel agent-rental-panel principle-panel is-simple">
+      <div className="multi-party-data-flow agent-rental-flow" aria-label="智能体所有者发布能力，租用方签署任务，A3S 隔离执行，ACVM 验收并结算">
+        <section>
+          <Icon name="fingerprint" />
+          <small>智能体所有者</small>
+          <strong>发布服务能力</strong>
+          <p>模型 · 工具 · 专业流程</p>
         </section>
         <i aria-hidden="true">→</i>
-        <section className="trusted-data-product">
-          <Icon name="lock" />
-          <small>可信数据空间</small>
-          <strong>联合数据产品</strong>
-          <p>授权 · 用数 · 谱系可核对</p>
+        <section>
+          <Icon name="receipt" />
+          <small>租用方</small>
+          <strong>签署任务订单</strong>
+          <p>目标 · 预算 · 验收规则</p>
+        </section>
+        <i aria-hidden="true">→</i>
+        <section>
+          <Icon name="brain" />
+          <small>A3S 执行域</small>
+          <strong>隔离执行智能体</strong>
+          <p>模型与私有数据不交付</p>
         </section>
         <i aria-hidden="true">→</i>
         <section className="accepted-outcome">
           <Icon name="shield" />
           <small>ACVM</small>
           <strong>验收结果并分账</strong>
-          <p>AcceptedResult · splitRoot</p>
+          <p>AcceptedResult · ValidPoI</p>
         </section>
       </div>
       <div className="data-space-gate">
-        <span>UsageProof</span><b>+</b><span>AcceptedResult</span><i aria-hidden="true">→</i><strong>释放结果池</strong>
+        <span>SignedDemand</span><b>+</b><span>ExecReceipt</span><b>+</b><span>AcceptedResult</span><i aria-hidden="true">→</i><strong>释放结果费</strong>
       </div>
       <footer className="data-space-payees">
-        <small>按签约时冻结的 splitRoot 分配</small>
-        <span>设备厂</span><span>工厂</span><span>维保商</span><span>其他约定参与方</span>
+        <small>组合服务可按 splitRoot 分配</small>
+        <span>智能体所有者</span><span>模型方</span><span>算力方</span><span>数据贡献方</span>
       </footer>
     </LearningPanel>
   );

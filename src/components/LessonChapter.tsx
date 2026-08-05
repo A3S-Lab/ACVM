@@ -9,7 +9,7 @@ import { TechTerm, type TechKey } from './TechTerm';
 const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = {
   'product-snapshot': 'flow',
   'geo-verification': 'proof',
-  'data-space': 'network',
+  'agent-rental': 'network',
   simulation: 'network',
   'useful-work': 'proof',
   'poi-consensus': 'proof',
@@ -22,8 +22,6 @@ const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = 
   'poi-proof': 'proof',
   'deployment-modes': 'chains',
   'native-chain': 'chains',
-  'security-boundaries': 'proof',
-  'economy-roles': 'network',
 };
 
 export type MechanismComparison = {
@@ -132,7 +130,7 @@ export function LessonChapter({
           comparison={comparison}
           terms={terms}
         />
-        <div className="technical-visual lesson-stage">
+        <div className="technical-visual lesson-stage" data-local-scroll>
           <div className="lesson-diagram">{visual}</div>
         </div>
       </div>
