@@ -11,10 +11,10 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
   id="system-architecture"
   className="system-architecture-screen"
   eyebrow="03 · WORKFLOW / ONE ORDER"
-  title="一单 AI 服务怎么跑完？"
-  accent="找服务、锁规则、做推理、验结果、再结算"
-  body="ACVM 用同一个 taskId 串起 ANS、智能体合约、雾节点和 Validator。验收通过后，结果费与 PoI 分别记账。"
-  figureLabel="ASCII MAP / DEMAND → ANS → CONTRACT → FOG → VERDICT → PAY + POI"
+  title="AP2、A3S 与 ACVM 怎么协作？"
+  accent="授权、执行、裁决各由一层负责"
+  body="AP2 提供签名授权，A3S 编排并执行任务，ACVM 固定验收规则并形成裁决；现有链或 AVS 负责终局与结算。"
+  figureLabel="STACK / AUTHORIZATION → A3S EXECUTION → ACVM VERDICT → FINALITY"
   visual={<AcvmServiceWorkflowArchitecture />}
 >
 </LessonChapter>
@@ -73,7 +73,7 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
   eyebrow="03 · WORKFLOW / PROOF OF INTELLIGENCE"
   title="什么样的推理才算贡献？"
   accent="真实订单、通过验收、执行可查、不能重放"
-  body="ACVM 同时检查需求签名、结果裁决、执行证明和 taskKey。四项都通过才生成 PoI；只有 GPU 用量不算。"
+  body="ACVM 同时检查需求签名、结果裁决、执行证明和 taskKey。四项都通过才允许派生 PoI；单笔结果结算不依赖 PoI。"
   figureLabel="POI / DEMAND · RESULT · EXECUTION · FRESHNESS"
   visual={<IntelligenceProofArchitecture />}
 >

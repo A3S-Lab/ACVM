@@ -74,6 +74,74 @@ const sources = {
     label: 'OWASP Agentic Applications Top 10',
     url: 'https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/',
   },
+  ap2: {
+    label: 'Google AP2 官方协议仓库',
+    url: 'https://github.com/google-agentic-commerce/AP2',
+  },
+  ap2Overview: {
+    label: 'Google Cloud AP2 协议说明',
+    url: 'https://cloud.google.com/blog/products/ai-machine-learning/announcing-agents-to-payments-ap2-protocol',
+  },
+  ap2Lab: {
+    label: 'AP2 Lab 中文导读（社区资料）',
+    url: 'https://ap2lab.com/docs/introduction/',
+  },
+  a3s: {
+    label: 'A3S 开源框架与能力边界',
+    url: 'https://github.com/A3S-Lab/a3s',
+  },
+  a3sRuntime: {
+    label: 'A3S Runtime 持久生命周期与回执',
+    url: 'https://github.com/A3S-Lab/Runtime',
+  },
+  a3sPower: {
+    label: 'A3S Power 可验证推理与执行回执',
+    url: 'https://github.com/A3S-Lab/Power',
+  },
+  bittensor: {
+    label: 'Bittensor Yuma 共识权重论文',
+    url: 'https://docs.bittensor.com/papers/BT-Consensus-based-Weights.pdf',
+  },
+  allora: {
+    label: 'Allora 共识与奖励机制',
+    url: 'https://docs.allora.network/learn/consensus-and-rewards',
+  },
+  gensynVerde: {
+    label: 'Gensyn Verde 执行验证边界',
+    url: 'https://blog.gensyn.ai/verde-verification-system-in-production/',
+  },
+  eigenAi: {
+    label: 'EigenAI 确定性推理白皮书',
+    url: 'https://docs.eigencloud.xyz/assets/files/EigenAI_Whitepaper-f1c89ddb88c1e28ccadff250523a273c.pdf',
+  },
+  eigenRestaking: {
+    label: 'EigenLayer Restaking 与 Slashing',
+    url: 'https://docs.eigencloud.xyz/eigenlayer/restakers/concepts/overview',
+  },
+  eigenAvs: {
+    label: 'EigenLayer AVS 任务、Quorum 与挑战示例',
+    url: 'https://github.com/Layr-Labs/incredible-squaring-avs',
+  },
+  chainOpera: {
+    label: 'ChainOpera PoI 协议设计与 L1 路线',
+    url: 'https://paper.chainopera.ai/tokenomics-and-protocol-design/proof-of-intelligence-based-protocol-design-and-evolution-to-an-l1-ai-chain',
+  },
+  bsn: {
+    label: 'BSN 链下系统网关接入说明',
+    url: 'https://zhuanwang.bsnbase.com/static/tmpFile/bzsc/developer/5-4-1.html',
+  },
+  sparkChain: {
+    label: '星火·链网 BIF-Core 开放文档',
+    url: 'https://bif-doc.readthedocs.io/zh-cn/1.0.0/app/brief.html',
+  },
+  chainMaker: {
+    label: '长安链技术平台与国密能力',
+    url: 'https://docs.chainmaker.org.cn/quickstart/%E9%95%BF%E5%AE%89%E9%93%BE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%BB%8B%E7%BB%8D.html',
+  },
+  fisco: {
+    label: 'FISCO BCOS 权限治理体系',
+    url: 'https://fisco-bcos-doc.readthedocs.io/zh-cn/release-3/docs/design/security_control/committee_design.html',
+  },
 } as const satisfies Record<string, GuideSource>;
 
 export const speakerGuideDetails = {
@@ -225,42 +293,73 @@ export const speakerGuideDetails = {
     ],
     sources: [sources.survey, sources.agentSecurity],
   },
-  'useful-work': {
+  'geo-poi-boundary': {
     implementation: [
       {
-        title: '把业务贡献与最终共识拆开',
-        mechanism: 'AcceptedResult 先进入 PoI 池，按任务类别归一、质量加权、时间衰减并按主体封顶。它只形成下一 epoch 的候选权重；VRF 抽签和 BFT 投票另行执行。',
-        acceptance: '任何节点都能从终局裁决重算 poiRoot 和候选权重；单个 PoI 无法直接让区块终局。',
+        title: '默认关闭 PoI，按协作边界逐级启用',
+        mechanism: '把方案拆成三档：单组织用签名报告与审计库；跨组织用 ACVM 状态机和现有链终局；只有开放 Worker、开放 Validator、跨任务奖励同时成立时，才在 VerdictFinalized 后派生 PoI。',
+        acceptance: '架构决策记录必须回答参与方是否互不信任、是否有共同账本需求、贡献是否跨任务累计。任一条件不成立，PoI 开关保持关闭且不能影响付款。',
       },
       {
-        title: '保留稀缺投入',
-        mechanism: 'Worker 付出 GPU、数据和服务成本，Validator 与挑战者锁定保证金。攻击者要制造权重，必须同时支付真实任务成本并承担被拒绝、罚没和权重封顶。',
-        acceptance: '试点阶段测量制造一单位有效 PoI 的最低成本，并与潜在区块收益比较；攻击成本不足时不开放 PoI 加权。',
+        title: '业务闭环与网络闭环使用两套不变量',
+        mechanism: '业务不变量只要求 SignedDemand、Evidence、Verdict 和 Settlement；网络不变量另要求 uniqueTaskKey、贡献归一、权重上限与终局规则。两者通过 verdictRoot 单向连接。',
+        acceptance: '关闭 PoI 后，GEO 订单仍能完整结算；开启 PoI 后，删除或重放贡献记录都不能改变已经终局的业务付款。',
       },
     ],
     challenges: [
       {
-        title: '不同推理任务不可直接相加',
-        failure: '一次昂贵推理、一万次廉价分类和一个高价值 GEO 结果没有天然统一单位。',
-        solution: '按任务类别建立独立基准和质量门槛，先在类别内归一，再用治理上限合并；采用对数或平方根函数削弱大户边际权重。',
-        residual: '权重函数是经济参数，不是数学真理，必须根据攻击成本与市场数据持续校准。',
+        title: '开放网络是否真的带来净收益',
+        failure: '如果首批需求方、Worker 和 Validator 都由同一团队运营，PoI 只增加链上成本、治理参数和攻击面，没有增加可信度。',
+        solution: '先用 permissioned pilot 测量观察成本、争议率、供给集中度和跨机构需求；只有新增独立供给显著降低成本或提高覆盖，才进入 PoI shadow mode。',
+        residual: '早期合作伙伴样本会高估协同意愿，开放网络的经济性必须用对抗性订单重新验证。',
       },
     ],
     security: [
       {
-        title: 'PoW 的多数算力与概率终局',
-        failure: '控制多数算力的攻击者可持续构造更重的分支，重组自己的付款并审查交易；较少确认只能降低、不能消除追赶概率。',
-        solution: '传统做法依赖算力分散、确认深度、全节点独立验块和经济激励。ACVM 不继承哈希竞赛，但仍保留“高成本贡献 + 独立验块”的安全目标。',
-        residual: 'ACVM 把风险从算力多数转移到任务质量、身份关联和 Validator 串谋，风险没有凭空消失。',
-      },
-      {
-        title: '有用工作被伪装成廉价刷量',
-        failure: '攻击者挑最便宜的任务循环调用，以远低于诚实服务价值的成本获得大量权重。',
-        solution: '只接收带托管预算和独立验收的任务；类别内归一、主体封顶、时间衰减，并以真实支付和挑战损失约束刷量。',
-        residual: '若网络奖励高于刷量总成本，攻击仍有利可图，因此奖励上限必须由测得的攻击成本反推。',
+        title: '过早启用 PoI 会把刷单变成共识攻击',
+        failure: '需求方与 Worker 自买自卖，仍能完成形式上的 GEO 订单，再把付款循环成贡献权重。',
+        solution: 'PoI 上线门槛包括独立需求方比例、关联交易率、制造单位权重的最低成本和 Validator 有效独立数；不达标时只结算业务，不产生网络权重。',
+        residual: '组织关联无法由密码学完全识别，因此 PoI 永远不能单独决定付款或 BFT 终局。',
       },
     ],
-    sources: [sources.bitcoin, sources.survey],
+    sources: [sources.survey, sources.contracts, sources.eigenRestaking],
+  },
+  'useful-work': {
+    implementation: [
+      {
+        title: '用同一张工程表比较 proof predicate',
+        mechanism: 'Bittensor / Allora 比较相对质量并分配激励；Gensyn Verde / EigenAI 验证声明模型的忠实执行；EigenLayer AVS 提供可罚没 Operator 安全；ChainOpera 记录广义 AI 贡献。ACVM 的 predicate 是“签名订单的业务结果已按事前规则通过”。',
+        acceptance: '每个比较项必须能回答证明对象、裁决者、经济结果和剩余信任四列；资料未证明的生产能力标成路线或设计，不把白皮书目标写成已交付事实。',
+      },
+      {
+        title: '竞品能力作为可插拔证据或安全层',
+        mechanism: 'ACVM 可以接收 Verde / EigenAI 一类 ExecProof，也可以把 Validator 服务做成 EigenLayer AVS；这些组件只替换 executionEvidence 或 validatorSecurity 接口，不替换 verificationPolicy 和 Verdict。',
+        acceptance: '替换执行证明或 Operator Set 后，同一业务验收测试向量必须得到相同裁决；只有 ACVM 验收策略能触发结果结算。',
+      },
+    ],
+    challenges: [
+      {
+        title: 'PoI 不是行业统一术语',
+        failure: '不同项目用 PoI、incentive consensus、verification 或 AVS 描述不同层级，按名称比较会把预测评分、执行正确和业务验收混在一起。',
+        solution: '评审只比较公开规范中的状态机与 predicate；把“当前主网”“测试网”“研究原型”“未来 L1 路线”分栏，不用代币市值或宣传语代替工程成熟度。',
+        residual: '项目实现会持续变化，正式选型前仍需针对目标版本做代码、部署和经济参数复核。',
+      },
+    ],
+    security: [
+      {
+        title: '质量共识会被评分权和 stake 集中影响',
+        failure: 'Validator / Reputer 的评分、损失函数或 stake 分布被少数主体控制时，相对质量共识可以稳定地产生错误激励。',
+        solution: 'ACVM 不直接复用外部网络的质量分作为 AcceptedResult；外部分数只是一项 evidence，仍需订单指定的数据源、阈值、故障域和挑战路径。',
+        residual: '开放式业务质量最终仍含治理判断，无法被执行证明完全消除。',
+      },
+      {
+        title: '执行正确与经济安全都不能替代业务正确',
+        failure: '可复现执行能忠实地产生错误答案；再质押 Operator 也可能对一个定义错误的任务形成高额 quorum。',
+        solution: 'ACVM 强制拆分 ExecProof、BusinessEvidence 和 VerificationPolicy；EigenLayer slashing 只处罚可客观举证的协议违规，业务争议进入订单约定的复测或仲裁。',
+        residual: '若验收规格本身写错，所有节点都可能诚实地执行错误规则，需求方仍需承担规格责任。',
+      },
+    ],
+    sources: [sources.bittensor, sources.allora, sources.gensynVerde, sources.eigenAi, sources.eigenRestaking, sources.eigenAvs, sources.chainOpera],
   },
   'execution-boundary': {
     implementation: [
@@ -302,39 +401,44 @@ export const speakerGuideDetails = {
   'system-architecture': {
     implementation: [
       {
-        title: '事件与状态根贯穿整条订单',
-        mechanism: '每一步输出结构化事件：ResolvedAgent、TaskFunded、ExecutionSubmitted、VerdictFinalized、PaymentClaimed 和 PoIFinalized。事件都引用 taskId 和前序状态根。',
-        acceptance: '索引器可从创世状态重放单笔任务并得到相同终态；缺事件、乱序或根不连续会被状态机拒绝。',
+        title: '把 AP2 授权映射为 ACVM 需求，不改写 AP2',
+        mechanism: '适配器验证 Intent Mandate 或 Cart Mandate 的签名、主体、范围和有效期，计算 mandateHash 并写入 SignedDemand。ACVM 另加 resultSpecRoot、verificationPolicyRoot、budget、deadline 和 disputePolicy；AP2 负责授权与支付可追责性，ACVM 负责履约结果。',
+        acceptance: '官方 AP2 测试向量能通过签名与 schema 校验；mandateHash、需求主体或支付范围不匹配时任务不能入池。没有 AcceptedResult 时，AP2 授权本身不能触发 ACVM 结果费。',
       },
       {
-        title: '付款与 PoI 由同一终局事件派生',
-        mechanism: 'VerdictFinalized 是唯一分叉点：业务支路更新可领取余额，共识支路写入 usedTaskKey 和 PoI 明细。两者在同一原子交易内提交。',
-        acceptance: '不变量要求“存在 PoI 必有终局裁决”“一条终局裁决至多一个付款结果”和“Rejected 不生成 PoI”。',
+        title: 'A3S 是实际执行底座，不是架构占位符',
+        mechanism: 'A3S Flow 记录可重放工作流；Runtime 用 caller-owned request ID 和持久回执管理 Task / Service；Event 保存事件历史；Box 明确选择 MicroVM 或 Sandbox；Power 绑定模型、环境、nonce 与执行回执；Gateway / Sentry 管协议入口和安全控制。ACVM Adapter 将这些记录归一为 ExecReceipt。',
+        acceptance: '故障测试在步骤执行后、回执提交前杀进程，恢复后不得重复副作用；ExecReceipt 必须能追到 A3S runId、requestId、artifact digest、policy digest 和证明引用。缺少任一绑定字段则不能进入业务验收。',
+      },
+      {
+        title: 'Verdict 是执行层与结算层之间的唯一闸门',
+        mechanism: 'A3S 只报告执行事实，不宣布业务成功。ACVM Validator 分别检查 executionEvidence 和 businessEvidence，生成 verdictRoot；底层链或 AVS 只接受版本化 verifier 对该根的确定判断。',
+        acceptance: '替换模型、A3S Provider、支付轨道或底层链后，同一验收测试向量仍得到相同 Verdict；任何 A3S succeeded 状态都不能绕过 AcceptedResult 直接提款。',
       },
     ],
     challenges: [
       {
-        title: '跨服务一致性',
-        failure: 'ANS、调度器、Worker 和索引器各自重试，容易出现“链下显示完成、链上仍在运行”。',
-        solution: '链上状态是唯一事实源；链下服务用 outbox/inbox 和事件游标至少一次投递，消费端用 taskId + step 幂等。任何缓存都带 finalizedHeight。',
-        residual: '链上最终一致会带来界面延迟，产品必须明确显示 pending、finalized 和 disputed，而不是统一写“成功”。',
+        title: '三套协议版本会独立演进',
+        failure: 'AP2 schema、A3S receipt 和 ACVM contractRoot 任一升级，都可能让旧任务无法重放或被新验证器误判。',
+        solution: '每个任务固定 ap2Profile、a3sReceiptVersion、acvmContractVersion 和 verifierHash；适配器按版本注册，发布前跑跨版本 golden fixtures，运行中任务禁止隐式升级。',
+        residual: '版本矩阵会增加运维成本，早期试点应只支持一组明确锁定的协议版本。',
       },
     ],
     security: [
       {
-        title: '重组后的幽灵任务',
-        failure: 'Worker 根据未终局事件开始昂贵推理，随后链重组移除了订单或预算。',
-        solution: '小额任务可立即执行但计入风险准备金；大额任务等待配置确认数或 BFT 终局。重组时调度器撤销未租用任务，已执行成本由预先约定的风险池承担。',
-        residual: '等待终局与交付速度存在直接权衡，不能用一个确认数覆盖所有链和订单金额。',
+        title: 'Mandate 重放与权限过宽',
+        failure: '攻击者把同一授权搬到另一任务、商户或支付轨道，或者利用模糊意图扩大金额和商品范围。',
+        solution: 'mandateHash 做 domain separation，绑定主体、商户、支付轨道、币种、金额上限、有效期、nonce 和 taskId；任何范围扩张必须取得新签名，敏感执行采用最小权限能力令牌。',
+        residual: '自然语言意图仍可能含歧义，高金额任务必须把可执行范围转成结构化字段并允许人工确认。',
       },
       {
-        title: '跨模块权限扩散',
-        failure: '调度服务被攻破后同时能改 ANS、发任务、验收和放款。',
-        solution: '解析、调度、执行、裁决和结算使用独立密钥与角色；服务间使用短期能力令牌，关键动作需不同安全域共同签名。',
-        residual: '运维身份仍是高价值目标，需要硬件密钥、轮换和可演练的吊销流程。',
+        title: '执行回执摘要不等于硬件真实性',
+        failure: '攻击者可以自己构造格式正确的 receipt JSON；仅有 SHA-256 只能证明相对某个可信锚点未变化，不能证明运行发生在声明硬件上。',
+        solution: '普通任务用签名 Provider 身份与抽检；高保证任务要求 A3S Power / Box 的远程证明、nonce 新鲜性、可信发布或等价外部 pin，并校验证明链和撤销状态。',
+        residual: 'TEE 厂商、证明服务和签名发布仍是显式信任根，不能包装成无条件密码学真相。',
       },
     ],
-    sources: [sources.survey, sources.contracts],
+    sources: [sources.ap2, sources.ap2Overview, sources.ap2Lab, sources.a3s, sources.a3sRuntime, sources.a3sPower, sources.survey],
   },
   ans: {
     implementation: [
@@ -445,14 +549,14 @@ export const speakerGuideDetails = {
         residual: '供应链审计只能降低概率，关键任务还需多实现比对和异常输出检测。',
       },
     ],
-    sources: [sources.agentSecurity, sources.survey],
+    sources: [sources.a3s, sources.a3sPower, sources.agentSecurity, sources.survey],
   },
   'poi-proof': {
     implementation: [
       {
-        title: '四条件共同成立',
-        mechanism: 'ValidPoI = SignedDemand ∧ AcceptedResult ∧ ExecutionEvidence ∧ UniqueTaskKey。taskKey 由 taskId、verdictRoot、Worker 和任务类别做域隔离哈希。',
-        acceptance: '验证器逐项检查需求签名与托管、终局裁决、执行证据策略和 usedTaskKey；任一失败都不写 PoI。',
+        title: '启用贡献网络时，四条件共同成立',
+        mechanism: 'ValidPoI = SignedDemand ∧ AcceptedResult ∧ ExecutionEvidence ∧ UniqueTaskKey。taskKey 由 taskId、verdictRoot、Worker 和任务类别做域隔离哈希；PoI feature flag 关闭时不执行这条支路。',
+        acceptance: '验证器逐项检查需求签名与托管、终局裁决、执行证据策略和 usedTaskKey；任一失败都不写 PoI。关闭 PoI 不得阻断已经终局的结果付款。',
       },
       {
         title: '贡献可重算、不可转移',
@@ -579,45 +683,50 @@ export const speakerGuideDetails = {
   'deployment-modes': {
     implementation: [
       {
-        title: '从协处理器开始',
-        mechanism: 'ACVM 链下运行任务与验证器，现有链合约只负责托管、任务根、裁决根和付款。成熟后再把状态机做成原生执行器；只有开放参与需要明确时才引入应用链共识。',
-        acceptance: '第一阶段的成功标准是一笔真实任务可从 SignedDemand 走到 PaymentClaimed 和 FinalizedPoI，而不是先拥有新链。',
+        title: '固定 ChainAdapter ABI，按网络实现 Driver',
+        mechanism: 'ACVM Core 只依赖 submitTaskRoot、submitVerdictRoot、finalityStatus、claimSettlement 和 subscribeEvents。Adapter 把 taskId、contractRoot、verdictRoot、amount、identityRef 和 nonce 映射到目标链合约；Prompt、原始数据、模型与详细证据留在 A3S 证据存储。',
+        acceptance: '每个 Driver 跑同一套 conformance fixtures：重复提交幂等、状态根连续、终局回报单调、重组可检测、同一 verdict 不重复结算。链上事件能反向定位 A3S evidence URI 与摘要。',
       },
       {
-        title: '每条链都有终局适配器',
-        mechanism: 'adapter 输出 finalizedHeight、finalityType、reorgDepth、challengeWindow 和 dataAvailabilityMode。上层按订单金额与证据类型选择等待策略。',
-        acceptance: '故障注入测试覆盖重组、链停机、RPC 分叉、sequencer 审查和桥消息重复，状态机在任何情况下都不重复付款。',
+        title: '国内基础设施按三类接口接入',
+        mechanism: 'BSN 走城市节点 / 专网网关 API 与其承载的联盟链合约；星火·链网走 BIF-Core SDK，并可用 BID 解析主体；自建联盟链直接接长安链或 FISCO BCOS SDK、CA、国密与权限治理。ACVM 不把这些不同产品称成一条统一“国家链”。',
+        acceptance: '选定一个具体部署配置后，锁定网络、节点、链框架、证书体系、密码套件、合约地址和终局规则。试点证明国密账户可签名、权限可撤销、任务根可查询、裁决事件可审计。',
+      },
+      {
+        title: '开放网络把 Validator 服务做成 AVS',
+        mechanism: 'ACVM TaskManager 发布 verdict task；EigenLayer Operator Set 读取证据、按 verificationPolicy 执行 Validator、签名响应，Aggregator 达到 quorum 后提交聚合结果；挑战期内用客观反例触发争议和可配置 slashing。',
+        acceptance: '先按 EigenLayer 官方示例跑测试网：任务响应、quorum、BLS 聚合、挑战和错误响应处置都有集成测试。只有可客观判定的违规进入 slashing；主观业务争议不自动罚没 restaked 资产。',
       },
     ],
     challenges: [
       {
-        title: '不同链的“确认”不是同一件事',
-        failure: 'PoW 是概率终局，BFT 可即时终局，PoS 还涉及检查点，Rollup 又依赖 L1、挑战窗和数据可用性。',
-        solution: '产品不暴露统一的“已确认”布尔值，而是明确 pending、safe、finalized、challengeable。金额越大，要求越强的终局等级。',
-        residual: '跨链业务的安全上限取决于最弱一环，适配器不能把弱终局包装成强终局。',
+        title: '身份、支付与链终局来自不同系统',
+        failure: '联盟链能确认裁决根，却不天然完成企业 KYC、人民币划拨或发票；把三者都写成链上 token 会破坏真实业务边界。',
+        solution: 'IdentityAdapter 映射 CA / BID / DID，PaymentAdapter 调用现有托管或支付服务，ChainAdapter 记录授权引用、裁决和状态。用 saga 与幂等键处理链已终局但支付失败的补偿。',
+        residual: '支付机构、银行接口和企业审批仍是外部依赖，试点必须把超时、撤销和人工对账写进 SLA。',
       },
     ],
     security: [
       {
-        title: 'L1 与 PoS 长程风险',
-        failure: '底层链重组、终局延迟或新节点同步到伪造的旧分叉，都会让任务状态和付款根失真。',
-        solution: '按链设置确认门槛；PoS 节点从多个独立来源交叉检查近期弱主观检查点；客户端与 RPC 多样化，发现冲突立即冻结大额结算。',
-        residual: '底层链发生社会层分叉时，ACVM 也必须等待所选生态完成选链。',
+        title: '联盟链证书、委员会或网关被攻破',
+        failure: '攻击者取得 CA、合约管理员或网关权限后，可以伪造主体、审查挑战或替换业务合约；多节点不等于多故障域。',
+        solution: '身份签发、合约升级、暂停和资金权限分离；跨机构多签与时间锁管理变更；ACVM 客户端校验多个网关 / 节点的区块头与事件，关键证据另做内容寻址副本。',
+        residual: '许可链的安全上限由成员治理决定；治理机构共同失守时，ACVM 只能暂停并按审计与恢复方案迁移。',
       },
       {
-        title: 'Rollup：排序器审查、欺诈证明与数据可用性',
-        failure: '中心化排序器拒绝挑战；乐观 Rollup 隐藏数据使欺诈证明无法生成；ZK Rollup 的电路或 prover 集中又形成新风险。',
-        solution: '优先选择数据发布到 L1、支持强制包含和用户逃生的 Rollup；等待挑战期或 L1 接受有效性证明。审查电路升级、证明者替代和 DA 模式。',
-        residual: 'Validium 等链下 DA 模式加入额外委员会信任；更快结算通常意味着承担更多流动性或桥风险。',
+        title: 'AVS slashing 逻辑或治理失守',
+        failure: 'EigenLayer 官方文档明确提示：恶意 AVS、受损治理或 Operator 可让委托 stake 面临罚没风险。把主观 GEO 争议直接接 slashing 会造成不可恢复的误罚。',
+        solution: '第一阶段只奖励不罚没；随后仅对双签、超时、无效签名或可确定反例等客观违规启用有限 slashing。Operator Set、redistribution recipient、升级和退出延迟全部公开并加时间锁。',
+        residual: '再质押提高攻击成本，也放大合约和治理错误的损失；它不是业务正确性的替代品。',
       },
       {
-        title: '跨链桥：验证者串谋、合约漏洞与消息回放',
-        failure: '外部多签伪造源链消息，桥合约被攻破，或同一裁决在目标链重复执行。',
-        solution: '优先轻客户端或底层原生验证桥；消息绑定源链、目标链、合约、nonce 和有效期。设置速率上限、延迟、大额人工复核和熔断，桥失败不允许回退到普通管理员签名。',
-        residual: '跨链总会叠加两个链和桥的风险；首个试点应尽量单链结算。',
+        title: '把敏感业务材料直接上链',
+        failure: '联盟链也会复制数据给多个成员，Prompt、个人轨迹、商业策略或完整模型日志一旦写入账本便难以删除和控制用途。',
+        solution: '链上只保存最小根、状态和身份引用；A3S 执行域保存加密证据并按 retention policy 删除。高敏任务使用权限化取证、TEE 或隐私计算，审计者按角色取回。',
+        residual: '摘要和时间模式仍可能泄露业务活动，必要时使用批量提交、延迟和访问隔离降低侧信道。',
       },
     ],
-    sources: [sources.bridges, sources.zkRollups, sources.dataAvailability, sources.weakSubjectivity],
+    sources: [sources.bsn, sources.sparkChain, sources.chainMaker, sources.fisco, sources.eigenRestaking, sources.eigenAvs, sources.a3s],
   },
   'security-boundaries': {
     implementation: [
@@ -709,13 +818,13 @@ export const speakerGuideDetails = {
     implementation: [
       {
         title: '用安全门槛推进，而不是按功能列表推进',
-        mechanism: '阶段一跑通本地状态机和不变量；阶段二影子结算真实任务但不自动放款；阶段三小额托管并开放挑战；数据稳定后才试 PoI 加权和开放 Validator。',
+        mechanism: '阶段一在 A3S Flow / Runtime / Box / Power 上跑通任务、回执绑定和 ACVM 状态机；阶段二影子结算真实任务但不自动放款；阶段三小额托管并开放挑战；数据稳定后才试 PoI 或 AVS。',
         acceptance: '每阶段都有退出条件：重复结算为零、证据取回率达标、挑战可用、Validator 有效独立数达标，且完成重组与密钥失守演练。',
       },
       {
         title: '首个试点留下完整审计链',
         mechanism: '选 GEO 或社会模拟的一种，固定一个验证策略和单链结算。记录需求、版本、证据、裁决、付款、争议与成本，不急着覆盖所有模型和链。',
-        acceptance: '外部审计者能从 SignedDemand 重建到 FinalizedPoI；客户能解释为何付款，Worker 能解释为何得款或被拒。',
+        acceptance: '外部审计者能从 SignedDemand 重建到 VerdictFinalized 和 PaymentClaimed；客户能解释为何付款，Worker 能解释为何得款或被拒。若 PoI 关闭，审计链仍完整。',
       },
     ],
     challenges: [
@@ -740,6 +849,6 @@ export const speakerGuideDetails = {
         residual: '严重共识或桥故障仍需人工协调，因此责任人和决策时限必须在上线前公开。',
       },
     ],
-    sources: [sources.contracts, sources.agentSecurity, sources.survey, sources.bridges],
+    sources: [sources.a3s, sources.a3sRuntime, sources.a3sPower, sources.contracts, sources.agentSecurity, sources.survey],
   },
 } as const satisfies Record<ScreenId, SpeakerGuideDetails>;

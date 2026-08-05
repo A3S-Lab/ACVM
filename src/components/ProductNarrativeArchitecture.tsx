@@ -39,7 +39,7 @@ export function ProductDefinitionArchitecture() {
       </div>
 
       <div className="product-responsibility-strip">
-        <span><Icon name="brain" /><b>AI Runtime</b><small>运行模型与工具</small></span>
+        <span><Icon name="brain" /><b>A3S Runtime</b><small>编排模型、工具与回执</small></span>
         <span className="is-acvm"><Icon name="shield" /><b>ACVM</b><small>记录约定与验收</small></span>
         <span><Icon name="chain" /><b>底层链</b><small>托管资金并给出终局</small></span>
       </div>
@@ -93,30 +93,30 @@ export function ProductLifecycleArchitecture() {
 const readinessStages = [
   {
     stage: 'TODAY',
-    title: '概念规范与演示',
-    detail: 'PoI、智能体合约、ANS 和雾计算已有可讨论设计',
+    title: 'A3S 执行底座可复用',
+    detail: 'Flow、Runtime、Box、Power 已开源；ACVM 适配器待实现',
     status: '当前',
     tone: 'current',
   },
   {
     stage: 'NEXT',
-    title: '跑通一笔任务',
-    detail: 'Contract SDK、任务运行器和 PoI 验证器',
+    title: '跑通结果结算',
+    detail: 'AP2 适配、A3S 回执、ACVM Verdict；PoI 关闭',
     status: '下一步',
     tone: 'next',
   },
   {
     stage: 'PILOT',
     title: '真实业务试点',
-    detail: '接入 GEO 观测源或社会模拟数据方',
+    detail: 'GEO 或社会模拟先做影子结算',
     status: '需共建',
     tone: 'future',
   },
   {
     stage: 'SCALE',
-    title: '开放 PoI 网络',
-    detail: '有界权重、VRF、BFT 和多链适配器',
-    status: '规模化',
+    title: '按需开放网络',
+    detail: '供给侧开放后，再接 AVS 或启用 PoI',
+    status: '条件成立',
     tone: 'future',
   },
 ] as const;
@@ -125,8 +125,8 @@ export function ProductReadinessArchitecture() {
   return (
     <LearningPanel code="DELIVERY / FROM DEMO TO PILOT" status="NEXT MILESTONE" className="product-readiness-panel">
       <header className="product-readiness-status">
-        <span><Icon name="terminal" /><small>现在</small><strong>概念规范 + 产品演示</strong></span>
-        <DataChip tone="amber">CONCEPT</DataChip>
+        <span><Icon name="terminal" /><small>现在</small><strong>A3S 执行底座 + ACVM 产品规范</strong></span>
+        <DataChip tone="amber">A3S BASE</DataChip>
       </header>
       <div className="product-readiness-track">
         {readinessStages.map((item, index) => (
@@ -140,7 +140,7 @@ export function ProductReadinessArchitecture() {
           </span>
         ))}
       </div>
-      <footer><Icon name="check" /><strong>下一项交付</strong><span>让一笔真实任务从签约、执行、验收走到付款和 Finalized PoI</span></footer>
+      <footer><Icon name="check" /><strong>下一项交付</strong><span>让一笔真实任务从签约、A3S 执行、验收走到付款</span></footer>
     </LearningPanel>
   );
 }

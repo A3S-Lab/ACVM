@@ -1,16 +1,16 @@
 import { LessonChapter } from '../components/LessonChapter'
 import { PoiSecurityArchitecture } from '../components/ProductMechanismArchitecture'
-import { ChainArchitectureSimple } from '../components/SimplifiedArchitecture'
+import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchitecture'
 
 <LessonChapter
   id="deployment-modes"
   className="chains-screen"
-  eyebrow="04 · FEASIBILITY / DEPLOYMENT"
-  title="必须先建一条新链吗？"
-  accent="不必，先接现有链跑通一笔任务"
-  body="ACVM 可以先做协处理器，借用现有链的托管和终局；需求稳定后再升级原生执行器或 PoI 应用链。"
-  figureLabel="FEASIBILITY / COPROCESSOR → NATIVE VM → APPLICATION CHAIN"
-  visual={<ChainArchitectureSimple />}
+  eyebrow="04 · FEASIBILITY / INTEGRATION"
+  title="如何接入现有区块链基础设施？"
+  accent="A3S 跑任务，ACVM 出裁决，现有链做终局"
+  body="国内模式接 BSN、星火·链网或联盟链 SDK，只上链任务根、裁决根和资金状态；开放模式可把 Validator 做成 EigenLayer AVS。"
+  figureLabel="INTEGRATION / AP2 → A3S → ACVM → CHAIN ADAPTER / AVS"
+  visual={<AcvmIntegrationArchitecture />}
 >
 </LessonChapter>
 

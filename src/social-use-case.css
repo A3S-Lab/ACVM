@@ -62,13 +62,13 @@
 .social-validator-node small,
 .social-result-node small {
   color: #708199;
-  font: 700 6px var(--font-mono);
+  font: 700 7.5px var(--font-mono);
   letter-spacing: 0.08em;
 }
 
 .social-private-zone strong {
   color: #e3eaf2;
-  font-size: 8px;
+  font-size: 9.5px;
 }
 
 .social-agent-list {
@@ -121,12 +121,12 @@
 
 .social-agent-list article strong {
   color: #dce4ed;
-  font-size: 7px;
+  font-size: 8.5px;
 }
 
 .social-agent-list article code {
   color: #75869d;
-  font: 6px var(--font-mono);
+  font: 7px var(--font-mono);
 }
 
 .social-agent-list article > i {
@@ -174,14 +174,14 @@
 .social-aggregate-node strong,
 .social-validator-node strong {
   color: #dfe6ee;
-  font-size: 7px;
+  font-size: 8.5px;
   line-height: 1.3;
 }
 
 .social-aggregate-node code,
 .social-validator-node code {
   color: #7f90a6;
-  font: 6px var(--font-mono);
+  font: 7px var(--font-mono);
 }
 
 .service-stage-3 .social-aggregate-node,
@@ -221,7 +221,7 @@
 
 .social-result-node > b {
   color: #b6c6d7;
-  font: 700 7px var(--font-mono);
+  font: 700 8.5px var(--font-mono);
 }
 
 @keyframes social-agent-pulse {

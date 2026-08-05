@@ -375,14 +375,14 @@
 .verification-tabs { flex: 0 0 70px; display: grid; grid-template-columns: repeat(5, 1fr); border-bottom: 1px solid var(--line); }
 .verification-tabs button { display: grid; align-content: center; gap: 5px; padding: 10px; border-right: 1px solid var(--line); color: var(--faint); background: transparent; cursor: pointer; }
 .verification-tabs button:last-child { border-right: 0; }
-.verification-tabs button span { font: 8px var(--mono); }
-.verification-tabs button strong { font-size: 10px; }
+.verification-tabs button span { font: 9.5px var(--mono); }
+.verification-tabs button strong { font-size: 12px; }
 .verification-tabs button:hover, .verification-tabs button.is-active { color: var(--text); background: rgba(var(--purple-rgb), 0.08); }
 .verification-tabs button.is-active { box-shadow: inset 0 -2px var(--violet); }
 .verification-detail { flex: 1; display: grid; grid-template-columns: 0.75fr 1.25fr; align-items: center; gap: 34px; padding: 30px; }
 .verification-orb { justify-self: center; width: min(210px, 100%); aspect-ratio: 1; display: grid; place-content: center; justify-items: center; gap: 14px; border: 1px solid rgba(var(--purple-rgb), 0.42); border-radius: 50%; background: radial-gradient(circle, rgba(var(--purple-rgb), 0.16), transparent 65%); }
 .verification-orb svg { width: 42px; color: var(--violet); }
-.verification-orb span { font-size: 13px; font-weight: 700; }
+.verification-orb span { font-size: 15px; font-weight: 700; }
 .verification-orb.is-blue { border-color: rgba(var(--blue-rgb), 0.42); background: radial-gradient(circle, rgba(var(--blue-rgb), 0.16), transparent 65%); }
 .verification-orb.is-blue svg { color: var(--blue); }
 .verification-orb.is-amber { border-color: rgba(241, 201, 121, 0.42); background: radial-gradient(circle, rgba(241, 201, 121, 0.12), transparent 65%); }
@@ -393,13 +393,13 @@
 .verification-orb.is-red svg { color: var(--red); }
 .verification-detail dl { display: grid; gap: 8px; margin: 0; }
 .verification-detail dl div { display: grid; grid-template-columns: 88px 1fr; gap: 14px; padding: 11px 13px; border: 1px solid var(--line); border-radius: 8px; }
-.verification-detail dt { color: var(--faint); font: 9px var(--mono); }
-.verification-detail dd { margin: 0; color: var(--muted); font-size: 10px; }
+.verification-detail dt { color: var(--faint); font: 10.5px var(--mono); }
+.verification-detail dd { margin: 0; color: var(--muted); font-size: 11.5px; }
 .verification-rule { min-height: 70px; display: flex; align-items: center; gap: 13px; padding: 0 22px; border-top: 1px solid var(--line); }
 .verification-rule > svg { width: 22px; color: var(--violet); }
 .verification-rule > span { display: grid; gap: 4px; }
-.verification-rule strong { font-size: 10px; }
-.verification-rule small { color: var(--muted); font-size: 9px; }
+.verification-rule strong { font-size: 12.5px; }
+.verification-rule small { color: var(--muted); font-size: 10.5px; }
 
 .contract-evolution { flex: 1; display: flex; align-items: center; padding: 24px; }
 .contract-kind { flex: 1; min-height: 235px; display: flex; flex-direction: column; padding: 20px; border: 1px solid var(--line); border-radius: 15px; }

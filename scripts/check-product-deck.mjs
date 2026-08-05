@@ -57,8 +57,8 @@ const missing = expectedSlideIds.filter((id) => !actualSlideIds.includes(id));
 const unexpected = actualSlideIds.filter((id) => !expectedSlideIds.includes(id));
 const orderMatches = JSON.stringify(expectedSlideIds) === JSON.stringify(actualSlideIds);
 
-if (screenIds.length !== 17) {
-  throw new Error(`Expected a 17-slide product deck including the cover; found ${screenIds.length}`);
+if (screenIds.length !== 18) {
+  throw new Error(`Expected an 18-slide product deck including the cover; found ${screenIds.length}`);
 }
 if (contentFiles.length !== 6) {
   throw new Error(`Expected six product-deck MDX groups; found ${contentFiles.length}`);

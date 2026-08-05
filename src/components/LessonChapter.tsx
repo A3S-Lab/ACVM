@@ -10,6 +10,7 @@ const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = 
   'product-snapshot': 'flow',
   'geo-verification': 'proof',
   simulation: 'network',
+  'geo-poi-boundary': 'proof',
   'useful-work': 'proof',
   'execution-boundary': 'flow',
   'system-architecture': 'flow',
@@ -82,15 +83,7 @@ function SectionHeading({
   body,
   comparison,
   terms = [],
-  bridge,
-  bridgeLabel,
-  isChapterOpening,
-}: Omit<LessonChapterProps, 'id' | 'className' | 'figureLabel' | 'visual' | 'children'> & {
-  index: number;
-  bridge: string;
-  bridgeLabel: string;
-  isChapterOpening: boolean;
-}) {
+}: Omit<LessonChapterProps, 'id' | 'className' | 'figureLabel' | 'visual' | 'children'> & { index: number }) {
   return (
     <header className="section-heading">
       <div className="section-meta">
@@ -99,9 +92,6 @@ function SectionHeading({
           SLIDE {String(index).padStart(2, '0')} / {String(screens.length - 1).padStart(2, '0')}
         </span>
       </div>
-      {isChapterOpening ? (
-        <div className="chapter-bridge"><small>{bridgeLabel}</small><span>{bridge}</span></div>
-      ) : null}
       <h2>{title}<br /><em>{accent}</em></h2>
       <p>{body}</p>
       {comparison ? <MechanismCompare {...comparison} /> : null}
@@ -146,9 +136,6 @@ export function LessonChapter({
           body={body}
           comparison={comparison}
           terms={terms}
-          bridge={chapter.bridge}
-          bridgeLabel="这一部分要回答"
-          isChapterOpening={chapter.id === id}
         />
         <div className="technical-visual lesson-stage">
           <div className="lesson-diagram">{visual}</div>

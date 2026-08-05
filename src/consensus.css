@@ -9,6 +9,12 @@
   --consensus-red: #ff7081;
 }
 
+@media (min-width: 961px) {
+  .acvm-execution-boundary-screen {
+    --diagram-height: clamp(430px, 50vh, 480px);
+  }
+}
+
 .consensus-family-tabs,
 .governance-tabs,
 .boundary-workload-tabs {
@@ -324,10 +330,15 @@
 .boundary-comparison > section,
 .boundary-case {
   min-width: 0;
-  padding: 17px;
+  padding: 18px;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.022);
+}
+
+.boundary-comparison > section {
+  display: grid;
+  grid-template-rows: auto minmax(72px, 1fr) auto;
 }
 
 .boundary-comparison > section.is-evm { border-color: rgba(116, 167, 255, 0.3); }
@@ -335,18 +346,18 @@
 .boundary-comparison section header { display: flex; align-items: center; gap: 10px; }
 .boundary-comparison section header svg { width: 25px; color: var(--violet); }
 .boundary-comparison section header span { display: grid; gap: 3px; }
-.boundary-comparison section header small { color: var(--faint); font: 9px var(--mono); }
-.boundary-comparison section header strong { font-size: 12px; }
-.boundary-comparison section > code { display: block; margin-top: 42px; color: #a8c8ff; font-size: 11px; line-height: 1.6; }
-.boundary-comparison section > p { margin: 16px 0 0; color: var(--faint); font-size: 11px; line-height: 1.6; }
+.boundary-comparison section header small { color: var(--faint); font: 10px var(--mono); }
+.boundary-comparison section header strong { font-size: 13px; }
+.boundary-comparison section > code { align-self: center; color: #a8c8ff; font-size: 12px; line-height: 1.6; }
+.boundary-comparison section > p { align-self: end; margin: 0; color: var(--faint); font-size: 11.5px; line-height: 1.6; }
 
-.boundary-case { display: flex; flex-direction: column; border-color: rgba(241, 201, 121, 0.3); }
-.boundary-case > .data-chip { align-self: flex-start; }
-.boundary-case > code { margin: 14px 0; color: var(--text); font-size: 11px; }
-.boundary-case dl { display: grid; gap: 7px; margin: auto 0 0; }
-.boundary-case dl > div { display: grid; grid-template-columns: 76px 1fr; gap: 8px; padding-top: 7px; border-top: 1px solid var(--line); }
-.boundary-case dt { color: var(--faint); font: 9px var(--mono); }
-.boundary-case dd { margin: 0; font-size: 10px; line-height: 1.45; }
+.boundary-case { display: grid; grid-template-rows: auto minmax(72px, 1fr) auto; border-color: rgba(241, 201, 121, 0.3); }
+.boundary-case > .data-chip { align-self: flex-start; justify-self: start; }
+.boundary-case > code { align-self: center; margin: 0; color: var(--text); font-size: 12px; }
+.boundary-case dl { display: grid; gap: 9px; margin: 0; }
+.boundary-case dl > div { display: grid; grid-template-columns: 82px 1fr; gap: 9px; padding-top: 9px; border-top: 1px solid var(--line); }
+.boundary-case dt { color: var(--faint); font: 10px var(--mono); }
+.boundary-case dd { margin: 0; font-size: 11.5px; line-height: 1.45; }
 
 .boundary-cost {
   min-height: 62px;
@@ -358,8 +369,8 @@
 }
 
 .boundary-cost span { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 12px; border: 1px solid var(--line); }
-.boundary-cost b { font-size: 10px; }
-.boundary-cost code { color: var(--faint); font-size: 9px; }
+.boundary-cost b { font-size: 11px; }
+.boundary-cost code { color: var(--faint); font-size: 10px; }
 
 @media (max-width: 1180px) and (min-width: 961px) {
   .consensus-stage > article { padding: 12px 10px; }

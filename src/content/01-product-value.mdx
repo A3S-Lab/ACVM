@@ -4,6 +4,7 @@ import {
 } from '../components/CoreUseCaseAnimations'
 import { LessonChapter } from '../components/LessonChapter'
 import { ProductDefinitionArchitecture } from '../components/ProductNarrativeArchitecture'
+import { GeoPoiDecisionArchitecture } from '../components/ProductEvidenceArchitecture'
 
 <LessonChapter
   id="product-snapshot"
@@ -23,8 +24,8 @@ import { ProductDefinitionArchitecture } from '../components/ProductNarrativeArc
   eyebrow="01 · PRODUCT / GEO VERIFICATION"
   title="品牌方怎么确认 GEO 真有效？"
   accent="冻结口径，独立复测，按增量付款"
-  body="ACVM 先锁定问题集、基线和观察窗口。优化方不能给自己打分；独立节点复测，达到门槛才付款并生成 PoI。"
-  figureLabel="CORE CASE / DEMAND → INFERENCE → OBSERVATION → POI"
+  body="ACVM 先锁定问题集、基线和观察窗口。优化方不能给自己打分；独立节点复测，达到门槛才付款。PoI 不参与这一步。"
+  figureLabel="CORE CASE / DEMAND → INFERENCE → OBSERVATION → SETTLEMENT"
   visual={<GeoVerificationArchitecture />}
 >
 </LessonChapter>
@@ -36,7 +37,19 @@ import { ProductDefinitionArchitecture } from '../components/ProductNarrativeArc
   title="数据不能公开，结论怎么让人信？"
   accent="个体数据留在本地，只公开统计和证明"
   body="ACVM 固定模型、样本承诺和随机过程。雾节点在隔离域运行模拟，Validator 复核聚合结果，不读取个人轨迹。"
-  figureLabel="CORE CASE / SEALED INPUT → VERIFIED SIMULATION → POI"
+  figureLabel="CORE CASE / SEALED INPUT → VERIFIED SIMULATION → SETTLEMENT"
   visual={<SocialSimulationArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="geo-poi-boundary"
+  className="geo-poi-boundary-screen"
+  eyebrow="01 · PRODUCT / NECESSITY"
+  title="GEO 一定要用 PoI 吗？"
+  accent="单笔业务不需要；开放协作网络才需要"
+  body="GEO 必需的是冻结口径、独立复测和按结果结算。只有开放 Worker、跨机构 Validator 和网络激励需要统一贡献账时，才启用 PoI。"
+  figureLabel="DECISION / VERIFIABLE RESULT FIRST · POI ONLY WHEN NEEDED"
+  visual={<GeoPoiDecisionArchitecture />}
 >
 </LessonChapter>

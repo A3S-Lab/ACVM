@@ -3825,7 +3825,7 @@ svg {
 
 .poi-flow article {
   position: relative;
-  min-height: 150px;
+  min-height: 174px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -3855,17 +3855,17 @@ svg {
 }
 
 .poi-flow article strong {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .poi-flow article small {
   max-width: 140px;
   color: var(--muted);
-  font: 10px/1.55 var(--mono);
+  font: 11px/1.55 var(--mono);
 }
 
 .poi-equation {
-  min-height: 68px;
+  min-height: 78px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3877,18 +3877,18 @@ svg {
 
 .poi-equation code {
   color: var(--accent);
-  font: 12px var(--mono);
+  font: 13px var(--mono);
 }
 
 .poi-equation span {
   max-width: 270px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
 .poi-finality {
-  min-height: 100px;
+  min-height: 112px;
   display: grid;
   grid-template-columns: 1fr 1px 1fr;
   align-items: center;
@@ -3913,12 +3913,12 @@ svg {
 }
 
 .poi-finality section strong {
-  font-size: 12px;
+  font-size: 13.5px;
 }
 
 .poi-finality section span {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 /* Chain */

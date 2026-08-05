@@ -11,28 +11,29 @@ first-principles substitutions:
    receipts, validation, disputes, and settlement.
 
 These substitutions form one product loop. A model-inference task first creates
-value for a customer. When signed demand, accepted output, attested execution,
-and anti-replay checks all hold, it also creates a valid Proof of Intelligence
-(`PoI`). The PoI may contribute bounded proposer weight; verifiable randomness
-selects a proposer, and BFT or the configured base-chain rules provide finality.
-PoI is therefore a source of candidate weight, not a complete consensus
-protocol by itself.
+value for a customer. Signed demand, accepted output, execution evidence, and
+anti-replay checks can then create a Proof of Intelligence (`PoI`) when an open
+network actually needs contribution accounting. PoI is optional for ordinary
+result settlement. If enabled, it may contribute bounded proposer weight;
+verifiable randomness selects a proposer, while BFT or configured base-chain
+rules provide finality.
 
 ## Product story
 
-The 17-slide presentation, including the cover, is organized into six sections:
+The 18-slide presentation, including the cover, is organized into six sections:
 
 1. **Product and use cases.** The payment condition is defined first, followed
-   by GEO result verification and privacy-sealed social simulation.
-2. **First principles.** The deck separates the security function of proof of
-   work from hash computation, then separates deterministic VM replay from the
-   execution needs of long-running AI agents.
-3. **Order workflow.** An animated ASCII map connects signed demand, ANS agent
-   discovery, Agentic Contracts, fog inference, result verification, PoI,
-   VRF proposer selection, BFT finality, and settlement.
-4. **Deployment and security.** Three deployment modes and five explicit
-   attack paths define what can be implemented and what still needs pilot
-   calibration.
+   by GEO result verification, privacy-sealed social simulation, and an explicit
+   decision rule showing that GEO does not inherently require PoI.
+2. **Engineering landscape.** Bittensor, Allora, Gensyn, EigenAI, EigenLayer,
+   and ChainOpera are compared by proof target, judge, and economic effect before
+   the deck explains why model execution cannot be replayed by every chain node.
+3. **Order workflow.** An animated ASCII map separates AP2 authorization, A3S
+   execution, ACVM verdicts, existing-chain settlement, and optional PoI before
+   expanding ANS, Agentic Contracts, fog inference, and result verification.
+4. **Deployment and security.** A concrete adapter plan covers BSN, Spark Chain,
+   ChainMaker, FISCO BCOS, and an optional EigenLayer AVS path, followed by
+   explicit attack controls and residual risks.
 5. **Economics.** One concrete escrow example shows how accepted, rejected, and
    fraudulent outcomes pay each participant and assign risk.
 6. **Delivery.** One roadmap slide separates the current concept demonstration
@@ -48,10 +49,11 @@ closed so the audience view keeps the largest readable canvas.
 ## Current status
 
 The repository currently provides a concept specification and product
-presentation. Its TypeScript objects, proof conditions, consensus flow, and
-economics are explanatory models, not a released production runtime or SDK.
-The next verifiable milestone is one real inference task running from
-`SignedDemand` through `ValidPoI` to a finalized task and payment receipt.
+presentation. A3S is the proposed open-source execution foundation; the ACVM
+adapters, verdict state machine, and settlement integration shown here remain
+to be implemented and validated. The next milestone is one real task running
+from `SignedDemand` through an A3S execution receipt to `VerdictFinalized` and a
+payment receipt, with PoI disabled by default.
 
 ## Presentation controls
 

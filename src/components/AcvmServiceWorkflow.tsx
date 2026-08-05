@@ -5,10 +5,10 @@ import { LearningPanel } from './LearningPanel';
 const workflowStages = [
   {
     code: '01',
-    title: '写清结果',
-    actor: '需求方',
-    solution: '签名目标、验收门槛、预算和截止时间。调用量只用于限额，不触发付款。',
-    record: 'SignedDemand',
+    title: '签署授权',
+    actor: 'AP2 / 需求方',
+    solution: 'Intent 或 Cart Mandate 固定主体与支付授权；ACVM 再补充结果目标、验收门槛和截止时间。',
+    record: 'mandateHash · SignedDemand',
     icon: 'key',
   },
   {
@@ -29,26 +29,26 @@ const workflowStages = [
   },
   {
     code: '04',
-    title: '就近推理',
-    actor: 'Fog Worker',
-    solution: '模型在靠近数据的节点运行；原始数据留在本地，只提交回执和证明。',
-    record: 'ExecReceipt · Proof',
+    title: '执行任务',
+    actor: 'A3S',
+    solution: 'Flow 持久化步骤，Runtime 管生命周期，Box / Power 执行并出具回执，Sentry 施加安全策略。',
+    record: 'flowRoot · ExecReceipt',
     icon: 'brain',
   },
   {
     code: '05',
-    title: '独立验收',
-    actor: 'Validator',
-    solution: '按事前规则检查结果和证据；有异议就进入挑战期，不提前放款。',
+    title: '裁决结果',
+    actor: 'ACVM Validator',
+    solution: '把 A3S 运行回执与业务证据分开检查；按事前规则通过、拒绝或进入挑战期。',
     record: 'Verdict · Challenge',
     icon: 'shield',
   },
   {
     code: '06',
-    title: '付款与记账',
-    actor: 'ACVM',
-    solution: '验收终局后释放结果费；同一份有效推理生成 PoI，进入有上限的提议权重。',
-    record: 'Settlement · ValidPoI',
+    title: '结算 / 可选记账',
+    actor: '底层链 / AVS',
+    solution: '终局裁决触发结果付款；只有开放网络需要跨任务贡献权重时，才从同一裁决派生 PoI。',
+    record: 'Settlement · PoI?',
     icon: 'receipt',
   },
 ] as const satisfies readonly {
@@ -61,8 +61,8 @@ const workflowStages = [
 }[];
 
 const diagramLines = [
-  { stage: 0, text: '[ 需求方 ]' },
-  { stage: 0, text: '    │  结果门槛 + 预算 + 截止时间' },
+  { stage: 0, text: '[ AP2 / 需求方 ] ── Mandate + 结果条件' },
+  { stage: 0, text: '    │  mandateHash + SignedDemand' },
   { stage: 1, text: '    ▼' },
   { stage: 1, text: '[  ANS  ] ── 能力 / 价格 / 信誉 ──▶ [ 服务 Agent ]' },
   { stage: 2, text: '    │' },
@@ -70,12 +70,13 @@ const diagramLines = [
   { stage: 2, text: '[ Agentic Contract ] ── taskId / 权限 / 验收 / 结算' },
   { stage: 3, text: '    │' },
   { stage: 3, text: '    ▼' },
-  { stage: 3, text: '[ Fog Worker ] ── 模型推理 ──▶ [ Receipt + Proof ]' },
+  { stage: 3, text: '[ A3S ]  Flow / Runtime / Box / Power / Sentry' },
+  { stage: 3, text: '    └── 执行任务 ──▶ [ ExecReceipt + Evidence ]' },
   { stage: 4, text: '    │' },
   { stage: 4, text: '    ▼' },
-  { stage: 4, text: '[ Validator ] ── 验收 / 挑战' },
-  { stage: 5, text: '    ├──▶ [ 结果结算 ]  客户按已验证结果付费' },
-  { stage: 5, text: '    └──▶ [ Valid PoI ] ─▶ 权重 ─▶ VRF ─▶ BFT 终局' },
+  { stage: 4, text: '[ ACVM Validator ] ── 业务验收 / 挑战' },
+  { stage: 5, text: '    ├──▶ [ 结果结算 ]  现有链 / 支付系统' },
+  { stage: 5, text: '    └──▶ [ PoI? ]  仅开放贡献网络启用' },
 ] as const;
 
 export function AcvmServiceWorkflowArchitecture() {
@@ -138,7 +139,7 @@ export function AcvmServiceWorkflowArchitecture() {
           ))}
         </nav>
 
-        <footer><Icon name="spark" /><strong>一份推理先交付客户结果；验收通过后，才进入付款和 PoI。</strong></footer>
+        <footer><Icon name="spark" /><strong>AP2 管授权 · A3S 管执行 · ACVM 管裁决 · 现有基础设施管终局。</strong></footer>
       </LearningPanel>
     </div>
   );
