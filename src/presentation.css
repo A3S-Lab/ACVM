@@ -516,7 +516,11 @@ body {
 .foundation-screen,
 .code-screen,
 .stories-screen {
-  --diagram-height: clamp(390px, calc(100dvh - 300px), 560px);
+  --diagram-height: clamp(
+    430px,
+    min(calc(100dvh - 270px), calc(56.25vw - 105px)),
+    740px
+  );
 }
 
 .technical-layout,
@@ -1028,7 +1032,11 @@ body {
 .site-shell:fullscreen .foundation-screen,
 .site-shell:fullscreen .code-screen,
 .site-shell:fullscreen .stories-screen {
-  --diagram-height: clamp(420px, calc(100vh - 300px), 620px);
+  --diagram-height: clamp(
+    430px,
+    min(calc(100vh - 180px), calc(56.25vw - 125px)),
+    880px
+  );
 }
 
 .site-shell:fullscreen .deck-controls {

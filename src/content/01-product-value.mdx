@@ -11,9 +11,9 @@ import { ProductThesis } from '../components/ProductThesis'
   id="product-thesis"
   className="product-thesis-screen"
   eyebrow="01 · PRODUCT / CORE THESIS"
-  title="ACVM 改变什么？"
-  accent="一次推理，同时交付结果与 PoI"
-  body="ACVM 用已验收的模型服务替代无意义哈希竞争，用智能体合约管理链下执行；客户拿结果，网络拿有效工作。"
+  title="ACVM 替换了什么？"
+  accent="一次推理，交付结果，也生成 PoI"
+  body="真实需求替代空耗算力，智能体合约管理链下执行。客户只为达标结果付费，网络得到可验证的有效工作。"
   figureLabel="THESIS / USEFUL INFERENCE → POI · AGENTIC CONTRACT → SETTLEMENT"
   visual={<ProductThesis />}
 >
@@ -23,9 +23,9 @@ import { ProductThesis } from '../components/ProductThesis'
   id="product-snapshot"
   className="product-snapshot-screen"
   eyebrow="01 · PRODUCT / PAYMENT CONDITION"
-  title="为什么不按调用量结算？"
-  accent="调用计成本，验收结果才付款"
-  body="ACVM 记录任务、证据、裁决和付款条件。模型仍在链下运行，结果通过验收才生成 ValidPoI；底层链确认后释放托管资金。"
+  title="什么条件触发付款？"
+  accent="调用只计成本，验收通过才放款"
+  body="任务开始前锁定目标、证据和付款条件。结果通过验收才生成 ValidPoI，底层链据此释放托管资金。"
   figureLabel="PRODUCT / OUTCOME SPEC → EVIDENCE → VERDICT → POI → PAY"
   visual={<ProductDefinitionArchitecture />}
 >
@@ -36,8 +36,8 @@ import { ProductThesis } from '../components/ProductThesis'
   className="core-use-case-screen geo-verification-screen"
   eyebrow="01 · PRODUCT / GEO VERIFICATION"
   title="品牌方怎么确认 GEO 真有效？"
-  accent="冻结口径，独立复测，按增量付款"
-  body="ACVM 先锁定问题集、基线和观察窗口。优化方不能给自己打分；独立节点复测，达到门槛才生成 PoI 并付款。"
+  accent="冻结口径，独立复测，增量达标才付款"
+  body="先冻结问题集、基线和观察窗口，再由独立节点复测。引用增量达到门槛，才生成 PoI 并付款。"
   figureLabel="CORE CASE / DEMAND → INFERENCE → OBSERVATION → POI → SETTLEMENT"
   visual={<GeoVerificationArchitecture />}
 >
@@ -48,8 +48,8 @@ import { ProductThesis } from '../components/ProductThesis'
   className="core-use-case-screen simulation-screen"
   eyebrow="01 · PRODUCT / SOCIAL SIMULATION"
   title="数据不能公开，结论怎么让人信？"
-  accent="个体数据留在本地，只公开统计和证明"
-  body="ACVM 固定模型、样本承诺和随机过程。雾节点在隔离域运行模拟，Validator 复核聚合结果，不读取个人轨迹。"
+  accent="数据留在本地，只公开统计和证明"
+  body="模型、样本承诺和随机过程先固定。雾节点在数据所在地运行，只提交聚合结果和证明，Validator 不读取个人轨迹。"
   figureLabel="CORE CASE / SEALED INPUT → VERIFIED SIMULATION → SETTLEMENT"
   visual={<SocialSimulationArchitecture />}
 >
@@ -61,7 +61,7 @@ import { ProductThesis } from '../components/ProductThesis'
   eyebrow="02 · WHY / POI BOUNDARY"
   title="GEO 一定要用 PoI 吗？"
   accent="业务可以不用，ACVM 不能没有"
-  body="单笔 GEO 可由中心化审计交付；接入 ACVM 后，验收通过必须生成 ValidPoI，作为结果付款凭证，并继续支持网络激励与记账。"
+  body="传统 GEO 可用中心化审计；ACVM 任务必须把验收结果生成 ValidPoI。它先解锁结果费，再进入网络激励与记账。"
   figureLabel="BOUNDARY / BUSINESS CAN OMIT POI · ACVM CANNOT"
   visual={<GeoPoiDecisionArchitecture />}
 >

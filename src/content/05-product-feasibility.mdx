@@ -6,9 +6,9 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
   id="deployment-modes"
   className="chains-screen"
   eyebrow="05 · FEASIBILITY / INTEGRATION"
-  title="如何接入现有区块链基础设施？"
+  title="ACVM 要重新造一条链吗？"
   accent="A3S 跑任务，ACVM 生成 PoI，现有链做终局"
-  body="国内模式接 BSN、星火·链网或联盟链 SDK，只上链任务根、PoI 根和资金状态；开放模式可把 Validator 做成 EigenLayer AVS。"
+  body="不用。国内模式接 BSN、星火·链网或联盟链 SDK；开放模式可接 EigenLayer AVS。ACVM 不替换既有身份、支付和终局。"
   figureLabel="INTEGRATION / AP2 → A3S → ACVM → CHAIN ADAPTER / AVS"
   visual={<AcvmIntegrationArchitecture />}
 >
@@ -18,9 +18,9 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
   id="security-boundaries"
   className="security-boundaries-screen"
   eyebrow="05 · FEASIBILITY / ATTACK SURFACE"
-  title="刷单和串谋怎么办？"
-  accent="权重封顶、随机验收、保证金和挑战一起用"
-  body="ACVM 给自造需求、重复计分、伪造结果、验证者串谋和难度失真分别设置检查项，不靠单一信誉分兜底。"
+  title="刷单和串谋怎么防？"
+  accent="逐条设防，不把安全押在信誉分上"
+  body="关联订单、重复计分、伪造结果和验证者串谋分别处理。身份关联、taskKey、随机委员会、保证金和挑战共同抬高成本。"
   figureLabel="SECURITY / THREAT → CONTROL → RESIDUAL RISK"
   visual={<PoiSecurityArchitecture />}
 >

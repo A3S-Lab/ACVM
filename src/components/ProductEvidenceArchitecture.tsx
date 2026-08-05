@@ -132,7 +132,7 @@ export function PoiLandscapeArchitecture() {
     <LearningPanel code="AI + BLOCKCHAIN / PROOF LANDSCAPE" status="COMPARE THE PREDICATE" className="poi-landscape">
       <header className="poi-landscape-question">
         <span><Icon name="fingerprint" /><small>TECHNICAL REVIEW</small></span>
-        <strong>先问“证明对象是什么”，再比较共识名称</strong>
+        <strong>验证命题不同，经济结果也不同</strong>
       </header>
       <div className="poi-landscape-table" role="table" aria-label="AI 区块链工程机制比较">
         <div className="poi-landscape-row is-header" role="row">

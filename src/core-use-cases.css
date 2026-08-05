@@ -1,5 +1,9 @@
 .core-use-case-screen {
-  --diagram-height: clamp(550px, 69vh, 640px);
+  --diagram-height: clamp(
+    430px,
+    min(calc(100dvh - 270px), calc(56.25vw - 105px)),
+    740px
+  );
 }
 
 .service-demo-panel {
@@ -659,10 +663,6 @@
 }
 
 @media (max-width: 1180px) and (min-width: 961px) {
-  .core-use-case-screen {
-    --diagram-height: clamp(535px, 69vh, 600px);
-  }
-
   .service-demo-body {
     grid-template-columns: minmax(0, 1.3fr) 205px;
   }

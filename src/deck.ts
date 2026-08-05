@@ -1,23 +1,23 @@
 export const screens = [
   ['top', 'ACVM'],
-  ['product-thesis', 'ACVM 改变什么'],
-  ['product-snapshot', '为什么不按调用量结算'],
+  ['product-thesis', 'ACVM 替换了什么'],
+  ['product-snapshot', '什么条件触发付款'],
   ['geo-verification', 'GEO 结果验证即服务'],
   ['simulation', '社会模拟即服务'],
   ['geo-poi-boundary', 'GEO 一定要用 PoI 吗'],
-  ['useful-work', '其他 AI 网络在证明什么'],
+  ['useful-work', '其他 AI 网络证明什么'],
   ['execution-boundary', '为什么模型不能链上重跑'],
-  ['system-architecture', 'AP2、A3S 与 ACVM 如何协作'],
+  ['system-architecture', '一笔 AI 订单怎么跑到底'],
   ['ans', '调用方如何找到可信 Agent'],
   ['agentic-contract', '谁来管理任务与责任'],
   ['fog-inference', '数据不出域如何完成推理'],
   ['verification-engine', '开放式结果如何验收'],
-  ['poi-proof', '什么样的推理才算贡献'],
-  ['poi-consensus', 'PoI 如何影响记账权'],
-  ['economy-roles', '一笔预算如何分配'],
-  ['deployment-modes', '如何接入现有区块链基础设施'],
-  ['security-boundaries', '刷单与串谋如何控制'],
-  ['product-roadmap', '下一步交付什么'],
+  ['poi-proof', '什么样的推理才算 PoI'],
+  ['poi-consensus', 'PoI 等于记账权吗'],
+  ['economy-roles', '一笔 12 万元订单怎么分'],
+  ['deployment-modes', 'ACVM 要重新造链吗'],
+  ['security-boundaries', '刷单和串谋怎么防'],
+  ['product-roadmap', '第一项可验收交付'],
 ] as const;
 
 export type ScreenId = (typeof screens)[number][0];
@@ -28,7 +28,7 @@ export const navigation = [
     id: 'product-thesis',
     label: '产品与场景',
     shortLabel: '01 / PRODUCT',
-    question: 'ACVM 改变什么，又如何在 GEO 和社会模拟中按结果结算？',
+    question: 'ACVM 如何按结果结算，GEO 和社会模拟怎么落地？',
     screens: ['product-thesis', 'product-snapshot', 'geo-verification', 'simulation'],
   },
   {
@@ -36,7 +36,7 @@ export const navigation = [
     id: 'geo-poi-boundary',
     label: 'PoI 与边界',
     shortLabel: '02 / WHY',
-    question: 'PoI 为什么是 ACVM 的核心，现有工程又留下了什么缺口？',
+    question: 'PoI 为什么必须存在，ACVM 与其他网络有什么差别？',
     screens: ['geo-poi-boundary', 'useful-work', 'execution-boundary'],
   },
   {
@@ -44,7 +44,7 @@ export const navigation = [
     id: 'system-architecture',
     label: '一笔订单',
     shortLabel: '03 / WORKFLOW',
-    question: 'AP2、A3S 与 ACVM 怎样把一笔订单推进到验收和付款？',
+    question: '一笔订单如何从授权、执行走到验收和付款？',
     screens: ['system-architecture', 'ans', 'agentic-contract', 'fog-inference', 'verification-engine', 'poi-proof', 'poi-consensus'],
   },
   {
@@ -52,7 +52,7 @@ export const navigation = [
     id: 'economy-roles',
     label: '钱与责任',
     shortLabel: '04 / ECONOMICS',
-    question: '谁出钱、谁分钱，正常失败和造假分别怎么处理？',
+    question: '谁出钱、谁分钱，失败和造假分别怎么处理？',
     screens: ['economy-roles'],
   },
   {
@@ -60,7 +60,7 @@ export const navigation = [
     id: 'deployment-modes',
     label: '部署与安全',
     shortLabel: '05 / FEASIBILITY',
-    question: '产品如何接入国家级、产业级或开放区块链基础设施，又怎样控制作弊？',
+    question: '产品如何接入现有基础设施，又怎样控制作弊？',
     screens: ['deployment-modes', 'security-boundaries'],
   },
   {
@@ -68,7 +68,7 @@ export const navigation = [
     id: 'product-roadmap',
     label: '试点',
     shortLabel: '06 / DELIVERY',
-    question: '现在做到哪一步，下一项可验证交付是什么？',
+    question: '现在做到哪一步，第一项可验收交付是什么？',
     screens: ['product-roadmap'],
   },
 ] as const;

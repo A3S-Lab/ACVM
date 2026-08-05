@@ -4,11 +4,13 @@
 }
 
 .lesson-diagram {
+  height: var(--diagram-height);
   min-height: var(--diagram-height);
 }
 
 @media (max-width: 960px) {
   .lesson-diagram {
+    height: auto;
     min-height: 0;
   }
 }
