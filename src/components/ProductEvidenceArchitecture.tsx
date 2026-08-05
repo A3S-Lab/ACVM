@@ -1,46 +1,6 @@
 import { Icon, type IconName } from './Icons';
 import { LearningPanel } from './LearningPanel';
 
-const acvmAdoptionTriggers = [
-  {
-    label: '跨组织',
-    title: '独立裁决',
-    detail: '多方协作 · 权责分离 · 可追责',
-  },
-  {
-    label: '按结果付款',
-    title: '条件结算',
-    detail: '冻结门槛 · 独立验收 · 达标放款',
-  },
-  {
-    label: '多方数据',
-    title: '按约分账',
-    detail: '授权用数 · 谱系记录 · 收益分配',
-  },
-] as const;
-
-export function GeoPoiDecisionArchitecture() {
-  return (
-    <LearningPanel code="ACVM / RECOMMENDED USE" status="RESULT-BASED COLLABORATION" className="geo-poi-decision is-simple">
-      <div className="fit-spectrum" aria-label="应使用 ACVM 的三类协作">
-        {acvmAdoptionTriggers.map((choice, index) => (
-          <span className="fit-spectrum-fragment" key={choice.title}>
-            <article>
-              <small>{choice.label}</small>
-              <strong>{choice.title}</strong>
-              <p>{choice.detail}</p>
-            </article>
-            {index < acvmAdoptionTriggers.length - 1 ? <i aria-hidden="true">→</i> : null}
-          </span>
-        ))}
-      </div>
-      <footer className="fit-trigger">
-        <span>跨组织交付</span><b>·</b><span>结果付款</span><b>·</b><span>多方分账</span><i aria-hidden="true">→</i><strong>使用 ACVM</strong>
-      </footer>
-    </LearningPanel>
-  );
-}
-
 const proofLandscape = [
   {
     project: 'Bittensor / Allora',

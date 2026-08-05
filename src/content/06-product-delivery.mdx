@@ -1,38 +1,7 @@
-import {
-  SocialSimulationArchitecture,
-} from '../components/CoreUseCaseAnimations'
 import { AcvmExecutionBoundaryArchitecture } from '../components/AcvmExecutionBoundary'
-import { AgentResolutionArchitecture } from '../components/AgentResolutionArchitecture'
 import { ContractModelArchitecture } from '../components/FormalSpecArchitecture'
-import { FogInferenceArchitecture } from '../components/FogInferenceArchitecture'
 import { LessonChapter } from '../components/LessonChapter'
-import { AcvmIntegrationArchitecture, PoiLandscapeArchitecture } from '../components/ProductEvidenceArchitecture'
-import { PoiConsensusArchitecture } from '../components/ProductMechanismArchitecture'
-import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitecture'
-
-<LessonChapter
-  id="simulation"
-  className="core-use-case-screen simulation-screen"
-  eyebrow="06 · APPENDIX / EXPANSION CASE"
-  title="隐私数据留在本地"
-  accent="聚合统计与验证证明可复核"
-  body="模型、样本、随机过程与隐私预算事前固定。"
-  figureLabel="APPENDIX / SEALED INPUT → VERIFIED SIMULATION → SETTLEMENT"
-  visual={<SocialSimulationArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="useful-work"
-  className="useful-work-screen"
-  eyebrow="06 · APPENDIX / ENGINEERING LANDSCAPE"
-  title="AI 网络验证不同命题"
-  accent="相对质量、执行正确、经济安全和业务达标是不同命题"
-  body="选型需按目标版本复核；ACVM 可复用执行证明与经济安全。"
-  figureLabel="APPENDIX / PROOF TARGET → JUDGE → ECONOMIC EFFECT"
-  visual={<PoiLandscapeArchitecture />}
->
-</LessonChapter>
+import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchitecture'
 
 <LessonChapter
   id="execution-boundary"
@@ -47,18 +16,6 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
 </LessonChapter>
 
 <LessonChapter
-  id="ans"
-  className="ans-screen"
-  eyebrow="06 · APPENDIX / OPTIONAL ANS"
-  title="ANS 提供签名服务卡"
-  accent="服务发现绑定身份、能力、价格与信誉"
-  body="名称、价格、任务量和信誉均为演示数据。"
-  figureLabel="APPENDIX / ILLUSTRATIVE ANS RECORD → A2A INTENT"
-  visual={<AgentResolutionArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
   id="agentic-contract"
   className="formal-screen contract-spec-screen"
   eyebrow="06 · APPENDIX / AGENTIC CONTRACT"
@@ -67,42 +24,6 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
   body="输入输出、参与方、挑战期和付款条件事前固定。"
   figureLabel="APPENDIX / SCHEMA · WORKER · VALIDATOR · SETTLEMENT"
   visual={<ContractModelArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="fog-inference"
-  className="fog-screen"
-  eyebrow="06 · APPENDIX / OPTIONAL FOG"
-  title="数据本地执行，结果可交付"
-  accent="雾节点就近执行，账本只收证据"
-  body="原始数据留在现场；账本只记录结果根、运行证明与裁决。"
-  figureLabel="APPENDIX / LOCAL DATA → NEARBY INFERENCE → GLOBAL VERIFICATION"
-  visual={<FogInferenceArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="poi-proof"
-  className="intelligence-screen"
-  eyebrow="06 · APPENDIX / PROOF OF INTELLIGENCE"
-  title="PoI 绑定需求、结果与执行"
-  accent="真实需求、结果达标、执行可查、不能重放"
-  body="SignedDemand、AcceptedResult、ExecutionEvidence 和 UniqueTaskKey 缺一不可。"
-  figureLabel="APPENDIX / DEMAND · RESULT · EXECUTION · FRESHNESS"
-  visual={<IntelligenceProofArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="poi-consensus"
-  className="poi-consensus-screen"
-  eyebrow="06 · APPENDIX / FUTURE NETWORK"
-  title="PoI 加权，法定人数确认终局"
-  accent="未来选项；试点阶段权重为零"
-  body="最终确认仍由法定人数完成。"
-  figureLabel="APPENDIX / FUTURE POI WEIGHT → VRF PROPOSER → BFT FINALITY"
-  visual={<PoiConsensusArchitecture />}
 >
 </LessonChapter>
 

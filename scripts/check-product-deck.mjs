@@ -15,25 +15,17 @@ const screenIds = [...screensBlock.matchAll(/\['([^']+)'/g)].map((match) => matc
 const expectedSlideIds = screenIds.slice(1);
 const mainlineIds = [
   'product-snapshot',
-  'product-thesis',
-  'geo-poi-boundary',
+  'poi-proof',
   'geo-verification',
   'data-space',
   'system-architecture',
-  'verification-engine',
   'economy-roles',
   'security-boundaries',
   'product-roadmap',
 ];
 const appendixIds = [
-  'simulation',
-  'useful-work',
   'execution-boundary',
-  'ans',
   'agentic-contract',
-  'fog-inference',
-  'poi-proof',
-  'poi-consensus',
   'deployment-modes',
 ];
 const retiredTutorialIds = [
@@ -79,8 +71,8 @@ const missing = expectedSlideIds.filter((id) => !actualSlideIds.includes(id));
 const unexpected = actualSlideIds.filter((id) => !expectedSlideIds.includes(id));
 const orderMatches = JSON.stringify(expectedSlideIds) === JSON.stringify(actualSlideIds);
 
-if (screenIds.length !== 20) {
-  throw new Error(`Expected a 20-slide deck with one cover, ten mainline slides, and nine appendix slides; found ${screenIds.length}`);
+if (screenIds.length !== 12) {
+  throw new Error(`Expected a 12-slide deck with one cover, eight mainline slides, and three appendix slides; found ${screenIds.length}`);
 }
 if (contentFiles.length !== 6) {
   throw new Error(`Expected six product-deck MDX groups; found ${contentFiles.length}`);
@@ -106,7 +98,7 @@ for (const field of ['implementation', 'challenges', 'security', 'sources']) {
   }
 }
 if (JSON.stringify(expectedSlideIds.slice(0, mainlineIds.length)) !== JSON.stringify(mainlineIds)) {
-  throw new Error(`The ten-slide decision narrative is out of order: ${JSON.stringify(expectedSlideIds.slice(0, mainlineIds.length))}`);
+  throw new Error(`The eight-slide decision narrative is out of order: ${JSON.stringify(expectedSlideIds.slice(0, mainlineIds.length))}`);
 }
 if (JSON.stringify(expectedSlideIds.slice(mainlineIds.length)) !== JSON.stringify(appendixIds)) {
   throw new Error(`The technical appendix is out of order: ${JSON.stringify(expectedSlideIds.slice(mainlineIds.length))}`);

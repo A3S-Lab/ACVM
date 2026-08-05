@@ -11,8 +11,8 @@ rules; an existing chain or payment system provides settlement finality.
 
 ## Decision narrative
 
-The 20-slide deck contains one cover, a 10-slide decision narrative, and a
-9-slide technical appendix. The main narrative presents two priority scenarios:
+The 12-slide deck contains one cover, an 8-slide decision narrative, and a
+3-slide technical appendix. PoI is introduced before the two priority scenarios:
 
 1. **GEO result verification.** Freeze a query set, baseline, observation
    window, evidence sources, and improvement threshold; release the result pool
@@ -40,29 +40,24 @@ the proposed ACVM addition.
 
 The mainline sequence is:
 
-1. Result acceptance as the payment condition
-2. ACVM's result-verdict role
-3. Recommended ACVM collaboration patterns
-4. GEO result verification
-5. Trusted data space and outcome-based data-element settlement
-6. One-order workflow
-7. Result-verification model
-8. Illustrative settlement waterfall
-9. Attack controls and residual risks
-10. Current delivery status
+1. ACVM's result-verdict role and payment boundary
+2. PoI as the settlement credential for an accepted result
+3. GEO result verification
+4. Trusted data space and outcome-based data-element settlement
+5. One-order workflow with execution and business evidence
+6. Illustrative settlement waterfall
+7. Attack controls and residual risks
+8. Current delivery status
 
-The appendix covers privacy-sealed social simulation, comparison predicates for
-other AI networks, the off-chain execution boundary, optional ANS discovery,
-Agentic Contracts, fog inference, ValidPoI requirements, future PoI-weighted
-proposer selection, and candidate deployment adapters.
+The appendix covers the off-chain execution boundary, Agentic Contract state
+management, and candidate deployment adapters.
 
 ## Evidence and product boundaries
 
 Visible slides distinguish current capabilities, proposed integrations, future
-options, and illustrative data. GEO measurements, ANS records, and the ¥120,000
-settlement example are demonstrations rather than production claims. Candidate
-chains and AVS integrations are not presented as completed work. PoI proposer
-weight remains zero during a first pilot.
+options, and illustrative data. GEO measurements and the ¥120,000 settlement
+example are demonstrations rather than production claims. Candidate chains and
+AVS integrations are not presented as completed work.
 
 The speaker guide cites primary sources for every slide. The trusted-data-space
 track is grounded in the State Council's data-system policy, the National Data
@@ -86,8 +81,6 @@ binds the data-space digital contract and usage proof to the same `taskId`.
 - `O` toggles slide thumbnails.
 - `G` toggles the speaker guide.
 - `F` toggles fullscreen presentation mode.
-- The social-simulation appendix scene can play, pause, and jump to a specific
-  stage; the main decision narrative uses static visuals for faster delivery.
 
 ## Development
 

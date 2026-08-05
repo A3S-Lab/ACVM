@@ -25,7 +25,9 @@ export function ProductDefinitionArchitecture() {
       <footer className="decision-statement">
         <span><small>执行层提交</small><strong>任务回执</strong></span>
         <i aria-hidden="true">→</i>
-        <span className="is-acvm"><small>ACVM 生成</small><strong>结果裁决与付款指令</strong></span>
+        <span className="is-acvm"><small>ACVM 生成</small><strong>结果裁决</strong></span>
+        <i aria-hidden="true">→</i>
+        <span><small>支付 / 链执行</small><strong>资金结算</strong></span>
       </footer>
     </LearningPanel>
   );
@@ -120,16 +122,16 @@ const readinessStages = [
   },
   {
     stage: '03',
-    title: '真实首单',
-    detail: 'GEO 或可信数据空间二选一，接入小额结果付款',
-    status: '试点',
+    title: '真实订单',
+    detail: '接入 GEO 或可信数据空间的小额结果付款',
+    status: '验证',
     tone: 'future',
   },
 ] as const;
 
 export function ProductReadinessArchitecture() {
   return (
-    <LearningPanel code="DELIVERY / READINESS" status="FOUNDATION → BUILD → PILOT" className="product-readiness-panel is-simple">
+    <LearningPanel code="DELIVERY / READINESS" status="FOUNDATION → BUILD → VALIDATE" className="product-readiness-panel is-simple">
       <div className="product-readiness-track">
         {readinessStages.map((item, index) => (
           <span className="product-readiness-stage" key={item.stage}>

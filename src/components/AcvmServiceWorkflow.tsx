@@ -18,8 +18,8 @@ const workflowStages = [
   },
   {
     code: '03',
-    title: '证据',
-    actor: 'Worker / 观察方',
+    title: '双证据',
+    actor: '执行证明 / 业务证据',
     record: 'EvidenceRoot',
     icon: 'eye',
   },
@@ -48,7 +48,7 @@ const workflowStages = [
 export function AcvmServiceWorkflowArchitecture() {
   return (
     <LearningPanel code="ONE ORDER / ONE TASK ID" status="FIVE SIGNED EVENTS" className="order-flow-simple">
-      <div className="order-flow" aria-label="规则、执行、证据、裁决、结算五步闭环">
+      <div className="order-flow" aria-label="规则、执行、技术证明与业务证据、裁决、结算五步闭环">
         {workflowStages.map((stage, index) => (
           <span className="order-flow-fragment" key={stage.code}>
             <article>

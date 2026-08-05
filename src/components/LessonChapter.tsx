@@ -7,21 +7,13 @@ import {
 import { TechTerm, type TechKey } from './TechTerm';
 
 const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = {
-  'product-thesis': 'flow',
   'product-snapshot': 'flow',
   'geo-verification': 'proof',
   'data-space': 'network',
-  simulation: 'network',
-  'geo-poi-boundary': 'proof',
-  'useful-work': 'proof',
   'execution-boundary': 'flow',
   'system-architecture': 'flow',
-  ans: 'network',
   'agentic-contract': 'state',
-  'fog-inference': 'fog',
   'poi-proof': 'proof',
-  'poi-consensus': 'network',
-  'verification-engine': 'proof',
   'deployment-modes': 'chains',
   'security-boundaries': 'proof',
   'economy-roles': 'network',

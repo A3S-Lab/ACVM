@@ -640,9 +640,9 @@ export function IntelligenceProofArchitecture() {
         </section>
         <i />
         <section>
-          <small>开放网络</small>
-          <strong>用 VRF 选出区块提议者</strong>
-          <span>PoI 只提供候选权重</span>
+          <small>多方数据</small>
+          <strong>按 splitRoot 分配收益</strong>
+          <span>分配规则在签约时冻结</span>
         </section>
       </div>
     </div>

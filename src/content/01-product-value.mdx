@@ -1,25 +1,26 @@
 import { LessonChapter } from '../components/LessonChapter'
 import { ProductDefinitionArchitecture } from '../components/ProductNarrativeArchitecture'
-import { ProductThesis } from '../components/ProductThesis'
+import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitecture'
 
 <LessonChapter
   id="product-snapshot"
   className="product-snapshot-screen"
-  eyebrow="01 / 客户问题"
-  title="结果验收成为付款条件"
-  accent="事前定规则，事后验结果"
-  body="独立裁决通过后释放结果费。"
+  eyebrow="01 / 产品价值与边界"
+  title="ACVM 把结果验收变成付款条件"
+  accent="事前定规则，事后验结果，按裁决付款"
+  body="执行层提交回执，ACVM 独立裁决，现有支付或链完成资金终局。"
   visual={<ProductDefinitionArchitecture />}
 >
 </LessonChapter>
 
 <LessonChapter
-  id="product-thesis"
-  className="product-thesis-screen"
-  eyebrow="01 / 产品边界"
-  title="ACVM 负责结果裁决"
-  accent="结果达标后触发付款"
-  body="执行由服务方负责；资金终局由现有链或支付系统负责。"
-  visual={<ProductThesis />}
+  id="poi-proof"
+  className="intelligence-screen"
+  eyebrow="01 / PoI 结果凭证"
+  title="PoI 是结果验收后的结算凭证"
+  accent="真实需求、结果达标、执行可查、不可重放"
+  body="四项条件同时成立，ACVM 才生成有效 PoI 并触发结算。"
+  figureLabel="DEMAND · RESULT · EXECUTION · FRESHNESS"
+  visual={<IntelligenceProofArchitecture />}
 >
 </LessonChapter>
