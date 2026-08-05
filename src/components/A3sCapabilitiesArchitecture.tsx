@@ -2,10 +2,9 @@ import { Icon } from './Icons';
 import { LearningPanel } from './LearningPanel';
 
 const boxStages = [
-  ['01', '准备工作负载', '镜像 · 构建 · 网络 · 卷', 'terminal'],
-  ['02', '解析隔离策略', 'MicroVM 或显式 Sandbox', 'shield'],
-  ['03', '管理完整生命周期', '启动 · exec · 暂停 · 恢复', 'spark'],
-  ['04', '形成运行证据', '日志 · 指标 · 事件 · 清理', 'receipt'],
+  ['01', '准备任务环境', '镜像 · 网络 · 存储 · 资源上限', 'terminal'],
+  ['02', '按策略隔离运行', '默认 MicroVM；Sandbox 必须显式选择', 'shield'],
+  ['03', '记录、恢复与清理', '启动 · 日志 · 暂停 · 恢复 · 销毁', 'receipt'],
 ] as const;
 
 export function A3sBoxCapabilitiesArchitecture() {
@@ -24,41 +23,25 @@ export function A3sBoxCapabilitiesArchitecture() {
         ))}
       </div>
 
-      <div className="a3s-box-isolation-rule">
-        <section>
-          <small>默认后端</small>
-          <strong>专用内核 MicroVM</strong>
-          <span>适合不可信任务与更强租户边界</span>
-        </section>
-        <b>不静默降级</b>
-        <section>
-          <small>显式选择</small>
-          <strong>共享内核 Sandbox</strong>
-          <span>适合可信或半可信工具与自动化</span>
-        </section>
-      </div>
-
       <footer className="a3s-box-capability-boundary">
         <Icon name="eye" />
-        <strong>所选后端、策略和代际持久化</strong>
-        <span>恢复、重启与清理沿用同一执行边界</span>
+        <strong>运行中不切换隔离方式</strong>
+        <span>恢复、重启和清理沿用原策略</span>
       </footer>
     </LearningPanel>
   );
 }
 
 const powerPrivacySteps = [
-  ['TEE 执行', 'AMD SEV-SNP / Intel TDX'],
-  ['远程证明', '测量值 · 硬件签名 · nonce'],
-  ['机密模型', '加密加载 · 完整性校验'],
-  ['隐私运行', '日志脱敏 · 内存清零'],
+  ['受保护环境', 'SEV-SNP / TDX'],
+  ['远程证明', '核验硬件和运行程序'],
+  ['安全收尾', '日志脱敏 · 内存清零'],
 ] as const;
 
 const powerStreamingSteps = [
-  ['参数映射', 'GGUF 权重无需整体驻留'],
-  ['当前层加载', '仅活跃层参数进入内存'],
-  ['计算即释放', '完成后回收本层权重页'],
-  ['受控内存峰值', 'O(layer_size) 而非模型总量'],
+  ['参数留在外部', '模型无需整体驻留'],
+  ['当前层载入', '只加载正在计算的一层'],
+  ['计算后释放', '峰值接近单层大小'],
 ] as const;
 
 function PowerCapabilityLane({
@@ -91,14 +74,14 @@ export function A3sPowerCapabilitiesArchitecture() {
     <LearningPanel code="a3s-power / 隐私计算与参数流式推理" status="模型无关 · 回执可核验" className="a3s-power-capability">
       <div className="a3s-power-capability-lanes" aria-label="a3s-power 的隐私计算与参数流式推理能力">
         <PowerCapabilityLane
-          eyebrow="隐私计算"
+          eyebrow="数据与模型不暴露"
           title="隐私计算"
           icon="lock"
           steps={powerPrivacySteps}
           className="is-privacy"
         />
         <PowerCapabilityLane
-          eyebrow="参数流式推理"
+          eyebrow="模型参数按层流动"
           title="参数流式推理"
           icon="brain"
           steps={powerStreamingSteps}
@@ -108,7 +91,7 @@ export function A3sPowerCapabilitiesArchitecture() {
 
       <footer className="a3s-power-receipt">
         <Icon name="receipt" />
-        <span><small>标准执行回执</small><strong>modelRoot · runtimePolicy · nonce · requestDigest · outputDigest</strong></span>
+        <span><small>可核验回执</small><strong>模型版本 · 执行策略 · 输入摘要 · 输出摘要</strong></span>
       </footer>
     </LearningPanel>
   );

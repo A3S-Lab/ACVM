@@ -22,12 +22,8 @@ export function ProductDefinitionArchitecture() {
           </span>
         ))}
       </div>
-      <footer className="decision-statement">
-        <span><small>执行层提交</small><strong>任务回执</strong></span>
-        <i aria-hidden="true">→</i>
-        <span className="is-acvm"><small>ACVM 生成</small><strong>结果裁决</strong></span>
-        <i aria-hidden="true">→</i>
-        <span><small>支付 / 链执行</small><strong>资金结算</strong></span>
+      <footer className="decision-statement decision-statement-single">
+        <Icon name="receipt" /><strong>ACVM 的结果裁决就是付款开关</strong>
       </footer>
     </LearningPanel>
   );
@@ -36,41 +32,31 @@ export function ProductDefinitionArchitecture() {
 export function AgentRentalArchitecture() {
   return (
     <LearningPanel code="智能体服务租赁 / 按结果结算" status="所有权始终由服务方保留" className="trusted-data-space-panel agent-rental-panel principle-panel is-simple">
-      <div className="multi-party-data-flow agent-rental-flow" aria-label="智能体所有者发布能力，租用方签署任务，A3S 隔离执行，ACVM 验收并结算">
+      <div className="multi-party-data-flow agent-rental-flow" aria-label="智能体所有者发布服务，租用方提交任务，ACVM 验收并分账">
         <section>
           <Icon name="fingerprint" />
-          <small>智能体所有者</small>
-          <strong>发布服务能力</strong>
-          <p>模型 · 工具 · 专业流程</p>
-        </section>
-        <i aria-hidden="true">→</i>
-        <section>
-          <Icon name="receipt" />
-          <small>租用方</small>
-          <strong>签署任务订单</strong>
-          <p>目标 · 预算 · 验收规则</p>
+          <small>01 / 发布</small>
+          <strong>登记智能体服务</strong>
+          <p>ANS 服务卡 · 能力 · 价格</p>
         </section>
         <i aria-hidden="true">→</i>
         <section>
           <Icon name="brain" />
-          <small>A3S 执行域</small>
-          <strong>隔离执行智能体</strong>
-          <p>模型与私有数据不交付</p>
+          <small>02 / 使用</small>
+          <strong>提交任务并隔离执行</strong>
+          <p>租用方下单 · A3S 运行</p>
         </section>
         <i aria-hidden="true">→</i>
         <section className="accepted-outcome">
           <Icon name="shield" />
-          <small>ACVM</small>
-          <strong>验收结果并分账</strong>
-          <p>AcceptedResult · ValidPoI</p>
+          <small>03 / 结算</small>
+          <strong>结果通过后自动分账</strong>
+          <p>ACVM 验收 · splitRoot 分配</p>
         </section>
       </div>
-      <div className="data-space-gate">
-        <span>SignedDemand</span><b>+</b><span>ExecReceipt</span><b>+</b><span>AcceptedResult</span><i aria-hidden="true">→</i><strong>释放结果费</strong>
-      </div>
       <footer className="data-space-payees">
-        <small>组合服务可按 splitRoot 分配</small>
-        <span>智能体所有者</span><span>模型方</span><span>算力方</span><span>数据贡献方</span>
+        <strong>splitRoot 自动分账</strong>
+        <span>智能体所有者 · 模型方 · 算力方 · 数据贡献方</span>
       </footer>
     </LearningPanel>
   );

@@ -1,5 +1,6 @@
 import { Icon, type IconName } from './Icons';
 import { DataChip, LearningPanel } from './LearningPanel';
+import { ProgressiveTechnicalFlow } from './ProgressiveTechnicalFlow';
 
 const replacements = [
   {
@@ -64,22 +65,20 @@ export function UsefulWorkOpportunityArchitecture() {
     <LearningPanel code="传统区块链 / 基于 PoI 的区块链" status="推理即证明" className="useful-work-opportunity useful-work-simple">
       <div className="work-source-compare">
         <section className="is-hash">
-          <header><Icon name="bolt" /><span><small>传统区块链</small><strong>哈希即工作量</strong></span></header>
-          <div><b>投入</b><span>电力 · 芯片 · nonce</span></div>
-          <div><b>验证</b><span>哈希低于目标值</span></div>
-          <div><b>链外结果</b><span className="is-zero">无可交付业务结果</span></div>
+          <header><Icon name="bolt" /><span><small>传统 PoW</small><strong>反复试算哈希</strong></span></header>
+          <div><b>通过条件</b><span>哈希低于目标值</span></div>
+          <div><b>直接产出</b><span className="is-zero">获得记账权，不产生业务结果</span></div>
           <code>H(blockHeader ∥ nonce) &lt; target</code>
         </section>
         <i aria-hidden="true">替换工作来源 →</i>
         <section className="is-intelligence">
-          <header><Icon name="brain" /><span><small>基于 PoI 的区块链</small><strong>推理即证明</strong></span></header>
-          <div><b>投入</b><span>模型 · GPU · 工具 · 专业能力</span></div>
-          <div><b>验证</b><span>任务约束 · 推理结果 · 执行证据</span></div>
-          <div><b>可交付结果</b><span className="is-value">诊断 · 预测 · 分析等模型输出</span></div>
+          <header><Icon name="brain" /><span><small>PoI 区块链</small><strong>运行模型完成任务</strong></span></header>
+          <div><b>通过条件</b><span>执行证据和业务结果同时达标</span></div>
+          <div><b>直接产出</b><span className="is-value">诊断、预测、分析等模型结果</span></div>
           <code>SignedDemand ∧ AcceptedResult ∧ ExecReceipt</code>
         </section>
       </div>
-      <footer><Icon name="shield" /><strong>工作量来源由哈希搜索变为真实推理</strong><span>工作来源改变，共识安全机制仍须独立定义。</span></footer>
+      <footer><Icon name="shield" /><strong>改变的是工作内容；共识安全规则仍需单独设计</strong></footer>
     </LearningPanel>
   );
 }
@@ -129,17 +128,19 @@ const consensusStages = [
 
 export function PoiConsensusArchitecture() {
   return (
-    <LearningPanel code="ACVM / 核心共识算法" status="归一 → 封顶 → 抽签 → 终局" className="poi-consensus-architecture poi-algorithm-simple">
-      <div className="poi-consensus-flow">
-        {consensusStages.map((stage, index) => (
-          <span className="poi-consensus-fragment" key={stage.index}>
-            <article><header><b>{stage.index}</b><Icon name={stage.icon} /></header><strong>{stage.title}</strong><p>{stage.detail}</p><code>{stage.code}</code></article>
-            {index < consensusStages.length - 1 ? <i>→</i> : null}
-          </span>
-        ))}
-      </div>
-      <footer><Icon name="eye" /><strong>权重只决定提议机会</strong><span>验证规则和 BFT 法定人数不随权重改变。</span></footer>
-    </LearningPanel>
+    <ProgressiveTechnicalFlow
+      code="ACVM / 核心共识算法"
+      status="归一 → 封顶 → 抽签 → 终局"
+      className="poi-consensus-architecture poi-algorithm-simple"
+      stages={consensusStages.map((stage) => ({ ...stage, formula: stage.code }))}
+      ariaLabel="PoI 共识算法的四个计算步骤"
+      footer={(
+        <footer className="progressive-flow-footer">
+          <span><Icon name="eye" /><strong>权重只决定提议机会</strong></span>
+          <small>验证规则和 BFT 法定人数保持不变</small>
+        </footer>
+      )}
+    />
   );
 }
 

@@ -1117,6 +1117,16 @@
   font-size: 20px;
 }
 
+.decision-statement.decision-statement-single {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding-block: 20px;
+}
+
+.decision-statement-single > svg { width: 22px; color: var(--green, #46d28f); }
+.decision-statement-single > strong { color: var(--text, #fff); font-size: 14px; }
+
 /* Product boundary */
 .product-thesis.is-simple {
   display: grid;
@@ -1415,21 +1425,18 @@
 .data-space-payees {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 14px 20px;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 22px;
+  border-top: 1px solid var(--line);
 }
 
-.data-space-payees small {
-  margin-right: auto;
-  color: var(--muted, #9ca3af);
-  font-size: 10px !important;
-}
+.data-space-payees strong { color: var(--green, #46d28f); font-size: 12px; }
 
 .data-space-payees span {
-  padding: 6px 9px;
-  border: 1px solid var(--line);
-  border-radius: 99px;
-  font-size: 10px;
+  color: var(--muted, #9ca3af);
+  font-size: 11px;
+  text-align: right;
 }
 
 /* Adoption fit */
@@ -1564,9 +1571,9 @@
 
 .order-settlement-outcomes > section {
   min-width: 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 8px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
   padding: 13px 15px;
   border: 1px solid rgba(225, 231, 240, .24);
   border-radius: 6px;
@@ -1575,7 +1582,7 @@
 
 .order-settlement-outcomes > section.is-accepted { border-color: rgba(112, 226, 170, .5); }
 .order-settlement-outcomes > section.is-fraud { border-color: rgba(255, 112, 129, .42); }
-.order-settlement-outcomes header { grid-column: 1 / -1; display: flex; align-items: center; gap: 9px; }
+.order-settlement-outcomes header { display: flex; align-items: center; gap: 9px; }
 .order-settlement-outcomes header > svg { width: 18px; color: var(--principle-violet); }
 .order-settlement-outcomes header > span { display: grid; gap: 3px; }
 .order-settlement-outcomes header small { color: var(--principle-soft); font: 700 8px/1 var(--mono, monospace); }
@@ -1585,7 +1592,7 @@
 .order-settlement-outcomes .is-fraud code { color: #ff8492; }
 
 .order-settlement-panel .order-task-id {
-  justify-content: space-between;
+  justify-content: center;
   padding: 15px 24px;
 }
 
@@ -1597,7 +1604,7 @@
 .order-settlement-panel .order-task-id strong {
   color: var(--principle-green);
   font-size: 10.5px;
-  text-align: right;
+  text-align: center;
 }
 
 /* Verification */
@@ -2315,7 +2322,7 @@
 .social-simulation-simple-flow {
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr) 24px minmax(0, 1fr) 24px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1.25fr) 28px minmax(0, 1fr);
   align-items: stretch;
   gap: 6px;
   padding: 38px 24px;
@@ -2355,7 +2362,7 @@
   height: 100%;
   min-height: 0;
   display: grid;
-  grid-template-rows: auto 1fr auto auto;
+  grid-template-rows: auto 1fr auto;
 }
 
 .a3s-box-capability-flow {
@@ -2422,10 +2429,17 @@
 .a3s-power-capability-lanes {
   min-height: 0;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
 }
-.a3s-power-capability-lanes > section { min-width: 0; padding: 28px 28px 22px; }
-.a3s-power-capability-lanes > section + section { border-left: 1px solid var(--line); }
+.a3s-power-capability-lanes > section {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  padding: 22px 28px;
+}
+.a3s-power-capability-lanes > section + section { border-top: 1px solid var(--line); }
 .a3s-power-capability-lanes > section.is-privacy { background: rgba(154,130,255,.04); }
 .a3s-power-capability-lanes > section.is-streaming { background: rgba(70,210,143,.035); }
 .a3s-power-capability-lanes > section > header { display: flex; align-items: center; gap: 13px; }
@@ -2433,18 +2447,19 @@
 .a3s-power-capability-lanes > section > header span { display: grid; gap: 5px; }
 .a3s-power-capability-lanes > section > header small { color: var(--faint, #77879d); font: 700 9px/1 var(--mono, monospace); }
 .a3s-power-capability-lanes > section > header strong { font-size: 19px; }
-.a3s-power-capability-lanes > section > div { display: grid; margin-top: 24px; }
+.a3s-power-capability-lanes > section > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .a3s-power-capability-lanes > section > div > span {
   display: grid;
-  grid-template-columns: 26px 92px 1fr;
-  align-items: baseline;
-  gap: 10px;
-  padding: 13px 0;
-  border-top: 1px solid var(--line);
+  grid-template-columns: auto 1fr;
+  align-content: center;
+  gap: 7px 9px;
+  min-height: 92px;
+  padding: 14px 16px;
+  border-left: 1px solid var(--line);
 }
 .a3s-power-capability-lanes > section > div b { color: var(--violet, #9a82ff); font: 700 8px/1 var(--mono, monospace); }
 .a3s-power-capability-lanes > section > div strong { font-size: 12px; }
-.a3s-power-capability-lanes > section > div small { color: var(--muted, #9ca3af); font-size: 10px; line-height: 1.4; }
+.a3s-power-capability-lanes > section > div small { grid-column: 1 / -1; color: var(--muted, #9ca3af); font-size: 10px; line-height: 1.4; }
 
 .a3s-power-receipt {
   display: flex;
@@ -2749,6 +2764,7 @@
 /* Agent rental uses the same blueprint surface without hiding commercial logic. */
 .agent-rental-panel {
   background: #030405;
+  grid-template-rows: auto 1fr auto;
 }
 
 .agent-rental-panel .multi-party-data-flow {
@@ -2756,7 +2772,7 @@
 }
 
 .agent-rental-panel .multi-party-data-flow > section {
-  min-height: 225px;
+  min-height: 245px;
   justify-content: center;
   border-top: 1px solid rgba(225, 231, 240, .34);
   border-bottom: 1px solid rgba(225, 231, 240, .34);
@@ -2780,12 +2796,7 @@
 }
 
 .agent-rental-panel .data-space-payees span {
-  padding: 4px 2px 5px;
-  border: 0;
-  border-bottom: 1px solid rgba(225, 231, 240, .3);
-  border-radius: 0;
   color: rgba(239, 243, 249, .68);
-  font-family: var(--mono, ui-monospace, monospace);
 }
 
 @keyframes principle-node-lock {

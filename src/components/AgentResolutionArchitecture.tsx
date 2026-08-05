@@ -1,10 +1,8 @@
 const leftServices = [
-  { x: 225, y: 76, label: 'GEO' },
-  { x: 334, y: 136, label: '雾计算' },
-  { x: 334, y: 294, label: '诊断' },
-  { x: 225, y: 354, label: '模拟' },
-  { x: 116, y: 294, label: '数据服务' },
-  { x: 116, y: 136, label: 'Web' },
+  { x: 225, y: 84, label: 'GEO' },
+  { x: 346, y: 215, label: '诊断' },
+  { x: 225, y: 346, label: '模拟' },
+  { x: 104, y: 215, label: '雾计算' },
 ] as const;
 
 const rightServices = leftServices.map((service) => ({ ...service, x: service.x + 450 }));
@@ -49,7 +47,7 @@ export function AgentResolutionArchitecture() {
               </g>
             ))}
           </g>
-          <text className="principle-metric" x="225" y="403" textAnchor="middle">N(N−1)/2 条定制连接</text>
+          <text className="principle-metric" x="225" y="403" textAnchor="middle">4 个服务需要 6 条定制连接</text>
 
           <circle className="ans-orbit" cx="675" cy="215" r="139" />
           <g className="ans-hub-links" aria-hidden="true">
@@ -70,15 +68,15 @@ export function AgentResolutionArchitecture() {
             <rect x="-65" y="-44" width="130" height="88" rx="5" />
             <text className="principle-kicker" textAnchor="middle" y="-18">签名服务卡</text>
             <text className="principle-core-title" textAnchor="middle" y="8">ANS</text>
-            <text className="principle-detail" textAnchor="middle" y="29">recordRoot · seq</text>
+            <text className="principle-detail" textAnchor="middle" y="29">身份 · 能力 · 地址</text>
           </g>
-          <text className="principle-metric is-good" x="675" y="403" textAnchor="middle">统一发现入口 · 每次调用先核验</text>
+          <text className="principle-metric is-good" x="675" y="403" textAnchor="middle">一个目录入口 · 调用前核验</text>
         </svg>
       </div>
 
       <footer className="principle-statusbar ans-principle-statusbar">
-        <code>name → DID → capabilityRoot → endpoint → recordRoot</code>
-        <span>签名 · 有效期 · 撤销状态 · 历史回执</span>
+        <code>名称 → 身份 → 能力 → 服务地址</code>
+        <span>签名 · 有效期 · 撤销状态</span>
       </footer>
     </div>
   );

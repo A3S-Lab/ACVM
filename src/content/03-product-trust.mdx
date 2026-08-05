@@ -4,10 +4,10 @@ import { LessonChapter } from '../components/LessonChapter'
 <LessonChapter
   id="system-architecture"
   className="system-architecture-screen"
-  eyebrow="04 / 订单闭环"
-  title="一笔订单完成验收、结算与风控"
-  accent="同一 taskId，三种终局结果"
-  body="结果通过就分账，正常未达标退回结果池；只有可证明造假才罚没保证金，验证成本按约结算。"
+  eyebrow="04 / 订单结算规则"
+  title="每笔订单都有清楚的付款、退款和处罚结果"
+  accent="通过就分账，未达标就退款，造假才处罚"
+  body="订单、执行记录和验收结果共用同一个任务编号，避免重复结算；验证者完成有效工作，也按约获得费用。"
   visual={<AcvmServiceWorkflowArchitecture />}
 >
 </LessonChapter>

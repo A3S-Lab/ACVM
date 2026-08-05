@@ -199,30 +199,23 @@ export function SocialSimulationSimpleArchitecture() {
       <div className="social-simulation-simple-flow" aria-label="私有数据经过本地社会模拟、安全聚合与 ACVM 验收形成可结算结果">
         <section>
           <Icon name="lock" />
-          <small>私有输入</small>
-          <strong>机构、企业与个人数据</strong>
-          <span>原始画像与轨迹不出域</span>
+          <small>01 / 本地数据</small>
+          <strong>原始数据留在各机构</strong>
+          <span>画像与轨迹不对外公开</span>
         </section>
         <i aria-hidden="true">→</i>
         <section className="is-simulation">
           <Icon name="brain" />
-          <small>隔离仿真</small>
-          <strong>按冻结假设运行</strong>
-          <span>模型 · 样本 · 随机种子</span>
-        </section>
-        <i aria-hidden="true">→</i>
-        <section>
-          <Icon name="chain" />
-          <small>安全聚合</small>
-          <strong>只汇总群体指标</strong>
-          <span>统计值 · 置信区间</span>
+          <small>02 / 运行与汇总</small>
+          <strong>按同一规则仿真并安全聚合</strong>
+          <span>只汇总统计值和置信区间</span>
         </section>
         <i aria-hidden="true">→</i>
         <section className="is-accepted">
           <Icon name="shield" />
-          <small>ACVM 裁决</small>
-          <strong>验管线与结果回执</strong>
-          <span>通过后结算服务费</span>
+          <small>03 / 验收与结算</small>
+          <strong>ACVM 核对实验和汇总结果</strong>
+          <span>通过后才支付服务费</span>
         </section>
       </div>
       <footer className="social-simulation-simple-boundary">

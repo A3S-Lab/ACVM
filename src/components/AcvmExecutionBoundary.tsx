@@ -1,5 +1,5 @@
 import { Icon, type IconName } from './Icons';
-import { LearningPanel } from './LearningPanel';
+import { ProgressiveTechnicalFlow } from './ProgressiveTechnicalFlow';
 
 const trustStages = [
   {
@@ -27,7 +27,7 @@ const trustStages = [
     index: '04',
     title: '生成终局裁决',
     detail: 'taskKey 绑定任务、输出与 nonce，保证只消费一次',
-    formula: 'taskKey = H(taskId ∥ outputRoot ∥ nonce); Accepted = ExecOK ∧ OutcomeOK ∧ ¬Spent(taskKey)',
+    formula: 'taskKey = H(taskId ∥ outputRoot ∥ nonce)\nAccepted = ExecOK ∧ OutcomeOK ∧ ¬Spent(taskKey)',
     icon: 'shield',
   },
 ] as const satisfies readonly {
@@ -40,25 +40,18 @@ const trustStages = [
 
 export function AcvmExecutionBoundaryArchitecture() {
   return (
-    <LearningPanel code="Agentic Contract / 链下可信算法" status="执行证明与结果证明分别验证" className="agentic-trust-panel principle-panel">
-      <div className="agentic-trust-flow" aria-label="链下计算先冻结规则承诺，再分别验证执行证明和业务结果，最后检查防重放并生成终局裁决">
-        {trustStages.map((stage, stageIndex) => (
-          <span className={`agentic-trust-fragment is-stage-${stageIndex + 1}`} key={stage.index}>
-            <section>
-              <header><b>{stage.index}</b><Icon name={stage.icon} /></header>
-              <strong>{stage.title}</strong>
-              <small>{stage.detail}</small>
-              <code>{stage.formula}</code>
-            </section>
-            {stageIndex < trustStages.length - 1 ? <i aria-hidden="true">→</i> : null}
-          </span>
-        ))}
-      </div>
-
-      <footer className="agentic-trust-rule">
-        <code>Sₙ₊₁ = δACVM(Sₙ, AcceptedResult)</code>
-        <span><Icon name="check" /><strong>节点重验公式与证据</strong><small>不在区块内重跑模型</small></span>
-      </footer>
-    </LearningPanel>
+    <ProgressiveTechnicalFlow
+      code="Agentic Contract / 链下可信算法"
+      status="四步验证 · 逐步展示"
+      className="agentic-trust-panel principle-panel"
+      stages={trustStages}
+      ariaLabel="可信链下执行的四个验证步骤"
+      footer={(
+        <footer className="progressive-flow-footer">
+          <code>Sₙ₊₁ = δACVM(Sₙ, AcceptedResult)</code>
+          <span><Icon name="check" /><strong>链上只重验证据和公式，不重跑模型</strong></span>
+        </footer>
+      )}
+    />
   );
 }

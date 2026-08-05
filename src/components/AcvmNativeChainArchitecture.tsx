@@ -1,5 +1,5 @@
 import { Icon, type IconName } from './Icons';
-import { LearningPanel } from './LearningPanel';
+import { ProgressiveTechnicalFlow } from './ProgressiveTechnicalFlow';
 
 const nativeAlgorithmStages = [
   {
@@ -34,7 +34,7 @@ const nativeAlgorithmStages = [
     actor: '链上 ACVM',
     title: '恢复合约并结算',
     detail: '先验证门限裁决，再用 taskKey 防止重复恢复合约',
-    formula: 'taskKey = H(taskId ∥ outputRoot ∥ nonce); Accept ⇔ Verify(R) ∧ ¬Spent(taskKey)',
+    formula: 'taskKey = H(taskId ∥ outputRoot ∥ nonce)\nAccept ⇔ Verify(R) ∧ ¬Spent(taskKey)\n(Sₙ₊₁, PoIₙ₊₁) = (δACVM(Sₙ, AcceptedResult), UpdateBounded(PoIₙ, ValidPoI))',
     icon: 'shield',
     tone: 'chain',
   },
@@ -50,32 +50,18 @@ const nativeAlgorithmStages = [
 
 export function AcvmNativeChainArchitecture() {
   return (
-    <LearningPanel code="Rust 原生链 / ACVM 异步推理算法" status="推理不阻塞出块，裁决确定性终局" className="native-chain-panel native-chain-algorithm-panel principle-panel">
-      <div className="native-chain-service-flow" aria-label="链上 ACVM 异步发布任务，PoI Worker 提供推理，Validator 形成门限裁决，ACVM 恢复合约并更新 PoI">
-        {nativeAlgorithmStages.map((stage, stageIndex) => (
-          <span className={`native-chain-service-fragment is-${stage.tone}`} key={stage.index}>
-            <section>
-              <header><b>{stage.index}</b><Icon name={stage.icon} /></header>
-              <small>{stage.actor}</small>
-              <strong>{stage.title}</strong>
-              <p>{stage.detail}</p>
-              <code>{stage.formula}</code>
-            </section>
-            {stageIndex < nativeAlgorithmStages.length - 1 ? <i aria-hidden="true">→</i> : null}
-          </span>
-        ))}
-      </div>
-
-      <div className="native-chain-state-machine">
-        <span><small>链上任务状态</small><code>Requested → AwaitingInference → Accepted → Resumed / Settled</code></span>
-        <b>区块不等待模型</b>
-      </div>
-
-      <footer className="native-chain-service-result">
-        <code>Sₙ₊₁ = δACVM(Sₙ, outputRoot, AcceptedResult)</code>
-        <i aria-hidden="true">+</i>
-        <code>PoIₙ₊₁ = UpdateBounded(PoIₙ, ValidPoI)</code>
-      </footer>
-    </LearningPanel>
+    <ProgressiveTechnicalFlow
+      code="Rust 原生链 / ACVM 异步推理算法"
+      status="推理不阻塞出块"
+      className="native-chain-panel native-chain-algorithm-panel principle-panel"
+      stages={nativeAlgorithmStages}
+      ariaLabel="Rust 原生 ACVM 链的四个执行步骤"
+      footer={(
+        <footer className="progressive-flow-footer is-native">
+          <span><small>链上任务状态</small><strong>发布任务 → 等待推理 → 验收通过 → 合约继续</strong></span>
+          <b>区块不等待模型</b>
+        </footer>
+      )}
+    />
   );
 }

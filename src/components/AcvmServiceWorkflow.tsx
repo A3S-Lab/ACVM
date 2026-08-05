@@ -5,36 +5,31 @@ const workflowStages = [
   {
     code: '01',
     title: '签约与托管',
-    detail: '需求方签名任务，锁定结果池与验证费',
-    record: 'SignedDemand + Escrow',
+    detail: '锁定任务、结果池和验证费',
     icon: 'key',
   },
   {
     code: '02',
     title: '隔离执行',
-    detail: 'Worker 在 a3s-box 中运行并提交回执',
-    record: 'ExecReceipt',
+    detail: 'Worker 在 a3s-box 中运行',
     icon: 'brain',
   },
   {
     code: '03',
     title: '独立验收',
-    detail: 'Validator 分别检查执行证明与业务证据',
-    record: 'AcceptedResult',
+    detail: 'Validator 核对执行和业务证据',
     icon: 'eye',
   },
   {
     code: '04',
     title: '挑战与终局',
-    detail: '挑战窗口结束，检查 quorum 与 taskKey',
-    record: 'FinalVerdict',
+    detail: '挑战期结束后形成最终结果',
     icon: 'shield',
   },
 ] as const satisfies readonly {
   code: string;
   title: string;
   detail: string;
-  record: string;
   icon: IconName;
 }[];
 
@@ -42,24 +37,21 @@ const settlementOutcomes = [
   {
     state: 'Accepted',
     title: '结果通过',
-    money: 'ResultPool → splitRoot 分账',
-    proof: 'ValidPoI = 1',
+    money: '结果费按 splitRoot 分账',
     tone: 'accepted',
     icon: 'check',
   },
   {
     state: 'Rejected',
     title: '正常未达标',
-    money: 'ResultPool → 退回需求方',
-    proof: 'ValidPoI = 0',
+    money: '结果费退回需求方',
     tone: 'rejected',
     icon: 'receipt',
   },
   {
     state: 'Fraud',
     title: '证据造假',
-    money: 'Bond → 挑战者 + 安全储备',
-    proof: 'Slash > 0',
+    money: '保证金补偿挑战者与安全储备',
     tone: 'fraud',
     icon: 'shield',
   },
@@ -67,7 +59,6 @@ const settlementOutcomes = [
   state: string;
   title: string;
   money: string;
-  proof: string;
   tone: 'accepted' | 'rejected' | 'fraud';
   icon: IconName;
 }[];
@@ -82,7 +73,6 @@ export function AcvmServiceWorkflowArchitecture() {
               <header><b>{stage.code}</b><Icon name={stage.icon} /></header>
               <strong>{stage.title}</strong>
               <small>{stage.detail}</small>
-              <code>{stage.record}</code>
             </article>
             {index < workflowStages.length - 1 ? <i aria-hidden="true">→</i> : null}
           </span>
@@ -92,16 +82,14 @@ export function AcvmServiceWorkflowArchitecture() {
       <div className="order-settlement-outcomes" aria-label="通过、未达标和造假三种终局资金结果">
         {settlementOutcomes.map((outcome) => (
           <section className={`is-${outcome.tone}`} key={outcome.state}>
-            <header><Icon name={outcome.icon} /><span><small>{outcome.state}</small><strong>{outcome.title}</strong></span></header>
+            <header><Icon name={outcome.icon} /><strong>{outcome.title}</strong></header>
             <p>{outcome.money}</p>
-            <code>{outcome.proof}</code>
           </section>
         ))}
       </div>
 
       <footer className="order-task-id">
-        <code>VerificationPool → Evidence / Validator / Protocol</code>
-        <strong>验证成本按约支付；罚没只由 FraudProof 触发</strong>
+        <strong>验证者按约获得费用；只有 FraudProof 才会罚没保证金</strong>
       </footer>
     </LearningPanel>
   );

@@ -72,30 +72,28 @@ export function AcvmIntegrationArchitecture() {
       <div className="integration-simple-flow" aria-label="ACVM 标准任务状态通过 ChainAdapter 映射到国内区块链的身份、事件和终局接口">
         <section>
           <Icon name="receipt" />
-          <small>ACVM 标准状态</small>
-          <strong>ACVM 标准状态</strong>
-          <span>taskRoot · verdictRoot · poiRoot</span>
+          <small>输入</small>
+          <strong>ACVM 任务结果</strong>
+          <span>任务 · 裁决 · PoI</span>
         </section>
         <i aria-hidden="true">→</i>
         <section className="is-acvm">
           <Icon name="spark" />
-          <small>链适配器</small>
+          <small>连接</small>
           <strong>ChainAdapter</strong>
-          <span>身份映射 · 事件编码 · 终局回执</span>
+          <span>身份 · 事件 · 终局</span>
         </section>
         <i aria-hidden="true">→</i>
         <section>
           <Icon name="chain" />
-          <small>国内基础设施</small>
+          <small>写入</small>
           <strong>国内区块链</strong>
           <span>BSN · 星火链网 · 长安链 · FISCO BCOS</span>
         </section>
       </div>
 
       <footer className="integration-simple-boundary">
-        <span><b>统一 ACVM 接口</b><small>task · verdict · PoI · finality</small></span>
-        <i />
-        <span><b>目标链 Driver</b><small>身份 · 交易 · 事件 · 终局</small></span>
+        <b>每条链只实现一个 Driver，ACVM 上层业务规则保持不变</b>
       </footer>
     </LearningPanel>
   );

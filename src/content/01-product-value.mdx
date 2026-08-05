@@ -7,10 +7,10 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
 <LessonChapter
   id="useful-work"
   className="useful-work-screen"
-  eyebrow="01 / 传统区块链缺陷"
-  title="无意义哈希换成推理即证明"
-  accent="算力转化为可交付的推理结果"
-  body="传统 PoW 反复搜索 nonce；PoI 把模型、GPU 与专业能力投入真实任务，以推理结果和执行证据完成验证。"
+  eyebrow="01 / 传统区块链的局限"
+  title="传统 PoW 的算力没有直接服务业务"
+  accent="PoI 让算力完成可验收的 AI 任务"
+  body="传统 PoW 不断试算哈希来争夺记账权，却不会直接产出诊断、预测等业务结果。PoI 改为运行模型，并交付可验收的结果。"
   visual={<UsefulWorkOpportunityArchitecture />}
 >
 </LessonChapter>
@@ -18,10 +18,10 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
 <LessonChapter
   id="product-snapshot"
   className="product-snapshot-screen"
-  eyebrow="02 / ACVM 产品价值"
-  title="ACVM 把结果验收变成付款条件"
-  accent="先定验收条件，按结果付款"
-  body="执行方提交回执，ACVM 按规则裁决，资金据此释放或退回。"
+  eyebrow="02 / ACVM 的工作方式"
+  title="ACVM 先验收结果，再付款或退款"
+  accent="任务、验收和付款写进同一份数字订单"
+  body="服务方提交结果和执行记录，ACVM 自动核对约定条件。达标就付款，不达标就退款。"
   visual={<ProductDefinitionArchitecture />}
 >
 </LessonChapter>
@@ -30,9 +30,9 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
   id="poi-proof"
   className="intelligence-screen"
   eyebrow="02 / PoI 结果凭证"
-  title="PoI 是结果验收后的结算凭证"
-  accent="只有真实任务和有效结果才能形成 PoI"
-  body="订单、执行回执、结果验收和防重放同时通过后，ACVM 才生成可付款、可计量的 PoI。"
+  title="PoI 证明一项 AI 任务已经真实完成"
+  accent="有订单、有执行记录、有验收结果，才能生成凭证"
+  body="PoI 把有效结果与唯一订单绑定，可用于付款、分账和贡献计量，同一结果不能重复领取费用。"
   figureLabel="真实需求 · 执行证明 · 结果验收 · 防重放"
   visual={<IntelligenceProofArchitecture />}
 >
@@ -42,9 +42,9 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
   id="execution-boundary"
   className="acvm-execution-boundary-screen"
   eyebrow="02 / 可信链下执行"
-  title="链下计算采用双证据验收"
-  accent="先证明按约执行，再证明结果达标"
-  body="a3s-box 或 TEE 证明任务绑定的执行环境；Validator 再核验独立业务证据，全部条件成立后才推进链上状态。"
+  title="链下 AI 结果要通过两道验证"
+  accent="第一道查执行过程，第二道查业务结果"
+  body="隔离环境证明模型、数据和权限没有被替换；独立验证者再按约定标准检查业务结果。两道验证都通过，链上才确认任务完成。"
   figureLabel="规则承诺 → 执行验证 → 结果验证 → 确定性终局"
   visual={<AcvmExecutionBoundaryArchitecture />}
 >

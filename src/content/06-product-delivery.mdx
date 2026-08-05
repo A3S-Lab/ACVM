@@ -6,10 +6,10 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
 <LessonChapter
   id="a3s-box"
   className="a3s-box-screen"
-  eyebrow="05 / a3s-box"
-  title="a3s-box 固定任务的隔离执行边界"
-  accent="镜像、资源与生命周期统一管理"
-  body="默认使用专用内核 MicroVM，显式选择 Sandbox；运行中不静默切换后端。"
+  eyebrow="05 / a3s-box 执行环境"
+  title="a3s-box 为每个 AI 任务提供独立运行空间"
+  accent="模型、资源、网络和数据访问都按任务锁定"
+  body="任务默认在轻量虚拟机中运行，彼此互不影响。系统完整记录启动、执行和清理过程，发生故障后也能按原配置恢复。"
   visual={<A3sBoxCapabilitiesArchitecture />}
 >
 </LessonChapter>
@@ -17,10 +17,10 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
 <LessonChapter
   id="a3s-power"
   className="a3s-power-screen"
-  eyebrow="05 / a3s-power"
-  title="a3s-power 提供隐私计算与参数流式推理"
-  accent="TEE 保密执行，活跃层参数按层加载"
-  body="当前层参数进入可信内存，计算后立即释放；峰值内存约为单层规模，并输出可核验回执。"
+  eyebrow="05 / a3s-power 隐私推理"
+  title="a3s-power 让大模型在受保护的小内存中运行"
+  accent="数据和模型全程受保护，用到哪一层就加载哪一层"
+  body="模型不用一次全部进入可信内存：当前层参数计算完成后立即释放。这样既保护隐私，也能降低运行大模型所需的可信内存。"
   visual={<A3sPowerCapabilitiesArchitecture />}
 >
 </LessonChapter>
@@ -28,10 +28,10 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
 <LessonChapter
   id="deployment-modes"
   className="chains-screen"
-  eyebrow="05 / 国内区块链接入"
-  title="ChainAdapter 将 ACVM 接入国内区块链"
-  accent="统一映射身份、事件与终局"
-  body="A3S 执行结果先进入 ACVM；ChainAdapter 再把标准任务状态映射到目标链。"
+  eyebrow="05 / 对接国内区块链"
+  title="ACVM 可以接入现有的国内区块链"
+  accent="业务流程不变，只替换对应区块链的连接器"
+  body="A3S 负责 AI 执行，ACVM 负责验收和状态管理；连接器再把统一结果写入长安链、FISCO BCOS、星火链网或 BSN。"
   figureLabel="ACVM 标准状态 → ChainAdapter → 国内区块链基础设施"
   visual={<AcvmIntegrationArchitecture />}
 >
@@ -40,10 +40,10 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
 <LessonChapter
   id="native-chain"
   className="native-chain-screen"
-  eyebrow="06 / Rust 原生链"
-  title="原生 ACVM 异步执行推理任务"
-  accent="PoI Worker 为链上合约提供推理服务"
-  body="区块只处理任务、回执和确定性状态转换，不等待模型；AcceptedResult 恢复合约，并同步完成结算与有界 PoI 更新。"
+  eyebrow="06 / Rust 原生 ACVM 链"
+  title="Rust 原生链把 AI 推理接入合约执行"
+  accent="PoI 节点提供模型服务，链上负责验证、续跑和结算"
+  body="合约发布任务后，PoI 节点运行指定模型并提交回执；验证通过后，链上恢复合约、更新状态并付款。区块生成不用等待模型计算。"
   figureLabel="ACVM 任务 → PoI 推理服务 → AcceptedResult → 状态恢复与 ValidPoI"
   visual={<AcvmNativeChainArchitecture />}
 >
