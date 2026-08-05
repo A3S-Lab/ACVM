@@ -24,13 +24,13 @@ export const speakerGuides = {
     duration: '0:45',
     focus: 'PoI 是结果验收后的结算凭证。',
     example: '同一个预测结果即使被复制到两个订单，也只有同时匹配签名需求、验收结果、执行回执和唯一 taskKey 的订单可以领取一次费用。',
-    beats: ['SignedDemand 证明真实订单与预算，AcceptedResult 证明结果已按约通过。', 'ExecutionEvidence 与 AntiReplay 保证执行可查且不能重复结算。'],
+    beats: ['SignedDemand 证明真实订单与预算，AcceptedResult 证明结果已按约通过。', 'ExecutionEvidence 与 AntiReplay 保证执行可查且不能重复结算；共识权重由后续算法另行计算。'],
   },
   'useful-work': {
     duration: '0:50',
-    focus: 'PoI 把无链外价值的哈希工作换成链上 ACVM 实际需要的模型推理服务。',
-    example: '链上 GEO 合约发布引用分析任务，PoI Worker 完成模型推理并通过独立验收；同一结果返回合约触发结算，同时生成 ValidPoI。',
-    beats: ['有效推理先完成 Agentic Contract 的真实服务，再进入 PoI 贡献计量。', 'PoI 只形成有界候选权重，VRF 抽签与 BFT 终局仍保持独立。'],
+    focus: 'PoI 把无链外产出的哈希搜索，换成能交付业务结果的模型推理。',
+    example: '示例：GPU 不再反复尝试 nonce，而是对匿名化订单运行异常检测，交付异常清单、模型版本和执行证据。',
+    beats: ['PoI 改变的是工作量来源：从哈希搜索改为真实推理。', '结果验收、付款与共识权重分别由 ACVM 裁决、PoI 凭证和共识算法完成。'],
   },
   'geo-verification': {
     duration: '0:50',
@@ -52,9 +52,9 @@ export const speakerGuides = {
   },
   'poi-consensus': {
     duration: '0:50',
-    focus: '四个公式把 ValidPoI 连接到有界权重、VRF 抽签和 BFT 终局。',
-    example: '示例：Worker 获得多个预测性维护 ValidPoI 后，权重先按任务类别归一并封顶；即使被 VRF 抽中，也必须由法定人数确认区块。',
-    beats: ['ValidPoI 要求需求、结果、执行证明与防重放同时成立。', 'PoI 只影响候选概率，其他节点仍重验区块并完成终局。'],
+    focus: '已验收的 PoI 先按任务类别归一，再变成有界权重、VRF 抽签和 BFT 终局。',
+    example: '示例：GEO、预测性维护和社会模拟不直接按订单金额比较，而是在各自类别内归一、封顶和衰减，避免高价任务直接垄断提议机会。',
+    beats: ['贡献分数只来自已终局的 PoI，不接受 Worker 自报成本或分值。', '权重只影响候选概率；其他节点仍重验交易与状态，并由 BFT 法定人数完成终局。'],
   },
   'system-architecture': {
     duration: '0:55',
@@ -88,7 +88,7 @@ export const speakerGuides = {
   },
   'execution-boundary': {
     duration: '0:55',
-    focus: '链下 Agentic Contract 用两类证明进入可信状态：执行证明过程，业务证据证明结果。',
+    focus: '执行证明确认按约运行，结果证明确认业务目标达标。',
     example: '示例：采购 Agent 完成供应商询价后，TEE 回执证明指定模型、工具和权限按约运行；真实采购单与到货记录再证明业务目标完成。两类证据通过 Validator 法定人数确认后才生成 ValidPoI 并付款。',
     beats: ['contractRoot 先冻结目标、权限、验收、分账和挑战规则；回执绑定 taskId、模型、环境、输入输出根与 nonce。', 'TEE 不能单独证明结果正确；AcceptedResult 必须来自独立业务证据，链上再验签、确认法定人数并防重放。'],
   },
@@ -106,14 +106,14 @@ export const speakerGuides = {
   },
   'deployment-modes': {
     duration: '0:45',
-    focus: 'a3s-box、a3s-power 与 ChainAdapter 组成 ACVM 接入国内区块链的近期路径。',
-    example: '实施示例：预测性维护任务在 a3s-box 中隔离执行，a3s-power 绑定模型与环境生成证明；ACVM 验收后把 taskRoot、verdictRoot 和 poiRoot 提交到选定联盟链。',
-    beats: ['a3s-box 管执行边界，a3s-power 提供模型与环境证明，ACVM 负责结果裁决和 PoI。', 'ChainAdapter 对接 BSN 承载网络、星火链网、长安链或 FISCO BCOS，原链继续提供成员、账本和终局。'],
+    focus: 'ChainAdapter 把 ACVM 的统一任务状态，映射到国内区块链的身份、事件和终局接口。',
+    example: '实施示例：GEO 任务在 A3S 执行并由 ACVM 形成 taskRoot、verdictRoot 和 poiRoot；长安链 Driver 将这些标准状态写入合约，再把终局回执返回 ACVM。',
+    beats: ['A3S 执行域保留原始数据、模型与详细证据；ChainAdapter 只处理标准状态和链上最小记录。', 'BSN、星火链网、长安链与 FISCO BCOS 分别实现 Driver，ACVM 上层语义保持一致。'],
   },
   'native-chain': {
     duration: '1:00',
     focus: 'Rust 原生链把 PoI Worker 变成链上 ACVM 的异步模型推理服务层。',
-    example: '示例：链上预测性维护合约发布故障诊断任务；PoI Worker 在 a3s-power 中运行指定模型，诊断结果通过验收后恢复合约状态、生成维保指令并结算，同时形成 ValidPoI。',
+    example: '示例：链上理赔合约发布票据一致性识别任务；PoI Worker 运行指定视觉模型，Validator 结合保单规则与人工复核验收，AcceptedResult 恢复合约并结算，同时形成 ValidPoI。',
     beats: ['区块不会同步等待模型；Agentic Contract 进入 AwaitingInference，收到 AcceptedResult 后再执行确定性状态转换。', '同一次有效推理获得服务收益并形成有界候选权重，VRF 选择提议者，BFT 完成区块终局。'],
   },
 } as const satisfies Record<ScreenId, SpeakerGuideEntry>;

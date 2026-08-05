@@ -74,12 +74,12 @@ export function UsefulWorkOpportunityArchitecture() {
         <section className="is-intelligence">
           <header><Icon name="brain" /><span><small>基于 PoI 的区块链</small><strong>推理即证明</strong></span></header>
           <div><b>投入</b><span>模型 · GPU · 工具 · 专业能力</span></div>
-          <div><b>验证</b><span>真实需求 · 结果验收 · 执行证据</span></div>
-          <div><b>服务结果</b><span className="is-value">链上 ACVM 可消费的 AI 结果</span></div>
-          <code>SignedDemand ∧ AcceptedResult ∧ ExecProof</code>
+          <div><b>验证</b><span>任务约束 · 推理结果 · 执行证据</span></div>
+          <div><b>可交付结果</b><span className="is-value">诊断 · 预测 · 分析等模型输出</span></div>
+          <code>Demand ∧ Result ∧ ExecProof</code>
         </section>
       </div>
-      <footer><Icon name="shield" /><strong>PoI 推理先服务 Agentic Contract</strong><span>验收后再形成有界候选权重；VRF 与 BFT 完成终局。</span></footer>
+      <footer><Icon name="shield" /><strong>工作量来源由哈希搜索变为真实推理</strong><span>工作来源改变，共识安全机制仍须独立定义。</span></footer>
     </LearningPanel>
   );
 }
@@ -121,15 +121,15 @@ export function AcvmSystemArchitecture() {
 }
 
 const consensusStages = [
-  { index: '01', title: '有效 PoI', detail: '需求、结果、执行与防重放同时成立', code: 'ValidPoI = Dsig ∧ Rok ∧ πexec ∧ ¬Replay', icon: 'shield' },
-  { index: '02', title: '有界权重', detail: '按任务类别归一、封顶并随时间衰减', code: 'wᵢ = min(cap, Normalize(Σqₜcₜe⁻λΔt))', icon: 'brain' },
+  { index: '01', title: '贡献归一', detail: '不同任务类别先换算为可比较贡献', code: 'qᵢ = 𝟙[ValidPoIᵢ] · Normalize_class(scoreᵢ)', icon: 'receipt' },
+  { index: '02', title: '有界权重', detail: '贡献封顶并随时间衰减', code: 'wᵢ = min(cap, Σₖ qₖe⁻λΔtₖ)', icon: 'brain' },
   { index: '03', title: 'VRF 抽签', detail: '权重只影响成为候选提议者的概率', code: 'scoreᵢ = VRFᵢ(epoch ∥ poiRoot) / wᵢ', icon: 'spark' },
   { index: '04', title: 'BFT 终局', detail: '其他节点重验区块并达到法定人数', code: 'Final ⇔ ValidBlock ∧ QC ≥ 2f+1', icon: 'check' },
 ] as const satisfies readonly { index: string; title: string; detail: string; code: string; icon: IconName }[];
 
 export function PoiConsensusArchitecture() {
   return (
-    <LearningPanel code="ACVM / CORE ALGORITHM" status="VERIFY → WEIGHT → DRAW → FINALIZE" className="poi-consensus-architecture poi-algorithm-simple">
+    <LearningPanel code="ACVM / CORE ALGORITHM" status="NORMALIZE → CAP → DRAW → FINALIZE" className="poi-consensus-architecture poi-algorithm-simple">
       <div className="poi-consensus-flow">
         {consensusStages.map((stage, index) => (
           <span className="poi-consensus-fragment" key={stage.index}>
@@ -138,7 +138,7 @@ export function PoiConsensusArchitecture() {
           </span>
         ))}
       </div>
-      <footer><Icon name="eye" /><strong>提议权与规则权分离</strong><span>其他节点检查交易、PoI、状态转换与区块签名。</span></footer>
+      <footer><Icon name="eye" /><strong>权重只决定提议机会</strong><span>验证规则和 BFT 法定人数不随权重改变。</span></footer>
     </LearningPanel>
   );
 }

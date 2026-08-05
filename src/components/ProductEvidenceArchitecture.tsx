@@ -68,41 +68,34 @@ export function PoiLandscapeArchitecture() {
 
 export function AcvmIntegrationArchitecture() {
   return (
-    <LearningPanel code="A3S + ACVM + DOMESTIC CHAIN" status="IMPLEMENTATION PATH" className="acvm-integration integration-simple">
-      <div className="integration-simple-flow" aria-label="a3s-box 隔离执行，a3s-power 生成推理证明，ACVM 验收并计算 PoI，国内区块链基础设施提供账本与终局">
+    <LearningPanel code="CHAINADAPTER / DOMESTIC INFRASTRUCTURE" status="IDENTITY · EVENT · FINALITY" className="acvm-integration integration-simple">
+      <div className="integration-simple-flow" aria-label="ACVM 标准任务状态通过 ChainAdapter 映射到国内区块链的身份、事件和终局接口">
         <section>
-          <Icon name="terminal" />
-          <small>ISOLATED EXECUTION</small>
-          <strong>a3s-box</strong>
-          <span>任务隔离 · 工具边界 · 执行回执</span>
-        </section>
-        <i aria-hidden="true">→</i>
-        <section>
-          <Icon name="brain" />
-          <small>INFERENCE PROOF</small>
-          <strong>a3s-power</strong>
-          <span>模型根 · 环境根 · nonce · 证明</span>
+          <Icon name="receipt" />
+          <small>ACVM CANONICAL STATE</small>
+          <strong>ACVM 标准状态</strong>
+          <span>taskRoot · verdictRoot · poiRoot</span>
         </section>
         <i aria-hidden="true">→</i>
         <section className="is-acvm">
-          <Icon name="receipt" />
-          <small>OUTCOME &amp; POI</small>
-          <strong>ACVM Core</strong>
-          <span>结果验收 · 状态转换 · ValidPoI</span>
+          <Icon name="spark" />
+          <small>CHAIN ADAPTER</small>
+          <strong>ChainAdapter</strong>
+          <span>身份映射 · 事件编码 · 终局回执</span>
         </section>
         <i aria-hidden="true">→</i>
         <section>
           <Icon name="chain" />
           <small>DOMESTIC INFRASTRUCTURE</small>
-          <strong>联盟链适配器</strong>
+          <strong>国内区块链</strong>
           <span>BSN · 星火链网 · 长安链 · FISCO BCOS</span>
         </section>
       </div>
 
       <footer className="integration-simple-boundary">
-        <span><b>链上最小状态</b><small>taskRoot · verdictRoot · poiRoot · finality</small></span>
+        <span><b>统一 ACVM 接口</b><small>task · verdict · PoI · finality</small></span>
         <i />
-        <span><b>受控链下执行</b><small>原始数据 · Prompt · 模型 · 详细证据</small></span>
+        <span><b>目标链 Driver</b><small>身份 · 交易 · 事件 · 终局</small></span>
       </footer>
     </LearningPanel>
   );

@@ -319,7 +319,7 @@ export const speakerGuideDetails = {
       {
         title: '可信执行与结果有效使用两条独立证据链',
         mechanism: 'Worker 回执至少包含 taskId、contractRoot、inputRoot、modelRoot、envRoot、toolCallRoot、outputRoot、前后状态、nonce 和签名，用于证明任务按冻结环境执行。AcceptedResult 另行绑定独立业务证据、验收谓词版本、Validator 身份与法定人数签名，用于证明结果按约达标。',
-        acceptance: '节点分别验证执行证明和结果证明，再检查状态转移与防重放；两者同时成立才生成 ValidPoI，不要求每台节点重跑 GPU 推理。',
+        acceptance: '节点分别验证执行证明和结果证明，再检查状态转移与防重放；两者同时成立才生成 AcceptedResult，不要求每台节点重跑 GPU 推理。',
       },
       {
         title: '副作用采用意图—确认两阶段',
@@ -513,8 +513,8 @@ export const speakerGuideDetails = {
     implementation: [
       {
         title: '安全功能与工作来源分开',
-        mechanism: 'PoW 通过可公开验证的哈希竞争形成稀缺成本。ACVM 保留抗女巫、抽签与终局，把候选贡献来源替换为真实需求触发、结果已验收且带执行证据的模型推理。',
-        acceptance: '替换前后都能独立验证候选资格；PoI 不能绕过 VRF 抽签、区块重验和法定人数终局。',
+        mechanism: 'PoW 通过可公开验证的哈希竞争形成稀缺成本，但搜索过程不交付链外业务结果。PoI 将工作对象换成真实需求触发的模型推理，交付结果、执行证据与可核对的资源记录。',
+        acceptance: '同一次计算同时产生可交付的模型输出和可独立检查的执行证据；工作来源的替换不直接赋予区块终局权。',
       },
     ],
     challenges: [
@@ -565,7 +565,7 @@ export const speakerGuideDetails = {
     implementation: [
       {
         title: '四个确定公式连接验收到终局',
-        mechanism: 'ValidPoI 先检查需求、结果、执行与防重放；随后按任务类别归一、封顶和衰减得到 wᵢ。候选者计算 VRF 分数，获选者只提交区块，最终由 ValidBlock 与 QC ≥ 2f+1 确认。',
+        mechanism: '终局 PoI 明细先在各自任务类别内归一得到 qᵢ，再经主体上限和时间衰减得到 wᵢ。候选者计算 VRF 分数，获选者只提交区块，最终由 ValidBlock 与 QC ≥ 2f+1 确认。',
         acceptance: '任意节点从同一终局 PoI 集合和参数重算得到相同权重、poiRoot 与区块有效性；没有法定人数证书不得进入最终状态。',
       },
     ],
@@ -652,9 +652,9 @@ export const speakerGuideDetails = {
   'deployment-modes': {
     implementation: [
       {
-        title: 'a3s-box 与 a3s-power 形成执行证明层',
-        mechanism: 'a3s-box 固定工具、网络、文件系统和资源边界，生成绑定 taskId 的执行回执；a3s-power 绑定 modelRoot、envRoot、inputRoot、outputRoot 与挑战 nonce，提供模型推理和环境证明。ACVM 将两类证据交给版本化 Validator。',
-        acceptance: '替换模型、镜像或环境必须改变对应根；旧 nonce、越权工具调用或缺失证明的任务不能进入 AcceptedResult 与 ValidPoI。',
+        title: 'ACVM 标准状态是链适配边界',
+        mechanism: 'A3S 执行域完成模型运行与证据归集，ACVM/Validator 完成结果验收。ACVM 只向 ChainAdapter 输出 taskRoot、verdictRoot、poiRoot、identityRef、amount、nonce 和目标终局状态；Prompt、原始数据、模型与详细证据不进入通用链适配层。',
+        acceptance: '对任一目标链，同一标准状态都能生成唯一链上事件，并把不可回退的终局回执映射回原 taskId；适配层不得修改验收结果。',
       },
       {
         title: '固定 ChainAdapter ABI，按网络实现 Driver',

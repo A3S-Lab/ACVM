@@ -15,7 +15,7 @@ export const screens = [
   ['fog-inference', '雾节点本地执行'],
   ['a3s-box', 'a3s-box 隔离执行能力'],
   ['a3s-power', 'a3s-power 隐私计算与参数流式推理'],
-  ['deployment-modes', 'A3S 接入国内区块链实现 ACVM'],
+  ['deployment-modes', 'ChainAdapter 将 ACVM 接入国内区块链'],
   ['native-chain', 'Rust 原生链的 PoI 推理服务'],
 ] as const;
 

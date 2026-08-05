@@ -3,15 +3,15 @@ import { LearningPanel } from './LearningPanel';
 
 const trustStages = [
   ['01', '规则冻结', 'Contract Root', '目标 · 权限 · 验收 · 分账', 'lock'],
-  ['02', '可信执行', 'Exec Receipt', '镜像 · 模型 · 环境 · nonce', 'terminal'],
-  ['03', '独立验收', 'Accepted Result', '技术证明 · 业务证据 · 法定人数', 'eye'],
-  ['04', '链上终局', 'ValidPoI', '验签 · 状态机 · 防重放', 'shield'],
+  ['02', '执行证明', 'Exec Receipt', '代码 · 模型 · 环境 · nonce', 'terminal'],
+  ['03', '结果证明', 'Outcome Evidence', '业务观测 · 复测 · 签章', 'eye'],
+  ['04', '确定性验收', 'Accepted Result', '验签 · 法定人数 · 防重放', 'shield'],
 ] as const;
 
 export function AcvmExecutionBoundaryArchitecture() {
   return (
-    <LearningPanel code="AGENTIC CONTRACT / TRUST CHAIN" status="EXECUTION PROOF + OUTCOME PROOF" className="agentic-trust-panel">
-      <div className="agentic-trust-flow" aria-label="链下 Agentic Contract 从规则冻结、可信执行、独立验收到链上终局的证据链">
+    <LearningPanel code="AGENTIC CONTRACT / TRUST CHAIN" status="EXECUTION PROOF ≠ OUTCOME PROOF" className="agentic-trust-panel">
+      <div className="agentic-trust-flow" aria-label="链下 Agentic Contract 从规则冻结、执行证明、结果证明到确定性验收的证据链">
         {trustStages.map(([index, title, output, detail, icon], stageIndex) => (
           <span className={`agentic-trust-fragment is-stage-${stageIndex + 1}`} key={index}>
             <section>
@@ -26,11 +26,11 @@ export function AcvmExecutionBoundaryArchitecture() {
       </div>
 
       <footer className="agentic-trust-rule">
-        <span><Icon name="terminal" /><strong>执行可信</strong><small>a3s-box / TEE 回执</small></span>
-        <i>∧</i>
-        <span><Icon name="eye" /><strong>结果有效</strong><small>独立证据 / Validator</small></span>
+        <span><Icon name="terminal" /><strong>执行证明</strong><small>确认按约运行</small></span>
+        <i>≠</i>
+        <span><Icon name="eye" /><strong>结果证明</strong><small>确认业务目标达标</small></span>
         <i>→</i>
-        <b>ValidPoI · 结算</b>
+        <b>AcceptedResult</b>
       </footer>
     </LearningPanel>
   );

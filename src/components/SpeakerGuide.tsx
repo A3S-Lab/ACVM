@@ -60,8 +60,8 @@ export function SpeakerGuide({
               {details.implementation.map((item) => (
                 <article key={item.title}>
                   <h3>{item.title}</h3>
-                  <p><em>怎么做</em>{item.mechanism}</p>
-                  <p><em>怎么验</em>{item.acceptance}</p>
+                  <p><em>实现方式</em>{item.mechanism}</p>
+                  <p><em>验收标准</em>{item.acceptance}</p>
                 </article>
               ))}
             </div>
@@ -73,9 +73,9 @@ export function SpeakerGuide({
               {details.challenges.map((item) => (
                 <article key={item.title}>
                   <h3>{item.title}</h3>
-                  <p><em>难在哪</em>{item.failure}</p>
-                  <p><em>解决</em>{item.solution}</p>
-                  <p className="speaker-guide__residual"><em>仍需承认</em>{item.residual}</p>
+                  <p><em>工程难点</em>{item.failure}</p>
+                  <p><em>处理方案</em>{item.solution}</p>
+                  <p className="speaker-guide__residual"><em>剩余约束</em>{item.residual}</p>
                 </article>
               ))}
             </div>
@@ -87,8 +87,8 @@ export function SpeakerGuide({
               {details.security.map((item) => (
                 <article key={item.title}>
                   <h3>{item.title}</h3>
-                  <p><em>怎么失效</em>{item.failure}</p>
-                  <p><em>解决</em>{item.solution}</p>
+                  <p><em>失效条件</em>{item.failure}</p>
+                  <p><em>处置方式</em>{item.solution}</p>
                   <p className="speaker-guide__residual"><em>剩余风险</em>{item.residual}</p>
                 </article>
               ))}
