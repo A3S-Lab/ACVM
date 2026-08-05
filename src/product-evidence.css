@@ -1,6 +1,7 @@
 .geo-poi-decision,
 .poi-landscape,
-.acvm-integration {
+.acvm-integration,
+.native-chain-panel {
   --evidence-line: color-mix(in srgb, var(--line, #30343f) 84%, transparent);
   height: 100%;
   min-height: 0;
@@ -638,6 +639,76 @@
 .integration-simple-boundary small { color: var(--muted, #9ca3af); font-size: 11px; }
 .integration-simple-boundary > i { width: 1px; height: 32px; background: var(--evidence-line); }
 
+/* Rust-native ACVM chain: PoI compute is the asynchronous inference service. */
+.native-chain-panel {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.native-chain-service-flow {
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  padding: 34px 26px 28px;
+}
+
+.native-chain-service-fragment { display: contents; }
+
+.native-chain-service-fragment > section {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 22px 15px;
+  border-top: 1px solid var(--evidence-line);
+  border-bottom: 1px solid var(--evidence-line);
+}
+
+.native-chain-service-fragment.is-compute > section {
+  background: rgba(154,130,255,.07);
+}
+
+.native-chain-service-fragment.is-verify > section {
+  background: rgba(70,210,143,.055);
+}
+
+.native-chain-service-fragment.is-chain > section {
+  border-color: rgba(70,210,143,.42);
+}
+
+.native-chain-service-fragment header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--violet, #9a82ff);
+}
+
+.native-chain-service-fragment header b { font: 700 9px/1 var(--mono, monospace); }
+.native-chain-service-fragment header svg { width: 25px; }
+.native-chain-service-fragment section > small { margin-top: 26px; color: var(--faint, #77879d); font: 700 8.5px/1.25 var(--mono, monospace); letter-spacing: .05em; }
+.native-chain-service-fragment section > strong { margin-top: 8px; font-size: 15px; }
+.native-chain-service-fragment section > p { min-height: 34px; margin: 10px 0 0; color: var(--muted, #9ca3af); font-size: 10.5px; line-height: 1.5; }
+.native-chain-service-fragment section > code { margin-top: 22px; color: var(--green, #46d28f); font: 600 9.5px/1.3 var(--mono, monospace); overflow-wrap: anywhere; }
+.native-chain-service-fragment > i { flex: 0 0 27px; align-self: center; color: var(--violet, #9a82ff); font-style: normal; text-align: center; }
+
+.native-chain-service-result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 18px 24px;
+  border-top: 1px solid var(--evidence-line);
+}
+
+.native-chain-service-result > span { display: flex; align-items: center; gap: 10px; }
+.native-chain-service-result svg { width: 20px; color: var(--violet, #9a82ff); }
+.native-chain-service-result strong { font-size: 13px; }
+.native-chain-service-result small { color: var(--muted, #9ca3af); font-size: 10.5px; }
+.native-chain-service-result > i { color: var(--amber, #f5b342); font-style: normal; }
+.native-chain-service-result > b { color: var(--green, #46d28f); font-size: 12px; }
+
 @media (max-width: 960px) {
-  .acvm-integration.integration-simple { min-width: 720px; }
+  .acvm-integration.integration-simple,
+  .native-chain-panel { min-width: 720px; }
 }

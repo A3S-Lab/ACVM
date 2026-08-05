@@ -1,3 +1,4 @@
+import { AcvmExecutionBoundaryArchitecture } from '../components/AcvmExecutionBoundary'
 import { LessonChapter } from '../components/LessonChapter'
 import { ProductDefinitionArchitecture } from '../components/ProductNarrativeArchitecture'
 import { UsefulWorkOpportunityArchitecture } from '../components/ProductMechanismArchitecture'
@@ -8,8 +9,8 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
   className="useful-work-screen"
   eyebrow="01 / 传统区块链缺陷"
   title="无意义哈希换成推理即证明"
-  accent="已验收的推理成为工作量"
-  body="PoI 只替换提议权的工作来源；VRF 抽签，BFT 或底层链完成终局。"
+  accent="推理服务同时成为 PoI 工作量"
+  body="链上 ACVM 发布真实推理任务；验收结果用于合约执行，ValidPoI 再进入有界候选权重。"
   visual={<UsefulWorkOpportunityArchitecture />}
 >
 </LessonChapter>
@@ -34,5 +35,17 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
   body="PoI 通过验收后生成，用于单方付款或按 splitRoot 分账。"
   figureLabel="DEMAND · RESULT · EXECUTION · FRESHNESS"
   visual={<IntelligenceProofArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="execution-boundary"
+  className="acvm-execution-boundary-screen"
+  eyebrow="02 / 可信链下执行"
+  title="链下 Agentic Contract 的可信闭环"
+  accent="执行可信，结果有效，状态可终局"
+  body="合约根冻结规则；执行回执证明过程，独立证据证明结果，链上只接受不可重放的终局状态。"
+  figureLabel="CONTRACT ROOT → EXECUTION PROOF → OUTCOME PROOF → FINALITY"
+  visual={<AcvmExecutionBoundaryArchitecture />}
 >
 </LessonChapter>

@@ -28,9 +28,9 @@ export const speakerGuides = {
   },
   'useful-work': {
     duration: '0:50',
-    focus: 'PoI 把无链外价值的哈希工作换成已验收的模型推理。',
-    example: '一个通过独立验收的 GEO 订单生成有效 PoI，可提高 Worker 被 VRF 选为区块提议者的概率，但不能让它单独确认区块。',
-    beats: ['PoI 替换提议权的工作来源，不取消抗女巫、随机选择和区块验证。', 'VRF 负责抽签，BFT 或底层链规则仍负责最终确认。'],
+    focus: 'PoI 把无链外价值的哈希工作换成链上 ACVM 实际需要的模型推理服务。',
+    example: '链上 GEO 合约发布引用分析任务，PoI Worker 完成模型推理并通过独立验收；同一结果返回合约触发结算，同时生成 ValidPoI。',
+    beats: ['有效推理先完成 Agentic Contract 的真实服务，再进入 PoI 贡献计量。', 'PoI 只形成有界候选权重，VRF 抽签与 BFT 终局仍保持独立。'],
   },
   'geo-verification': {
     duration: '0:50',
@@ -80,12 +80,6 @@ export const speakerGuides = {
     example: '工厂 Agent 查询 fog.infer.ans，取得端点、能力、报价和有效期；核验签名与撤销状态后再创建推理任务。',
     beats: ['服务卡把名称解析为可核验的身份、接口和交易条件。', '历史回执提供履约参考，不能替代本次订单的独立验收。'],
   },
-  'agentic-contract': {
-    duration: '0:45',
-    focus: '智能体合约用签名回执推进长任务状态。',
-    example: '采购 Agent 可能运行三天并等待人工审批；Worker 不能因为完成一次工具调用就自行宣布订单完成。',
-    beats: ['Schema 固定输入、结果、证据和裁决格式。', '超时、拒绝、挑战和付款都有明确状态转换。'],
-  },
   'fog-inference': {
     duration: '0:45',
     focus: '雾节点让原始数据留在现场，同时向外部提交可验证结果。',
@@ -112,8 +106,14 @@ export const speakerGuides = {
   },
   'deployment-modes': {
     duration: '0:45',
-    focus: 'a3s-box、a3s-power 与国内区块链基础设施组成 ACVM 的实现路径。',
+    focus: 'a3s-box、a3s-power 与 ChainAdapter 组成 ACVM 接入国内区块链的近期路径。',
     example: '实施示例：预测性维护任务在 a3s-box 中隔离执行，a3s-power 绑定模型与环境生成证明；ACVM 验收后把 taskRoot、verdictRoot 和 poiRoot 提交到选定联盟链。',
     beats: ['a3s-box 管执行边界，a3s-power 提供模型与环境证明，ACVM 负责结果裁决和 PoI。', 'ChainAdapter 对接 BSN 承载网络、星火链网、长安链或 FISCO BCOS，原链继续提供成员、账本和终局。'],
+  },
+  'native-chain': {
+    duration: '1:00',
+    focus: 'Rust 原生链把 PoI Worker 变成链上 ACVM 的异步模型推理服务层。',
+    example: '示例：链上预测性维护合约发布故障诊断任务；PoI Worker 在 a3s-power 中运行指定模型，诊断结果通过验收后恢复合约状态、生成维保指令并结算，同时形成 ValidPoI。',
+    beats: ['区块不会同步等待模型；Agentic Contract 进入 AwaitingInference，收到 AcceptedResult 后再执行确定性状态转换。', '同一次有效推理获得服务收益并形成有界候选权重，VRF 选择提议者，BFT 完成区块终局。'],
   },
 } as const satisfies Record<ScreenId, SpeakerGuideEntry>;

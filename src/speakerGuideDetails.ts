@@ -150,6 +150,14 @@ const sources = {
     label: 'ChainOpera PoI 协议设计与 L1 路线',
     url: 'https://paper.chainopera.ai/tokenomics-and-protocol-design/proof-of-intelligence-based-protocol-design-and-evolution-to-an-l1-ai-chain',
   },
+  polkadotSdk: {
+    label: 'Polkadot SDK Rust 区块链运行时参考',
+    url: 'https://github.com/paritytech/polkadot-sdk',
+  },
+  rustLibp2p: {
+    label: 'rust-libp2p 点对点网络实现',
+    url: 'https://github.com/libp2p/rust-libp2p',
+  },
   bsn: {
     label: 'BSN 链下系统网关接入说明',
     url: 'https://zhuanwang.bsnbase.com/static/tmpFile/bzsc/developer/5-4-1.html',
@@ -318,6 +326,11 @@ export const speakerGuideDetails = {
         mechanism: '发邮件、下单或写外部系统时，Agent 先生成带能力令牌和幂等键的 intent；授权执行器完成后再返回 signed receipt，合约据此推进状态。',
         acceptance: '同一幂等键重复提交不产生第二次副作用；未确认、超时和部分完成都有明确补偿路径。',
       },
+      {
+        title: '异步状态机避免区块等待推理',
+        mechanism: 'contractRoot 固定输入输出 schema、角色、证据策略、预算、超时和补偿动作。链上状态从 Requested 进入 AwaitingInference，收到合格的 AcceptedResult 后才进入 Resumed 或 Settled；模型输出不能直接调用结算入口。',
+        acceptance: '每条状态转移都有前置条件、授权角色、单调 nonce 和最大执行次数；节点只重放确定性验证与状态转换，不同步重跑模型。',
+      },
     ],
     challenges: [
       {
@@ -341,7 +354,7 @@ export const speakerGuideDetails = {
         residual: '外部数据受许可或隐私约束时无法完全公开，只能用 TEE、零知识或授权仲裁替代公开复核。',
       },
     ],
-    sources: [sources.dataAvailability, sources.contracts, sources.survey],
+    sources: [sources.dataAvailability, sources.contracts, sources.agentSecurity, sources.a3sBox, sources.a3sPower, sources.survey],
   },
   ans: {
     implementation: [
@@ -421,43 +434,6 @@ export const speakerGuideDetails = {
       },
     ],
     sources: [sources.ap2, sources.ap2Overview, sources.ap2Lab, sources.a3s, sources.a3sRuntime, sources.a3sPower, sources.survey],
-  },
-  'agentic-contract': {
-    implementation: [
-      {
-        title: '合约目录与异步状态机',
-        mechanism: '目录固定 input/output schema、Worker 接口、Validator 接口、证据策略、预算、超时、补偿动作和结算规则并生成 contractRoot。状态机只接受声明过的事件。',
-        acceptance: '每条状态转移都有前置条件、授权角色和最大执行次数；模型输出本身不能直接调用结算入口。',
-      },
-      {
-        title: '能力令牌约束 Agent',
-        mechanism: '任务启动时按步骤签发短期、单用途令牌，限定工具、对象、金额、网络目标和调用次数。Worker 不能继承调度器或需求方的长期凭证。',
-        acceptance: '网关拒绝越权目标、过期令牌和预算超限；所有工具调用生成可关联 taskId 的审计回执。',
-      },
-    ],
-    challenges: [
-      {
-        title: '长任务会跨版本、跨超时、跨人工审批',
-        failure: '把一切塞进单笔交易会超出 gas 和时间限制；随意续跑又会让旧权限长期有效。',
-        solution: '按 checkpoint 拆分步骤，每步有租约、截止时间和恢复令牌。升级只影响新任务；运行中任务按原 contractRoot 完成、取消或显式迁移。',
-        residual: '跨版本迁移无法完全自动化，状态不可兼容时必须退款并重新签约。',
-      },
-    ],
-    security: [
-      {
-        title: '提示注入、工具误用与 confused deputy',
-        failure: '网页或文档中的恶意指令诱导 Agent 使用合法工具泄露数据、转账或删除资源。',
-        solution: '模型文本永远视为不可信数据；策略引擎在模型之外校验能力令牌、目标、金额和数据分类。高风险动作要求确定性规则或人工二次批准，工具响应也做 schema 校验。',
-        residual: '模型仍可能在允许范围内做出低质量决策，因此权限范围和单次损失上限比“更聪明的提示词”更重要。',
-      },
-      {
-        title: '合约重入、未检查外部调用与升级后门',
-        failure: '外部适配器回调重入状态机，失败调用被当作成功，或升级管理员绕过原约束。',
-        solution: '采用 checks-effects-interactions、pull payment、显式检查返回值和重入锁；适配器按 allowlist 版本固定。升级经多签、时间锁和用户退出窗口，运行中任务不可热换逻辑。',
-        residual: '复杂业务逻辑仍需形式化不变量、审计与限额，不能只靠通用安全模板。',
-      },
-    ],
-    sources: [sources.agentSecurity, sources.contracts, sources.survey],
   },
   'fog-inference': {
     implementation: [
@@ -714,6 +690,60 @@ export const speakerGuideDetails = {
       },
     ],
     sources: [sources.a3s, sources.a3sRuntime, sources.a3sBox, sources.a3sPower, sources.bsn, sources.sparkChain, sources.chainMaker, sources.fisco],
+  },
+  'native-chain': {
+    implementation: [
+      {
+        title: 'Rust Runtime 只执行确定性状态转换',
+        mechanism: '原生节点把 DeployContract、OpenInferenceTask、SubmitExecReceipt、SubmitVerdict、ResumeContract、Settle 和 RecordPoI 定义为版本化交易。Runtime 固定编码、验签、根承诺、防重放与状态转换；P2P、交易池、状态数据库和区块执行可参考 Rust 区块链 SDK 与 rust-libp2p 组件实现。',
+        acceptance: '所有全节点对同一区块重放后得到相同 stateRoot；模型推理、私有数据和外部工具不进入同步区块执行。',
+      },
+      {
+        title: 'PoI Worker 是链上 ACVM 的推理服务层',
+        mechanism: 'Agentic Contract 发布绑定 taskId、modelRoot、inputRoot、policyRoot、预算、截止时间和 Validator 规则的 InferenceTask，并进入 AwaitingInference。PoI Worker 使用 a3s-box 固定执行边界、使用 a3s-power 完成隐私推理，提交 ExecReceipt；AcceptedResult 通过后 Runtime 恢复合约状态。',
+        acceptance: '同一 taskId 的合格结果只能被消费一次；合约能读取规范化输出或 outputRoot，继续生成业务状态、工具意图、付款与 splitRoot 分账。',
+      },
+      {
+        title: '同一次有效推理同时形成服务收益与 PoI',
+        mechanism: 'AcceptedResult 触发结果费，同时按 SignedDemand、ExecutionEvidence、AcceptedResult 和 UniqueTaskKey 派生 ValidPoI。PoI 经过任务类别归一、封顶和衰减后只形成候选提议权重；VRF 负责抽签，BFT 法定人数负责区块终局。',
+        acceptance: '服务结算、PoI 记录与状态恢复引用同一 taskId 和 verdictRoot；重复任务、退款或被挑战撤销的结果不能继续累积有效权重。',
+      },
+    ],
+    challenges: [
+      {
+        title: '模型推理不能阻塞出块',
+        failure: '若区块执行同步等待 GPU、外部工具或人工审批，慢节点会拖住全网，超时差异还会造成分叉。',
+        solution: '使用 Requested → AwaitingInference → Accepted / Rejected → Resumed / Settled 的异步状态机；出块只处理任务事件、证据验证和确定性状态变化。',
+        residual: '合约完成时间仍受 Worker 容量、模型延迟和挑战窗口影响，需要租约、备用 Worker 与明确超时补偿。',
+      },
+      {
+        title: '非确定性模型输出需要确定性验收口径',
+        failure: '不同采样、硬件和模型实现可能产生不同文本，要求节点比较逐字输出会拒绝诚实结果。',
+        solution: '冻结模型与运行策略；结构化任务验证 schema、阈值和性质，开放任务使用独立业务观测、委员会裁决或多模型复核。',
+        residual: '协议能确认结果满足冻结谓词，不能证明开放式回答是唯一真值。',
+      },
+    ],
+    security: [
+      {
+        title: '自交易可能伪造推理需求与 PoI',
+        failure: '同一控制方创建需求、运行 Worker 并控制 Validator，可循环资金制造服务量和候选权重。',
+        solution: '要求真实预算托管、独立验收、关联账户合并、任务类别权重封顶和挑战保证金；PoI 只影响候选概率，不直接赋予终局票权。',
+        residual: '链下关联关系无法完全识别，高权重主体仍需人工审计、身份成本和持续异常检测。',
+      },
+      {
+        title: 'TEE 与 Validator 串谋会污染链上结果',
+        failure: '被攻破的执行环境或同一故障域的 Validator 可能为错误推理签出完整证据链。',
+        solution: 'TEE 报告绑定 nonce、模型与策略；委员会按故障域去相关，高价值任务采用跨厂商复算、挑战和可用性收据。证据验证与 BFT 成员权分离。',
+        residual: '硬件厂商、证明服务与治理仍是显式信任根，原生链不能把这些依赖变成无条件密码学真相。',
+      },
+      {
+        title: 'Runtime 升级不能改写运行中合约',
+        failure: '治理升级验收规则、PoI 权重或结算模块后，可能改变已提交任务的付款与共识收益。',
+        solution: '任务固定 runtimeVersion、contractRoot、verifierHash 和 weightPolicy；升级经多签时间锁，只作用于新任务，运行中任务按旧版本完成或显式迁移。',
+        residual: '长期维护多个 Runtime 版本会增加节点和审计成本，正式网络需要清晰的支持周期与退出机制。',
+      },
+    ],
+    sources: [sources.polkadotSdk, sources.rustLibp2p, sources.a3sBox, sources.a3sPower, sources.chainOpera, sources.vrf, sources.cometBft, sources.dataAvailability],
   },
   'security-boundaries': {
     implementation: [

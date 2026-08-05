@@ -1,7 +1,6 @@
-import { AcvmExecutionBoundaryArchitecture } from '../components/AcvmExecutionBoundary'
 import { A3sBoxCapabilitiesArchitecture, A3sPowerCapabilitiesArchitecture } from '../components/A3sCapabilitiesArchitecture'
+import { AcvmNativeChainArchitecture } from '../components/AcvmNativeChainArchitecture'
 import { AgentResolutionArchitecture } from '../components/AgentResolutionArchitecture'
-import { ContractModelArchitecture } from '../components/FormalSpecArchitecture'
 import { FogInferenceArchitecture } from '../components/FogInferenceArchitecture'
 import { LessonChapter } from '../components/LessonChapter'
 import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchitecture'
@@ -19,18 +18,6 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
 </LessonChapter>
 
 <LessonChapter
-  id="agentic-contract"
-  className="formal-screen contract-spec-screen"
-  eyebrow="06 · APPENDIX / AGENTIC CONTRACT"
-  title="智能体合约管理长任务"
-  accent="长任务先定规则再执行"
-  body="合约固定预算、权限、超时和挑战，以签名回执推进任务。"
-  figureLabel="APPENDIX / SCHEMA · WORKER · VALIDATOR · SETTLEMENT"
-  visual={<ContractModelArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
   id="fog-inference"
   className="fog-screen"
   eyebrow="06 · APPENDIX / FOG COMPUTING"
@@ -39,18 +26,6 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
   body="任务在隔离雾节点执行，回执绑定模型、环境和 taskId，ACVM 验证结果。"
   figureLabel="APPENDIX / LOCAL DATA → NEARBY EXECUTION → VERIFIABLE RECEIPT"
   visual={<FogInferenceArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="execution-boundary"
-  className="acvm-execution-boundary-screen"
-  eyebrow="06 · APPENDIX / TRUST CHAIN"
-  title="链下 Agentic Contract 的可信闭环"
-  accent="执行可信，结果有效，状态可终局"
-  body="合约根冻结规则；执行回执证明过程，独立证据证明结果，链上只接受不可重放的终局状态。"
-  figureLabel="APPENDIX / CONTRACT ROOT → EXECUTION PROOF → OUTCOME PROOF → FINALITY"
-  visual={<AcvmExecutionBoundaryArchitecture />}
 >
 </LessonChapter>
 
@@ -80,10 +55,22 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
   id="deployment-modes"
   className="chains-screen"
   eyebrow="06 · IMPLEMENTATION / A3S + CHAIN"
-  title="A3S 与国内区块链实现 ACVM"
-  accent="隔离执行、推理证明、链上终局"
-  body="a3s-box 执行，a3s-power 出具证明；ACVM 验收并计算 PoI。"
+  title="A3S 接入国内区块链实现 ACVM"
+  accent="近期复用现有账本、身份与终局"
+  body="a3s-box 执行，a3s-power 出具证明；ACVM 验收并计算 PoI，ChainAdapter 提交链上最小状态。"
   figureLabel="IMPLEMENTATION / A3S-BOX → A3S-POWER → ACVM → DOMESTIC CHAIN"
   visual={<AcvmIntegrationArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="native-chain"
+  className="native-chain-screen"
+  eyebrow="07 · NATIVE CHAIN / RUST"
+  title="PoI 推理计算直接服务链上 ACVM"
+  accent="真实合约需求产生有效推理工作量"
+  body="ACVM 异步发布推理任务；验收结果恢复合约状态，同时完成结算、PoI 计量与有界候选权重更新。"
+  figureLabel="ACVM TASK → POI INFERENCE SERVICE → ACCEPTED RESULT → VALID POI"
+  visual={<AcvmNativeChainArchitecture />}
 >
 </LessonChapter>

@@ -75,11 +75,11 @@ export function UsefulWorkOpportunityArchitecture() {
           <header><Icon name="brain" /><span><small>基于 PoI 的区块链</small><strong>推理即证明</strong></span></header>
           <div><b>投入</b><span>模型 · GPU · 工具 · 专业能力</span></div>
           <div><b>验证</b><span>真实需求 · 结果验收 · 执行证据</span></div>
-          <div><b>链外结果</b><span className="is-value">客户已验收的 AI 结果</span></div>
+          <div><b>服务结果</b><span className="is-value">链上 ACVM 可消费的 AI 结果</span></div>
           <code>SignedDemand ∧ AcceptedResult ∧ ExecProof</code>
         </section>
       </div>
-      <footer><Icon name="shield" /><strong>PoI 替换的是提议权的工作量来源</strong><span>VRF 负责随机选择；BFT 或底层链规则负责最终确认。</span></footer>
+      <footer><Icon name="shield" /><strong>PoI 推理先服务 Agentic Contract</strong><span>验收后再形成有界候选权重；VRF 与 BFT 完成终局。</span></footer>
     </LearningPanel>
   );
 }

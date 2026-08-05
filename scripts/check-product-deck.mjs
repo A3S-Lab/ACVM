@@ -17,6 +17,7 @@ const mainlineIds = [
   'useful-work',
   'product-snapshot',
   'poi-proof',
+  'execution-boundary',
   'geo-verification',
   'data-space',
   'simulation',
@@ -27,13 +28,12 @@ const mainlineIds = [
 ];
 const appendixIds = [
   'ans',
-  'agentic-contract',
   'fog-inference',
-  'execution-boundary',
   'a3s-box',
   'a3s-power',
   'deployment-modes',
 ];
+const nativeChainIds = ['native-chain'];
 const retiredTutorialIds = [
   'btc-ledger',
   'btc-pow',
@@ -78,7 +78,7 @@ const unexpected = actualSlideIds.filter((id) => !expectedSlideIds.includes(id))
 const orderMatches = JSON.stringify(expectedSlideIds) === JSON.stringify(actualSlideIds);
 
 if (screenIds.length !== 18) {
-  throw new Error(`Expected an 18-slide deck with one cover, ten mainline slides, and seven appendix slides; found ${screenIds.length}`);
+  throw new Error(`Expected an 18-slide deck with one cover, eleven mainline slides, five appendix slides, and one native-chain slide; found ${screenIds.length}`);
 }
 if (contentFiles.length !== 5) {
   throw new Error(`Expected five product-deck MDX groups; found ${contentFiles.length}`);
@@ -104,10 +104,13 @@ for (const field of ['implementation', 'challenges', 'security', 'sources']) {
   }
 }
 if (JSON.stringify(expectedSlideIds.slice(0, mainlineIds.length)) !== JSON.stringify(mainlineIds)) {
-  throw new Error(`The ten-slide decision narrative is out of order: ${JSON.stringify(expectedSlideIds.slice(0, mainlineIds.length))}`);
+  throw new Error(`The eleven-slide decision narrative is out of order: ${JSON.stringify(expectedSlideIds.slice(0, mainlineIds.length))}`);
 }
-if (JSON.stringify(expectedSlideIds.slice(mainlineIds.length)) !== JSON.stringify(appendixIds)) {
+if (JSON.stringify(expectedSlideIds.slice(mainlineIds.length, mainlineIds.length + appendixIds.length)) !== JSON.stringify(appendixIds)) {
   throw new Error(`The technical appendix is out of order: ${JSON.stringify(expectedSlideIds.slice(mainlineIds.length))}`);
+}
+if (JSON.stringify(expectedSlideIds.slice(mainlineIds.length + appendixIds.length)) !== JSON.stringify(nativeChainIds)) {
+  throw new Error(`The native-chain close is out of order: ${JSON.stringify(expectedSlideIds.slice(mainlineIds.length + appendixIds.length))}`);
 }
 if (closingTags !== actualSlideIds.length) {
   throw new Error(`LessonChapter tags are unbalanced: ${actualSlideIds.length} open, ${closingTags} closed`);
@@ -156,4 +159,4 @@ if (speakerGuideSource.includes('transition:')) {
   throw new Error('Speaker-guide transition scripts must remain removed.');
 }
 
-console.log(`Product deck OK: ${mainlineIds.length}-slide decision narrative + ${appendixIds.length}-slide technical appendix, full speaker-guide and security-note coverage.`);
+console.log(`Product deck OK: ${mainlineIds.length}-slide decision narrative + ${appendixIds.length}-slide technical appendix + ${nativeChainIds.length}-slide native-chain close, full speaker-guide and security-note coverage.`);

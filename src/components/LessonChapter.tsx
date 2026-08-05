@@ -19,9 +19,9 @@ const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = 
   'a3s-box': 'flow',
   'a3s-power': 'fog',
   'system-architecture': 'flow',
-  'agentic-contract': 'state',
   'poi-proof': 'proof',
   'deployment-modes': 'chains',
+  'native-chain': 'chains',
   'security-boundaries': 'proof',
   'economy-roles': 'network',
 };
