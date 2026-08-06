@@ -17,21 +17,21 @@ const mainlineIds = [
   'useful-work',
   'product-snapshot',
   'poi-proof',
+  'native-chain',
   'execution-boundary',
   'geo-verification',
-  'fog-inference',
   'ans',
+  'fog-inference',
   'agent-rental',
   'simulation',
-  'poi-consensus',
   'system-architecture',
+  'poi-consensus',
 ];
 const appendixIds = [
   'a3s-box',
   'a3s-power',
   'deployment-modes',
 ];
-const nativeChainIds = ['native-chain'];
 const retiredTutorialIds = [
   'btc-ledger',
   'btc-pow',
@@ -76,7 +76,7 @@ const unexpected = actualSlideIds.filter((id) => !expectedSlideIds.includes(id))
 const orderMatches = JSON.stringify(expectedSlideIds) === JSON.stringify(actualSlideIds);
 
 if (screenIds.length !== 16) {
-  throw new Error(`Expected a 16-slide deck with one cover, eleven mainline slides, three appendix slides, and one native-chain slide; found ${screenIds.length}`);
+  throw new Error(`Expected a 16-slide deck with one cover, twelve mainline slides, and three appendix slides; found ${screenIds.length}`);
 }
 if (contentFiles.length !== 4) {
   throw new Error(`Expected four product-deck MDX groups; found ${contentFiles.length}`);
@@ -106,9 +106,6 @@ if (JSON.stringify(expectedSlideIds.slice(0, mainlineIds.length)) !== JSON.strin
 }
 if (JSON.stringify(expectedSlideIds.slice(mainlineIds.length, mainlineIds.length + appendixIds.length)) !== JSON.stringify(appendixIds)) {
   throw new Error(`The technical appendix is out of order: ${JSON.stringify(expectedSlideIds.slice(mainlineIds.length))}`);
-}
-if (JSON.stringify(expectedSlideIds.slice(mainlineIds.length + appendixIds.length)) !== JSON.stringify(nativeChainIds)) {
-  throw new Error(`The native-chain close is out of order: ${JSON.stringify(expectedSlideIds.slice(mainlineIds.length + appendixIds.length))}`);
 }
 if (closingTags !== actualSlideIds.length) {
   throw new Error(`LessonChapter tags are unbalanced: ${actualSlideIds.length} open, ${closingTags} closed`);
@@ -157,4 +154,4 @@ if (speakerGuideSource.includes('transition:')) {
   throw new Error('Speaker-guide transition scripts must remain removed.');
 }
 
-console.log(`Product deck OK: ${mainlineIds.length}-slide decision narrative + ${appendixIds.length}-slide technical appendix + ${nativeChainIds.length}-slide native-chain close, full speaker-guide and security-note coverage.`);
+console.log(`Product deck OK: ${mainlineIds.length}-slide decision narrative + ${appendixIds.length}-slide technical appendix, full speaker-guide and security-note coverage.`);

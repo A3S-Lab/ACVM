@@ -1,4 +1,5 @@
 import { AcvmExecutionBoundaryArchitecture } from '../components/AcvmExecutionBoundary'
+import { AcvmNativeChainArchitecture } from '../components/AcvmNativeChainArchitecture'
 import { LessonChapter } from '../components/LessonChapter'
 import { ProductDefinitionArchitecture } from '../components/ProductNarrativeArchitecture'
 import { UsefulWorkOpportunityArchitecture } from '../components/ProductMechanismArchitecture'
@@ -8,9 +9,10 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
   id="useful-work"
   className="useful-work-screen"
   eyebrow="01 / 传统区块链的局限"
-  title="传统 PoW 的算力没有直接服务业务"
-  accent="PoI 让算力完成可验收的 AI 任务"
-  body="传统 PoW 不断试算哈希来争夺记账权，却不会直接产出诊断、预测等业务结果。PoI 改为运行模型，并交付可验收的结果。"
+  title="传统 PoW 算力不直接产出业务结果"
+  accent="PoI 把算力变成可交付结果"
+  body="PoI 节点运行模型，完成真实 AI 任务。"
+  detail="传统 PoW 不断试算哈希来争夺记账权，却不会直接产出诊断、预测等业务结果。PoI 改为运行模型，并交付可验收的结果。"
   visual={<UsefulWorkOpportunityArchitecture />}
 >
 </LessonChapter>
@@ -18,10 +20,11 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
 <LessonChapter
   id="product-snapshot"
   className="product-snapshot-screen"
-  eyebrow="02 / ACVM 的工作方式"
-  title="ACVM 先验收结果，再付款或退款"
-  accent="任务、验收和付款写进同一份数字订单"
-  body="服务方提交结果和执行记录，ACVM 自动核对约定条件。达标就付款，不达标就退款。"
+  eyebrow="02 / Agentic Contract Runtime"
+  title="ACVM 运行链上 Agentic Contract"
+  accent="发出任务，等待结果，验证后继续执行"
+  body="状态更新、付款和分账都由合约规则驱动。"
+  detail="ACVM 是链上 Agentic Contract 的 Runtime。合约把任务、验收规则和预算写入状态机，链下服务提交结果与回执；链上智能体 PoI 验证器确认后，Runtime 恢复合约，完成状态更新、付款或退款。"
   visual={<ProductDefinitionArchitecture />}
 >
 </LessonChapter>
@@ -30,21 +33,36 @@ import { IntelligenceProofArchitecture } from '../components/SimplifiedArchitect
   id="poi-proof"
   className="intelligence-screen"
   eyebrow="02 / PoI 结果凭证"
-  title="PoI 证明一项 AI 任务已经真实完成"
-  accent="有订单、有执行记录、有验收结果，才能生成凭证"
-  body="PoI 把有效结果与唯一订单绑定，可用于付款、分账和贡献计量，同一结果不能重复领取费用。"
+  title="PoI 证明 AI 任务真实完成"
+  accent="真实任务通过验收才生成 PoI"
+  body="凭证用于付款、分账和贡献计量。"
+  detail="PoI 把签名订单、执行回执、验收结果和唯一任务键绑定在一起。同一结果不能重复生成 PoI，也不能重复领取费用。"
   figureLabel="真实需求 · 执行证明 · 结果验收 · 防重放"
   visual={<IntelligenceProofArchitecture />}
 >
 </LessonChapter>
 
 <LessonChapter
+  id="native-chain"
+  className="native-chain-screen"
+  eyebrow="03 / Rust 原生 ACVM 链"
+  title="PoI 为链上 ACVM 提供模型推理"
+  accent="链下隐私计算，链上智能体验证"
+  body="验证通过后，Runtime 恢复 Agentic Contract。"
+  detail="Rust 原生链内置 ACVM Runtime 和智能体 PoI 验证器。Agentic Contract 发布任务后进入等待状态；a3s-box 与 a3s-power 在链下完成隐私推理，只提交结果和回执。链上验证通过后，Runtime 恢复合约、更新状态并结算。"
+  figureLabel="Agentic Contract → 链下隐私计算 → 链上智能体 PoI 验证 → Runtime 恢复"
+  visual={<AcvmNativeChainArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
   id="execution-boundary"
   className="acvm-execution-boundary-screen"
-  eyebrow="02 / 可信链下执行"
-  title="链下 AI 结果要通过两道验证"
-  accent="第一道查执行过程，第二道查业务结果"
-  body="隔离环境证明模型、数据和权限没有被替换；独立验证者再按约定标准检查业务结果。两道验证都通过，链上才确认任务完成。"
+  eyebrow="03 / 可信执行算法"
+  title="链下隐私计算，链上验证结果"
+  accent="执行可信与结果达标必须同时成立"
+  body="两道验证通过后，ACVM 才推进合约状态。"
+  detail="a3s-box 与 a3s-power 在链下保护模型、数据和执行过程，并生成可核验回执。链上智能体 PoI 验证器再检查执行证明和独立业务证据；两项都通过且任务未被消费，ACVM Runtime 才恢复 Agentic Contract。"
   figureLabel="规则承诺 → 执行验证 → 结果验证 → 确定性终局"
   visual={<AcvmExecutionBoundaryArchitecture />}
 >

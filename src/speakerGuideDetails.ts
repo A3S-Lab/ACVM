@@ -181,8 +181,8 @@ export const speakerGuideDetails = {
     implementation: [
       {
         title: '封面给出整套演示的总命题',
-        mechanism: '封面以“让有效推理成为链上价值”统领 PoI、结果验收、按约结算和多方分账。产品定义、场景、算法与实现路径由后续页面逐层展开。',
-        acceptance: '观众在十秒内能复述 ACVM 的作用：把有效推理转成可验证、可结算、可分配的链上价值。',
+        mechanism: '封面以“去中心化智能体即服务网络”统领智能体发布、ANS 服务发现、雾计算隐私执行、PoI 结果验证和 ACVM 自动分账。产品定义、场景、算法与实现路径由后续页面逐层展开。',
+        acceptance: '观众在十秒内能复述 ACVM 的作用：让智能体可发布、服务可发现、结果可验证、收益可分配。',
       },
     ],
     challenges: [
@@ -212,8 +212,8 @@ export const speakerGuideDetails = {
       },
       {
         title: '执行、裁决与结算分层负责',
-        mechanism: 'Worker 或 A3S 提交执行回执；ACVM Validator 按 contractRoot 中冻结的证据、阈值和挑战规则生成 AcceptedResult；现有链或支付系统根据终局裁决释放或退回资金。',
-        acceptance: '执行成功不能直接提款；没有 AcceptedResult 不能付款；ACVM 不替代执行层，也不替代资金终局。',
+        mechanism: 'ACVM Runtime 执行链上 Agentic Contract 状态机；A3S 提交链下隐私计算回执，智能体 PoI 验证器按 contractRoot 中冻结的证据、阈值和挑战规则生成 AcceptedResult，Runtime 再恢复合约。',
+        acceptance: '执行成功不能直接提款；没有 AcceptedResult，Agentic Contract 不能从等待态进入结算态；全节点重放后必须得到同一 stateRoot。',
       },
     ],
     challenges: [
@@ -323,7 +323,7 @@ export const speakerGuideDetails = {
     implementation: [
       {
         title: '可信执行与结果有效使用两条独立证据链',
-        mechanism: 'Worker 回执至少包含 taskId、contractRoot、inputRoot、modelRoot、envRoot、toolCallRoot、outputRoot、前后状态、nonce 和签名，用于证明任务按冻结环境执行。AcceptedResult 另行绑定独立业务证据、验收谓词版本、Validator 身份与法定人数签名，用于证明结果按约达标。',
+        mechanism: 'a3s-box 与 a3s-power 生成的 πpriv 至少绑定 taskId、contractRoot、inputRoot、modelRoot、envRoot、toolCallRoot、outputRoot、前后状态、nonce 和签名。AcceptedResult 另行绑定独立业务证据、验收谓词版本、智能体 PoI 验证器身份与法定人数签名。',
         acceptance: '节点分别验证执行证明和结果证明，再检查状态转移与防重放；两者同时成立才生成 AcceptedResult，不要求每台节点重跑 GPU 推理。',
       },
       {
@@ -699,13 +699,13 @@ export const speakerGuideDetails = {
   'native-chain': {
     implementation: [
       {
-        title: 'Rust Runtime 只执行确定性状态转换',
-        mechanism: '原生节点把 DeployContract、OpenInferenceTask、SubmitExecReceipt、SubmitVerdict、ResumeContract、Settle 和 RecordPoI 定义为版本化交易。任务根 T = H(taskId ∥ modelRoot ∥ inputRoot ∥ policyRoot)，状态按 Requested → AwaitingInference → Accepted → Resumed / Settled 单向推进。',
+        title: 'ACVM Runtime 只执行确定性状态转换',
+        mechanism: 'Rust 原生节点把 DeployAgenticContract、OpenInferenceTask、SubmitPrivateReceipt、SubmitAgentVerdict、ResumeContract、Settle 和 RecordPoI 定义为版本化交易。任务根 T = H(taskId ∥ modelRoot ∥ inputRoot ∥ policyRoot)，状态按 Requested → AwaitingInference → Accepted → Resumed / Settled 单向推进。',
         acceptance: '所有全节点对同一区块重放后得到相同 stateRoot；模型推理、私有数据和外部工具不进入同步区块执行。',
       },
       {
-        title: 'PoI Worker 是链上 ACVM 的推理服务层',
-        mechanism: 'Agentic Contract 发布 T 并进入 AwaitingInference。PoI Worker 使用 a3s-box 固定执行边界、使用 a3s-power 完成隐私推理，提交 rExec = SignW(T ∥ outputRoot ∥ πexec ∥ nonce)；Validator 形成 R = QC(H(T ∥ rExec ∥ verdictRoot))。',
+        title: '链下隐私计算，链上智能体验证',
+        mechanism: 'Agentic Contract 发布 T 并进入 AwaitingInference。PoI Worker 使用 a3s-box 固定执行边界、使用 a3s-power 完成隐私推理，提交 rPriv = SignW(T ∥ outputRoot ∥ πpriv ∥ nonce)；链上智能体 PoI 验证器形成 R = QC(H(T ∥ rPriv ∥ verdictRoot))。',
         acceptance: '同一 taskId 的合格结果只能被消费一次；合约能读取规范化输出或 outputRoot，继续生成业务状态、工具意图、付款与 splitRoot 分账。',
       },
       {

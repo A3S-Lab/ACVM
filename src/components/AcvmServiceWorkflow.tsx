@@ -1,96 +1,21 @@
-import { Icon, type IconName } from './Icons';
-import { LearningPanel } from './LearningPanel';
+import { BusinessProcessFlow, type BusinessProcessStage } from './BusinessProcessFlow';
 
-const workflowStages = [
-  {
-    code: '01',
-    title: '签约与托管',
-    detail: '锁定任务、结果池和验证费',
-    icon: 'key',
-  },
-  {
-    code: '02',
-    title: '隔离执行',
-    detail: 'Worker 在 a3s-box 中运行',
-    icon: 'brain',
-  },
-  {
-    code: '03',
-    title: '独立验收',
-    detail: 'Validator 核对执行和业务证据',
-    icon: 'eye',
-  },
-  {
-    code: '04',
-    title: '挑战与终局',
-    detail: '挑战期结束后形成最终结果',
-    icon: 'shield',
-  },
-] as const satisfies readonly {
-  code: string;
-  title: string;
-  detail: string;
-  icon: IconName;
-}[];
-
-const settlementOutcomes = [
-  {
-    state: 'Accepted',
-    title: '结果通过',
-    money: '结果费按 splitRoot 分账',
-    tone: 'accepted',
-    icon: 'check',
-  },
-  {
-    state: 'Rejected',
-    title: '正常未达标',
-    money: '结果费退回需求方',
-    tone: 'rejected',
-    icon: 'receipt',
-  },
-  {
-    state: 'Fraud',
-    title: '证据造假',
-    money: '保证金补偿挑战者与安全储备',
-    tone: 'fraud',
-    icon: 'shield',
-  },
-] as const satisfies readonly {
-  state: string;
-  title: string;
-  money: string;
-  tone: 'accepted' | 'rejected' | 'fraud';
-  icon: IconName;
-}[];
+const orderFlowStages = [
+  { index: '01', label: '签约托管', actor: '需求方 + ACVM', action: '创建唯一订单并锁定结果费、验证费和保证金', detail: '任务内容、验收规则、分账比例和 nonce 共同生成 taskId，后续所有记录都引用它。', input: '任务目标 + 预算 + 验收规则', output: 'FUNDED taskId', state: 'CREATED → FUNDED', icon: 'key', tone: 'violet' },
+  { index: '02', label: '隔离执行', actor: 'A3S Worker', action: '在受控环境完成任务并提交结果与执行回执', detail: '回执绑定模型、输入、环境和输出摘要，不能把另一项任务的结果移来结算。', input: 'FUNDED taskId', output: 'outputRoot + ExecReceipt', state: 'FUNDED → SUBMITTED', icon: 'brain', tone: 'violet' },
+  { index: '03', label: '独立验收', actor: '链上智能体 PoI 验证器', action: '分别核验执行证据和业务结果', detail: '满足法定人数后形成裁决；挑战者仍可在窗口期提交 FraudProof。', input: '结果 + 执行证据 + 业务证据', output: 'Accepted / Rejected / Fraud', state: 'SUBMITTED → DECIDED', icon: 'shield', tone: 'green' },
+  { index: '04', label: '资金终局', actor: 'ACVM Settlement', action: '根据终局结果执行分账、退款或罚没', detail: '通过就按 splitRoot 分账；正常未达标就退款；只有可证明造假才罚没保证金。', input: '终局裁决 + taskKey', output: '分账 / 退款 / Fraud 罚没', state: 'DECIDED → FINALIZED', icon: 'receipt', tone: 'green' },
+] as const satisfies readonly BusinessProcessStage[];
 
 export function AcvmServiceWorkflowArchitecture() {
   return (
-    <LearningPanel code="一笔订单 / 同一 taskId" status="验收、结算与风控一次终局" className="order-flow-simple order-settlement-panel principle-panel">
-      <div className="order-flow" aria-label="订单依次完成签约托管、隔离执行、独立验收和挑战终局">
-        {workflowStages.map((stage, index) => (
-          <span className="order-flow-fragment" key={stage.code}>
-            <article>
-              <header><b>{stage.code}</b><Icon name={stage.icon} /></header>
-              <strong>{stage.title}</strong>
-              <small>{stage.detail}</small>
-            </article>
-            {index < workflowStages.length - 1 ? <i aria-hidden="true">→</i> : null}
-          </span>
-        ))}
-      </div>
-
-      <div className="order-settlement-outcomes" aria-label="通过、未达标和造假三种终局资金结果">
-        {settlementOutcomes.map((outcome) => (
-          <section className={`is-${outcome.tone}`} key={outcome.state}>
-            <header><Icon name={outcome.icon} /><strong>{outcome.title}</strong></header>
-            <p>{outcome.money}</p>
-          </section>
-        ))}
-      </div>
-
-      <footer className="order-task-id">
-        <strong>验证者按约获得费用；只有 FraudProof 才会罚没保证金</strong>
-      </footer>
-    </LearningPanel>
+    <BusinessProcessFlow
+      code="一笔订单 / 同一 taskId"
+      status="签约 → 执行 → 验收 → 资金终局"
+      className="order-flow-simple order-settlement-panel principle-panel"
+      stages={orderFlowStages}
+      ariaLabel="ACVM 订单从签约托管到隔离执行、独立验收和资金终局的四步流程"
+      footer={<strong>验证智能体按约获得费用；只有 FraudProof 才触发罚没</strong>}
+    />
   );
 }

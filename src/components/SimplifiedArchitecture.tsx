@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 import { DetailHint, type DetailRow, type ProofDerivation } from './DetailHint';
 import { derivations } from './DerivationLibrary';
 import { Icon, type IconName } from './Icons';
+import { ProgressiveTechnicalFlow, type ProgressiveStage } from './ProgressiveTechnicalFlow';
+import { WorkflowFormula } from './WorkflowHint';
 
 type ArchitectureHint = {
   title: string;
@@ -598,70 +600,30 @@ export function LongTaskArchitectureSimple() {
   );
 }
 
+const poiProofStages = [
+  { index: '01', title: '核验真实需求', actor: 'ACVM 订单模块', detail: '需求方签名、预算托管和任务规则同时有效，证明这不是自造空任务', formula: 'DemandOK = VerifySig(owner, demand) ∧ Escrow ≥ budget', input: 'SignedDemand + escrowRoot', output: 'DemandOK + demandRoot', icon: 'key', tone: 'chain' },
+  { index: '02', title: '核验执行回执', actor: '执行证明验证器', detail: '执行回执必须绑定同一任务、模型、环境、输出和本次 nonce', formula: 'ExecOK = VerifyExec(πexec, taskId, modelRoot, outputRoot, nonce)', input: 'ExecReceipt + πexec', output: 'ExecOK + outputRoot', icon: 'brain', tone: 'compute' },
+  { index: '03', title: '核验结果达标', actor: 'Validator 法定人数', detail: '独立验证者按照订单冻结的业务谓词检查结果，并形成门限裁决', formula: 'OutcomeOK ⇔ Σᵥ 𝟙[VerifySig(σᵥ) ∧ P(result,eᵥ)] ≥ q', input: '业务证据 + Validator 签名', output: 'AcceptedResult + verdictRoot', icon: 'shield', tone: 'verify' },
+  { index: '04', title: '检查唯一消费', actor: 'ACVM 防重放集合', detail: 'taskKey 将任务、输出和 nonce 绑定，已经结算的结果不能再次生成 PoI', formula: 'taskKey = H(taskId ∥ outputRoot ∥ nonce)\nUniqueOK = ¬Spent(taskKey)', input: 'taskId + outputRoot + nonce', output: 'UniqueOK', icon: 'fingerprint', tone: 'chain' },
+  { index: '05', title: '生成 ValidPoI', actor: 'PoI 计量模块', detail: '真实需求、可信执行、结果达标和唯一消费全部成立，才形成可结算贡献', formula: 'ValidPoI = DemandOK ∧ ExecOK ∧ OutcomeOK ∧ UniqueOK', input: '四项验证结果 + splitRoot', output: 'ValidPoI → 分账 + 有界权重', icon: 'spark', tone: 'verify' },
+] as const satisfies readonly ProgressiveStage[];
+
 export function IntelligenceProofArchitecture() {
   return (
-    <div className="diagram-panel intelligence-proof intelligence-proof-simple principle-panel poi-principle-panel">
-      <PanelChrome label="PoI / 证据合流算法" status="确定性生成" />
-      <div className="principle-canvas poi-principle-canvas">
-        <svg className="principle-svg poi-principle-svg" viewBox="0 0 900 430" role="img" aria-labelledby="poi-principle-title poi-principle-desc">
-          <title id="poi-principle-title">PoI 证据合流动画</title>
-          <desc id="poi-principle-desc">签名需求、执行回执、结果验收和唯一任务键分别绑定同一 taskId，确定性生成 ValidPoI。</desc>
-
-          <g className="principle-grid" aria-hidden="true">
-            <path d="M40 108H860M40 215H860M40 322H860" />
-            <path d="M225 35V395M450 35V395M675 35V395" />
-          </g>
-
-          <g className="poi-evidence-links" aria-hidden="true">
-            <path className="poi-evidence-link is-link-1" d="M244 105C330 105 348 164 394 191" />
-            <path className="poi-evidence-link is-link-2" d="M656 105C570 105 552 164 506 191" />
-            <path className="poi-evidence-link is-link-3" d="M244 325C330 325 348 266 394 239" />
-            <path className="poi-evidence-link is-link-4" d="M656 325C570 325 552 266 506 239" />
-          </g>
-
-          <g className="poi-evidence-node is-node-1" transform="translate(66 65)">
-            <rect width="178" height="80" rx="5" />
-            <text className="principle-kicker" x="16" y="21">01 / 真实需求</text>
-            <text className="principle-title" x="16" y="47">SignedDemand</text>
-            <text className="principle-detail" x="16" y="67">签名主体 · budgetRoot</text>
-            <circle cx="178" cy="40" r="4" />
-          </g>
-          <g className="poi-evidence-node is-node-2" transform="translate(656 65)">
-            <rect width="178" height="80" rx="5" />
-            <text className="principle-kicker" x="16" y="21">02 / 执行证明</text>
-            <text className="principle-title" x="16" y="47">ExecReceipt</text>
-            <text className="principle-detail" x="16" y="67">modelRoot · envRoot</text>
-            <circle cx="0" cy="40" r="4" />
-          </g>
-          <g className="poi-evidence-node is-node-3" transform="translate(66 285)">
-            <rect width="178" height="80" rx="5" />
-            <text className="principle-kicker" x="16" y="21">03 / 结果验收</text>
-            <text className="principle-title" x="16" y="47">AcceptedResult</text>
-            <text className="principle-detail" x="16" y="67">verdictRoot · 法定人数</text>
-            <circle cx="178" cy="40" r="4" />
-          </g>
-          <g className="poi-evidence-node is-node-4" transform="translate(656 285)">
-            <rect width="178" height="80" rx="5" />
-            <text className="principle-kicker" x="16" y="21">04 / 防重放</text>
-            <text className="principle-title" x="16" y="47">UniqueTaskKey</text>
-            <text className="principle-detail" x="16" y="67">taskId · nonce · 域隔离</text>
-            <circle cx="0" cy="40" r="4" />
-          </g>
-
-          <g className="poi-core" transform="translate(450 215)">
-            <circle className="poi-core-orbit" r="78" />
-            <circle className="poi-core-node" r="58" />
-            <text className="principle-kicker" textAnchor="middle" y="-20">结果已验收</text>
-            <text className="principle-core-title" textAnchor="middle" y="8">ValidPoI</text>
-            <text className="principle-detail" textAnchor="middle" y="31">H(taskId ∥ verdictRoot)</text>
-          </g>
-        </svg>
-      </div>
-      <footer className="principle-statusbar poi-principle-statusbar">
-        <code>ValidPoI = SignedDemand ∧ ExecReceipt ∧ AcceptedResult ∧ ¬Spent(taskKey)</code>
-        <span>结算 · splitRoot 分账 · 有界权重</span>
-      </footer>
-    </div>
+    <ProgressiveTechnicalFlow
+      code="PoI / 证据生成算法"
+      status="真实需求 → 执行 → 验收 → 防重放 → ValidPoI"
+      className="intelligence-proof intelligence-proof-simple principle-panel poi-principle-panel"
+      stages={poiProofStages}
+      ariaLabel="PoI 从核验真实需求到执行回执、结果验收、防重放和生成 ValidPoI 的五步算法"
+      footer={(
+        <footer className="progressive-flow-footer">
+          <WorkflowFormula formula="ValidPoI → Settlement(splitRoot) + UpdateBoundedWeight" title="PoI 的双重结果" summary="同一份有效推理一方面按 splitRoot 结算业务收益，另一方面只以有界权重计入共识贡献。" />
+          <span><Icon name="check" /><strong>同一份有效推理只计量一次</strong></span>
+        </footer>
+      )}
+      interval={3200}
+    />
   );
 }
 

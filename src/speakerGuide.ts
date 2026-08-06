@@ -10,15 +10,15 @@ export type SpeakerGuideEntry = {
 export const speakerGuides = {
   top: {
     duration: '0:15',
-    focus: 'ACVM 把已验收的有效推理转成可验证、可结算、可分配的链上价值。',
+    focus: 'ACVM 是去中心化智能体即服务网络：企业发布智能体，用户按需调用，网络验证结果并自动分配收益。',
     example: '示例：设备厂把故障诊断智能体发布为服务；工厂提交诊断订单，结果通过独立验收后，ACVM 向所有者付款并生成 ValidPoI。',
-    beats: ['真实需求、结果验收、执行证明和防重放同时成立，推理才形成 ValidPoI。', 'ValidPoI 可触发付款与多方分账，也可形成有界的 PoI 候选权重。'],
+    beats: ['ANS 负责服务发现，雾计算网络负责匹配隐私执行节点。', '链上智能体 PoI 验证器确认结果后，ACVM Runtime 完成付款、分账和贡献计量。'],
   },
   'product-snapshot': {
     duration: '0:50',
-    focus: 'ACVM 把目标、证据、裁决和付款绑定为一笔结果订单。',
-    example: 'GEO Worker 更新内容，观察方独立复测；ACVM 判定引用增量达标后，现有支付系统释放结果费。',
-    beats: ['签约时冻结目标、证据、预算和挑战规则。', '执行层提交回执，ACVM 负责裁决，支付或链完成资金终局。'],
+    focus: 'ACVM 是链上 Agentic Contract 的 Runtime，负责执行任务状态机并在验证后恢复合约。',
+    example: 'GEO Agentic Contract 冻结问题集、引用基线和预算；链下观察节点提交复测结果，链上智能体 PoI 验证器确认增量后，ACVM Runtime 恢复合约并释放结果费。',
+    beats: ['Agentic Contract 在链上保存任务、验收、预算和防重放状态。', '链下服务只提交结果与回执；验证通过后，ACVM Runtime 才更新状态、付款或退款。'],
   },
   'poi-proof': {
     duration: '0:45',
@@ -41,7 +41,7 @@ export const speakerGuides = {
   'agent-rental': {
     duration: '0:55',
     focus: '智能体所有者保留模型与私有资产，也能按已验收结果获得服务收益。',
-    example: '示例：设备厂开放故障诊断智能体，工厂按批次提交订单；模型留在所有者或雾节点，Validator 根据维修工单验收后，ACVM 再释放结果费。',
+    example: '示例：设备厂开放故障诊断智能体，工厂按批次提交订单；加密镜像只在雾节点 TEE 内解密，链上智能体 PoI 验证器结合维修工单验收后，ACVM 再释放结果费。',
     beats: ['ANS 服务卡先绑定智能体身份、能力、接口与调用条件，租用方再签署任务和验收规则。', 'A3S 隔离执行并提交回执；AcceptedResult 触发付款和 ValidPoI，组合服务可按 splitRoot 分账。'],
   },
   simulation: {
@@ -70,21 +70,21 @@ export const speakerGuides = {
   },
   'fog-inference': {
     duration: '0:45',
-    focus: 'a3s-box 在雾节点建立本地隐私执行边界，只把结果和签名回执送往外部。',
-    example: '工厂质检图像进入厂区 a3s-box MicroVM；网络白名单、只读模型和临时数据卷限制数据流向，任务结束后销毁数据卷，外部只接收缺陷统计与 ExecReceipt。',
-    beats: ['租约把 taskId、镜像、网络策略、资源上限和截止时间固定到同一个 a3s-box 实例。', '原始图像不出本地数据域；ACVM 只核验 ExecReceipt、outputRoot 与独立业务证据。'],
+    focus: 'ANS 找到服务后，雾计算网络按安全、资源、位置和时延选择单节点或同域 MoE 专家组。',
+    example: '工厂质检任务优先选择厂区内带 TEE 的 GPU 节点；MoE 模式则选择同一机房的路由节点和 Top-k 专家，避免跨地域激活传输抵消并行收益。',
+    beats: ['FogLease 把 taskId、加密镜像、TEE 等级、资源和截止时间固定到本次执行。', 'a3s-box 建立隐私边界，a3s-power 只加载命中的专家参数；外部只收到结果根和组合回执。'],
   },
   'execution-boundary': {
     duration: '0:55',
-    focus: '链下可信由规则承诺、执行验证、结果验证和防重放四个确定条件共同生成。',
-    example: '示例：采购 Agent 完成供应商询价后，TEE 回执证明指定模型、工具和权限按约运行；真实采购单与到货记录再证明业务目标完成。两类证据通过 Validator 法定人数确认后才生成 ValidPoI 并付款。',
-    beats: ['承诺 C 固定任务、输入、模型、策略、验收和分账；ExecOK 再验证 πexec、outputRoot 与本次 nonce 的绑定。', '有效签名票达到阈值 q 才得到 OutcomeOK；只有 taskKey 未消费，δACVM 才能用 AcceptedResult 推进链上状态。'],
+    focus: '链下负责隐私计算，链上智能体 PoI 验证器负责执行证明、业务结果与防重放裁决。',
+    example: '采购 Agent 在 a3s-box 内完成供应商询价，πpriv 证明指定模型、工具和权限按约运行；链上验证智能体再结合采购单与到货记录判断结果。两类证据通过后，ACVM Runtime 才恢复合约并付款。',
+    beats: ['承诺 C 固定任务、输入、模型、策略、验收和分账；ExecOK 验证 πpriv、outputRoot 与本次 nonce 的绑定。', '验证智能体的有效签名票达到阈值 q 才得到 OutcomeOK；taskKey 未消费时，δACVM 才推进 Agentic Contract 状态。'],
   },
   'a3s-box': {
     duration: '0:55',
-    focus: 'a3s-box 为本地 OCI 工作负载固定可恢复、可审计的隔离执行边界。',
-    example: '示例：非可信 Validator 镜像默认进入专用内核 MicroVM，CPU、内存和网络策略随任务持久化，并记录启动、exec、日志、退出与清理事件。',
-    beats: ['a3s-box 管理镜像、构建、网络、卷、快照、健康、重启、日志和清理。', '默认 MicroVM 与显式 Sandbox 之间不静默降级，恢复时沿用原后端和策略。'],
+    focus: 'A3S 执行栈把智能体从可签名构建包安全送入 TEE，并按任务远程挂载最小权限能力。',
+    example: '示例：企业用 a3s-code 打包售后智能体并发布加密镜像；雾节点证明通过后，a3s-box 才在 TEE 内解密，a3s-use 再挂载本次任务授权的 CRM 读取和模型推理能力。',
+    beats: ['imageRoot 与 capabilityRoot 分别锁定智能体镜像和能力清单，仓库与宿主机看不到明文。', '任务结束后，a3s-box 签发隐私执行回执并清零镜像密钥、能力令牌和临时卷。'],
   },
   'a3s-power': {
     duration: '1:00',
@@ -100,8 +100,8 @@ export const speakerGuides = {
   },
   'native-chain': {
     duration: '1:00',
-    focus: 'Rust 原生链用异步状态机把 PoI Worker 变成链上 ACVM 的模型推理服务层。',
-    example: '示例：链上理赔合约发布票据一致性识别任务；PoI Worker 运行指定视觉模型，Validator 结合保单规则与人工复核验收，AcceptedResult 恢复合约并结算，同时形成 ValidPoI。',
-    beats: ['任务根 T 绑定 taskId、模型、输入与策略；PoI Worker 提交 rExec，Validator 用 QC 形成裁决 R，区块全程不等待模型。', 'taskKey 绑定任务、输出与 nonce；Verify(R) 且 taskKey 未消费时，δACVM 恢复合约并由 UpdateBounded 更新 PoI。'],
+    focus: 'Rust 原生链内置 ACVM Runtime 与智能体 PoI 验证器，PoI Worker 在链下提供隐私模型推理。',
+    example: '链上理赔 Agentic Contract 发布票据识别任务；a3s-box 与 a3s-power 在链下保护票据和模型，链上验证智能体结合保单规则与复核证据形成 AcceptedResult，ACVM Runtime 随后恢复合约并结算。',
+    beats: ['任务根 T 绑定任务、模型、输入与策略；链下只返回 outputRoot 与 πpriv，区块不等待模型计算。', '链上智能体 PoI 验证器达到法定人数 q 后形成裁决；taskKey 未消费时，δACVM 恢复合约并更新 ValidPoI。'],
   },
 } as const satisfies Record<ScreenId, SpeakerGuideEntry>;

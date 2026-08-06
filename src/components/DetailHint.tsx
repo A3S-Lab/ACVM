@@ -31,6 +31,7 @@ export type ProofDerivation = {
 type Placement = {
   top: number;
   left: number;
+  arrowLeft: number;
   ready: boolean;
   side: 'top' | 'bottom' | 'sheet';
 };
@@ -57,7 +58,17 @@ export function DetailHint({
   const tooltipRef = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
-  const [placement, setPlacement] = useState<Placement>({ top: -9999, left: -9999, ready: false, side: 'top' });
+  const [portalRoot, setPortalRoot] = useState<Element | null>(() => (
+    typeof document !== 'undefined' ? (document.fullscreenElement ?? document.body) : null
+  ));
+  const [placement, setPlacement] = useState<Placement>({ top: -9999, left: -9999, arrowLeft: 0, ready: false, side: 'top' });
+
+  useEffect(() => {
+    const updatePortalRoot = () => setPortalRoot(document.fullscreenElement ?? document.body);
+    updatePortalRoot();
+    document.addEventListener('fullscreenchange', updatePortalRoot);
+    return () => document.removeEventListener('fullscreenchange', updatePortalRoot);
+  }, []);
 
   useLayoutEffect(() => {
     if (!open) return undefined;
@@ -80,6 +91,7 @@ export function DetailHint({
         setPlacement({
           top: Math.max(16, viewportHeight - tooltipRect.height - 16),
           left: 16,
+          arrowLeft: 0,
           ready: true,
           side: 'sheet',
         });
@@ -94,8 +106,12 @@ export function DetailHint({
       const top = fitsAbove
         ? targetRect.top - tooltipRect.height - gap
         : Math.min(viewportHeight - tooltipRect.height - edge, targetRect.bottom + gap);
+      const arrowLeft = Math.min(
+        tooltipRect.width - 16,
+        Math.max(16, targetRect.left + targetRect.width / 2 - left),
+      );
 
-      setPlacement({ top: Math.max(topEdge, top), left, ready: true, side: fitsAbove ? 'top' : 'bottom' });
+      setPlacement({ top: Math.max(topEdge, top), left, arrowLeft, ready: true, side: fitsAbove ? 'top' : 'bottom' });
     };
 
     const frame = window.requestAnimationFrame(place);
@@ -106,7 +122,7 @@ export function DetailHint({
       window.removeEventListener('resize', place);
       window.removeEventListener('scroll', place, true);
     };
-  }, [open]);
+  }, [open, portalRoot]);
 
   useEffect(() => {
     if (!pinned) return undefined;
@@ -136,6 +152,7 @@ export function DetailHint({
   const tooltipStyle = {
     top: placement.top,
     left: placement.left,
+    '--tooltip-arrow-left': `${placement.arrowLeft}px`,
     visibility: placement.ready ? 'visible' : 'hidden',
   } as CSSProperties;
 
@@ -165,7 +182,7 @@ export function DetailHint({
       >
         {label}
       </span>
-      {open && typeof document !== 'undefined' ? createPortal(
+      {open && portalRoot ? createPortal(
         <aside
           className="detail-tooltip"
           data-side={placement.side}
@@ -215,7 +232,7 @@ export function DetailHint({
           ) : null}
           <i aria-hidden="true" />
         </aside>,
-        document.body,
+        portalRoot,
       ) : null}
     </>
   );

@@ -5,6 +5,8 @@ import {
   type TechnicalBackdropVariant,
 } from './TechnicalBackdrop';
 import { TechTerm, type TechKey } from './TechTerm';
+import { DetailHint } from './DetailHint';
+import { Icon } from './Icons';
 
 const technicalBackdrops: Partial<Record<ScreenId, TechnicalBackdropVariant>> = {
   'product-snapshot': 'flow',
@@ -40,6 +42,7 @@ export type LessonChapterProps = {
   title: string;
   accent: string;
   body: string;
+  detail?: string;
   comparison?: MechanismComparison;
   terms?: TechKey[];
   figureLabel?: string;
@@ -78,6 +81,7 @@ function SectionHeading({
   title,
   accent,
   body,
+  detail,
   comparison,
   terms = [],
 }: Omit<LessonChapterProps, 'id' | 'className' | 'figureLabel' | 'visual' | 'children'>) {
@@ -89,6 +93,15 @@ function SectionHeading({
       <h2>{title}</h2>
       <p className="section-accent">{accent}</p>
       <p className="section-summary">{body}</p>
+      {detail ? (
+        <DetailHint
+          className="section-detail-trigger"
+          category="详细说明"
+          title={title}
+          summary={detail}
+          label={<span className="section-detail-label"><Icon name="eye" />详细说明</span>}
+        />
+      ) : null}
       {comparison ? <MechanismCompare {...comparison} /> : null}
       {terms.length > 0 ? (
         <div className="section-terms">
@@ -106,6 +119,7 @@ export function LessonChapter({
   title,
   accent,
   body,
+  detail,
   comparison,
   terms,
   visual,
@@ -127,6 +141,7 @@ export function LessonChapter({
           title={title}
           accent={accent}
           body={body}
+          detail={detail}
           comparison={comparison}
           terms={terms}
         />

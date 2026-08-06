@@ -2,6 +2,8 @@ import type { CSSProperties } from 'react';
 import { Icon, type IconName } from './Icons';
 import { LearningPanel } from './LearningPanel';
 import { useStepPlayback } from './useStepPlayback';
+import { AsciiFlowControls, type BusinessProcessStage } from './BusinessProcessFlow';
+import { WorkflowFormula, WorkflowTerm } from './WorkflowHint';
 
 type ServiceStep = {
   label: string;
@@ -13,53 +15,13 @@ type ServiceStep = {
   icon: IconName;
 };
 
-const geoSteps: readonly ServiceStep[] = [
-  {
-    label: '冻结口径',
-    title: '把“变好”写成可检查的条件',
-    actor: '品牌方 + Validator',
-    description: '签名固定问题集、观测引擎、站点版本、基线、30 天窗口和 8pp 门槛。',
-    evidence: 'intentRoot · baselineRoot',
-    state: 'CREATED → FUNDED',
-    icon: 'lock',
-  },
-  {
-    label: '执行优化',
-    title: 'GEO Agent 在链下改内容',
-    actor: 'GEO Worker',
-    description: '改写页面、补充可引用材料并发布；站点快照和发布记录绑定同一 taskId。',
-    evidence: 'artifactRoot · publishReceipt',
-    state: 'FUNDED → RUNNING',
-    icon: 'brain',
-  },
-  {
-    label: '独立观测',
-    title: '成绩不由执行者自己上报',
-    actor: 'Observation Workers',
-    description: '观察节点按冻结问题集重新查询，排除付费流量与合成查询，汇总引用份额。',
-    evidence: 'querySetRoot · observationRoot',
-    state: 'RUNNING → SUBMITTED',
-    icon: 'eye',
-  },
-  {
-    label: '验证增量',
-    title: 'Validator 只判断约定谓词',
-    actor: 'Independent Validators',
-    description: '核对前后样本、数据来源和排除项；25.8% − 14.2% = 11.6pp，超过门槛。',
-    evidence: 'verdictQC · delta = +11.6pp',
-    state: 'SUBMITTED → ACCEPTED',
-    icon: 'shield',
-  },
-  {
-    label: '结果结算',
-    title: '终局后按有效增量付款',
-    actor: 'Settlement Contract',
-    description: '裁决过挑战期并随区块终局后，合约按每个百分点 ¥10,000 释放服务费。',
-    evidence: 'receiptRoot · ¥116,000',
-    state: 'ACCEPTED → FINALIZED',
-    icon: 'receipt',
-  },
-];
+const geoFlowStages = [
+  { index: '01', label: '冻结基线', actor: '品牌方 + 链上 ACVM 验证智能体', action: '把提升目标写成可以复测的链上验收条件', detail: '固定测试问题、当前引用率、观察周期和增量门槛，并将 querySetRoot 与 baselineRoot 写入订单。', input: '问题集 + 当前引用率 14.2%', output: '链上基线与 +8pp 门槛', state: 'CREATED → FUNDED', icon: 'lock', tone: 'violet' },
+  { index: '02', label: '执行优化', actor: 'GEO Agent', action: '改进站点内容并提交发布记录', detail: '页面改动、可引用材料和站点快照绑定到同一个 taskId。', input: '已冻结的 GEO 订单', output: '新内容 + 发布回执', state: 'FUNDED → RUNNING', icon: 'brain', tone: 'violet' },
+  { index: '03', label: '发起独立复测', actor: '链上 ACVM 验证智能体', action: '按冻结问题集发布复测任务并选择独立观察智能体', detail: '验证智能体通过 ANS 选择与 GEO 执行方无利益关联的观察节点，并把查询版本、窗口和排除规则写入任务。', input: 'querySetRoot + 新站点版本', output: '链上 ObservationTask', state: 'RUNNING → VERIFYING', icon: 'eye', tone: 'green' },
+  { index: '04', label: '链上验证增量', actor: 'ACVM 验证智能体 + PoI 观察节点', action: '收集签名查询回执，并按固定公式计算真实增量', detail: '观察节点访问实际 AI 引擎并返回证据；链上智能体验签、检查法定人数，再计算 25.8% − 14.2% = 11.6pp。', input: 'SignedObservation[] + baselineRoot', output: 'AcceptedResult · +11.6pp', state: 'VERIFYING → ACCEPTED', icon: 'shield', tone: 'green' },
+  { index: '05', label: '结果付费', actor: 'ACVM', action: '只对已经验证的引用提升释放费用', detail: '裁决终局后，按订单约定的每个百分点价格计算并支付结果费。', input: 'AcceptedResult + 计价规则', output: '结果费 ¥116,000', state: 'ACCEPTED → FINALIZED', icon: 'receipt', tone: 'green' },
+] as const satisfies readonly BusinessProcessStage[];
 
 const simulationSteps: readonly ServiceStep[] = [
   {
@@ -168,62 +130,76 @@ function StepInspector({ step, index, total }: { step: ServiceStep; index: numbe
 }
 
 export function GeoVerificationArchitecture() {
+  const { rootRef, activeStep, isPlaying, selectStep, togglePlayback } = useStepPlayback(geoFlowStages.length, 3200);
+  const current = geoFlowStages[activeStep];
+
   return (
-    <LearningPanel code="GEO / 独立复测" status="示例数据" className="geo-proof-simple">
-      <div className="geo-proof-rule">
-        <span><small>冻结基线</small><strong>14.2%</strong></span>
-        <span><small>验收门槛</small><strong>+8pp</strong></span>
-        <span><small>观察窗口</small><strong>30 天</strong></span>
-      </div>
-      <div className="geo-proof-result" aria-label="引用份额从 14.2% 提升到 25.8%">
-        <div className="geo-proof-bars">
-          <span className="is-baseline"><b>14.2%</b><i /><small>签约基线</small></span>
-          <span className="is-observed"><b>25.8%</b><i /><small>独立复测</small></span>
+    <div className="geo-ascii-shell" ref={rootRef}>
+      <LearningPanel code="GEO / 链上 ACVM 效果验证" status="14.2% → 25.8% · +11.6pp" className="geo-proof-simple geo-ascii-panel principle-panel">
+        <AsciiFlowControls stages={geoFlowStages} activeStep={activeStep} isPlaying={isPlaying} onSelect={selectStep} onToggle={togglePlayback} ariaLabel="GEO 链上验证的五个步骤" />
+        <div className={`geo-ascii-verifier ascii-workflow-canvas is-stage-${activeStep + 1}`} key={current.index}>
+          <header><code>┌─ ACVM::GEO_VERIFY_AGENT / taskId 0xGEO-2048 ───────────────┐</code></header>
+          <div className="geo-ascii-metrics">
+            <span className="is-baseline"><b>基线</b><i><em /></i><strong>14.2%</strong></span>
+            <span className="is-threshold"><b>门槛</b><i><em /></i><strong>+8.0pp</strong></span>
+            <span className="is-observed"><b>复测</b><i><em /></i><strong>25.8%</strong></span>
+            <span className="is-delta"><b>增量</b><i aria-hidden="true">────────◆──────▶</i><strong>+11.6pp / ACCEPTED</strong></span>
+          </div>
+          <div className="geo-ascii-route" aria-label="GEO 执行智能体提交站点版本，链上 ACVM 验证智能体发布观察任务，PoI 观察节点返回签名回执，ACVM 计算增量并结算">
+            <span className={`${activeStep === 1 ? 'is-active' : ''} ascii-workflow-node`}>[<WorkflowTerm term="GEO" label="GEO Agent" />]</span><i>── siteRoot ──▶</i>
+            <span className={`${activeStep === 0 || activeStep === 2 || activeStep === 3 ? 'is-active' : ''} ascii-workflow-node`}>[链上 <WorkflowTerm term="AgenticContract" label="ACVM 验证智能体" />]</span><i>── ObservationTask ──▶</i>
+            <span className={`${activeStep === 2 || activeStep === 3 ? 'is-active' : ''} ascii-workflow-node`}>[<WorkflowTerm term="PoI" label="PoI 观察节点" /> × q]</span><i>── SignedObservation[] ──▶</i>
+            <span className={`${activeStep === 4 ? 'is-active' : ''} ascii-workflow-node`}>[结果费 ¥116,000]</span>
+          </div>
+          <footer><code>└─ 当前 / {current.label} / {current.state} / {current.output} ─────────┘</code></footer>
         </div>
-        <div className="geo-proof-delta">
-          <small>已验证增量</small>
-          <strong>+11.6<em>pp</em></strong>
-          <span><Icon name="check" /> 达标</span>
-        </div>
-      </div>
-      <footer className="geo-proof-settlement">
-        <span>独立复测超过门槛</span><i aria-hidden="true">→</i><strong>释放结果费</strong>
-      </footer>
-    </LearningPanel>
+        <footer className="business-process-footer"><span><small>链上判断</small><WorkflowFormula formula="25.8% − 14.2% = 11.6pp ≥ 8pp" title="GEO 引用增量验收" summary="独立复测引用率减去签约基线，增量达到订单门槛才形成 AcceptedResult。" details={[{ label: '基线', value: '14.2%' }, { label: '复测', value: '25.8%' }, { label: '门槛', value: '+8.0pp' }]} /></span><strong>只结算独立复测确认的增量</strong></footer>
+      </LearningPanel>
+    </div>
   );
 }
 
+const simulationFlowStages = [
+  { index: '01', label: '冻结实验', actor: '研究方 + 参与机构', action: '共同固定模型、样本范围和随机规则', detail: '所有参与方在运行前确认同一实验版本，避免事后修改条件迎合结果。', input: '研究问题 + 多方数据范围', output: '已签名实验承诺', state: 'CREATED → FUNDED', icon: 'lock', tone: 'violet' },
+  { index: '02', label: '本地仿真', actor: '各机构的 a3s-box', action: '在本地数据域运行同一社会模拟', detail: '画像、轨迹和个体判断留在各机构内部，只生成待聚合的加密统计。', input: '实验承诺 + 本地私有数据', output: '加密局部统计', state: 'FUNDED → RUNNING', icon: 'brain', tone: 'violet' },
+  { index: '03', label: '安全汇总', actor: 'MPC 聚合节点', action: '合并多方统计但不还原个人记录', detail: '跨机构只流转总体指标、置信区间和聚合记录，原始数据始终不出域。', input: '多方加密局部统计', output: '群体结果 + 置信区间', state: 'RUNNING → SUBMITTED', icon: 'chain', tone: 'green' },
+  { index: '04', label: '验收结算', actor: 'Validator + ACVM', action: '复核实验管线后发布结果并结算', detail: '验证模型、样本、随机种子和聚合过程；通过后向参与机构和执行方分账。', input: '汇总结果 + 执行证据', output: '可审计结果 + 多方收益', state: 'SUBMITTED → FINALIZED', icon: 'shield', tone: 'green' },
+] as const satisfies readonly BusinessProcessStage[];
+
 export function SocialSimulationSimpleArchitecture() {
+  const { rootRef, activeStep, isPlaying, selectStep, togglePlayback } = useStepPlayback(simulationFlowStages.length, 3100);
+  const current = simulationFlowStages[activeStep];
+
   return (
-    <LearningPanel code="社会模拟即服务" status="私有输入 · 可验证输出" className="social-simulation-simple">
-      <div className="social-simulation-simple-flow" aria-label="私有数据经过本地社会模拟、安全聚合与 ACVM 验收形成可结算结果">
-        <section>
-          <Icon name="lock" />
-          <small>01 / 本地数据</small>
-          <strong>原始数据留在各机构</strong>
-          <span>画像与轨迹不对外公开</span>
-        </section>
-        <i aria-hidden="true">→</i>
-        <section className="is-simulation">
-          <Icon name="brain" />
-          <small>02 / 运行与汇总</small>
-          <strong>按同一规则仿真并安全聚合</strong>
-          <span>只汇总统计值和置信区间</span>
-        </section>
-        <i aria-hidden="true">→</i>
-        <section className="is-accepted">
-          <Icon name="shield" />
-          <small>03 / 验收与结算</small>
-          <strong>ACVM 核对实验和汇总结果</strong>
-          <span>通过后才支付服务费</span>
-        </section>
-      </div>
-      <footer className="social-simulation-simple-boundary">
-        <span><b>能够证明</b> 按冻结假设与统计管线运行</span>
-        <i aria-hidden="true">≠</i>
-        <span><b>不能证明</b> 模拟结论必然等于现实</span>
-      </footer>
-    </LearningPanel>
+    <div className="simulation-ascii-shell" ref={rootRef}>
+      <LearningPanel code="社会模拟即服务 / 多机构并行实验" status="私有输入 · 可验证汇总" className="social-simulation-simple simulation-ascii-panel principle-panel">
+        <AsciiFlowControls stages={simulationFlowStages} activeStep={activeStep} isPlaying={isPlaying} onSelect={selectStep} onToggle={togglePlayback} ariaLabel="多家机构从冻结社会模拟实验到本地运行、安全汇总和验收结算的四步业务流程" />
+        <div className={`simulation-ascii-network ascii-workflow-canvas is-stage-${activeStep + 1}`} key={current.index}>
+          <header><code>┌─ experimentRoot 0xSIM-2048 / 同一模型 · 样本规则 · VRF seed ───┐</code></header>
+          <div className="simulation-ascii-parties">
+            {[
+              ['机构 A', '居民服务数据', 'Enc(stat_A)'],
+              ['机构 B', '企业经营数据', 'Enc(stat_B)'],
+              ['机构 C', '公共设施数据', 'Enc(stat_C)'],
+            ].map(([party, data, output]) => (
+              <section className="ascii-workflow-node" key={party}>
+                <small>[{party} / 本地数据域]</small>
+                <code>{data}</code>
+                <i aria-hidden="true">│<br />▼</i>
+                <strong>[a3s-box 社会模拟]</strong>
+                <b>{output}</b>
+              </section>
+            ))}
+          </div>
+          <div className="simulation-ascii-converge"><i>╲</i><i>│</i><i>╱</i><code>只汇出加密局部统计</code></div>
+          <div className="simulation-ascii-result">
+            <span className="ascii-workflow-node">[<WorkflowTerm term="MPC" label="MPC 安全汇总" />]</span><i>── aggregationRoot ──▶</i><span className="ascii-workflow-node">[Validator 复核]</span><i>── <WorkflowTerm term="AcceptedResult" /> ──▶</i><strong className="ascii-workflow-node">48.0% ± 2.4pp</strong>
+          </div>
+          <footer><code>└─ 当前 / {current.label} / {current.state} / {current.output} ─────┘</code></footer>
+        </div>
+        <footer className="business-process-footer"><span><small>跨域流转</small><code>Enc(stat_A/B/C) → 群体统计</code></span><strong>验证实验按约运行，不把模拟结果冒充现实事实</strong></footer>
+      </LearningPanel>
+    </div>
   );
 }
 

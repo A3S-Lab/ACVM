@@ -1,15 +1,15 @@
 import { A3sBoxCapabilitiesArchitecture, A3sPowerCapabilitiesArchitecture } from '../components/A3sCapabilitiesArchitecture'
-import { AcvmNativeChainArchitecture } from '../components/AcvmNativeChainArchitecture'
 import { LessonChapter } from '../components/LessonChapter'
 import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchitecture'
 
 <LessonChapter
   id="a3s-box"
   className="a3s-box-screen"
-  eyebrow="05 / a3s-box 执行环境"
-  title="a3s-box 为每个 AI 任务提供独立运行空间"
-  accent="模型、资源、网络和数据访问都按任务锁定"
-  body="任务默认在轻量虚拟机中运行，彼此互不影响。系统完整记录启动、执行和清理过程，发生故障后也能按原配置恢复。"
+  eyebrow="06 / A3S 智能体执行栈"
+  title="A3S 把加密智能体安全送入 TEE"
+  accent="a3s-code 构建，a3s-use 组装，a3s-box 运行"
+  body="远程证明通过后，镜像和能力才在 TEE 内加载。"
+  detail="a3s-code 把智能体逻辑、配置和能力声明构建为可签名镜像；a3s-box 在选中的雾节点核验镜像与 TEE 证明，证明通过后才在可信内存解密。运行中的 a3s-use 按 capabilityRoot 拉取、验签并挂载本次任务授权的远程模型、工具和数据连接器。"
   visual={<A3sBoxCapabilitiesArchitecture />}
 >
 </LessonChapter>
@@ -17,10 +17,11 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
 <LessonChapter
   id="a3s-power"
   className="a3s-power-screen"
-  eyebrow="05 / a3s-power 隐私推理"
-  title="a3s-power 让大模型在受保护的小内存中运行"
-  accent="数据和模型全程受保护，用到哪一层就加载哪一层"
-  body="模型不用一次全部进入可信内存：当前层参数计算完成后立即释放。这样既保护隐私，也能降低运行大模型所需的可信内存。"
+  eyebrow="06 / a3s-power 隐私推理"
+  title="a3s-power 按层加载大模型"
+  accent="当前层进入内存，用完立即释放"
+  body="大模型不必一次装进可信内存。"
+  detail="a3s-use 把模型推理能力挂载到智能体后，a3s-power 在 TEE 内完成实际推理。模型参数不一次全部进入可信内存，只加载正在计算的一层，完成后立即清零并加载下一层；数据、模型密钥和执行过程始终位于受保护环境。"
   visual={<A3sPowerCapabilitiesArchitecture />}
 >
 </LessonChapter>
@@ -28,23 +29,12 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
 <LessonChapter
   id="deployment-modes"
   className="chains-screen"
-  eyebrow="05 / 对接国内区块链"
-  title="ACVM 可以接入现有的国内区块链"
-  accent="业务流程不变，只替换对应区块链的连接器"
-  body="A3S 负责 AI 执行，ACVM 负责验收和状态管理；连接器再把统一结果写入长安链、FISCO BCOS、星火链网或 BSN。"
+  eyebrow="06 / 对接国内区块链"
+  title="ACVM 接入现有国内区块链"
+  accent="每条链只替换一个 Driver"
+  body="A3S 执行，ACVM 验收，Driver 写链。"
+  detail="A3S 负责 AI 执行，ACVM 负责验收和状态管理。ChainAdapter 把统一身份、事件和终局语义映射到长安链、FISCO BCOS、星火链网或 BSN。"
   figureLabel="ACVM 标准状态 → ChainAdapter → 国内区块链基础设施"
   visual={<AcvmIntegrationArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="native-chain"
-  className="native-chain-screen"
-  eyebrow="06 / Rust 原生 ACVM 链"
-  title="Rust 原生链把 AI 推理接入合约执行"
-  accent="PoI 节点提供模型服务，链上负责验证、续跑和结算"
-  body="合约发布任务后，PoI 节点运行指定模型并提交回执；验证通过后，链上恢复合约、更新状态并付款。区块生成不用等待模型计算。"
-  figureLabel="ACVM 任务 → PoI 推理服务 → AcceptedResult → 状态恢复与 ValidPoI"
-  visual={<AcvmNativeChainArchitecture />}
 >
 </LessonChapter>

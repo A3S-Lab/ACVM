@@ -1,13 +1,27 @@
 import { AcvmServiceWorkflowArchitecture } from '../components/AcvmServiceWorkflow'
 import { LessonChapter } from '../components/LessonChapter'
+import { PoiConsensusArchitecture } from '../components/ProductMechanismArchitecture'
 
 <LessonChapter
   id="system-architecture"
   className="system-architecture-screen"
-  eyebrow="04 / 订单结算规则"
-  title="每笔订单都有清楚的付款、退款和处罚结果"
-  accent="通过就分账，未达标就退款，造假才处罚"
-  body="订单、执行记录和验收结果共用同一个任务编号，避免重复结算；验证者完成有效工作，也按约获得费用。"
+  eyebrow="05 / 订单结算规则"
+  title="订单终局决定分账、退款或处罚"
+  accent="通过分账，未达标退款，造假处罚"
+  body="同一 taskId 只结算一次。"
+  detail="订单、执行记录和验收结果共用同一个任务编号，避免重复结算。链上智能体 PoI 验证器完成有效复核后按约获得费用；只有可证明造假时才罚没保证金。终局通过的 PoI 才进入下一步共识计量。"
   visual={<AcvmServiceWorkflowArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="poi-consensus"
+  className="poi-consensus-screen"
+  eyebrow="05 / PoI 共识算法"
+  title="有效贡献换成公平记账机会"
+  accent="先终局，再归一、封顶、抽签"
+  body="只有已验收并终局的 PoI 能参与记账竞争。"
+  detail="订单先完成验收和资金终局，再把有效 PoI 按任务类别归一为可比较贡献。贡献设置上限并随时间衰减，VRF 按有界权重抽取候选节点，最终仍由固定 BFT 法定人数确认区块。"
+  visual={<PoiConsensusArchitecture />}
 >
 </LessonChapter>

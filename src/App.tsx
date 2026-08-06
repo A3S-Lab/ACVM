@@ -400,10 +400,17 @@ export function App() {
   }, [goToScreen, guideOpen, helpOpen, toggleFullscreen, toggleGuide, toggleOutline]);
 
   useEffect(() => {
-    const onFullscreenChange = () => setIsFullscreen(Boolean(document.fullscreenElement));
+    const onFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+      const preservedScreen = activeScreenRef.current;
+      wheelLockedRef.current = true;
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => goToScreen(preservedScreen, 'auto'));
+      });
+    };
     document.addEventListener('fullscreenchange', onFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
-  }, []);
+  }, [goToScreen]);
 
   useEffect(() => () => window.clearTimeout(unlockTimerRef.current), []);
 
@@ -492,8 +499,8 @@ export function App() {
                 <LogoMark />
                 <span><strong>ACVM</strong><small>AGENTIC CONTRACT VIRTUAL MACHINE</small></span>
               </span>
-              <h1>让有效推理成为链上价值</h1>
-              <p className="hero-cover-scope">推理可证明 <i /> 结果可验收 <i /> 收益可分配</p>
+              <h1><span>去中心化智能体即服务网络</span></h1>
+              <p className="hero-cover-scope">智能体可发布 <i /> 服务可发现 <i /> 结果可验证 <i /> 收益可分配</p>
             </div>
           </div>
         </section>

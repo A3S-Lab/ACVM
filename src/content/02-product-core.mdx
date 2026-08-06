@@ -2,51 +2,54 @@ import { GeoVerificationArchitecture, SocialSimulationSimpleArchitecture } from 
 import { AgentResolutionArchitecture } from '../components/AgentResolutionArchitecture'
 import { FogInferenceArchitecture } from '../components/FogInferenceArchitecture'
 import { LessonChapter } from '../components/LessonChapter'
-import { PoiConsensusArchitecture } from '../components/ProductMechanismArchitecture'
 import { AgentRentalArchitecture } from '../components/ProductNarrativeArchitecture'
 
 <LessonChapter
   id="geo-verification"
   className="core-use-case-screen geo-verification-screen"
-  eyebrow="03 / GEO 效果付费"
-  title="GEO 按品牌被 AI 引用的提升效果付费"
-  accent="用同一组问题复测，达到约定增量才结算"
-  body="签约时确定测试问题、当前引用率和观察周期；由独立机构复测，品牌引用率提升达标后付款。"
+  eyebrow="04 / GEO 效果付费"
+  title="GEO 按 AI 引用提升效果付费"
+  accent="链上智能体独立复测后结算"
+  body="只按确认的引用增量付费。"
+  detail="签约时把测试问题、当前引用率和观察周期写入订单。链上 ACVM 验证智能体调用独立观察节点取得查询回执，再按固定公式计算增量；通过后自动付款。"
   visual={<GeoVerificationArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="fog-inference"
-  className="fog-screen"
-  eyebrow="03 / 本地隐私计算"
-  title="雾计算把 AI 运算放在数据所在地"
-  accent="敏感数据留在工厂、医院或机构内部"
-  body="a3s-box 在现场创建隔离运行环境，限制网络、文件和工具权限。外部只收到结果和可核验回执，看不到原始数据。"
-  figureLabel="本地数据 → a3s-box 隔离执行 → 签名回执 → ACVM"
-  visual={<FogInferenceArchitecture />}
 >
 </LessonChapter>
 
 <LessonChapter
   id="ans"
   className="ans-screen"
-  eyebrow="03 / ANS 服务目录"
-  title="ANS 帮助调用方找到可信的智能体服务"
-  accent="像服务目录一样，先查身份和能力，再下单"
-  body="每个智能体都发布带签名的服务卡，写明提供者、能力、接口、价格和有效期。调用方核验后，再通过 ACVM 创建任务。"
-  figureLabel="签名服务卡 → 已核验端点 → ACVM 订单"
+  eyebrow="04 / ANS 智能体网络"
+  title="ANS 让用户找到可调用的智能体"
+  accent="身份、能力、镜像和履历统一可查"
+  body="解析签名服务卡，再创建 ACVM 调用任务。"
+  detail="企业把 a3s-code 构建的智能体和 a3s-use 能力清单写入签名服务卡，ANS 公开其 DID、imageRoot、capabilityRoot、价格和 TEE 要求。用户解析并验签后创建 ACVM 任务；历史 PoI 继续用于能力评分、协作组队和奖励更新。"
+  figureLabel="唯一身份 → 服务发布 → 用户发现 → 履历评分 → 协作与奖励"
   visual={<AgentResolutionArchitecture />}
+>
+</LessonChapter>
+
+<LessonChapter
+  id="fog-inference"
+  className="fog-screen"
+  eyebrow="04 / 雾计算网络"
+  title="雾计算按任务选择节点或专家组"
+  accent="单节点隐私执行，MoE 专家并行"
+  body="ANS 找到服务后，雾网络再匹配执行节点。"
+  detail="用户通过 ANS 找到智能体服务后，ACVM 把任务交给雾计算网络。普通任务按 TEE、GPU、位置、负载和信誉选择单节点；MoE 任务选择同地域低时延专家组，路由器只调用 Top-k 专家。a3s-box 在各节点建立 TEE 边界，加密镜像、专家分片和激活值均受保护。"
+  figureLabel="ANS 调用 → 节点或专家组筛选 → 远程证明 → TEE 隐私推理"
+  visual={<FogInferenceArchitecture />}
 >
 </LessonChapter>
 
 <LessonChapter
   id="agent-rental"
   className="agent-rental-screen"
-  eyebrow="03 / 智能体租赁"
-  title="把自己的智能体出租，按完成效果收费"
-  accent="模型和私有数据不交付，只提供服务结果"
-  body="所有者设定服务范围、验收标准和价格，租用方提交任务。结果通过验收后，ACVM 自动付款，并按约定给多方分账。"
+  eyebrow="04 / 智能体即服务"
+  title="企业把智能体发布为可调用服务"
+  accent="构建一次，按有效结果持续服务"
+  body="用户通过 ANS 调用，ACVM 自动验收和结算。"
+  detail="企业用 a3s-code 构建智能体，用 a3s-use 声明可热插拔能力，再把加密镜像与签名服务卡发布到 ACVM 和 ANS。用户调用后，雾计算网络选择节点；a3s-box 在 TEE 内解密镜像并加载授权能力，链上智能体 PoI 验证器确认结果后完成分账。"
   visual={<AgentRentalArchitecture />}
 >
 </LessonChapter>
@@ -54,21 +57,11 @@ import { AgentRentalArchitecture } from '../components/ProductNarrativeArchitect
 <LessonChapter
   id="simulation"
   className="core-use-case-screen simulation-screen"
-  eyebrow="03 / 社会模拟服务"
-  title="多家机构可以共同完成可信的社会模拟"
-  accent="各自保留原始数据，只共享统计结果"
-  body="参与方提前确定模型、样本范围和随机规则，在本地运行同一实验。ACVM 核对执行记录和汇总结果后，再完成结算。"
+  eyebrow="04 / 社会模拟服务"
+  title="多家机构共同完成可信社会模拟"
+  accent="数据留本地，统计结果可验收"
+  body="各机构按同一规则运行并安全汇总。"
+  detail="参与方提前确定模型、样本范围和随机规则，在各自本地运行同一实验。只共享群体统计和置信区间，ACVM 核对执行记录与汇总过程后再完成结算。"
   visual={<SocialSimulationSimpleArchitecture />}
->
-</LessonChapter>
-
-<LessonChapter
-  id="poi-consensus"
-  className="poi-consensus-screen"
-  eyebrow="04 / PoI 共识算法"
-  title="ACVM 把有效贡献换成公平的记账机会"
-  accent="不同任务先统一评分，再限制单个参与方的影响"
-  body="只有已经验收的 PoI 才能计分。不同任务先分类换算并设上限，再随机选出候选节点，由多方共同确认结果。"
-  visual={<PoiConsensusArchitecture />}
 >
 </LessonChapter>
