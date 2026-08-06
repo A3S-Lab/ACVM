@@ -1658,7 +1658,14 @@
 
 .ascii-workflow-node {
   position: relative;
+  isolation: isolate;
   --workflow-port: rgba(183, 164, 255, .72);
+}
+
+/* Inline Dify-like nodes reserve a real port gutter, so the connection dots
+   never sit on top of the first or last glyph. */
+.ascii-workflow-node:is(span, strong, b) {
+  padding-inline: 12px;
 }
 
 .ascii-workflow-node::before,
@@ -1669,15 +1676,23 @@
   top: 50%;
   width: 6px;
   height: 6px;
+  pointer-events: none;
   border: 1px solid rgba(4, 7, 10, .96);
   border-radius: 50%;
   background: var(--workflow-port);
-  box-shadow: 0 0 0 1px rgba(183, 164, 255, .2);
-  transform: translateY(-50%);
+  box-shadow: 0 0 0 2px rgba(2, 5, 8, .9);
 }
 
-.ascii-workflow-node::before { left: -4px; }
-.ascii-workflow-node::after { right: -4px; background: var(--principle-green, #70e2aa); box-shadow: 0 0 0 1px rgba(112, 226, 170, .22); }
+.ascii-workflow-node::before {
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+.ascii-workflow-node::after {
+  right: 0;
+  background: var(--principle-green, #70e2aa);
+  transform: translate(50%, -50%);
+}
 
 .ascii-workflow-node:hover,
 .ascii-workflow-node:focus-within {
@@ -1712,6 +1727,7 @@
   .native-ascii-map
 ) > i {
   position: relative;
+  overflow: visible;
 }
 
 .ascii-workflow-canvas :is(
@@ -1723,13 +1739,18 @@
   .adapter-ascii-forward,
   .adapter-ascii-return
 ) > i::after {
-  content: '◆';
+  content: '';
   position: absolute;
-  top: 50%;
+  top: calc(50% + .78em);
   left: 8%;
-  color: var(--principle-green, #70e2aa);
-  font: 650 6px/1 var(--mono, monospace);
-  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  border: 1px solid rgba(2, 5, 8, .92);
+  border-radius: 50%;
+  background: var(--principle-green, #70e2aa);
+  box-shadow: 0 0 0 1px rgba(112, 226, 170, .2);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
   animation: workflow-packet-x 1.65s linear infinite;
 }
 
@@ -1862,8 +1883,8 @@
 
   .site-shell:fullscreen .lesson-diagram .ascii-workflow-node::before,
   .site-shell:fullscreen .lesson-diagram .ascii-workflow-node::after {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
   }
 
   .site-shell:fullscreen .lesson-diagram .workflow-node-hint {
