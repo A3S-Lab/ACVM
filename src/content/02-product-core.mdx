@@ -46,10 +46,10 @@ import { AgentRentalArchitecture } from '../components/ProductNarrativeArchitect
   id="agent-rental"
   className="agent-rental-screen"
   eyebrow="04 / 智能体即服务"
-  title="企业把智能体发布为可调用服务"
-  accent="构建一次，按有效结果持续服务"
-  body="用户通过 ANS 调用，ACVM 自动验收和结算。"
-  detail="企业用 a3s-code 构建智能体，用 a3s-use 声明可热插拔能力，再把加密镜像与签名服务卡发布到 ACVM 和 ANS。用户调用后，雾计算网络选择节点；a3s-box 在 TEE 内解密镜像并加载授权能力，链上智能体 PoI 验证器确认结果后完成分账。"
+  title="一笔智能体服务从发布走到分账"
+  accent="ANS、雾计算和 ACVM 串成完整服务闭环"
+  body="企业发布，用户调用，结果通过后自动分账。"
+  detail="企业用 a3s-code 构建智能体，用 a3s-use 声明能力，再把加密镜像和服务卡发布到 ANS。用户创建任务后，雾网络选择节点；a3s-box 管理隔离执行，a3s-power 在 TEE 内完成隐私推理，链上验证通过后由 ACVM 分账。"
   visual={<AgentRentalArchitecture />}
 >
 </LessonChapter>

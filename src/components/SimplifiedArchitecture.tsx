@@ -602,9 +602,9 @@ export function LongTaskArchitectureSimple() {
 
 const poiProofStages = [
   { index: '01', title: '核验真实需求', actor: 'ACVM 订单模块', detail: '需求方签名、预算托管和任务规则同时有效，证明这不是自造空任务', formula: 'DemandOK = VerifySig(owner, demand) ∧ Escrow ≥ budget', input: 'SignedDemand + escrowRoot', output: 'DemandOK + demandRoot', icon: 'key', tone: 'chain' },
-  { index: '02', title: '核验执行回执', actor: '执行证明验证器', detail: '执行回执必须绑定同一任务、模型、环境、输出和本次 nonce', formula: 'ExecOK = VerifyExec(πexec, taskId, modelRoot, outputRoot, nonce)', input: 'ExecReceipt + πexec', output: 'ExecOK + outputRoot', icon: 'brain', tone: 'compute' },
+  { index: '02', title: '核验执行回执', actor: '隐私回执验证器', detail: 'rPriv 必须把环境、输出和隐私证明绑定到同一规则承诺 C', formula: 'ExecOK = VerifyWorkerSig(rPriv) ∧ VerifyPriv(πpriv, C, envRoot, outputRoot)', input: 'C + rPriv + πpriv', output: 'ExecOK + outputRoot', icon: 'brain', tone: 'compute' },
   { index: '03', title: '核验结果达标', actor: 'Validator 法定人数', detail: '独立验证者按照订单冻结的业务谓词检查结果，并形成门限裁决', formula: 'OutcomeOK ⇔ Σᵥ 𝟙[VerifySig(σᵥ) ∧ P(result,eᵥ)] ≥ q', input: '业务证据 + Validator 签名', output: 'AcceptedResult + verdictRoot', icon: 'shield', tone: 'verify' },
-  { index: '04', title: '检查唯一消费', actor: 'ACVM 防重放集合', detail: 'taskKey 将任务、输出和 nonce 绑定，已经结算的结果不能再次生成 PoI', formula: 'taskKey = H(taskId ∥ outputRoot ∥ nonce)\nUniqueOK = ¬Spent(taskKey)', input: 'taskId + outputRoot + nonce', output: 'UniqueOK', icon: 'fingerprint', tone: 'chain' },
+  { index: '04', title: '检查唯一消费', actor: 'ACVM 防重放集合', detail: 'taskKey 绑定规则承诺、结果、裁决、Worker 和任务类别，已经结算的结果不能再次计量', formula: 'taskKey = H(C ∥ outputRoot ∥ verdictRoot ∥ workerDID ∥ taskClass)\nUniqueOK = ¬Spent(taskKey)', input: 'C + outputRoot + verdictRoot + Worker + 类别', output: 'UniqueOK', icon: 'fingerprint', tone: 'chain' },
   { index: '05', title: '生成 ValidPoI', actor: 'PoI 计量模块', detail: '真实需求、可信执行、结果达标和唯一消费全部成立，才形成可结算贡献', formula: 'ValidPoI = DemandOK ∧ ExecOK ∧ OutcomeOK ∧ UniqueOK', input: '四项验证结果 + splitRoot', output: 'ValidPoI → 分账 + 有界权重', icon: 'spark', tone: 'verify' },
 ] as const satisfies readonly ProgressiveStage[];
 

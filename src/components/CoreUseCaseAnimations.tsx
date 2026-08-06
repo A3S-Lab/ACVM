@@ -18,8 +18,8 @@ type ServiceStep = {
 const geoFlowStages = [
   { index: '01', label: '冻结基线', actor: '品牌方 + 链上 ACVM 验证智能体', action: '把提升目标写成可以复测的链上验收条件', detail: '固定测试问题、当前引用率、观察周期和增量门槛，并将 querySetRoot 与 baselineRoot 写入订单。', input: '问题集 + 当前引用率 14.2%', output: '链上基线与 +8pp 门槛', state: 'CREATED → FUNDED', icon: 'lock', tone: 'violet' },
   { index: '02', label: '执行优化', actor: 'GEO Agent', action: '改进站点内容并提交发布记录', detail: '页面改动、可引用材料和站点快照绑定到同一个 taskId。', input: '已冻结的 GEO 订单', output: '新内容 + 发布回执', state: 'FUNDED → RUNNING', icon: 'brain', tone: 'violet' },
-  { index: '03', label: '发起独立复测', actor: '链上 ACVM 验证智能体', action: '按冻结问题集发布复测任务并选择独立观察智能体', detail: '验证智能体通过 ANS 选择与 GEO 执行方无利益关联的观察节点，并把查询版本、窗口和排除规则写入任务。', input: 'querySetRoot + 新站点版本', output: '链上 ObservationTask', state: 'RUNNING → VERIFYING', icon: 'eye', tone: 'green' },
-  { index: '04', label: '链上验证增量', actor: 'ACVM 验证智能体 + PoI 观察节点', action: '收集签名查询回执，并按固定公式计算真实增量', detail: '观察节点访问实际 AI 引擎并返回证据；链上智能体验签、检查法定人数，再计算 25.8% − 14.2% = 11.6pp。', input: 'SignedObservation[] + baselineRoot', output: 'AcceptedResult · +11.6pp', state: 'VERIFYING → ACCEPTED', icon: 'shield', tone: 'green' },
+  { index: '03', label: '发起独立复测', actor: '链上 ACVM 验证智能体', action: '按冻结问题集发布复测任务并选择独立观察节点', detail: '验证智能体通过 ANS 选择与 GEO 执行方无利益关联的观察节点，并把查询版本、窗口和排除规则写入任务。', input: 'querySetRoot + 新站点版本', output: '链上 ObservationTask', state: 'RUNNING → VERIFYING', icon: 'eye', tone: 'green' },
+  { index: '04', label: '链上验证增量', actor: 'ACVM 验证智能体 + 独立观察节点', action: '收集签名查询回执，并按固定公式计算真实增量', detail: '观察节点访问实际 AI 引擎并返回证据；链上智能体验签、检查法定人数，再计算 25.8% − 14.2% = 11.6pp。', input: 'SignedObservation[] + baselineRoot', output: 'AcceptedResult · +11.6pp', state: 'VERIFYING → ACCEPTED', icon: 'shield', tone: 'green' },
   { index: '05', label: '结果付费', actor: 'ACVM', action: '只对已经验证的引用提升释放费用', detail: '裁决终局后，按订单约定的每个百分点价格计算并支付结果费。', input: 'AcceptedResult + 计价规则', output: '结果费 ¥116,000', state: 'ACCEPTED → FINALIZED', icon: 'receipt', tone: 'green' },
 ] as const satisfies readonly BusinessProcessStage[];
 
@@ -145,10 +145,10 @@ export function GeoVerificationArchitecture() {
             <span className="is-observed"><b>复测</b><i><em /></i><strong>25.8%</strong></span>
             <span className="is-delta"><b>增量</b><i aria-hidden="true">────────◆──────▶</i><strong>+11.6pp / ACCEPTED</strong></span>
           </div>
-          <div className="geo-ascii-route" aria-label="GEO 执行智能体提交站点版本，链上 ACVM 验证智能体发布观察任务，PoI 观察节点返回签名回执，ACVM 计算增量并结算">
+          <div className="geo-ascii-route" aria-label="GEO 执行智能体提交站点版本，链上 ACVM 验证智能体发布观察任务，独立观察节点返回签名回执，ACVM 计算增量并结算">
             <span className={`${activeStep === 1 ? 'is-active' : ''} ascii-workflow-node`}>[<WorkflowTerm term="GEO" label="GEO Agent" />]</span><i>── siteRoot ──▶</i>
             <span className={`${activeStep === 0 || activeStep === 2 || activeStep === 3 ? 'is-active' : ''} ascii-workflow-node`}>[链上 <WorkflowTerm term="AgenticContract" label="ACVM 验证智能体" />]</span><i>── ObservationTask ──▶</i>
-            <span className={`${activeStep === 2 || activeStep === 3 ? 'is-active' : ''} ascii-workflow-node`}>[<WorkflowTerm term="PoI" label="PoI 观察节点" /> × q]</span><i>── SignedObservation[] ──▶</i>
+            <span className={`${activeStep === 2 || activeStep === 3 ? 'is-active' : ''} ascii-workflow-node`}>[独立观察节点 × q]</span><i>── SignedObservation[] ──▶</i>
             <span className={`${activeStep === 4 ? 'is-active' : ''} ascii-workflow-node`}>[结果费 ¥116,000]</span>
           </div>
           <footer><code>└─ 当前 / {current.label} / {current.state} / {current.output} ─────────┘</code></footer>

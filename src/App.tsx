@@ -303,17 +303,23 @@ export function App() {
       });
     };
 
+    const keepActiveScreenAligned = () => {
+      const preservedScreen = activeScreenRef.current;
+      wheelLockedRef.current = true;
+      window.requestAnimationFrame(() => goToScreen(preservedScreen, 'auto'));
+    };
+
     updateActiveScreen();
     scroller?.addEventListener('scroll', updateActiveScreen, { passive: true });
     window.addEventListener('scroll', updateActiveScreen, { passive: true });
-    window.addEventListener('resize', updateActiveScreen);
+    window.addEventListener('resize', keepActiveScreenAligned);
     return () => {
       window.cancelAnimationFrame(frame);
       scroller?.removeEventListener('scroll', updateActiveScreen);
       window.removeEventListener('scroll', updateActiveScreen);
-      window.removeEventListener('resize', updateActiveScreen);
+      window.removeEventListener('resize', keepActiveScreenAligned);
     };
-  }, []);
+  }, [goToScreen]);
 
   useEffect(() => {
     const navigateToHash = () => {

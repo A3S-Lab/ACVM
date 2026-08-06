@@ -66,7 +66,7 @@ export function UsefulWorkOpportunityArchitecture() {
   const { rootRef, activeStep, isPlaying, selectStep, togglePlayback } = useStepPlayback(4, 2800);
   const lanes = [
     { label: '传统 PoW', tone: 'pow', nodes: ['区块头 + nonce', '反复试算哈希', '检查 H < target', '获得记账权'] },
-    { label: 'PoI 区块链', tone: 'poi', nodes: ['签名 AI 任务', '模型完成推理', '验收证据与结果', '交付结果 + ValidPoI'] },
+    { label: 'PoI 网络', tone: 'poi', nodes: ['签名 AI 任务', 'PoI Worker 推理', '验证智能体验收', '交付结果 + ValidPoI'] },
   ] as const;
 
   return (
@@ -98,7 +98,7 @@ export function UsefulWorkOpportunityArchitecture() {
               <footer>
                 {lane.tone === 'pow'
                   ? <WorkflowFormula formula="H(blockHeader ∥ nonce) < target" title="PoW 有效哈希条件" summary="矿工持续更换 nonce，直到区块头哈希小于当前难度目标；它证明消耗了算力，但不直接交付业务结果。" />
-                  : <WorkflowFormula formula="SignedDemand ∧ ExecReceipt ∧ AcceptedResult" title="PoI 有效工作条件" summary="真实需求、执行回执和已验收结果同时存在，才把本次推理视为可结算贡献。" />}
+                  : <WorkflowFormula formula="DemandOK ∧ ExecOK ∧ OutcomeOK ∧ UniqueOK" title="ValidPoI 有效条件" summary="真实需求、可信执行、结果达标和唯一消费同时成立，才把本次推理记为 ValidPoI。" />}
               </footer>
             </section>
           ))}
@@ -146,17 +146,17 @@ export function AcvmSystemArchitecture() {
 }
 
 const consensusStages = [
-  { index: '01', title: '贡献归一', detail: '只有已验收 PoI 参与计算，不同任务类别先换算为可比较贡献', code: 'qᵢ = 𝟙[ValidPoIᵢ] · Normalize_class(scoreᵢ)', input: 'ValidPoI + 任务类别 + 质量分', output: '归一化贡献 qᵢ', actor: 'PoI 计量模块', icon: 'receipt' },
+  { index: '01', title: '贡献归一', detail: '只有已终局的 ValidPoI 参与计算，不同任务类别先换算为可比较贡献', code: 'qᵢ = 𝟙[ValidPoIᵢ] · Normalize_class(scoreᵢ)', input: 'ValidPoI + 任务类别 + 质量分', output: '归一化贡献 qᵢ', actor: 'PoI 计量模块', icon: 'receipt' },
   { index: '02', title: '有界权重', detail: '历史贡献随时间衰减，并通过 cap 限制单个参与方影响', code: 'wᵢ = min(cap, Σₖ qₖe⁻λΔtₖ)', input: '归一化贡献序列 qₖ', output: '有界候选权重 wᵢ', actor: '权重计算模块', icon: 'brain' },
-  { index: '03', title: 'VRF 抽签', detail: '权重只影响成为候选提议者的概率，不改变验证规则', code: 'scoreᵢ = VRFᵢ(epoch ∥ poiRoot) / wᵢ', input: 'epoch + poiRoot + wᵢ', output: '候选提议者', actor: '各 PoI 节点', icon: 'spark' },
+  { index: '03', title: 'VRF 抽签', detail: '权重只影响成为候选提议者的概率，不改变验证规则', code: 'scoreᵢ = VRFᵢ(epoch ∥ poiRoot) / wᵢ', input: 'epoch + poiRoot + wᵢ', output: '候选提议者', actor: '共识候选节点', icon: 'spark' },
   { index: '04', title: 'BFT 终局', detail: '其他节点重新验证区块与证据，达到固定法定人数才终局', code: 'Final ⇔ ValidBlock ∧ QC ≥ 2f+1', input: '候选区块 + Validator 投票', output: '不可逆区块终局', actor: 'BFT Validator 集合', icon: 'check' },
 ] as const satisfies readonly { index: string; title: string; detail: string; code: string; input: string; output: string; actor: string; icon: IconName }[];
 
 export function PoiConsensusArchitecture() {
   return (
     <ProgressiveTechnicalFlow
-      code="ACVM / 核心共识算法"
-      status="归一 → 封顶 → 抽签 → 终局"
+      code="PoI Consensus / 核心共识算法"
+      status="ValidPoI → 归一 → 封顶 → 抽签 → 终局"
       className="poi-consensus-architecture poi-algorithm-simple"
       stages={consensusStages.map((stage) => ({ ...stage, formula: stage.code }))}
       ariaLabel="PoI 共识算法的四个计算步骤"

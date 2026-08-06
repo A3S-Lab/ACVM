@@ -323,8 +323,8 @@ export const speakerGuideDetails = {
     implementation: [
       {
         title: '可信执行与结果有效使用两条独立证据链',
-        mechanism: 'a3s-box 与 a3s-power 生成的 πpriv 至少绑定 taskId、contractRoot、inputRoot、modelRoot、envRoot、toolCallRoot、outputRoot、前后状态、nonce 和签名。AcceptedResult 另行绑定独立业务证据、验收谓词版本、智能体 PoI 验证器身份与法定人数签名。',
-        acceptance: '节点分别验证执行证明和结果证明，再检查状态转移与防重放；两者同时成立才生成 AcceptedResult，不要求每台节点重跑 GPU 推理。',
+        mechanism: '规则承诺 C 固定 chainId、Runtime 版本、合约根、taskId、输入、模型、策略、验收、分账和 nonce。PoI Worker 生成 rPriv = SignWorker(C ∥ envRoot ∥ outputRoot ∥ πpriv)；验证智能体再形成 R = QC(H(C ∥ rPriv ∥ verdictRoot))。',
+        acceptance: '节点验证 C、rPriv、R 与 taskKey 的连续绑定后再执行 δACVM，不要求每台节点重跑 GPU 推理；任何模型、权限、验收或结果换件都会让证书失效。',
       },
       {
         title: '副作用采用意图—确认两阶段',
@@ -333,7 +333,7 @@ export const speakerGuideDetails = {
       },
       {
         title: '异步状态机避免区块等待推理',
-        mechanism: 'contractRoot 固定输入输出 schema、角色、证据策略、预算、超时和补偿动作。链上状态从 Requested 进入 AwaitingInference，收到合格的 AcceptedResult 后才进入 Resumed 或 Settled；模型输出不能直接调用结算入口。',
+        mechanism: '规则承诺 C 固定输入输出 schema、角色、证据策略、预算、超时和补偿动作。链上状态从 Requested 进入 AwaitingInference，收到合格的结果证书 R 后才进入 Resumed 或 Settled；模型输出不能直接调用结算入口。',
         acceptance: '每条状态转移都有前置条件、授权角色、单调 nonce 和最大执行次数；节点只重放确定性验证与状态转换，不同步重跑模型。',
       },
     ],
@@ -407,12 +407,12 @@ export const speakerGuideDetails = {
       },
       {
         title: '双证据生成三态终局裁决',
-        mechanism: '承诺 C 固定 taskId、inputRoot、modelRoot、policyRoot、verifyRule 与 splitRoot；ExecOK = VerifyExec(πexec, C, outputRoot, nonce) 验证 a3s-box / TEE 回执。Validator 对独立证据执行冻结谓词并验签，达到阈值 q 后才令 OutcomeOK 成立。挑战窗口结束后，FinalVerdict 只能是 Accepted、Rejected 或 Fraud。',
+        mechanism: '承诺 C 固定 domain、taskId、inputRoot、modelRoot、policyRoot、verifyRuleRoot、splitRoot 与 nonce；PoI Worker 的 rPriv 绑定环境、输出与隐私证明。Validator 对独立证据执行冻结谓词并验签，达到阈值后形成结果证书 R。挑战窗口结束后，FinalVerdict 只能是 Accepted、Rejected 或 Fraud。',
         acceptance: 'Accepted 必须满足 ExecOK 与 OutcomeOK 且 taskKey 未消费；Rejected 表示结果未达标但无可证明造假；Fraud 必须引用可重放的伪证、双签或篡改证据。任何模糊状态都不能触发资金终局。',
       },
       {
         title: '一个终局函数处理付款、退款、罚没与 PoI',
-        mechanism: 'Settle(taskId, FinalVerdict) 按三条确定路径执行：Accepted 将 ResultPool 按 splitRoot 分账并记录 ValidPoI；Rejected 退回 ResultPool 且不记录 PoI；Fraud 执行责任 Bond 的罚没。VerificationPool 仅按已完成的证据与验证工作支付。',
+        mechanism: 'Settle(taskId, FinalVerdict) 按三条确定路径执行：Accepted 将 ResultPool 按 splitRoot 分账并记录 ValidPoI；Rejected 退回 ResultPool 且不记录 ValidPoI；Fraud 执行责任 Bond 的罚没。VerificationPool 仅按已完成的证据与验证工作支付。',
         acceptance: '三条路径都满足资金守恒、一次性领取和幂等重放；只有 Accepted 产生 ValidPoI，只有 FraudProof=1 产生 Slash，普通模型误判不能被包装成作恶。',
       },
     ],
@@ -444,12 +444,12 @@ export const speakerGuideDetails = {
     implementation: [
       {
         title: 'a3s-box 把任务固定到本地隔离实例',
-        mechanism: '调度器签发 lease = H(taskId ∥ imageRoot ∥ resourcePolicy ∥ deadline)。a3s-box 在数据现场创建专用内核 MicroVM，挂载只读模型与临时数据卷，并按 netPolicyRoot、工具白名单和资源上限执行。',
-        acceptance: '实际后端、镜像、网络策略、卷、CPU、内存和生命周期都与 lease 一致；运行中不能静默降级为共享内核，任务结束后临时卷、密钥和进程被清理。',
+        mechanism: '调度器签发 lease = H(taskId ∥ imageRoot ∥ resourcePolicy ∥ deadline)。a3s-box 在数据现场创建专用内核或 TEE 支持的 MicroVM，管理镜像、网络、临时卷与生命周期；模型推理由实例内的 a3s-power 执行。',
+        acceptance: '实际后端、TEE profile、镜像、网络策略、卷、CPU、内存和生命周期都与 lease 一致；运行中不能静默降级，任务结束后临时卷、密钥和进程被清理。',
       },
       {
         title: '原始数据留在隔离域，外部只验回执',
-        mechanism: '摄像头、传感器和本地日志只进入 a3s-box 数据卷；外部收到绑定 taskId、modelRoot、envRoot、outputRoot、nonce 与执行策略的 ExecReceipt，以及独立业务证据。高敏任务可叠加 a3s-power / TEE 保护使用中数据。',
+        mechanism: '摄像头、传感器和本地日志只进入 a3s-box 管理的数据卷；a3s-power 在 TEE 内保护模型与使用中数据。外部只收到绑定 C、envRoot、outputRoot 与隐私证明的 rPriv，以及独立业务证据。',
         acceptance: '出站网络测试不能传出原始字节、Prompt 或完整日志；ACVM 能验证回执签名、策略根、输出根和业务证据，但无法通过公共接口读取本地原始数据。',
       },
     ],
@@ -481,12 +481,12 @@ export const speakerGuideDetails = {
     implementation: [
       {
         title: '四项条件共同生成结算凭证',
-        mechanism: 'ValidPoI = SignedDemand ∧ AcceptedResult ∧ ExecutionEvidence ∧ UniqueTaskKey。taskKey 由 taskId、verdictRoot、Worker 和任务类别做域隔离哈希；任何 AcceptedResult 都必须执行这条确定性派生路径。',
+        mechanism: 'ValidPoI = DemandOK ∧ ExecOK ∧ OutcomeOK ∧ UniqueOK。taskKey = H(C ∥ outputRoot ∥ verdictRoot ∥ workerDID ∥ taskClass)，其中 C 已包含 chainId、Runtime 版本、合约根、taskId 和 nonce；任何 AcceptedResult 都必须执行这条确定性派生路径。',
         acceptance: '验证器逐项检查需求签名与托管、终局裁决、执行证据策略和 usedTaskKey；任一失败都不写 PoI，也不能领取结果费。失败任务只生成 FailureReceipt，不伪装成有效贡献。',
       },
       {
         title: '贡献可重算、不可转移',
-        mechanism: 'PoI 明细保存类别、质量分、有效成本、时间和来源裁决。epoch 权重由这些终局明细确定性计算，不接受 Worker 自报分值。',
+        mechanism: 'ValidPoI 明细保存类别、质量分、有效成本、时间和来源裁决。epoch 权重由这些终局明细确定性计算，不接受 Worker 自报分值。',
         acceptance: '任意全节点能从终局事件重建同一 poiRoot；修正只能新增反向记录，不能改写历史。',
       },
     ],
@@ -508,7 +508,7 @@ export const speakerGuideDetails = {
       {
         title: '重复、切片与类别套利',
         failure: '把一次任务拆成许多小任务，或在多链重复申报同一结果，放大贡献。',
-        solution: 'taskKey 纳入规范化输出根和需求 nonce；跨链注册全局来源域。按任务类别设置最小规模、批次去重和主体上限，异常相似输出进入审查。',
+        solution: 'taskKey 统一绑定 C、outputRoot、verdictRoot、workerDID 与 taskClass；跨链通过 C 中的 domain 隔离来源。按任务类别设置最小规模、批次去重和主体上限，异常相似输出进入审查。',
         residual: '语义相同但字节不同的结果难以完全去重，经济上限必须作为最后一道防线。',
       },
     ],
@@ -570,7 +570,7 @@ export const speakerGuideDetails = {
     implementation: [
       {
         title: '四个确定公式连接验收到终局',
-        mechanism: '终局 PoI 明细先在各自任务类别内归一得到 qᵢ，再经主体上限和时间衰减得到 wᵢ。候选者计算 VRF 分数，获选者只提交区块，最终由 ValidBlock 与 QC ≥ 2f+1 确认。',
+        mechanism: '终局 ValidPoI 明细先在各自任务类别内归一得到 qᵢ，再经主体上限和时间衰减得到 wᵢ。候选者计算 VRF 分数，获选者只提交区块，最终由 ValidBlock 与 QC ≥ 2f+1 确认。',
         acceptance: '任意节点从同一终局 PoI 集合和参数重算得到相同权重、poiRoot 与区块有效性；没有法定人数证书不得进入最终状态。',
       },
     ],
@@ -586,7 +586,7 @@ export const speakerGuideDetails = {
       {
         title: '高权重主体不能同时控制终局',
         failure: '若 PoI 权重直接等于确认票权，积累大量任务的主体可自提议、自验证并固化错误区块。',
-        solution: 'PoI 只进入有界候选权重；VRF 保持不可预测选择，其他节点独立重验交易、PoI 和状态转换，再由 BFT 法定人数签名。',
+        solution: 'ValidPoI 只进入有界候选权重；VRF 保持不可预测选择，其他节点独立重验交易、ValidPoI 和状态转换，再由 BFT 法定人数签名。',
         residual: 'Validator 集合仍可能串谋，需要成员独立性、轮换、挑战和治理恢复机制。',
       },
     ],
@@ -657,9 +657,9 @@ export const speakerGuideDetails = {
   'deployment-modes': {
     implementation: [
       {
-        title: 'ACVM 标准状态是链适配边界',
-        mechanism: 'A3S 执行域完成模型运行与证据归集，ACVM/Validator 完成结果验收。ACVM 只向 ChainAdapter 输出 taskRoot、verdictRoot、poiRoot、identityRef、amount、nonce 和目标终局状态；Prompt、原始数据、模型与详细证据不进入通用链适配层。',
-        acceptance: '对任一目标链，同一标准状态都能生成唯一链上事件，并把不可回退的终局回执映射回原 taskId；适配层不得修改验收结果。',
+        title: '两种部署路径共用同一语义',
+        mechanism: 'Rust 原生链把 ACVM Runtime 作为链上状态转换环境；适配模式由 ACVM Core 形成标准任务、裁决、ValidPoI 与结算事件，再通过 ChainAdapter 写入现有国内链。两种路径都不把 Prompt、原始数据、模型与详细证据写入链上。',
+        acceptance: '原生链由全节点重放 δACVM；适配模式由目标链合约验证授权、证书、nonce 和状态连续性。两种路径都能把终局回执映射回同一 taskId，但不能把适配模式表述为目标链原生运行完整 Runtime。',
       },
       {
         title: '固定 ChainAdapter ABI，按网络实现 Driver',
@@ -700,17 +700,17 @@ export const speakerGuideDetails = {
     implementation: [
       {
         title: 'ACVM Runtime 只执行确定性状态转换',
-        mechanism: 'Rust 原生节点把 DeployAgenticContract、OpenInferenceTask、SubmitPrivateReceipt、SubmitAgentVerdict、ResumeContract、Settle 和 RecordPoI 定义为版本化交易。任务根 T = H(taskId ∥ modelRoot ∥ inputRoot ∥ policyRoot)，状态按 Requested → AwaitingInference → Accepted → Resumed / Settled 单向推进。',
+        mechanism: 'Rust 原生节点把 DeployAgenticContract、OpenInferenceTask、SubmitPrivateReceipt、SubmitAgentVerdict、ResumeContract、Settle 和 RecordPoI 定义为版本化交易。统一承诺 C 绑定 domain、taskId、inputRoot、modelRoot、policyRoot、verifyRuleRoot、splitRoot 与 nonce，状态按 Requested → AwaitingInference → Accepted → Resumed / Settled 单向推进。',
         acceptance: '所有全节点对同一区块重放后得到相同 stateRoot；模型推理、私有数据和外部工具不进入同步区块执行。',
       },
       {
         title: '链下隐私计算，链上智能体验证',
-        mechanism: 'Agentic Contract 发布 T 并进入 AwaitingInference。PoI Worker 使用 a3s-box 固定执行边界、使用 a3s-power 完成隐私推理，提交 rPriv = SignW(T ∥ outputRoot ∥ πpriv ∥ nonce)；链上智能体 PoI 验证器形成 R = QC(H(T ∥ rPriv ∥ verdictRoot))。',
+        mechanism: 'Agentic Contract 发布 C 并进入 AwaitingInference。PoI Worker 使用 a3s-box 固定执行边界、使用 a3s-power 完成隐私推理，提交 rPriv = SignWorker(C ∥ envRoot ∥ outputRoot ∥ πpriv)；链上智能体 PoI 验证器形成 R = QC(H(C ∥ rPriv ∥ verdictRoot))。',
         acceptance: '同一 taskId 的合格结果只能被消费一次；合约能读取规范化输出或 outputRoot，继续生成业务状态、工具意图、付款与 splitRoot 分账。',
       },
       {
         title: '同一次有效推理同时形成服务收益与 PoI',
-        mechanism: 'Verify(R) 且 taskKey 未消费时，Sₙ₊₁ = δACVM(Sₙ, outputRoot, AcceptedResult) 恢复合约并结算；PoIₙ₊₁ = UpdateBounded(PoIₙ, ValidPoI) 同步更新有界贡献。VRF 负责抽签，BFT 法定人数负责区块终局。',
+        mechanism: 'Verify(R) 且 taskKey 未消费时，Sₙ₊₁ = δACVM(Sₙ, R) 恢复合约并结算；PoIₙ₊₁ = UpdateBounded(PoIₙ, ValidPoI) 同步更新有界贡献。VRF 负责抽签，BFT 法定人数负责区块终局。',
         acceptance: '服务结算、PoI 记录与状态恢复引用同一 taskId 和 verdictRoot；重复任务、退款或被挑战撤销的结果不能继续累积有效权重。',
       },
     ],

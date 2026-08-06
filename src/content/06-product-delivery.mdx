@@ -30,11 +30,11 @@ import { AcvmIntegrationArchitecture } from '../components/ProductEvidenceArchit
   id="deployment-modes"
   className="chains-screen"
   eyebrow="06 / 对接国内区块链"
-  title="ACVM 接入现有国内区块链"
-  accent="每条链只替换一个 Driver"
-  body="A3S 执行，ACVM 验收，Driver 写链。"
-  detail="A3S 负责 AI 执行，ACVM 负责验收和状态管理。ChainAdapter 把统一身份、事件和终局语义映射到长安链、FISCO BCOS、星火链网或 BSN。"
-  figureLabel="ACVM 标准状态 → ChainAdapter → 国内区块链基础设施"
+  title="ACVM 支持原生链与国内链接入"
+  accent="两种部署路径，共用同一套任务与验证语义"
+  body="原生链内置 Runtime，现有链通过 Driver 接入。"
+  detail="Rust 原生链可直接运行 ACVM Runtime；长安链、FISCO BCOS、星火链网或 BSN 则通过 ChainAdapter 记录任务根、裁决根、PoI 根和结算终局。模型与原始数据始终留在 A3S 执行域。"
+  figureLabel="原生 Rust 链内置 Runtime / 现有国内链通过 ChainAdapter 接入"
   visual={<AcvmIntegrationArchitecture />}
 >
 </LessonChapter>

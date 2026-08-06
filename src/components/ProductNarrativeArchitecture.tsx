@@ -5,20 +5,20 @@ import { useStepPlayback } from './useStepPlayback';
 import { WorkflowTerm } from './WorkflowHint';
 
 const productDecisionStages = [
-  { index: '01', label: '创建链上任务', actor: 'Agentic Contract', action: '写入目标、验收规则和预算', detail: 'ACVM Runtime 把任务目标、证据来源、通过门槛和付款规则保存为可执行状态。', input: '业务目标 + 预算', output: '等待执行的链上任务', state: 'CREATED → FUNDED', icon: 'key', tone: 'violet' },
-  { index: '02', label: '链下隐私计算', actor: 'A3S Worker', action: '在受保护环境运行模型并生成回执', detail: 'a3s-box 隔离任务，a3s-power 保护数据与模型；链上只接收结果、承诺根和执行回执。', input: '已签名任务', output: '结果 + ExecReceipt', state: 'FUNDED → SUBMITTED', icon: 'brain', tone: 'violet' },
-  { index: '03', label: '链上智能体验证', actor: '智能体 PoI 验证器', action: '分别检查执行过程和业务结果', detail: '验证器检查执行证据、独立业务证据和防重放状态，达到法定人数后形成终局裁决。', input: '结果 + 两类证据', output: 'Accepted / Rejected', state: 'SUBMITTED → DECIDED', icon: 'shield', tone: 'green' },
-  { index: '04', label: '恢复合约结算', actor: 'ACVM Runtime', action: '恢复 Agentic Contract 并执行付款规则', detail: '结果通过就推进状态并按 splitRoot 分账；正常未达标则把结果费退回需求方。', input: '终局裁决', output: '状态更新 + 付款或退款', state: 'DECIDED → FINALIZED', icon: 'receipt', tone: 'green' },
+  { index: '01', label: '部署链上合约', actor: 'Agentic Contract', action: '固定代码、状态、验收规则和付款条件', detail: '部署时锁定 contractRoot 与 runtimeVersion，运行中的任务不能临时更换验收和分账规则。', input: '合约代码 + 业务规则', output: '可执行链上状态机', state: 'DEFINED → DEPLOYED', icon: 'key', tone: 'violet' },
+  { index: '02', label: '挂起等待结果', actor: 'ACVM Runtime', action: '发布异步任务并让合约进入等待状态', detail: 'Runtime 记录任务承诺 C，区块继续生成，不让 GPU 推理和外部工具阻塞共识。', input: '任务目标 + 预算', output: 'InferenceRequested(C)', state: 'RUNNING → AWAITING_RESULT', icon: 'terminal', tone: 'violet' },
+  { index: '03', label: '接收链上裁决', actor: '智能体 PoI 验证器', action: '提交与同一承诺绑定的结果证书', detail: '结果证书 R 已包含法定人数签名；Runtime 只验证证书，不直接相信模型输出。', input: '结果证书 R', output: '确定性裁决', state: 'AWAITING_RESULT → DECIDED', icon: 'shield', tone: 'green' },
+  { index: '04', label: '恢复合约执行', actor: 'ACVM Runtime', action: '按裁决推进状态并执行付款规则', detail: '全节点重放同一 δACVM 状态转换，得到一致的新状态、付款、退款或后续任务。', input: '终局裁决', output: '状态更新 + 结算', state: 'DECIDED → RESUMED', icon: 'receipt', tone: 'green' },
 ] as const satisfies readonly BusinessProcessStage[];
 
 export function ProductDefinitionArchitecture() {
   return (
     <BusinessProcessFlow
       code="ACVM Runtime / Agentic Contract"
-      status="链上发任务 → 链下计算 → 链上验证 → 恢复合约"
+      status="部署状态机 → 挂起等待 → 接收裁决 → 确定性恢复"
       className="product-definition-panel"
       stages={productDecisionStages}
-      ariaLabel="ACVM Runtime 从创建链上任务到恢复 Agentic Contract 的四步业务流程"
+      ariaLabel="ACVM Runtime 从部署 Agentic Contract 到异步等待、接收裁决和确定性恢复的四步状态流程"
       footer={<strong>验证结果直接驱动 Agentic Contract 状态机</strong>}
     />
   );
@@ -30,7 +30,7 @@ const agentRentalStages = [
   { index: '03', label: '发布服务', actor: '企业 + ACVM + ANS', action: '发布加密镜像和签名服务卡', detail: '服务卡绑定 DID、imageRoot、capabilityRoot、价格、验收规则和所需 TEE 等级。', input: 'AgentImage.enc + ServiceCard', output: '可发现的智能体服务', state: 'LOCKED → DISCOVERABLE', icon: 'fingerprint', tone: 'violet' },
   { index: '04', label: '用户调用', actor: '用户 + ANS', action: '解析服务卡并创建 Agentic Contract 任务', detail: '用户先核验身份、版本、价格和履历，再把任务目标、验收条件和预算写入 ACVM。', input: 'Task Query + Budget', output: 'FUNDED Agentic Task', state: 'DISCOVERED → FUNDED', icon: 'receipt', tone: 'violet' },
   { index: '05', label: '雾节点调度', actor: 'Fog Scheduler', action: '按 TEE、GPU、位置、负载和信誉选择节点', detail: '调度器生成只对本次 taskId 有效的 FogLease，远程证明失败时不会下发镜像密钥。', input: 'Task Policy + Node Offers', output: 'FogLease + Attestation', state: 'FUNDED → LEASED', icon: 'chain', tone: 'violet' },
-  { index: '06', label: 'TEE 隐私执行', actor: 'a3s-box + a3s-use', action: '在 TEE 内解密镜像并远程加载授权能力', detail: 'a3s-box 核验 imageRoot 后解密镜像；a3s-use 核验 capabilityRoot，热插拔本次任务需要的模型、工具和数据连接器。', input: 'AgentImage.enc + FogLease', output: 'Result + πpriv', state: 'LEASED → SUBMITTED', icon: 'brain', tone: 'green' },
+  { index: '06', label: 'TEE 隐私执行', actor: 'a3s-box + a3s-use + a3s-power', action: '隔离智能体、挂载能力并完成隐私推理', detail: 'a3s-box 管理隔离环境和镜像解密，a3s-use 挂载授权能力，a3s-power 在 TEE 内保护模型、数据和推理过程。', input: 'AgentImage.enc + FogLease', output: 'Result + πpriv', state: 'LEASED → SUBMITTED', icon: 'brain', tone: 'green' },
   { index: '07', label: '验证结算', actor: '链上 PoI 验证器 + ACVM Runtime', action: '验收结果、恢复合约并按贡献分账', detail: '智能体 PoI 验证器确认执行与业务结果，ACVM Runtime 恢复 Agentic Contract，生成 ValidPoI 并按 splitRoot 结算。', input: 'Result + πpriv + Evidence', output: 'AcceptedResult + ValidPoI + Payout', state: 'SUBMITTED → FINALIZED', icon: 'shield', tone: 'green' },
 ] as const satisfies readonly BusinessProcessStage[];
 
@@ -53,7 +53,7 @@ export function AgentRentalArchitecture() {
             <section className="is-runtime ascii-workflow-node">
               <small>[ 雾计算节点 / <WorkflowTerm term="FogLease" label="Node-TEE-07" /> ]</small>
               <code><WorkflowTerm term="AgentImage" label="加密镜像" /> ──证明通过──▶ TEE 内解密</code>
-              <strong>[a3s-box] Agent Runtime + [<WorkflowTerm term="a3sUse" label="a3s-use" />] Remote Capabilities</strong>
+              <strong>[a3s-box] Agent Runtime + [<WorkflowTerm term="a3sUse" label="a3s-use" />] Capabilities + [a3s-power] Private Inference</strong>
             </section>
             <i>────◆ Result + πpriv ◆────▶</i>
             <section className="is-chain ascii-workflow-node">

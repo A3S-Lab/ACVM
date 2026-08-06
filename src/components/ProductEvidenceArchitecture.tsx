@@ -82,14 +82,14 @@ export function AcvmIntegrationArchitecture() {
 
   return (
     <div className="adapter-ascii-shell" ref={rootRef}>
-      <LearningPanel code="ChainAdapter / 协议翻译与终局回写" status="一个 ACVM 状态 · 多条目标链" className="acvm-integration integration-simple adapter-ascii-panel principle-panel">
+      <LearningPanel code="ACVM Deployment / 原生链 + 适配模式" status="同一套任务、裁决和 PoI 语义" className="acvm-integration adapter-ascii-panel principle-panel">
         <AsciiFlowControls stages={integrationFlowStages} activeStep={activeStep} isPlaying={isPlaying} onSelect={selectStep} onToggle={togglePlayback} ariaLabel="ACVM 标准事件经过 ChainAdapter 映射、目标链 Driver 提交并回写终局的四步流程" />
         <div className={`adapter-ascii-bridge ascii-workflow-canvas is-stage-${activeStep + 1}`} key={current.index}>
-          <header><code>┌─ ACVM StandardEvent → ChainAdapter → Target Finality ─────────┐</code></header>
+          <header><code>┌─ 原生 Rust 链：内置 Runtime ｜ 现有国内链：ChainAdapter + Driver ─┐</code></header>
           <div className="adapter-ascii-forward">
             <section className="is-event ascii-workflow-node">
-              <small>[ ACVM 标准事件 ]</small>
-              <code><WorkflowTerm term="taskId" />　verdict　validPoiRoot<br />subjectDID　state　proofRef</code>
+              <small>[ ACVM 统一语义 ]</small>
+              <code>原生链 → Runtime 直接执行<br />现有链 → StandardEvent</code>
             </section>
             <i aria-hidden="true">────◆────▶</i>
             <section className="is-map ascii-workflow-node">
@@ -107,7 +107,7 @@ export function AcvmIntegrationArchitecture() {
           <div className="adapter-ascii-return"><span className="ascii-workflow-node">[目标链 txHash + receipt + finality]</span><i>◀──────── 标准终局回写 ────────</i><strong className="ascii-workflow-node">[ACVM FinalizedEvent]</strong></div>
           <footer><code>└─ 当前 / {current.label} / {current.state} / {current.output} ─────┘</code></footer>
         </div>
-        <footer className="business-process-footer"><span><small>当前产出</small><code>{current.output}</code></span><strong>每条链只实现 Driver，ACVM 验收规则保持不变</strong></footer>
+        <footer className="business-process-footer"><span><small>当前产出</small><code>{current.output}</code></span><strong>两种路径共用 ACVM 任务、验证与结算语义</strong></footer>
       </LearningPanel>
     </div>
   );

@@ -8,7 +8,7 @@ const fogFlowStages = [
   { index: '02', label: '选择执行组', actor: 'Fog Scheduler', action: '筛选单节点或同域低时延 MoE 专家组', detail: '安全与资源是硬约束；MoE 还需控制路由节点到 Top-k 专家的激活传输时延。', input: 'Node Offers + Task Policy + Network RTT', output: 'Ranked Node / ExpertGroup', state: 'SCHEDULING → RANKED', icon: 'eye', tone: 'violet' },
   { index: '03', label: '组内远程证明', actor: 'a3s-box + TEE', action: '逐节点核验硬件、代码度量和随机挑战', detail: '单节点签发 FogLease；MoE 专家组签发 ExpertGroupLease，任一必要节点证明失败都会重新调度。', input: 'Node Quotes + nonce + policyRoot', output: 'Lease + AttestationOK', state: 'RANKED → ATTESTED', icon: 'shield', tone: 'violet' },
   { index: '04', label: '分离式隐私推理', actor: 'Router + a3s-box + a3s-use + a3s-power', action: '路由 Top-k 专家并在各 TEE 内加载加密专家分片', detail: 'a3s-use 热插拔专家端点，a3s-power 只加载命中的专家参数；激活值通过加密低时延链路传输。', input: 'AgentImage.enc + Lease + Encrypted Activations', output: 'Merged Result + Σπexpert', state: 'ATTESTED → SUBMITTED', icon: 'brain', tone: 'green' },
-  { index: '05', label: '返回组合证据', actor: 'Fog Expert Group + PoI Service', action: '提交路由、专家和合并结果的组合回执', detail: '链上智能体 PoI 验证器核验 routeRoot、每个专家回执和最终 outputRoot，并据有效贡献分配收益。', input: 'routeRoot + Expert Receipts + Result', output: 'outputRoot + πgroup', state: 'SUBMITTED → EVIDENCE_READY', icon: 'key', tone: 'green' },
+  { index: '05', label: '返回组合证据', actor: 'Fog Expert Group + PoI Worker', action: '提交路由、专家和合并结果的组合回执', detail: '链上智能体 PoI 验证器核验 routeRoot、每个专家回执和最终 outputRoot，并据有效贡献分配收益。', input: 'routeRoot + Expert Receipts + Result', output: 'outputRoot + πgroup', state: 'SUBMITTED → EVIDENCE_READY', icon: 'key', tone: 'green' },
 ] as const satisfies readonly BusinessProcessStage[];
 
 export function FogInferenceArchitecture() {
